@@ -10,3 +10,4 @@ A Not Shitty ShareX Upload Server That Actually Works As Intended (Pronounced "a
 - [ ] Thumbnail support
 - [ ] Delete support
 - [ ] Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc.)
+- [ ] Multiple access types (original, mixed-case alphanumeric, [ZWS](https://zws.im))
