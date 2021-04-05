@@ -57,7 +57,7 @@ function startup() {
 		data[resourceId] = req.file;
 		saveData(data);
 
-		res.type('text').send(`http://lh:${process.env.PORT}/${resourceId}`);
+		res.type('json').send({ resource: `http://lh:${process.env.PORT}/${resourceId}`, delete: `http://lh:${process.env.PORT}/delete/${req.file.filename}` });
 	});
 
 	// View file
@@ -67,5 +67,22 @@ function startup() {
 		else res.sendStatus(404);
 	});
 
-	app.listen(process.env.PORT, () => console.log(`Server started on port ${process.env.PORT}`));
+	// Delete file
+	app.get('/delete/:filename', (req, res) => {
+		let filename = req.params.filename;
+		let resourceId = Object.keys(data)[Object.values(data).indexOf(Object.values(data).find((d) => d.filename == filename))];
+
+		if (!resourceId || !data[resourceId]) return res.sendStatus(400);
+
+		log(`Deleted: ${data[resourceId].originalname} (${data[resourceId].mimetype})`);
+
+		// Save the file information
+		fs.rmSync(path(data[resourceId].path));
+		delete data[resourceId];
+		saveData(data);
+
+		res.type('text').send('File has been deleted!');
+	})
+
+	app.listen(process.env.PORT, () => log(`Server started on port ${process.env.PORT}\nAuthorized tokens: ${tokens.length}\nAvailable files: ${Object.keys(data).length}`));
 }
