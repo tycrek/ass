@@ -3,8 +3,8 @@ A Not Shitty ShareX Upload Server That Actually Works As Intended (Pronounced "a
 
 ### Todo
 
-- [ ] Token authorization via HTTP headers
-- [ ] Upload images
+- [x] Token authorization via HTTP headers
+- [x] Upload images
 - [ ] Upload videos
 - [ ] Upload files
 - [ ] Thumbnail support
