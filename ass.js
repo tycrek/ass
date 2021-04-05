@@ -53,7 +53,7 @@ function startup() {
 		log(`Uploaded: ${req.file.originalname} (${req.file.mimetype})`);
 
 		// Save the file information
-		let resourceId = zws(resourceIdSize);
+		let resourceId = zws(resourceIdSize); //todo: use crypto-random-string for alternative resourceId
 		data[resourceId] = req.file;
 		saveData(data);
 

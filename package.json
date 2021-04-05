@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/tycrek/anssxustawai#readme",
   "dependencies": {
-    "crypto-random-string": "^4.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fs-extra": "^9.1.0",
