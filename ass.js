@@ -76,7 +76,7 @@ function startup() {
 
 		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && !isMp4Req && isBot && !redirect)
 			res.type('html').send(generateDiscordMp4Response(req.url + '?redirect=true'));
-		if (data[resourceId])
+		else if (data[resourceId])
 			res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.byteLength).type(data[resourceId].mimetype).send(fileData);// .sendFile(path(data[resourceId].path));
 		else
 			res.sendStatus(404);
