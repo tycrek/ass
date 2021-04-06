@@ -54,6 +54,7 @@ function startup() {
 
 	// Upload file
 	app.post('/', upload.single('file'), (req, res) => {
+		// Prevent uploads from unauthorized clients
 		if (!verify(req, tokens)) return res.sendStatus(401);
 
 		log(`Uploaded: ${req.file.originalname} (${req.file.mimetype})`);
@@ -76,10 +77,13 @@ function startup() {
 		// Don't process favicon requests
 		if (req.url.includes('favicon.ico')) return;
 
+		// Parse the resource ID
 		let resourceId = req.params.resourceId.split('.')[0];
-		let fileData = fs.readFileSync(path(data[resourceId].path));
 
+		// If the ID is invalid, return 404
 		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
+
+		// Read the file and send it to the client
 		fs.readFile(path(data[resourceId].path))
 			.then((fileData) => res
 				.header('Accept-Ranges', 'bytes')
@@ -93,6 +97,7 @@ function startup() {
 		let filename = req.params.filename;
 		let resourceId = Object.keys(data)[Object.values(data).indexOf(Object.values(data).find((d) => d.filename == filename))];
 
+		// If the ID is invalid, return 400 because we are unable to process the resource
 		if (!resourceId || !data[resourceId]) return res.sendStatus(400);
 
 		log(`Deleted: ${data[resourceId].originalname} (${data[resourceId].mimetype})`);
