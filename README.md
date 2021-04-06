@@ -23,7 +23,7 @@ This project is still very young, so don't expect *everything* to be perfect yet
 
 | Type | What is it? |
 | ---- | ----------- |
-| **[ZWS](https://zws.im)** (Zero-width spaces) | The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name. |
+| **[ZWS](https://zws.im)** (Zero-width spaces) | The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name. ![ZWS sample](https://user-images.githubusercontent.com/29926144/113785625-bf43a480-96f4-11eb-8dd7-7f164f33ada2.png "ZWS sample") |
 | **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
 | **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
 
@@ -62,4 +62,4 @@ The installation may look daunting but it's really pretty straightforward. Just 
 
 ## Known issues
 
-- **Videos won't embed on Discord**: I know. This is because Discord developers make some really stupid decisions & only show embeds if the URL ends with `.mp4`. So the workaround: manually type "`.mp4`" after pasting your URL. This will be fixed in the future with a "Discord mode" for video uploads.
+- **Videos won't embed on Discord**: I know. This is because Discord developers make some really stupid decisions & only show embeds if the URL ends with `.mp4`. To fix this, either enable Discord Mode during `npm run setup` or manually append "`.mp4`" to the end of your URL's when sharing on Discord.
