@@ -10,7 +10,7 @@ const { path, saveData, log, verify } = require('./utils');
 //#region Variables, module setup
 const app = express();
 const upload = multer({ dest: 'uploads/' });
-const resourceIdSize = 8;
+const resourceIdSize = 12;
 var tokens = [];
 var data = {};
 
