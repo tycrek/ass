@@ -1,0 +1,14 @@
+{
+  "Version": "13.4.0",
+  "Name": "anssxustawai",
+  "DestinationType": "ImageUploader, TextUploader, FileUploader",
+  "RequestMethod": "POST",
+  "RequestURL": "https://your.domain.name.here/",
+  "Headers": {
+    "Authorization": "YOUR TOKEN HERE"
+  },
+  "Body": "MultipartFormData",
+  "FileFormName": "file",
+  "URL": "$json:.resource$",
+  "DeletionURL": "$json:.delete$"
+}
