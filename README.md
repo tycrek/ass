@@ -5,12 +5,15 @@ This project is still very young, so don't expect *everything* to be perfect yet
 
 ## Features
 
-- [x] Token authorization via HTTP `Authorization` header
-- [x] Upload images, videos, files
-- [ ] Thumbnail support
-- [x] Delete support
-- [ ] Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc. Currently uses JSON)
-- [ ] Multiple access types (original, mixed-case alphanumeric, [ZWS](https://zws.im), etc. Currently uses ZWS)
+- ✔️ Token authorization via HTTP `Authorization` header
+- ✔️ Upload images, videos, files
+- ❌ Thumbnail support
+- ✔️ Delete support
+- ❌ Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc. Currently uses JSON)
+- ❌ Multiple access types (original, mixed-case alphanumeric, [ZWS](https://zws.im), etc. Currently uses ZWS)
+- ❌ Multi-user support (upload restrictions, web library, etc.)
+- ❌ Block-storage support including Amazon S3
+- ❌ Usage metrics
 
 ## Installation
 
@@ -18,15 +21,14 @@ The installation may look daunting but it's really pretty straightforward. Just 
 
 1. First of all you must have Node.js 14 or later installed. It might work with Node.js 12 but just use 14.
 2. Clone this repo using `git clone https://github.com/tycrek/anssxustawai.git && cd anssxustawai/`
-3. Install the required dependencies using `npm i`
-4. Configure `.env.example` *before* running if you wish to. This will let you configure your port number & domain name.
-5. Run `npm start` to start. This will:
-   - Automatically copy `.env.example` to `.env`
-   - Creates `data.json` & `auth.json`
-   - Generates your first authorization token & saves it to `auth.json`
-6. You must also configure an SSL-enabled reverse proxy:
+3. Run `npm i` to install the required dependencies
+4. Run `npm run setup` to start the easy configuration
+5. Run `npm start` to start the server. The first-time run will:
+   - Create `data.json` & `auth.json`
+   - Generate your first authorization token & save it to `auth.json`
+6. **(Optional)** You must also configure an SSL-enabled reverse proxy (only if you want to use HTTPS):
    - I personally use Caddy, see [my tutorial](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/) on setting that up
-   - You may also Apache or Nginx as reverse proxies
+   - You may also use Apache or Nginx as reverse proxies
 
 ## Configure ShareX
 
@@ -37,7 +39,7 @@ The installation may look daunting but it's really pretty straightforward. Just 
    - Method: `POST`
    - URL: `https://your.domain.name.here/`
    - Body: `Form data (multipart/form-data)`
-   - File from name: `file`
+   - File from name: `file` (literally put "`file`" in the field)
    - Headers:
       - Name: `Authorization`
 	  - Value: (the value provided by `npm start` on first run)
@@ -48,5 +50,4 @@ The installation may look daunting but it's really pretty straightforward. Just 
 
 ## Known issues
 
-- **Videos won't embed on Discord**: I know. This is because Discord developers make some really stupid decisions & only show embeds if the URL ends with `.mp4`. So the workaround: manually type "`.mp4`" after pasting your URL. This will be fixed automatically in the future with some ZWS redirect tricks.
-- **It won't work over HTTP**: Yes because HTTP is outdated crap, why are you still using it??
+- **Videos won't embed on Discord**: I know. This is because Discord developers make some really stupid decisions & only show embeds if the URL ends with `.mp4`. So the workaround: manually type "`.mp4`" after pasting your URL. This will be fixed in the future with a "Discord mode" for video uploads.
