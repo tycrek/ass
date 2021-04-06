@@ -69,7 +69,7 @@ function startup() {
 		let fileData = fs.readFileSync(path(data[resourceId].path));
 
 		if (data[resourceId])
-			res/* .header('Accept-Ranges', 'bytes').header('Content-Length', fileData.byteLength).type(data[resourceId].mimetype).send(fileData); */.sendFile(path(data[resourceId].path));
+			res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.byteLength).type(data[resourceId].mimetype).send(fileData);
 		else
 			res.sendStatus(404);
 	});
