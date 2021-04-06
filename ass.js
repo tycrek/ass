@@ -60,7 +60,7 @@ function startup() {
 
 		// Save the file information
 		let resourceId = generateId(resourceIdType, resourceIdSize, req.file.originalname);
-		data[resourceId] = req.file;
+		data[resourceId.split('.')[0]] = req.file;
 		saveData(data);
 
 		let http = ('http').concat(useSsl ? 's' : '').concat('://');
