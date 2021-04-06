@@ -14,20 +14,20 @@ const config = {
 	domain: 'upload.example.com',
 	useSsl: true,
 	resourceIdSize: 12,
-	//resourceIdType: original/zws/random
+	resourceIdType: 'zws'
 };
 
 // Schema for setup prompts
 const setupSchema = {
 	properties: {
 		host: {
-			description: `Local IP to listen on`,
+			description: 'Local IP to listen on',
 			type: 'string',
 			default: config.host,
 			required: false
 		},
 		port: {
-			description: `Port number to listen on`,
+			description: 'Port number to listen on',
 			type: 'integer',
 			default: config.port,
 			required: false
@@ -39,16 +39,24 @@ const setupSchema = {
 			message: 'You must input a valid domain name or IP to continue'
 		},
 		useSsl: {
-			description: `Use SSL (requires reverse proxy!)`,
+			description: 'Use SSL (requires reverse proxy!)',
 			type: 'boolean',
 			default: config.useSsl,
 			required: false
 		},
 		resourceIdSize: {
-			description: `Resource ID size (by using a higher value, you will be able to upload more files)`,
+			description: 'Resource ID size (by using a higher value, you will be able to upload more files)',
 			type: 'integer',
 			default: config.resourceIdSize,
 			required: false
+		},
+		resourceIdType: {
+			description: 'Resource ID type (determines what kind of URL your uploads are visible at. Can be one of: original, zws, random)',
+			type: 'string',
+			default: config.resourceIdType,
+			require: false,
+			pattern: /(original|zws|random)/gi,
+			message: 'Must be one of: original, zws, random'
 		}
 	}
 };
@@ -81,3 +89,15 @@ function setup() {
 }
 
 setup();
+
+/*{
+	description: 'Enter your password',     // Prompt displayed to the user. If not supplied name will be used.
+	type: 'string',                 // Specify the type of input to expect.
+	pattern: /^\w+$/,                  // Regular expression that input must be valid against.
+	message: 'Password must be letters', // Warning message to display if validation fails.
+	hidden: true,                        // If true, characters entered will either not be output to console or will be outputed using the `replace` string.
+	replace: '*',                        // If `hidden` is set it will replace each hidden character with the specified string.
+	default: 'lamepassword',             // Default value to use if no value is entered.
+	required: true,                  // If true, value entered must be non-empty.
+	before: function (value) { return 'v' + value; } // Runs before node-prompt callbacks. It modifies user's input
+}*/
