@@ -1,4 +1,15 @@
-require('dotenv').config();
+try {
+	// Check if config.json exists
+	require('./config.json');
+} catch (err) {
+	console.error('No config.json found! Please run \'npm run setup\'');
+	process.exit(1);
+}
+
+// Load the config
+const { host, port, domain, useSsl, resourceIdSize } = require('./config.json');
+
+//#region Imports
 const fs = require('fs-extra');
 const uuid = require('uuid').v4;
 const express = require('express');
@@ -6,25 +17,19 @@ const useragent = require('express-useragent');
 const multer = require('multer');
 const zws = require('./zws');
 const { path, saveData, log, verify } = require('./utils');
+//#endregion
 
 //#region Variables, module setup
 const app = express();
 const upload = multer({ dest: 'uploads/' });
-const resourceIdSize = 12;
 var tokens = [];
 var data = {};
+//#endregion
 
 preStartup();
 startup();
 
 function preStartup() {
-	// Make sure .env exists
-	if (!fs.existsSync(path('.env'))) {
-		fs.copyFileSync(path('.env.example'), path('.env'));
-		log('File [.env] created');
-		require('dotenv').config();
-	} else log('File [.env] exists');
-
 	// Make sure data.json exists
 	if (!fs.existsSync(path('data.json'))) {
 		fs.writeJsonSync(path('data.json'), data, { spaces: 4 });
@@ -35,9 +40,7 @@ function preStartup() {
 	if (!fs.existsSync(path('auth.json'))) {
 		tokens.push(uuid().replace(/-/g, ''));
 		fs.writeJsonSync(path('auth.json'), { tokens }, { spaces: 4 });
-		log('File [auth.json] created');
-
-		log(`\n!! Important: save this token in a secure spot: ${tokens[0]}`);
+		log(`File [auth.json] created\n!! Important: save this token in a secure spot: ${tokens[0]}\n`);
 	} else log('File [auth.json] exists');
 
 	// Read tokens and data
@@ -60,7 +63,12 @@ function startup() {
 		data[resourceId] = req.file;
 		saveData(data);
 
-		res.type('json').send({ resource: `https://${process.env.DOMAIN}/${resourceId}`, delete: `https://${process.env.DOMAIN}/delete/${req.file.filename}` });
+		let http = ('http').concat(useSsl ? 's' : '').concat('://');
+		let trueDomain = domain.concat((port != 80 || port != 443) ? `:${port}` : '');
+		res.type('json').send({
+			resource: `${http}${trueDomain}/${resourceId}`,
+			delete: `${http}${trueDomain}/delete/${req.file.filename}`
+		});
 	});
 
 	// View file
@@ -91,5 +99,5 @@ function startup() {
 		res.type('text').send('File has been deleted!');
 	})
 
-	app.listen(process.env.PORT, () => log(`Server started on port ${process.env.PORT}\nAuthorized tokens: ${tokens.length}\nAvailable files: ${Object.keys(data).length}`));
+	app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized tokens: ${tokens.length}\nAvailable files: ${Object.keys(data).length}`));
 }
