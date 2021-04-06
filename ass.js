@@ -63,7 +63,7 @@ function startup() {
 	// View file
 	app.get('/:resourceId', (req, res) => {
 		let resourceId = req.params.resourceId;
-		if (data[resourceId]) res.header('Accept-Ranges', 'bytes').type(data[resourceId].mimetype).send(fs.readFileSync(path(data[resourceId].path)));// .sendFile(path(data[resourceId].path));
+		if (data[resourceId]) res.header('Accept-Ranges', 'bytes').header('etag', data[resourceId].filename).type(data[resourceId].mimetype).send(fs.readFileSync(path(data[resourceId].path)));// .sendFile(path(data[resourceId].path));
 		else res.sendStatus(404);
 	});
 
