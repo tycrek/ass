@@ -73,6 +73,9 @@ function startup() {
 
 	// View file
 	app.get('/:resourceId', (req, res) => {
+		// Don't process favicon requests
+		if (req.url.includes('favicon.ico')) return;
+
 		let resourceId = req.params.resourceId.split('.')[0];
 		let fileData = fs.readFileSync(path(data[resourceId].path));
 
