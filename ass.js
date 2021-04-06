@@ -79,10 +79,13 @@ function startup() {
 		let resourceId = req.params.resourceId.split('.')[0];
 		let fileData = fs.readFileSync(path(data[resourceId].path));
 
-		if (data[resourceId])
-			res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.byteLength).type(data[resourceId].mimetype).send(fileData);
-		else
-			res.sendStatus(404);
+		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
+		fs.readFile(path(data[resourceId].path))
+			.then((fileData) => res
+				.header('Accept-Ranges', 'bytes')
+				.header('Content-Length', fileData.byteLength)
+				.type(data[resourceId].mimetype).send(fileData))
+			.catch(console.error);
 	});
 
 	// Delete file
