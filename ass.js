@@ -2,6 +2,7 @@ require('dotenv').config();
 const fs = require('fs-extra');
 const uuid = require('uuid').v4;
 const express = require('express');
+const useragent = require('express-useragent');
 const multer = require('multer');
 const zws = require('./zws');
 const { path, saveData, log, verify } = require('./utils');
@@ -46,6 +47,8 @@ function preStartup() {
 }
 
 function startup() {
+	app.use(useragent.express());
+
 	// Upload file
 	app.post('/', upload.single('file'), (req, res) => {
 		if (!verify(req, tokens)) return res.sendStatus(401);
@@ -62,6 +65,7 @@ function startup() {
 
 	// View file
 	app.get('/:resourceId', (req, res) => {
+		log(req.useragent);
 		let resourceId = req.params.resourceId.split('.')[0];
 		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && req.params.resourceId.split('.')[1] != 'mp4') return res.redirect(req.url + '.mp4');
 		let fileData = fs.readFileSync(path(data[resourceId].path));
