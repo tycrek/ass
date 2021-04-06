@@ -10,7 +10,10 @@ This project is still very young, so don't expect *everything* to be perfect yet
 - ❌ Thumbnail support
 - ✔️ Delete support
 - ❌ Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc. Currently uses JSON)
-- ❌ Multiple access types (original, mixed-case alphanumeric, [ZWS](https://zws.im), etc. Currently uses ZWS)
+- ✔️ Multiple access types
+   - **[ZWS](https://zws.im)**: The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name
+   - **Mixed-case alphanumeric**: The "safe" mode. URL's are browser safe as the character set is just letters & numbers.
+   - **Original**: The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name.
 - ❌ Multi-user support (upload restrictions, web library, etc.)
 - ❌ Block-storage support including Amazon S3
 - ❌ Usage metrics
