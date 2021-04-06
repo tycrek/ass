@@ -67,9 +67,11 @@ function startup() {
 	app.get('/:resourceId', (req, res) => {
 		log('Is bot: ' + (req.useragent.isBot == 'discordbot'));
 		let resourceId = req.params.resourceId.split('.')[0];
-		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && req.params.resourceId.split('.')[1] != 'mp4') return res.redirect(req.url + '.mp4');
+		let isMp4Req = req.params.resourceId.split('.')[1] == 'mp4';
+		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && !isMp4Req) return res.redirect(req.url + '.mp4');
 		let fileData = fs.readFileSync(path(data[resourceId].path));
-		if (data[resourceId]) res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.byteLength).type(data[resourceId].mimetype).send(fileData);// .sendFile(path(data[resourceId].path));
+		if (data[resourceId] && !isMp4Req) res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.byteLength).type(data[resourceId].mimetype).send(fileData);// .sendFile(path(data[resourceId].path));
+		else if (data[resourceId] && isMp4Req) res.type('html').send(generateDiscordMp4Response(req.url + '.mp4'));
 		else res.sendStatus(404);
 	});
 
@@ -91,4 +93,18 @@ function startup() {
 	})
 
 	app.listen(process.env.PORT, () => log(`Server started on port ${process.env.PORT}\nAuthorized tokens: ${tokens.length}\nAvailable files: ${Object.keys(data).length}`));
+}
+
+function generateDiscordMp4Response(url) {
+	log('Generating video for Discord');
+	return '' +
+		'<html>' + '\n' +
+		'<head>' + '\n' +
+		`\t<meta property="og:video" content="${url}">` + '\n' +
+		`\t<meta property="og:url" content="${url}">` + '\n' +
+		'</head>' + '\n' +
+		'<body>' + '\n' +
+		`\t<video src="${url}" type="video/mp4" controls>Your browser does not support HTML5 video tags.</video>` + '\n' +
+		'</body>' + '\n' +
+		'</html>';
 }
