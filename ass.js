@@ -65,14 +65,22 @@ function startup() {
 
 	// View file
 	app.get('/:resourceId', (req, res) => {
-		log('Is bot: ' + (req.useragent.isBot == 'discordbot'));
 		let resourceId = req.params.resourceId.split('.')[0];
 		let isMp4Req = req.params.resourceId.split('.')[1] == 'mp4';
-		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && !isMp4Req) return res.redirect(req.url + '.mp4');
+		let isBot = req.useragent.isBot == 'discordbot';
+		let element = req.query['element'];
+		isBot = true;
+
+		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && !isMp4Req && isBot) return res.redirect(req.url + '.mp4');
+
 		let fileData = fs.readFileSync(path(data[resourceId].path));
-		if (data[resourceId] && !isMp4Req) res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.byteLength).type(data[resourceId].mimetype).send(fileData);// .sendFile(path(data[resourceId].path));
-		else if (data[resourceId] && isMp4Req) res.type('html').send(generateDiscordMp4Response(req.url + '.mp4'));
-		else res.sendStatus(404);
+
+		if (data[resourceId] && (element || (!isBot || !isMp4Req)))
+			res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.byteLength).type(data[resourceId].mimetype).send(fileData);// .sendFile(path(data[resourceId].path));
+		else if (data[resourceId] && isMp4Req && isBot)
+			res.type('html').send(generateDiscordMp4Response(req.url + '?element=true'));
+		else
+			res.sendStatus(404);
 	});
 
 	// Delete file
