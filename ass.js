@@ -57,7 +57,7 @@ function startup() {
 		data[resourceId] = req.file;
 		saveData(data);
 
-		res.type('json').send({ resource: `http://lh:${process.env.PORT}/${resourceId}`, delete: `http://lh:${process.env.PORT}/delete/${req.file.filename}` });
+		res.type('json').send({ resource: `http://${process.env.DOMAIN}:${process.env.PORT}/${resourceId}`, delete: `http://${process.env.DOMAIN}:${process.env.PORT}/delete/${req.file.filename}` });
 	});
 
 	// View file
