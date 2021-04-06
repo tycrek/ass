@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, resourceIdType } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -16,7 +16,7 @@ const express = require('express');
 const useragent = require('express-useragent');
 const multer = require('multer');
 const zws = require('./idgen/zws');
-const { path, saveData, log, verify } = require('./utils');
+const { path, saveData, log, verify, generateId } = require('./utils');
 //#endregion
 
 //#region Variables, module setup
@@ -59,7 +59,7 @@ function startup() {
 		log(`Uploaded: ${req.file.originalname} (${req.file.mimetype})`);
 
 		// Save the file information
-		let resourceId = zws(resourceIdSize); //todo: use crypto-random-string for alternative resourceId
+		let resourceId = generateId(resourceIdType, resourceIdSize, req.file.originalname);
 		data[resourceId] = req.file;
 		saveData(data);
 
