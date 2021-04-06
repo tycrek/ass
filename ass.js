@@ -15,7 +15,7 @@ const uuid = require('uuid').v4;
 const express = require('express');
 const useragent = require('express-useragent');
 const multer = require('multer');
-const zws = require('./zws');
+const zws = require('./idgen/zws');
 const { path, saveData, log, verify } = require('./utils');
 //#endregion
 
