@@ -9,7 +9,7 @@ This project is still very young, so don't expect *everything* to be perfect yet
 - [x] Upload images, videos, files
 - [ ] Thumbnail support
 - [x] Delete support
-- [ ] Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc.)
+- [ ] Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc. Currently uses JSON)
 - [ ] Multiple access types (original, mixed-case alphanumeric, [ZWS](https://zws.im), etc. Currently uses ZWS)
 
 ## Installation
