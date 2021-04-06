@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, resourceIdType } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, resourceIdType, discordMode } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -66,8 +66,9 @@ function startup() {
 
 		let http = ('http').concat(useSsl ? 's' : '').concat('://');
 		let trueDomain = domain.concat((port != 80 || port != 443) ? `:${port}` : '');
+		let discordCompat = (discordMode && req.file.mimetype == 'video/mp4') ? '.mp4' : '';
 		res.type('json').send({
-			resource: `${http}${trueDomain}/${resourceId}`,
+			resource: `${http}${trueDomain}/${resourceId}${discordCompat}`,
 			delete: `${http}${trueDomain}/delete/${req.file.filename}`
 		});
 	});

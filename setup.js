@@ -14,7 +14,8 @@ const config = {
 	domain: 'upload.example.com',
 	useSsl: true,
 	resourceIdSize: 12,
-	resourceIdType: 'zws'
+	resourceIdType: 'zws',
+	discordMode: false
 };
 
 // Schema for setup prompts
@@ -57,6 +58,12 @@ const setupSchema = {
 			require: false,
 			pattern: /(original|zws|random)/gi,
 			message: 'Must be one of: original, zws, random'
+		},
+		discordMode: {
+			description: 'Discord Mode (will automatically attach .mp4 to your video URLs so Discord embeds them properly)',
+			type: 'boolean',
+			default: config.discordMode,
+			required: false
 		}
 	}
 };

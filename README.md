@@ -7,6 +7,7 @@ This project is still very young, so don't expect *everything* to be perfect yet
 
 - ✔️ Token authorization via HTTP `Authorization` header
 - ✔️ Upload images, videos, files
+- ✔️ Discord compatibility mode for video embed
 - ❌ Thumbnail support
 - ✔️ Delete support
 - ❌ Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc. Currently uses JSON)
