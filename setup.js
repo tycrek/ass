@@ -13,6 +13,7 @@ const config = {
 	port: 40115,
 	domain: 'upload.example.com',
 	useSsl: true,
+	isProxied: true,
 	resourceIdSize: 12,
 	resourceIdType: 'zws',
 	discordMode: false
@@ -43,6 +44,12 @@ const setupSchema = {
 			description: 'Use SSL (requires reverse proxy!)',
 			type: 'boolean',
 			default: config.useSsl,
+			required: false
+		},
+		isProxied: {
+			description: 'Will you be running through a reverse proxy',
+			type: 'boolean',
+			default: config.isProxied,
 			required: false
 		},
 		resourceIdSize: {

@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, resourceIdType, discordMode } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, resourceIdType, discordMode, isProxied } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -15,7 +15,6 @@ const uuid = require('uuid').v4;
 const express = require('express');
 const useragent = require('express-useragent');
 const multer = require('multer');
-const zws = require('./idgen/zws');
 const { path, saveData, log, verify, generateId } = require('./utils');
 //#endregion
 
@@ -65,7 +64,7 @@ function startup() {
 		saveData(data);
 
 		let http = ('http').concat(useSsl ? 's' : '').concat('://');
-		let trueDomain = domain.concat((port != 80 || port != 443) ? `:${port}` : '');
+		let trueDomain = domain.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
 		let discordCompat = (discordMode && req.file.mimetype == 'video/mp4') ? '.mp4' : '';
 		res.type('json').send({
 			resource: `${http}${trueDomain}/${resourceId}${discordCompat}`,
