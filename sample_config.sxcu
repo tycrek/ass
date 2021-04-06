@@ -1,6 +1,6 @@
 {
   "Version": "13.4.0",
-  "Name": "anssxustawai",
+  "Name": "ass",
   "DestinationType": "ImageUploader, TextUploader, FileUploader",
   "RequestMethod": "POST",
   "RequestURL": "https://your.domain.name.here/",

@@ -1,5 +1,5 @@
 {
-  "name": "anssxustawai",
+  "name": "ass",
   "version": "1.0.0",
   "description": "A Not Shitty ShareX Upload Server That Actually Works As Intended",
   "main": "ass.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tycrek/anssxustawai.git"
+    "url": "git+https://github.com/tycrek/ass.git"
   },
   "keywords": [
     "sharex",
@@ -19,9 +19,9 @@
   "author": "tycrek",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tycrek/anssxustawai/issues"
+    "url": "https://github.com/tycrek/ass/issues"
   },
-  "homepage": "https://github.com/tycrek/anssxustawai#readme",
+  "homepage": "https://github.com/tycrek/ass#readme",
   "dependencies": {
     "crypto-random-string": "3.3.1",
     "express": "^4.17.1",

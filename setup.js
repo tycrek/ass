@@ -91,7 +91,7 @@ const confirmSchema = {
 };
 
 function setup() {
-	log('<<< anssxustawai setup >>>\n');
+	log('<<< ass setup >>>\n');
 	let results;
 	prompt.get(setupSchema)
 		.then((r) => results = r)
