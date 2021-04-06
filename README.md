@@ -22,7 +22,7 @@ This project is still very young, so don't expect *everything* to be perfect yet
 
 | Type | What is it? |
 | ---- | ----------- |
-| **[ZWS](https://zws.im)** | The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name |
+| **[ZWS](https://zws.im)** (Zero-width spaces) | The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name. |
 | **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
 | **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
 ## Installation
