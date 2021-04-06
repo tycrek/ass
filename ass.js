@@ -68,17 +68,17 @@ function startup() {
 		let resourceId = req.params.resourceId.split('.')[0];
 		let isMp4Req = req.params.resourceId.split('.')[1] == 'mp4';
 		let isBot = req.useragent.isBot == 'discordbot';
-		let element = req.query['element'];
+		let redirect = req.query['redirect'];
 		isBot = true;
 
-		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && !isMp4Req && isBot) return res.redirect(req.url + '.mp4');
+		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && !isMp4Req && isBot && redirect) return res.redirect(req.url + '.mp4');
 
 		let fileData = fs.readFileSync(path(data[resourceId].path));
 
+		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && !isMp4Req && isBot && !redirect)
+			res.type('html').send(generateDiscordMp4Response(req.url + '?redirect=true'));
 		if (data[resourceId] && (element || (!isBot || !isMp4Req)))
 			res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.byteLength).type(data[resourceId].mimetype).send(fileData);// .sendFile(path(data[resourceId].path));
-		else if (data[resourceId] && isMp4Req && isBot)
-			res.type('html').send(generateDiscordMp4Response(req.url + '?element=true'));
 		else
 			res.sendStatus(404);
 	});
