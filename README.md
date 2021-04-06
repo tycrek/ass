@@ -11,13 +11,20 @@ This project is still very young, so don't expect *everything* to be perfect yet
 - ✔️ Delete support
 - ❌ Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc. Currently uses JSON)
 - ✔️ Multiple access types
-   - **[ZWS](https://zws.im)**: The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name
-   - **Mixed-case alphanumeric**: The "safe" mode. URL's are browser safe as the character set is just letters & numbers.
-   - **Original**: The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name.
+   - **[ZWS](https://zws.im)**
+   - **Mixed-case alphanumeric**
+   - **Original**
 - ❌ Multi-user support (upload restrictions, web library, etc.)
 - ❌ Block-storage support including Amazon S3
 - ❌ Usage metrics
 
+### Access types
+
+| Type | What is it? |
+| ---- | ----------- |
+| **[ZWS](https://zws.im)** | The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name |
+| **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
+| **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
 ## Installation
 
 The installation may look daunting but it's really pretty straightforward. Just follow it word-for-word & you'll be fine. If you are not fine, then by all means [open an Issue](https://github.com/tycrek/anssxustawai/issues/new) & I'll try my best to help.
