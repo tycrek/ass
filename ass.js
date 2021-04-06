@@ -65,7 +65,7 @@ function startup() {
 
 	// View file
 	app.get('/:resourceId', (req, res) => {
-		log(req.useragent);
+		log('Is bot: ' + (req.useragent.isBot == 'discordbot'));
 		let resourceId = req.params.resourceId.split('.')[0];
 		if (data[resourceId] && data[resourceId].mimetype == 'video/mp4' && req.params.resourceId.split('.')[1] != 'mp4') return res.redirect(req.url + '.mp4');
 		let fileData = fs.readFileSync(path(data[resourceId].path));
