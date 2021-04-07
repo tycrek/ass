@@ -15,8 +15,7 @@ const config = {
 	useSsl: true,
 	isProxied: true,
 	resourceIdSize: 12,
-	resourceIdType: 'zws',
-	discordMode: false
+	resourceIdType: 'zws'
 };
 
 // Schema for setup prompts
@@ -65,12 +64,6 @@ const setupSchema = {
 			require: false,
 			pattern: /(original|zws|random)/gi,
 			message: 'Must be one of: original, zws, random'
-		},
-		discordMode: {
-			description: 'Discord Mode (will automatically attach .mp4 to your video URLs so Discord embeds them properly)',
-			type: 'boolean',
-			default: config.discordMode,
-			required: false
 		}
 	}
 };

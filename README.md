@@ -7,7 +7,7 @@ This project is still very young, so don't expect *everything* to be perfect yet
 
 - ✔️ Token authorization via HTTP `Authorization` header
 - ✔️ Upload images, videos, files
-- ✔️ Discord compatibility mode for video embed
+- ✔️ Seamless inline video embeds on Discord
 - ❌ Thumbnail support
 - ✔️ Delete support
 - ❌ Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc. Currently uses JSON)
@@ -59,7 +59,3 @@ The installation may look daunting but it's really pretty straightforward. Just 
    - URL: `$json:.resource$`
    - Deletion URL: `$json:.delete$`
 6. The file `sample_config.sxcu` can also be modified & imported to suit your needs
-
-## Known issues
-
-- **Videos won't embed on Discord**: I know. This is because Discord developers make some really stupid decisions & only show embeds if the URL ends with `.mp4`. To fix this, either enable Discord Mode during `npm run setup` or manually append "`.mp4`" to the end of your URL's when sharing on Discord.
