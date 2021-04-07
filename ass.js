@@ -45,6 +45,11 @@ function preStartup() {
 	tokens = fs.readJsonSync(path('auth.json')).tokens;
 	data = fs.readJsonSync(path('data.json'));
 	log('Tokens & data read from filesystem');
+
+	// Monitor auth.json for changes (triggered by running 'npm run new-token')
+	fs.watch(path('auth.json'), { persistent: false }, (eventType, _filename) => eventType === 'change' && fs.readJson(path('auth.json'))
+		.then((json) => (tokens.toString() != json.tokens.toString()) && (tokens = json.tokens) && log(`New token added: ${tokens[tokens.length - 1]}`))
+		.catch(console.error));
 }
 
 function startup() {
