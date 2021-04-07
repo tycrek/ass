@@ -153,7 +153,7 @@ function genHtml(resourceId) {
 	<meta property="og:video:type" content="video/mp4">
 	<meta property="og:video:width" content="1080">
 	<meta property="og:video:height" content="718">
-    <link rel="alternate" type="application/json+oembed" href="${getTrueHttp()}${getTrueDomain()}/oembed/${resourceId}" title="oEmbed">
+    <!-- link rel="alternate" type="application/json+oembed" href="${getTrueHttp()}${getTrueDomain()}/oembed/${resourceId}" title="oEmbed" -->
   </head>
   <body>ass</body>
 </html>
