@@ -21,7 +21,13 @@ function generateJson(url, width, height) {
 		version: '1.0',
 		width,
 		height,
-		html: getHtml().replace('{{{src}}}', url).replace('{{{width}}}', width).replace('{{{height}}}', height)
+		html: getHtml().replace('{{{src}}}', url).replace('{{{width}}}', width).replace('{{{height}}}', height),
+
+		title: "Rick Astley - Never Gonna Give You Up (Video)",
+		author_name: "RickAstleyVEVO",
+		author_url: "https://www.youtube.com/user/RickAstleyVEVO",
+		provider_name: "YouTube",
+		provider_url: "https://www.youtube.com/",
 	});
 }
 
