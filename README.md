@@ -1,7 +1,6 @@
 # ass
-A not-shitty ShareX upload server that actually works as intended.
 
-This project is still very young, so don't expect *everything* to be perfect yet.
+**ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite.
 
 ## Features
 
