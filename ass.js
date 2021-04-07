@@ -64,7 +64,7 @@ function startup() {
 		data[resourceId.split('.')[0]] = req.file;
 		saveData(data);
 
-		let http = ('http').concat(useSsl ? 's' : '').concat('://');
+		let http = getTrueHttp();
 		let trueDomain = getTrueDomain();
 		//let discordCompat = (discordMode && req.file.mimetype == 'video/mp4') ? '.mp4' : '';
 		let discordCompat = '';
@@ -131,6 +131,9 @@ function startup() {
 	app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized tokens: ${tokens.length}\nAvailable files: ${Object.keys(data).length}`));
 }
 
+function getTrueHttp() {
+	return ('http').concat(useSsl ? 's' : '').concat('://');
+}
 function getTrueDomain() {
 	return domain.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
 }
@@ -141,7 +144,7 @@ function genHtml(resourceId) {
 <html>
   <head>
     <title>ass</title>
-    <link rel="alternate" type="application/json+oembed" href="${getTrueDomain()}/oembed/${resourceId}" title="oEmbed">
+    <link rel="alternate" type="application/json+oembed" href="${getTrueHttp()}${getTrueDomain()}/oembed/${resourceId}" title="oEmbed">
   </head>
   <body>ass</body>
 </html>
