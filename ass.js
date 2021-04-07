@@ -144,8 +144,8 @@ function genHtml(resourceId) {
 <html>
   <head>
     <title>ass</title>
-	<!-- meta property="og:type" content="video.other" -->
-	<meta property="og:video" content="https://cdn-cf-east.streamable.com/video/mp4/12txw7.mp4?Expires=1618068000&amp;Signature=ZDjN-pV91ouVnVt2bmaq4nnWh56hStKeqpeH0C6v4zzfTHUR8OL6ASoG-Vzahk5SpKZDOp4ownnj3I1lF5PZpr28hIeFpBfIxj0iAkfnS1SEReLqlMnvPGCjB8MkCraKTzwgDyJGkTefbpU0ZvqRyZxEQayn06QY1YrvL3Gj27hAGtHsweJbYZwaW7xOv0fMtp4E63a2pAguXQEyvrB9RIMKfbh7LARRq4yJz8nNTpd0wGzLYLSGMM29CnCfC7Fh74KidjFq~2oRO71jph2yi3Z4IfCHAKFzFntlmTRvRhapDBxdtF2snF8cMaSnoQKDStAVISRZ3xa5qxo5t-yNQw__&amp;Key-Pair-Id=APKAIEYUVEN4EVB2OKEQ">
+	<meta property="og:type" content="video.other">
+	<meta property="og:video" content="${getTrueHttp()}${getTrueDomain()}/${resourceId}.mp4">
 	<!-- meta property="og:video:type" content="video/mp4" -->
 	<!-- meta property="og:title" content="s" -->
 	<!-- meta property="og:url" content="https://streamable.com/12txw7" -->
