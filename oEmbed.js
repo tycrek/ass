@@ -28,6 +28,10 @@ function generateJson(url, width, height) {
 		author_url: "https://www.youtube.com/user/RickAstleyVEVO",
 		provider_name: "YouTube",
 		provider_url: "https://www.youtube.com/",
+
+		thumbnail_height: 360,
+		thumbnail_width: 480,
+		thumbnail_url: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
 	});
 }
 
