@@ -16,16 +16,15 @@ module.exports = (url, file) =>
 			.catch(reject));
 
 function generateJson(url, width, height) {
-	return new Promise((resolve, reject) =>
-		fs.readFile(path('oEmbed.html'))
-			.then((bytes) => bytes.toString())
-			.then((html) => ({
-				type: 'video',
-				version: 1.0,
-				width,
-				height,
-				html: html.replace('{{{src}}}', url).replace('{{{width}}}', width).replace('{{{height}}}', height)
-			}))
-			.then(resolve)
-			.catch(reject));
+	return ({
+		type: 'video',
+		version: 1.0,
+		width,
+		height,
+		html: getHtml().replace('{{{src}}}', url).replace('{{{width}}}', width).replace('{{{height}}}', height)
+	});
+}
+
+function getHtml() {
+	return '<iframe src="{{{src}}}.mp4" frameborder="0" scrolling="no" width="{{{width}}}" height="{{{height}}}" allowfullscreen></iframe>';
 }
