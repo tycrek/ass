@@ -15,6 +15,7 @@ const uuid = require('uuid').v4;
 const express = require('express');
 const useragent = require('express-useragent');
 const multer = require('multer');
+const oEmbed = require('./oEmbed');
 const { path, saveData, log, verify, generateId } = require('./utils');
 //#endregion
 
@@ -64,8 +65,9 @@ function startup() {
 		saveData(data);
 
 		let http = ('http').concat(useSsl ? 's' : '').concat('://');
-		let trueDomain = domain.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
-		let discordCompat = (discordMode && req.file.mimetype == 'video/mp4') ? '.mp4' : '';
+		let trueDomain = getTrueDomain();
+		//let discordCompat = (discordMode && req.file.mimetype == 'video/mp4') ? '.mp4' : '';
+		let discordCompat = '';
 		res.type('json').send({
 			resource: `${http}${trueDomain}/${resourceId}${discordCompat}`,
 			delete: `${http}${trueDomain}/delete/${req.file.filename}`
@@ -83,6 +85,10 @@ function startup() {
 		// If the ID is invalid, return 404
 		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
 
+		if (req.useragent.isBot) {
+			return res.type('html').send(genHtml(resourceId));
+		}
+
 		// Read the file and send it to the client
 		fs.readFile(path(data[resourceId].path))
 			.then((fileData) => res
@@ -91,6 +97,18 @@ function startup() {
 				.type(data[resourceId].mimetype).send(fileData))
 			.catch(console.error);
 	});
+
+	app.get('/oembed/:resourceId', (req, res) => {
+		// Parse the resource ID
+		let resourceId = req.params.resourceId.split('.')[0];
+
+		// If the ID is invalid, return 400
+		if (!resourceId || !data[resourceId]) return res.sendStatus(400);
+
+		oEmbed(`/${resourceId}`, path(data[resourceId].path))
+			.then((json) => res.type('json').send(json))
+			.catch(console.error);
+	})
 
 	// Delete file
 	app.get('/delete/:filename', (req, res) => {
@@ -111,4 +129,21 @@ function startup() {
 	})
 
 	app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized tokens: ${tokens.length}\nAvailable files: ${Object.keys(data).length}`));
+}
+
+function getTrueDomain() {
+	return domain.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
+}
+
+function genHtml(resourceId) {
+	''
+	return `
+<html>
+  <head>
+    <title>ass</title>
+    <link rel="alternate" type="application/json+oembed" href="${getTrueDomain()}/oembed/${resourceId}" title="oEmbed">
+  </head>
+  <body>ass</body>
+</html>
+`;
 }
