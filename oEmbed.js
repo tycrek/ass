@@ -22,8 +22,6 @@ function generateJson(url, width, height) {
 			.then((html) => ({
 				type: 'video',
 				version: 1.0,
-				title: 'Test',
-				author_name: 'ass',
 				width,
 				height,
 				html: html.replace('{{{src}}}', url).replace('{{{width}}}', width).replace('{{{height}}}', height)
