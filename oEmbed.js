@@ -18,7 +18,7 @@ module.exports = (url, file) =>
 function generateJson(url, width, height) {
 	return ({
 		type: 'video',
-		version: 1.0,
+		version: '1.0',
 		width,
 		height,
 		html: getHtml().replace('{{{src}}}', url).replace('{{{width}}}', width).replace('{{{height}}}', height)
