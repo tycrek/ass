@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const Path = require('path');
-const zwsGen = require('./idgen/zws');
-const randomGen = require('./idgen/random');
+const zwsGen = require('./generators/zws');
+const randomGen = require('./generators/random');
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
