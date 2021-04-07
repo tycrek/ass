@@ -105,7 +105,7 @@ function startup() {
 		// If the ID is invalid, return 400
 		if (!resourceId || !data[resourceId]) return res.sendStatus(400);
 
-		oEmbed(`/${resourceId}`, path(data[resourceId].path))
+		oEmbed(`${getTrueHttp()}${getTrueDomain()}/${resourceId}`, path(data[resourceId].path))
 			.then((json) => res.type('json').send(json))
 			.catch(console.error);
 	})
