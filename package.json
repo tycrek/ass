@@ -26,8 +26,6 @@
     "crypto-random-string": "3.3.1",
     "express": "^4.17.1",
     "express-useragent": "^1.0.15",
-    "ffprobe": "^1.1.2",
-    "ffprobe-static": "^3.0.0",
     "fs-extra": "^9.1.0",
     "multer": "^1.4.2",
     "prompt": "^1.1.0",
