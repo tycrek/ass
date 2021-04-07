@@ -7,6 +7,7 @@ const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
 	r: 'random'     // Use a randomly generated ID with a mixed-case alphanumeric character set
+	// todo: gfycat-style ID's (example.com/correct-horse-battery-staple)
 };
 
 module.exports = {

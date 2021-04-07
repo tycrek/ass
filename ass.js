@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, resourceIdType, discordMode, isProxied } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -63,12 +63,10 @@ function startup() {
 		data[resourceId.split('.')[0]] = req.file;
 		saveData(data);
 
-		let http = ('http').concat(useSsl ? 's' : '').concat('://');
-		let trueDomain = domain.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
-		let discordCompat = (discordMode && req.file.mimetype == 'video/mp4') ? '.mp4' : '';
+		// Send the response
 		res.type('json').send({
-			resource: `${http}${trueDomain}/${resourceId}${discordCompat}`,
-			delete: `${http}${trueDomain}/delete/${req.file.filename}`
+			resource: `${getTrueHttp()}${getTrueDomain()}/${resourceId}`,
+			delete: `${getTrueHttp()}${getTrueDomain()}/delete/${req.file.filename}`
 		});
 	});
 
@@ -82,6 +80,9 @@ function startup() {
 
 		// If the ID is invalid, return 404
 		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
+
+		// If a Discord client wants to load an mp4, send the data needed for a proper inline embed
+		if (req.useragent.isBot && data[resourceId].mimetype == 'video/mp4') return res.type('html').send(genHtml(resourceId));
 
 		// Read the file and send it to the client
 		fs.readFile(path(data[resourceId].path))
@@ -111,4 +112,24 @@ function startup() {
 	})
 
 	app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized tokens: ${tokens.length}\nAvailable files: ${Object.keys(data).length}`));
+}
+
+function getTrueHttp() {
+	return ('http').concat(useSsl ? 's' : '').concat('://');
+}
+function getTrueDomain() {
+	return domain.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
+}
+
+function genHtml(resourceId) {
+	return `
+<html>
+  <head>
+    <title>ass</title>
+	<meta property="og:type" content="video.other">
+	<meta property="og:video" content="${getTrueHttp()}${getTrueDomain()}/${resourceId}.mp4">
+  </head>
+  <body>ass</body>
+</html>
+`;
 }
