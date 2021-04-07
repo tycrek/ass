@@ -11,11 +11,10 @@ const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied } 
 
 //#region Imports
 const fs = require('fs-extra');
-const uuid = require('uuid').v4;
 const express = require('express');
 const useragent = require('express-useragent');
 const multer = require('multer');
-const { path, saveData, log, verify, generateId } = require('./utils');
+const { path, saveData, log, verify, generateToken, generateId } = require('./utils');
 //#endregion
 
 //#region Variables, module setup
@@ -37,7 +36,7 @@ function preStartup() {
 
 	// Make sure auth.json exists and generate the first key
 	if (!fs.existsSync(path('auth.json'))) {
-		tokens.push(uuid().replace(/-/g, ''));
+		tokens.push(generateToken());
 		fs.writeJsonSync(path('auth.json'), { tokens }, { spaces: 4 });
 		log(`File [auth.json] created\n!! Important: save this token in a secure spot: ${tokens[0]}\n`);
 	} else log('File [auth.json] exists');

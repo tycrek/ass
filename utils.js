@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const Path = require('path');
+const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
 
@@ -15,6 +16,7 @@ module.exports = {
 	path: (...paths) => Path.join(__dirname, ...paths),
 	saveData: (data) => fs.writeJsonSync(Path.join(__dirname, 'data.json'), data, { spaces: 4 }),
 	verify: (req, tokens) => req.headers.authorization && tokens.includes(req.headers.authorization),
+	generateToken: () => token(),
 	generateId: (mode, lenth, originalName) =>
 		(mode == idModes.zws) ? zwsGen(lenth)
 			: (mode == idModes.r) ? randomGen(lenth)
