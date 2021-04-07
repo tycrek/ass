@@ -8,13 +8,17 @@ This project is still very young, so don't expect *everything* to be perfect yet
 - ✔️ Token authorization via HTTP `Authorization` header
 - ✔️ Upload images, videos, files
 - ✔️ Seamless inline video embeds on Discord
-- ❌ Thumbnail support
 - ✔️ Delete support
-- ❌ Multiple database types (JSON, Mongo, MySQL, PostgreSQL, etc. Currently uses JSON)
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
    - **Mixed-case alphanumeric**
    - **Original**
+- ❌ Thumbnail support
+- ❌ Multiple database types 
+   - **JSON**
+   - **Mongo** (soon!)
+   - **MySQL** (soon!)
+   - **PostgreSQL** (soon!)
 - ❌ Multi-user support (upload restrictions, web library, etc.)
 - ❌ Block-storage support including Amazon S3
 - ❌ Usage metrics
@@ -35,9 +39,7 @@ The installation may look daunting but it's really pretty straightforward. Just 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
 3. Run `npm i` to install the required dependencies
 4. Run `npm run setup` to start the easy configuration
-5. Run `npm start` to start the server. The first-time run will:
-   - Create `data.json` & `auth.json`
-   - Generate your first authorization token & save it to `auth.json`
+5. Run `npm start` to start the server. The first time you run it you will be shown your first authorization token; save this as you will need it to configure ShareX.
 6. **(Optional)** You must also configure an SSL-enabled reverse proxy (only if you want to use HTTPS):
    - I personally use Caddy, see [my tutorial](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/) on setting that up
    - You may also use Apache or Nginx as reverse proxies
