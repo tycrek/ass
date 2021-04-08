@@ -43,9 +43,13 @@ The installation may look daunting but it's really pretty straightforward. Just 
    - I personally use Caddy, see [my tutorial](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/) on setting that up
    - You may also use Apache or Nginx as reverse proxies
 
-#### Generating new tokens
+### Generating new tokens
 
 If you need to generate a new token at any time, run `npm run new-token`. This will **automatically** load the new token so there is no need to restart ass.
+
+### Cloudflare users
+
+In your Cloudflare DNS dashboard, make sure your domain/subdomain is set to **DNS Only**.
 
 ## Configure ShareX
 
