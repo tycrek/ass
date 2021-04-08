@@ -51,6 +51,8 @@ If you need to generate a new token at any time, run `npm run new-token`. This w
 
 In your Cloudflare DNS dashboard, make sure your domain/subdomain is set to **DNS Only**.
 
+> <img src="https://user-images.githubusercontent.com/29926144/114085791-0f467680-986f-11eb-8cdb-34a9dfae3a23.png" height="140px">
+
 ## Configure ShareX
 
 1. Add a new Custom Uploader in ShareX by going to `Destinations > Custom uploader settings...`
