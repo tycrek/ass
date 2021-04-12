@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -19,7 +19,25 @@ const { path, saveData, log, verify, generateToken, generateId } = require('./ut
 
 //#region Variables, module setup
 const app = express();
-const upload = multer({ dest: 'uploads/' });
+// Configure filename and location settings
+const storage = multer.diskStorage({
+	destination: saveWithDate ? (req, file, cb) => {
+		// Get current month and year
+		const [month, day, year] = new Date().toLocaleDateString("en-US").split("/")
+
+		// Add 0 before single digit months eg ( 6 turns into 06)
+		const folder = `${diskFilePath}/${year}-${("0" + month).slice(-2)}`
+
+		// Create folder if it doesn't exist
+		fs.ensureDirSync(folder)
+
+		cb(null, folder)
+	} : diskFilePath,
+
+	filename: saveAsOriginal ? (req, file, cb) => cb(null, file.originalname) : null,
+})
+   
+var upload = multer({ storage: storage })
 var tokens = [];
 var data = {};
 //#endregion
