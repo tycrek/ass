@@ -15,7 +15,10 @@ const config = {
 	useSsl: true,
 	isProxied: true,
 	resourceIdSize: 12,
-	resourceIdType: 'zws'
+	resourceIdType: 'zws',
+	saveWithDate: false,
+	diskFilePath: "uploads/",
+	saveAsOriginal: true,
 };
 
 // Schema for setup prompts
@@ -64,7 +67,25 @@ const setupSchema = {
 			require: false,
 			pattern: /(original|zws|random)/gi,
 			message: 'Must be one of: original, zws, random'
-		}
+		},
+		saveWithDate: {
+			description: 'Do you want to use date folder structure? Eg (uploads/2021-04/image.png)',
+			type: 'boolean',
+			default: config.saveWithDate,
+			required: false
+		},
+		diskFilePath: {
+			description: 'Where on the disk do you want to save?',
+			type: 'string',
+			default: config.diskFilePath,
+			required: false
+		},
+		saveAsOriginal: {
+			description: 'Save as original file name? (Use file name instead of randomly generated characters)',
+			type: 'boolean',
+			default: config.saveAsOriginal,
+			required: false
+		},
 	}
 };
 
