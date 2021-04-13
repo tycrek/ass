@@ -1,5 +1,13 @@
 # ass
 
+![GitHub package.json version](https://img.shields.io/github/package-json/v/tycrek/ass?color=%234A148C&style=for-the-badge)
+![GitHub license](https://img.shields.io/github/license/tycrek/ass?color=%236A1B9A&style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/tycrek/ass?color=%237B1FA2&style=for-the-badge)
+![Lines of code](https://img.shields.io/tokei/lines/github/tycrek/ass?color=%238E24AA&label=LINES&style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io/github/stars/tycrek/ass?color=%239C27B0&style=for-the-badge)
+
+
+
 **ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite.
 
 ## Features
