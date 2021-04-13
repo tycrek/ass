@@ -16,8 +16,8 @@ const config = {
 	isProxied: true,
 	resourceIdSize: 12,
 	resourceIdType: 'zws',
-	saveWithDate: false,
 	diskFilePath: "uploads/",
+	saveWithDate: false,
 	saveAsOriginal: true,
 };
 
