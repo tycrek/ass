@@ -86,7 +86,7 @@ If you need to override a specific part of the config to be different from the g
 | Header | Purpose |
 | ------ | ------- |
 | **`X-Ass-Domain`** | Override the domain returned for the clipboard |
-| **`X-Ass-Access`** | Override the generator used for the resource URI ([see above](#access-types)) |
+| **`X-Ass-Access`** | Override the generator used for the resource URI. Must be one of: `original`, `zws`, or `random` ([see above](#access-types)) |
 
 ## Contributing
 
