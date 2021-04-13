@@ -78,3 +78,7 @@ In your Cloudflare DNS dashboard, make sure your domain/subdomain is set to **DN
    - URL: `$json:.resource$`
    - Deletion URL: `$json:.delete$`
 6. The file `sample_config.sxcu` can also be modified & imported to suit your needs
+
+## Contributing
+
+No strict contributing rules at this time. I appreciate any Issues or Pull Requests.
