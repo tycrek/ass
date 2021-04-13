@@ -19,25 +19,25 @@ const { path, saveData, log, verify, generateToken, generateId } = require('./ut
 
 //#region Variables, module setup
 const app = express();
+
 // Configure filename and location settings
 const storage = multer.diskStorage({
-	destination: saveWithDate ? (req, file, cb) => {
+	filename: saveAsOriginal ? (_req, file, callback) => callback(null, file.originalname) : null,
+	destination: !saveWithDate ? diskFilePath : (_req, _file, callback) => {
 		// Get current month and year
-		const [month, day, year] = new Date().toLocaleDateString("en-US").split("/")
+		let [month, _day, year] = new Date().toLocaleDateString("en-US").split("/");
 
 		// Add 0 before single digit months eg ( 6 turns into 06)
-		const folder = `${diskFilePath}/${year}-${("0" + month).slice(-2)}`
+		let folder = `${diskFilePath}/${year}-${("0" + month).slice(-2)}`;
 
 		// Create folder if it doesn't exist
-		fs.ensureDirSync(folder)
+		fs.ensureDirSync(folder);
 
-		cb(null, folder)
-	} : diskFilePath,
+		callback(null, folder);
+	}
+});
 
-	filename: saveAsOriginal ? (req, file, cb) => cb(null, file.originalname) : null,
-})
-   
-var upload = multer({ storage: storage })
+var upload = multer({ storage });
 var tokens = [];
 var data = {};
 //#endregion

@@ -68,20 +68,20 @@ const setupSchema = {
 			pattern: /(original|zws|random)/gi,
 			message: 'Must be one of: original, zws, random'
 		},
-		saveWithDate: {
-			description: 'Do you want to use date folder structure? Eg (uploads/2021-04/image.png)',
-			type: 'boolean',
-			default: config.saveWithDate,
-			required: false
-		},
 		diskFilePath: {
-			description: 'Where on the disk do you want to save?',
+			description: 'Relative path to save uploads to',
 			type: 'string',
 			default: config.diskFilePath,
 			required: false
 		},
+		saveWithDate: {
+			description: 'Use date folder structure (e.x. uploads/2021-04/image.png)',
+			type: 'boolean',
+			default: config.saveWithDate,
+			required: false
+		},
 		saveAsOriginal: {
-			description: 'Save as original file name? (Use file name instead of randomly generated characters)',
+			description: 'Save as original file name instead of random',
 			type: 'boolean',
 			default: config.saveAsOriginal,
 			required: false
