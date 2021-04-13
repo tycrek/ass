@@ -78,17 +78,21 @@ function startup() {
 		// Prevent uploads from unauthorized clients
 		if (!verify(req, tokens)) return res.sendStatus(401);
 
-		log(`Uploaded: ${req.file.originalname} (${req.file.mimetype})`);
+		// Load overrides
+		let trueDomain = getTrueDomain(req.headers["x-ass-domain"]);
+		let generator = req.headers["x-ass-access"] || resourceIdType;
 
 		// Save the file information
-		let resourceId = generateId(resourceIdType, resourceIdSize, req.file.originalname);
+		let resourceId = generateId(generator, resourceIdSize, req.file.originalname);
 		data[resourceId.split('.')[0]] = req.file;
 		saveData(data);
 
+		log(`Uploaded: ${req.file.originalname} (${req.file.mimetype})`);
+
 		// Send the response
 		res.type('json').send({
-			resource: `${getTrueHttp()}${getTrueDomain()}/${resourceId}`,
-			delete: `${getTrueHttp()}${getTrueDomain()}/delete/${req.file.filename}`
+			resource: `${getTrueHttp()}${trueDomain}/${resourceId}`,
+			delete: `${getTrueHttp()}${trueDomain}/delete/${req.file.filename}`
 		});
 	});
 
@@ -139,8 +143,9 @@ function startup() {
 function getTrueHttp() {
 	return ('http').concat(useSsl ? 's' : '').concat('://');
 }
-function getTrueDomain() {
-	return domain.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
+
+function getTrueDomain(d = domain) {
+	return d.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
 }
 
 function genHtml(resourceId) {

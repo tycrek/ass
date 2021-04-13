@@ -79,6 +79,15 @@ In your Cloudflare DNS dashboard, make sure your domain/subdomain is set to **DN
    - Deletion URL: `$json:.delete$`
 6. The file `sample_config.sxcu` can also be modified & imported to suit your needs
 
+### Header overrides
+
+If you need to override a specific part of the config to be different from the global config, you may do so via "`X`" HTTP headers:
+
+| Header | Purpose |
+| ------ | ------- |
+| **`X-Ass-Domain`** | Override the domain returned for the clipboard |
+| **`X-Ass-Access`** | Override the generator used for the resource URI ([see above](#access-types)) |
+
 ## Contributing
 
 No strict contributing rules at this time. I appreciate any Issues or Pull Requests.
