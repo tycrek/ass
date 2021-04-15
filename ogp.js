@@ -1,12 +1,5 @@
-/*
-
-Optional:
-- og:title
-- og:description
-- og:site_name
-
-*/
 const Mustache = require('mustache');
+const github = require('./package.json').homepage;
 
 // 
 class OpenGraph {
@@ -55,6 +48,8 @@ class OpenGraph {
 
 	build() {
 		let view = {
+			github,
+
 			http: this.http,
 			domain: this.domain,
 			resourceId: this.resourceId,
@@ -85,7 +80,7 @@ const html = `
     {{{card}}}
   </head>
   <body>
-    ass
+    Open Graph response for <a href="{{{github}}}" target="_blank">ass</a>.
   </body>
 </html>
 `;
