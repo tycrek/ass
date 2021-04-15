@@ -87,6 +87,14 @@ function startup() {
 		// Get the uploaded time in milliseconds
 		req.file.timestamp = DateTime.now().toMillis();
 
+		// Attach any embed overrides, if necessary
+		req.file.opengraph = {
+			title: req.headers['x-ass-og-title'],
+			description: req.headers['x-ass-og-description'],
+			author: req.headers['x-ass-og-author'],
+			color: req.headers['x-ass-og-color']
+		};
+
 		// Save the file information
 		let resourceId = generateId(generator, resourceIdSize, req.file.originalname);
 		data[resourceId.split('.')[0]] = req.file;

@@ -1,5 +1,6 @@
 const Mustache = require('mustache');
 const github = require('./package.json').homepage;
+const { formatBytes } = require('./utils');
 
 // 
 class OpenGraph {
@@ -10,14 +11,14 @@ class OpenGraph {
 	filename;
 	type;
 	size;
+	timestamp;
 
-	title = '';
-	description = '';
-	author = '';
-	color = '';
-	showSize = false;
+	title;
+	description;
+	author;
+	color;
 
-	constructor(http, domain, resourceId, { originalname, mimetype, size }) {
+	constructor(http, domain, resourceId, { originalname, mimetype, size, timestamp, opengraph }) {
 		this.http = http;
 		this.domain = domain;
 		this.resourceId = resourceId;
@@ -25,31 +26,12 @@ class OpenGraph {
 		this.type = mimetype;
 		this.filename = originalname;
 		this.size = size;
-	}
+		this.timestamp = timestamp;
 
-	setTitle(title) {
-		this.title = title;
-		return this;
-	}
-
-	setDescription(description) {
-		this.description = description;
-		return this;
-	}
-
-	setAuthor(author) {
-		this.author = author;
-		return this;
-	}
-
-	setColor(color) {
-		this.color = color;
-		return this;
-	}
-
-	setShowSize(showSize) {
-		this.showSize = showSize;
-		return this;
+		this.title = opengraph.title || '';
+		this.description = opengraph.description || '';
+		this.author = opengraph.author || '';
+		this.color = opengraph.color || '';
 	}
 
 	build() {
@@ -69,7 +51,10 @@ class OpenGraph {
 			site: (this.author.length != 0) ? `<meta property="og:site_name" content="${this.author}">` : '',
 			color: (this.color.length != 0) ? `<meta name="theme-color" content="${this.color}">` : '',
 			card: !this.type.includes('video') ? `<meta name="twitter:card" content="summary_large_image">` : '',
-		});
+		})
+			.replace(new RegExp('&size', 'g'), formatBytes(this.size))
+			.replace(new RegExp('&filename', 'g'), this.filename)
+			.replace(new RegExp('&timestamp', 'g'), this.timestamp);
 	}
 }
 
