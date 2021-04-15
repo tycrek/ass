@@ -1,7 +1,7 @@
 const Mustache = require('mustache');
 const DateTime = require('luxon').DateTime;
 const github = require('./package.json').homepage;
-const { formatBytes } = require('./utils');
+const { formatBytes, randomHexColour } = require('./utils');
 
 // 
 class OpenGraph {
@@ -50,7 +50,7 @@ class OpenGraph {
 			title: (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '',
 			description: (this.description.length != 0) ? `<meta property="og:description" content="${this.description}">` : '',
 			site: (this.author.length != 0) ? `<meta property="og:site_name" content="${this.author}">` : '',
-			color: (this.color.length != 0) ? `<meta name="theme-color" content="${this.color}">` : '',
+			color: (this.color.length != 0) ? `<meta name="theme-color" content="${this.color === '&random' ? randomHexColour() : this.color}">` : '',
 			card: !this.type.includes('video') ? `<meta name="twitter:card" content="summary_large_image">` : '',
 		})
 			.replace(new RegExp('&size', 'g'), formatBytes(this.size))

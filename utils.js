@@ -26,5 +26,11 @@ module.exports = {
 		let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 		let i = Math.floor(Math.log(bytes) / Math.log(1024));
 		return parseFloat((bytes / Math.pow(1024, i)).toFixed(decimals < 0 ? 0 : decimals)) + ' ' + sizes[i];
+	},
+	randomHexColour: () => { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
+		let letters = "0123456789ABCDEF";
+		let colour = '#';
+		for (var i = 0; i < 6; i++) colour += letters[(Math.floor(Math.random() * 16))];
+		return colour;
 	}
 }
