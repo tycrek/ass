@@ -14,8 +14,9 @@
 
 - ✔️ Token authorization via HTTP `Authorization` header
 - ✔️ Upload images, videos, files
+- ✔️ Fancy embeds on Discord
 - ✔️ Seamless inline video embeds on Discord
-- ✔️ Delete support
+- ✔️ File deletion
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
    - **Mixed-case alphanumeric**
@@ -85,8 +86,29 @@ If you need to override a specific part of the config to be different from the g
 
 | Header | Purpose |
 | ------ | ------- |
-| **`X-Ass-Domain`** | Override the domain returned for the clipboard |
+| **`X-Ass-Domain`** | Override the domain returned for the clipboard (useful for multi-domain hosts) |
 | **`X-Ass-Access`** | Override the generator used for the resource URI. Must be one of: `original`, `zws`, or `random` ([see above](#access-types)) |
+
+### Fancy embeds
+
+If you primarily share media on Discord, you can add these additional (optional) headers to build embeds:
+
+| Header | Purpose |
+| ------ | ------- |
+| **`X-Ass-OG-Title`** | Large text shown above your media |
+| **`X-Ass-OG-Description`** | Small text shown below the title but above the media (does not show up on videos yet) |
+| **`X-Ass-OG-Author`** | Small text shown above the title |
+| **`X-Ass-OG-Color`** | Colour shown on the left side of the embed. Must be either a hex colour value (for example: `#fe3c29`) or `&random` |
+
+#### Embed placeholders
+
+You can insert certain metadata into your embeds with these placeholders:
+
+| Placeholder | Result |
+| ----------- | ------ |
+| **`&size`** | The files size with proper notation rounded to two decimals (example: `7.06 KB`) |
+| **`&filename`** | The original filename of the uploaded file |
+| **`&timestamp`** | The timestamp of when the file was uploaded (example: `Oct 14, 1983, 1:30 PM`) |
 
 ## Contributing
 
