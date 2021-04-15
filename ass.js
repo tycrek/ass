@@ -108,8 +108,8 @@ function startup() {
 		// If the ID is invalid, return 404
 		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
 
-		// If a Discord client wants to load an mp4, send the data needed for a proper inline embed
-		if (req.useragent.isBot /* && data[resourceId].mimetype == 'video/mp4' */) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, data[resourceId]).build());
+		// If the client is Discord, send an Open Graph embed
+		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, data[resourceId]).build());
 
 		// Read the file and send it to the client
 		fs.readFile(path(data[resourceId].path))
