@@ -64,6 +64,8 @@ class OpenGraph {
 		view.color = (this.color.length != 0) ? `<meta name="theme-color" content="${this.color}">` : '';
 		view.card = !this.type.includes('video') ? `<meta name="twitter:card" content="summary_large_image">` : '';
 
+		//todo: og:description
+
 		return Mustache.render(html, view);
 	}
 }
