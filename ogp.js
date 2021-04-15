@@ -20,6 +20,7 @@ class OpenGraph {
 
 	title = '';
 	author = '';
+	color = '';
 	showSize = false;
 
 	constructor(http, domain, resourceId, { originalname, mimetype, size }) {
@@ -42,6 +43,11 @@ class OpenGraph {
 		return this;
 	}
 
+	setColor(color) {
+		this.color = color;
+		return this;
+	}
+
 	setShowSize(showSize) {
 		this.showSize = showSize;
 		return this;
@@ -60,6 +66,7 @@ class OpenGraph {
 
 		view.title = (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '';
 		view.site = (this.author.length != 0) ? `<meta property="og:site_name" content="${this.author}">` : '';
+		view.color = (this.color.length != 0) ? `<meta name="theme-color" content="${this.color}">` : '';
 
 		return Mustache.render(html, view);
 	}
@@ -73,7 +80,7 @@ const html = `
     <meta property="og:{{{type}}}" content="{{{http}}}{{{domain}}}/{{{resourceId}}}{{{ext}}}">
 	{{{title}}}
 	{{{site}}}
-	<meta name="twitter:card" content="summary_large_image">
+    {{{color}}}
 	<meta name="theme-color" content="#D50000">
   </head>
   <body>ass</body>
