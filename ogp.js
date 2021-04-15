@@ -73,6 +73,8 @@ const html = `
     <meta property="og:{{{type}}}" content="{{{http}}}{{{domain}}}/{{{resourceId}}}{{{ext}}}">
 	{{{title}}}
 	{{{site}}}
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="theme-color" content="#D50000">
   </head>
   <body>ass</body>
 </html>
