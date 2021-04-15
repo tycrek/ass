@@ -14,6 +14,7 @@ const fs = require('fs-extra');
 const express = require('express');
 const useragent = require('express-useragent');
 const multer = require('multer');
+const DateTime = require('luxon').DateTime;
 const OpenGraph = require('./ogp');
 const { path, saveData, log, verify, generateToken, generateId } = require('./utils');
 //#endregion
@@ -82,6 +83,9 @@ function startup() {
 		// Load overrides
 		let trueDomain = getTrueDomain(req.headers["x-ass-domain"]);
 		let generator = req.headers["x-ass-access"] || resourceIdType;
+
+		// Get the uploaded time in milliseconds
+		req.file.timestamp = DateTime.now().toMillis();
 
 		// Save the file information
 		let resourceId = generateId(generator, resourceIdSize, req.file.originalname);
