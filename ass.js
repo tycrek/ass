@@ -148,16 +148,3 @@ function getTrueHttp() {
 function getTrueDomain(d = domain) {
 	return d.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
 }
-
-function genHtml(resourceId) {
-	return `
-<html>
-  <head>
-    <title>ass</title>
-	<meta property="og:type" content="video.other">
-	<meta property="og:video" content="${getTrueHttp()}${getTrueDomain()}/${resourceId}.mp4">
-  </head>
-  <body>ass</body>
-</html>
-`;
-}
