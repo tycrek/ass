@@ -1,4 +1,5 @@
 const Mustache = require('mustache');
+const DateTime = require('luxon').DateTime;
 const github = require('./package.json').homepage;
 const { formatBytes } = require('./utils');
 
@@ -54,7 +55,7 @@ class OpenGraph {
 		})
 			.replace(new RegExp('&size', 'g'), formatBytes(this.size))
 			.replace(new RegExp('&filename', 'g'), this.filename)
-			.replace(new RegExp('&timestamp', 'g'), this.timestamp);
+			.replace(new RegExp('&timestamp', 'g'), DateTime.fromMillis(this.timestamp).toLocaleString(DateTime.DATETIME_MED));
 	}
 }
 
