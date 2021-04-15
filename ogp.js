@@ -69,10 +69,10 @@ const html = `
 <html>
   <head>
     <title>ass</title>
-    <meta property="og:type" content="{{ogtype}}">
-    <meta property="og:{{type}}" content="{{http}}{{domain}}/{{resourceId}}{{ext}}">
-	{{title}}
-	{{site}}
+    <meta property="og:type" content="{{{ogtype}}}">
+    <meta property="og:{{{type}}}" content="{{{http}}}{{{domain}}}/{{{resourceId}}}{{{ext}}}">
+	{{{title}}}
+	{{{site}}}
   </head>
   <body>ass</body>
 </html>
