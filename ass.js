@@ -14,6 +14,7 @@ const fs = require('fs-extra');
 const express = require('express');
 const useragent = require('express-useragent');
 const multer = require('multer');
+const OpenGraph = require('./ogp');
 const { path, saveData, log, verify, generateToken, generateId } = require('./utils');
 //#endregion
 
@@ -108,7 +109,7 @@ function startup() {
 		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
 
 		// If a Discord client wants to load an mp4, send the data needed for a proper inline embed
-		if (req.useragent.isBot && data[resourceId].mimetype == 'video/mp4') return res.type('html').send(genHtml(resourceId));
+		if (req.useragent.isBot /* && data[resourceId].mimetype == 'video/mp4' */) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, data[resourceId]).build());
 
 		// Read the file and send it to the client
 		fs.readFile(path(data[resourceId].path))
