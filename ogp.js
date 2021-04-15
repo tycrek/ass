@@ -67,6 +67,7 @@ class OpenGraph {
 		view.title = (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '';
 		view.site = (this.author.length != 0) ? `<meta property="og:site_name" content="${this.author}">` : '';
 		view.color = (this.color.length != 0) ? `<meta name="theme-color" content="${this.color}">` : '';
+		view.card = !this.type.includes('video') ? `<meta name="twitter:card" content="summary_large_image">` : '';
 
 		return Mustache.render(html, view);
 	}
@@ -78,12 +79,14 @@ const html = `
     <title>ass</title>
     <meta property="og:type" content="{{{ogtype}}}">
     <meta property="og:{{{type}}}" content="{{{http}}}{{{domain}}}/{{{resourceId}}}{{{ext}}}">
-	{{{title}}}
-	{{{site}}}
+    {{{title}}}
+    {{{site}}}
     {{{color}}}
-	<meta name="theme-color" content="#D50000">
+    {{{card}}}
   </head>
-  <body>ass</body>
+  <body>
+    ass
+  </body>
 </html>
 `;
 
