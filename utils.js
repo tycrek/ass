@@ -20,5 +20,11 @@ module.exports = {
 	generateId: (mode, lenth, originalName) =>
 		(mode == idModes.zws) ? zwsGen(lenth)
 			: (mode == idModes.r) ? randomGen(lenth)
-				: originalName
+				: originalName,
+	formatBytes: (bytes, decimals = 2) => {
+		if (bytes === 0) return '0 Bytes';
+		let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+		let i = Math.floor(Math.log(bytes) / Math.log(1024));
+		return parseFloat((bytes / Math.pow(1024, i)).toFixed(decimals < 0 ? 0 : decimals)) + ' ' + sizes[i];
+	}
 }
