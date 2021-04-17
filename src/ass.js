@@ -1,13 +1,13 @@
 try {
 	// Check if config.json exists
-	require('./config.json');
+	require('../config.json');
 } catch (err) {
 	console.error('No config.json found! Please run \'npm run setup\'');
 	process.exit(1);
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal } = require('../config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -49,25 +49,25 @@ startup();
 
 function preStartup() {
 	// Make sure data.json exists
-	if (!fs.existsSync(path('data.json'))) {
-		fs.writeJsonSync(path('data.json'), data, { spaces: 4 });
+	if (!fs.existsSync(path('..', 'data.json'))) {
+		fs.writeJsonSync(path('..', 'data.json'), data, { spaces: 4 });
 		log('File [data.json] created');
 	} else log('File [data.json] exists');
 
 	// Make sure auth.json exists and generate the first key
-	if (!fs.existsSync(path('auth.json'))) {
+	if (!fs.existsSync(path('..', 'auth.json'))) {
 		tokens.push(generateToken());
-		fs.writeJsonSync(path('auth.json'), { tokens }, { spaces: 4 });
+		fs.writeJsonSync(path('..', 'auth.json'), { tokens }, { spaces: 4 });
 		log(`File [auth.json] created\n!! Important: save this token in a secure spot: ${tokens[0]}\n`);
 	} else log('File [auth.json] exists');
 
 	// Read tokens and data
-	tokens = fs.readJsonSync(path('auth.json')).tokens;
-	data = fs.readJsonSync(path('data.json'));
+	tokens = fs.readJsonSync(path('..', 'auth.json')).tokens;
+	data = fs.readJsonSync(path('..', 'data.json'));
 	log('Tokens & data read from filesystem');
 
 	// Monitor auth.json for changes (triggered by running 'npm run new-token')
-	fs.watch(path('auth.json'), { persistent: false }, (eventType, _filename) => eventType === 'change' && fs.readJson(path('auth.json'))
+	fs.watch(path('..', 'auth.json'), { persistent: false }, (eventType, _filename) => eventType === 'change' && fs.readJson(path('..', 'auth.json'))
 		.then((json) => (tokens.toString() != json.tokens.toString()) && (tokens = json.tokens) && log(`New token added: ${tokens[tokens.length - 1]}`))
 		.catch(console.error));
 }
@@ -124,7 +124,7 @@ function startup() {
 		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, data[resourceId]).build());
 
 		// Read the file and send it to the client
-		fs.readFile(path(data[resourceId].path))
+		fs.readFile(path('..', data[resourceId].path))
 			.then((fileData) => res
 				.header('Accept-Ranges', 'bytes')
 				.header('Content-Length', fileData.byteLength)
@@ -143,7 +143,7 @@ function startup() {
 		log(`Deleted: ${data[resourceId].originalname} (${data[resourceId].mimetype})`);
 
 		// Save the file information
-		fs.rmSync(path(data[resourceId].path));
+		fs.rmSync(path('..', data[resourceId].path));
 		delete data[resourceId];
 		saveData(data);
 

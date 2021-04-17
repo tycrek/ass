@@ -7,7 +7,7 @@ module.exports = () => uuid().replace(/-/g, '');
 // If directly called on the command line, generate a new token
 if (require.main === module) {
 	let token = module.exports();
-	let authPath = path.join(__dirname, '..', 'auth.json');
+	let authPath = path.join(__dirname, '../..', 'auth.json');
 
 	fs.readJson(authPath)
 		.then((auth) => {

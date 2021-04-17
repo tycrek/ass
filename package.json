@@ -4,8 +4,8 @@
   "description": "A Not Shitty ShareX Upload Server That Actually Works As Intended",
   "main": "ass.js",
   "scripts": {
-    "start": "node ass.js",
-    "setup": "node setup.js",
+    "start": "node src/ass.js",
+    "setup": "node src/setup.js",
     "new-token": "node generators/token.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

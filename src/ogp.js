@@ -1,6 +1,6 @@
 const Mustache = require('mustache');
 const DateTime = require('luxon').DateTime;
-const github = require('./package.json').homepage;
+const github = require('../package.json').homepage;
 const { formatBytes, randomHexColour } = require('./utils');
 
 // 
