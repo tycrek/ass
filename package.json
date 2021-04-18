@@ -5,9 +5,9 @@
   "main": "ass.js",
   "type": "module",
   "scripts": {
-    "start": "npm run build && node built/ass.js",
-    "quickstart": "node built/ass.js",
-    "setup": "node src/setup.js",
+    "start": "npm run build && node --experimental-json-modules build/ass.js",
+    "quickstart": "node build/ass.js",
+    "setup": "node build/setup.js",
     "new-token": "node generators/token.js",
     "build": "node ./node_modules/typescript/bin/tsc",
     "test": "echo \"Error: no test specified\" && exit 1"

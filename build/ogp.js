@@ -1,7 +1,7 @@
 import * as Mustache from 'mustache';
 import { DateTime } from 'luxon';
-const github = require('../package.json').homepage;
-const { formatBytes, randomHexColour } = require('./utils');
+import { formatBytes, randomHexColour } from './utils.js';
+const github = 'https://github.com/tycrek/ass#readme';
 // 
 class OpenGraph {
     constructor(http, domain, resourceId, { originalname, mimetype, size, timestamp, opengraph }) {

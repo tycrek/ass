@@ -1,24 +1,24 @@
 //#region Config pre-check
+import * as fs from 'fs-extra';
+console.log(fs);
 try {
     // Check if config.json exists
-    require(process.cwd() + '/config.json');
+    // require('./config.json');
 }
 catch (err) {
-    console.error(err);
     console.error('No config.json found! Please run \'npm run setup\'');
     process.exit(1);
 }
 //#endregion
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal } = require(process.cwd() + '/config.json');
+const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal } = fs.readJsonSync('../config.json');
 //#region Imports
-import * as fs from 'fs-extra';
 import * as express from 'express';
 import * as useragent from 'express-useragent';
 import * as multer from 'multer';
 import { DateTime } from 'luxon';
-const OpenGraph = require('./ogp');
-const { path, saveData, log, verify, generateToken, generateId } = require('./utils');
+import { default as OpenGraph } from './ogp.js';
+import { path, saveData, log, verify, generateToken, generateId } from './utils.js';
 //#endregion
 //#region Variables, module setup
 const app = express();
@@ -74,8 +74,8 @@ function startup() {
         if (!verify(req, tokens))
             return res.sendStatus(401);
         // Load overrides
-        let trueDomain = getTrueDomain(req.headers["x-ass-domain"]);
-        let generator = req.headers["x-ass-access"] || resourceIdType;
+        let trueDomain = getTrueDomain(req.headers["x-ass-domain"].toString());
+        let generator = req.headers["x-ass-access"].toString() || resourceIdType;
         // Get the uploaded time in milliseconds
         // @ts-ignore // todo make this not ignored
         req.file.timestamp = DateTime.now().toMillis();

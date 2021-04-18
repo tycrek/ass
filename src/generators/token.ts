@@ -7,7 +7,7 @@ function generate(): string {
 }
 
 // If directly called on the command line, generate a new token
-if (require.main === module) {
+if (process.argv[1].endsWith("token.js")) {
 	let token = generate();
 	let authPath = path.join(__dirname, '../..', 'auth.json');
 
