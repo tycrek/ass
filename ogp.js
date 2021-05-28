@@ -45,7 +45,7 @@ class OpenGraph {
 
 			ogtype: this.type.includes('video') ? 'video.other' : 'image',
 			type: this.type.includes('video') ? 'video' : 'image',
-			ext: this.type.includes('video') ? '.mp4' : '',
+			ext: this.type.includes('video') ? '.mp4' : this.type.includes('gif') ? '.gif' : '',
 
 			title: (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '',
 			description: (this.description.length != 0) ? `<meta property="og:description" content="${this.description}">` : '',
