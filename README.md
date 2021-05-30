@@ -16,6 +16,7 @@
 - ✔️ Upload images, videos, gifs, files
 - ✔️ Fancy embeds on Discord
 - ✔️ Seamless inline video embeds on Discord
+- ✔️ Upload log via Discord Webhooks
 - ✔️ File deletion
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
@@ -110,6 +111,25 @@ You can insert certain metadata into your embeds with these placeholders:
 | **`&size`** | The files size with proper notation rounded to two decimals (example: `7.06 KB`) |
 | **`&filename`** | The original filename of the uploaded file |
 | **`&timestamp`** | The timestamp of when the file was uploaded (example: `Oct 14, 1983, 1:30 PM`) |
+
+### Webhooks
+
+You may use Discord webhooks as an easy way to keep track of your uploads. The first step is to [create a new Webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks). You only need to follow the first section, **Making a Webhook**. Once you are done that, click **Copy Webhook URL**. Next, paste your URL into a text editor. Extract these two values from the URL:
+
+```
+https://discord.com/api/webhooks/12345678910/T0kEn0fw3Bh00K
+                                 ^^^^^^^^^^  ^^^^^^^^^^^^ 
+                                 Webhook ID  Webhook Token
+```
+
+Once you have these, add the following HTTP headers to your ShareX config:
+
+| Header | Purpose |
+| ------ | ------- |
+| **`X-Ass-Webhook-Client`** | The **Webhook ID** |
+| **`X-Ass-Webhook-Token`** | The **Webhook Token** |
+
+Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, and a link to delete the file. To disable webhooks, simply remove the headers from your config.
 
 ## Contributing
 

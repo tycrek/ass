@@ -15,11 +15,13 @@ const express = require('express');
 const useragent = require('express-useragent');
 const multer = require('multer');
 const DateTime = require('luxon').DateTime;
+const { WebhookClient, MessageEmbed } = require('discord.js');
 const OpenGraph = require('./ogp');
-const { path, saveData, log, verify, generateToken, generateId } = require('./utils');
+const { path, saveData, log, verify, generateToken, generateId, formatBytes, randomHexColour } = require('./utils');
 //#endregion
 
 //#region Variables, module setup
+const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/3437bfa0b32103d91e294d794ad1205d.png?size=1024'; // todo: change this to the logo eventually
 const app = express();
 
 // Configure filename and location settings
@@ -100,13 +102,38 @@ function startup() {
 		data[resourceId.split('.')[0]] = req.file;
 		saveData(data);
 
-		log(`Uploaded: ${req.file.originalname} (${req.file.mimetype})`);
+		// Log the upload
+		let logInfo = `${req.file.originalname} (${req.file.mimetype})`;
+		log(`Uploaded: ${logInfo}`);
+
+		// Build the URLs
+		let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
+		let deleteUrl = `${getTrueHttp()}${trueDomain}/delete/${req.file.filename}`;
 
 		// Send the response
-		res.type('json').send({
-			resource: `${getTrueHttp()}${trueDomain}/${resourceId}`,
-			delete: `${getTrueHttp()}${trueDomain}/delete/${req.file.filename}`
-		});
+		res.type('json').send({ resource: resourceUrl, delete: deleteUrl })
+
+			// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
+			.on('finish', () => {
+				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
+
+					// Build the webhook client & embed
+					let whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
+					let embed = new MessageEmbed()
+						.setTitle(logInfo)
+						.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
+						.setThumbnail(resourceUrl)
+						.setColor(randomHexColour())
+						.setTimestamp(req.file.timestamp);
+
+					// Send the embed to the webhook, then delete the client after to free resources
+					whc.send(null, {
+						username: req.headers['x-ass-webhook-username'] || 'ass',
+						avatarURL: ASS_LOGO,
+						embeds: [embed]
+					}).then((_msg) => whc.destroy());
+				}
+			});
 	});
 
 	// View file
