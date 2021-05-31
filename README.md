@@ -132,6 +132,10 @@ Once you have these, add the following HTTP headers to your ShareX config:
 
 Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, and a link to delete the file. To disable webhooks, simply remove the headers from your config.
 
+## Flameshot users (Linux)
+
+Use [this script](https://github.com/tycrek/ass/blob/master/flameshot_example.sh) kindly provided by [@ToxicAven](https://github.com/ToxicAven). For the `KEY`, put your token.
+
 ## Contributing
 
 No strict contributing rules at this time. I appreciate any Issues or Pull Requests.
