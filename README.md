@@ -128,6 +128,7 @@ Once you have these, add the following HTTP headers to your ShareX config:
 | ------ | ------- |
 | **`X-Ass-Webhook-Client`** | The **Webhook ID** |
 | **`X-Ass-Webhook-Token`** | The **Webhook Token** |
+| **`X-Ass-Webhook-Username`** | (Optional) the "username" of the Webhook; can be set to whatever you want |
 
 Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, and a link to delete the file. To disable webhooks, simply remove the headers from your config.
 
