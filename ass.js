@@ -43,6 +43,7 @@ const storage = multer.diskStorage({
 
 var upload = multer({ storage });
 var tokens = [];
+var users = {};
 var data = {};
 //#endregion
 
@@ -59,18 +60,19 @@ function preStartup() {
 	// Make sure auth.json exists and generate the first key
 	if (!fs.existsSync(path('auth.json'))) {
 		tokens.push(generateToken());
-		fs.writeJsonSync(path('auth.json'), { tokens }, { spaces: 4 });
+		fs.writeJsonSync(path('auth.json'), { tokens, users }, { spaces: 4 });
 		log(`File [auth.json] created\n!! Important: save this token in a secure spot: ${tokens[0]}\n`);
 	} else log('File [auth.json] exists');
 
 	// Read tokens and data
 	tokens = fs.readJsonSync(path('auth.json')).tokens;
+	users = fs.readJsonSync(path('auth.json')).users || {};
 	data = fs.readJsonSync(path('data.json'));
 	log('Tokens & data read from filesystem');
 
 	// Monitor auth.json for changes (triggered by running 'npm run new-token')
 	fs.watch(path('auth.json'), { persistent: false }, (eventType, _filename) => eventType === 'change' && fs.readJson(path('auth.json'))
-		.then((json) => (tokens.toString() != json.tokens.toString()) && (tokens = json.tokens) && log(`New token added: ${tokens[tokens.length - 1]}`))
+		.then((json) => (tokens.toString() != json.tokens.toString()) && (tokens = json.tokens) && (users = json.users) && log(`New token added: ${tokens[tokens.length - 1]}`))
 		.catch(console.error));
 }
 
@@ -89,6 +91,10 @@ function startup() {
 		// Get the uploaded time in milliseconds
 		req.file.timestamp = DateTime.now().toMillis();
 
+		// Keep track of the token that uploaded the resource
+		let uploadToken = req.headers.authorization;
+		req.file.token = uploadToken;
+
 		// Attach any embed overrides, if necessary
 		req.file.opengraph = {
 			title: req.headers['x-ass-og-title'],
@@ -104,7 +110,7 @@ function startup() {
 
 		// Log the upload
 		let logInfo = `${req.file.originalname} (${req.file.mimetype})`;
-		log(`Uploaded: ${logInfo}`);
+		log(`Uploaded: ${logInfo} (user: ${users[uploadToken] ? users[uploadToken].username : '<token-only>'})`);
 
 		// Build the URLs
 		let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
@@ -112,9 +118,9 @@ function startup() {
 
 		// Send the response
 		res.type('json').send({ resource: resourceUrl, delete: deleteUrl })
-
-			// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
 			.on('finish', () => {
+
+				// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
 				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
 
 					// Build the webhook client & embed
@@ -133,6 +139,17 @@ function startup() {
 						embeds: [embed]
 					}).then((_msg) => whc.destroy());
 				}
+
+				// Also update the users upload count
+				if (!users[uploadToken]) {
+					let generator = () => generateId('random', 20, null);
+					let username = generator();
+					while (Object.values(users).findIndex((user) => user.username == username) != -1)
+						username = generator();
+					users[uploadToken] = { username, count: 0 };
+				}
+				users[uploadToken].count += 1;
+				fs.writeJsonSync(path('auth.json'), { tokens, users }, { spaces: 4 })
 			});
 	});
 

@@ -1,6 +1,6 @@
 {
   "name": "ass",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A Not Shitty ShareX Upload Server That Actually Works As Intended",
   "main": "ass.js",
   "scripts": {
