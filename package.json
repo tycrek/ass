@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ass.js",
     "setup": "node setup.js",
+    "metrics": "node metrics.js",
     "new-token": "node generators/token.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
