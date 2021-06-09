@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><img height="180" alt="ass" src="https://jmoore.dev/files/ass-round-square-logo-white-with-text.png"></h1>
+  <h1><a href="https://discord.gg/wGZYt5fasY" target="_blank"><img height="180" alt="ass" src="https://jmoore.dev/files/ass-round-square-logo-white-with-text.png"></a></h1>
 </div>
 
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/tycrek/ass?color=fd842d&style=for-the-badge)
