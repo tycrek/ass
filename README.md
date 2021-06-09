@@ -1,12 +1,13 @@
-# ass
+<div align="center">
+  <h1><img height="180" alt="ass" src="https://jmoore.dev/files/ass-round-square-logo-white-with-text.png"></h1>
+</div>
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/tycrek/ass?color=%234A148C&style=for-the-badge)
-![GitHub license](https://img.shields.io/github/license/tycrek/ass?color=%236A1B9A&style=for-the-badge)
-![GitHub last commit](https://img.shields.io/github/last-commit/tycrek/ass?color=%237B1FA2&style=for-the-badge)
-![Lines of code](https://img.shields.io/tokei/lines/github/tycrek/ass?color=%238E24AA&label=LINES&style=for-the-badge)
-![GitHub Repo stars](https://img.shields.io/github/stars/tycrek/ass?color=%239C27B0&style=for-the-badge)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/tycrek/ass?color=fd842d&style=for-the-badge)
+![GitHub license](https://img.shields.io/github/license/tycrek/ass?color=FD7C21&style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/tycrek/ass?color=FD710D&style=for-the-badge)
+![Lines of code](https://img.shields.io/tokei/lines/github/tycrek/ass?color=F26602&label=LINES&style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io/github/stars/tycrek/ass?color=DE5E02&style=for-the-badge)
 [![Discord](https://img.shields.io/discord/848274994375294986?label=Support%20server&logo=Discord&logoColor=FFF&style=for-the-badge)](https://discord.gg/wGZYt5fasY)
-
 
 **ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite.
 
@@ -139,3 +140,7 @@ Use [this script](https://github.com/tycrek/ass/blob/master/flameshot_example.sh
 ## Contributing
 
 No strict contributing rules at this time. I appreciate any Issues or Pull Requests.
+
+## Credits
+
+- Special thanks to [hlsl#1359](http://be.net/zevwolf) for the awesome logo!
