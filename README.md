@@ -19,6 +19,7 @@
 - ✔️ Seamless inline video embeds on Discord
 - ✔️ Upload log via Discord Webhooks
 - ✔️ File deletion
+- ✔️ Usage metrics
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
    - **Mixed-case alphanumeric**
@@ -31,7 +32,6 @@
    - **PostgreSQL** (soon!)
 - ❌ Multi-user support (upload restrictions, web library, etc.)
 - ❌ Block-storage support including Amazon S3
-- ❌ Usage metrics
 
 ### Access types
 
