@@ -1,6 +1,7 @@
 #!/bin/bash
+RAND=$RANDOM$RANDOM #Random number, because ass displays the same file with different URLs depending on its original name while using ZWS mode
 IMAGEPATH="$HOME/Pictures/" #where to hold the screenshots before they are deleted
-IMAGENAME="ass" #Not really important, tells flameshot what file to send and delete
+IMAGENAME="$RAND" #Not really important unless using ZWS (see $RAND.) tells flameshot what file to send and delete
 KEY="" #Enter auth key
 DOMAIN="" #your upload domain
 
