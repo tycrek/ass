@@ -190,8 +190,8 @@ function startup() {
 		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
 
 		// Build the oEmbed object
-		let { opengraph } = data[resourceId];
-		let oembed = { version: '1.0' };
+		let { opengraph, mimetype } = data[resourceId];
+		let oembed = { version: '1.0', type: mimetype.includes('video') ? 'video' : 'photo' };
 		opengraph.author && (oembed.author_name = opengraph.author);
 		opengraph.authorUrl && (oembed.author_url = opengraph.authorUrl);
 		opengraph.provider && (oembed.provider_name = opengraph.provider);
