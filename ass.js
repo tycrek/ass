@@ -82,6 +82,15 @@ function startup() {
 	// Don't process favicon requests
 	app.use((req, res, next) => req.url.includes('favicon.ico') ? res.sendStatus(204) : next());
 
+	// Middleware for parsing the resource ID and handling 404
+	app.use('/:resourceId', (req, res, next) => {
+		// Parse the resource ID
+		req.ass = { resourceId: req.params.resourceId.split('.')[0] };
+
+		// If the ID is invalid, return 404. Otherwise, continue normally
+		(!req.ass.resourceId || !data[req.ass.resourceId]) ? res.sendStatus(404) : next();
+	});
+
 	// Upload file
 	app.post('/', upload.single('file'), (req, res) => {
 		// Prevent uploads from unauthorized clients
@@ -161,11 +170,7 @@ function startup() {
 
 	// View file
 	app.get('/:resourceId', (req, res) => {
-		// Parse the resource ID
-		let resourceId = req.params.resourceId.split('.')[0];
-
-		// If the ID is invalid, return 404
-		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
+		let resourceId = req.ass.resourceId;
 
 		// If the client is Discord, send an Open Graph embed
 		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, data[resourceId]).build());
@@ -183,11 +188,7 @@ function startup() {
 	// https://oembed.com/
 	// https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
 	app.get('/:resourceId/oembed.json', (req, res) => {
-		// Parse the resource ID
-		let resourceId = req.params.resourceId.split('.')[0];
-
-		// If the ID is invalid, return 404
-		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
+		let resourceId = req.ass.resourceId;
 
 		// Build the oEmbed object & send the response
 		let { opengraph, mimetype } = data[resourceId];
