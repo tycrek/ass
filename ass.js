@@ -77,6 +77,8 @@ function preStartup() {
 }
 
 function startup() {
+	app.enable('case sensitive routing');
+	app.set('trust proxy', isProxied);
 	app.use(useragent.express());
 
 	// Don't process favicon requests
