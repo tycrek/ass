@@ -135,7 +135,7 @@ function startup() {
 					// Send the embed to the webhook, then delete the client after to free resources
 					whc.send(null, {
 						username: req.headers['x-ass-webhook-username'] || 'ass',
-						avatarURL: ASS_LOGO,
+						avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
 						embeds: [embed]
 					}).then((_msg) => whc.destroy());
 				}
