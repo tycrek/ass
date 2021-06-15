@@ -14,6 +14,7 @@ const fs = require('fs-extra');
 const express = require('express');
 const useragent = require('express-useragent');
 const rateLimit = require("express-rate-limit");
+const marked = require('marked');
 const multer = require('multer');
 const DateTime = require('luxon').DateTime;
 const { WebhookClient, MessageEmbed } = require('discord.js');
@@ -80,6 +81,7 @@ function preStartup() {
 function startup() {
 	app.enable('case sensitive routing');
 	app.set('trust proxy', isProxied);
+	app.set('view engine', 'pug');
 	app.use(useragent.express());
 
 	// Don't process favicon requests
@@ -93,6 +95,9 @@ function startup() {
 		// If the ID is invalid, return 404. Otherwise, continue normally
 		(!req.ass.resourceId || !data[req.ass.resourceId]) ? res.sendStatus(404) : next();
 	});
+
+	// Index
+	app.get('/', (_req, res) => fs.readFile(path('README.md')).then((bytes) => bytes.toString()).then(marked).then((data) => res.render('index', { data })));
 
 	// Rate limit
 	app.post('/', rateLimit({
