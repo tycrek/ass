@@ -79,6 +79,9 @@ function preStartup() {
 function startup() {
 	app.use(useragent.express());
 
+	// Don't process favicon requests
+	app.use((req, res, next) => req.url.includes('favicon.ico') ? res.sendStatus(204) : next());
+
 	// Upload file
 	app.post('/', upload.single('file'), (req, res) => {
 		// Prevent uploads from unauthorized clients
@@ -155,9 +158,6 @@ function startup() {
 
 	// View file
 	app.get('/:resourceId', (req, res) => {
-		// Don't process favicon requests
-		if (req.url.includes('favicon.ico')) return;
-
 		// Parse the resource ID
 		let resourceId = req.params.resourceId.split('.')[0];
 
