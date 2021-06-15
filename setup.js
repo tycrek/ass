@@ -15,6 +15,7 @@ const config = {
 	useSsl: true,
 	isProxied: true,
 	resourceIdSize: 12,
+	gfyIdSize: 2,
 	resourceIdType: 'zws',
 	diskFilePath: "uploads/",
 	saveWithDate: false,
@@ -60,14 +61,21 @@ const setupSchema = {
 			default: config.resourceIdSize,
 			required: false
 		},
+		gfyIdSize: {
+			description: 'Adjective count for "gfycat" resource mode',
+			type: 'integer',
+			default: config.gfyIdSize,
+			required: false
+		},
 		resourceIdType: {
 			description: 'Resource ID type (determines what kind of URL your uploads are visible at. Can be one of: original, zws, random)',
 			type: 'string',
 			default: config.resourceIdType,
 			require: false,
-			pattern: /(original|zws|random)/gi,
-			message: 'Must be one of: original, zws, random'
+			pattern: /(original|zws|random|gfycat)/gi,
+			message: 'Must be one of: original, zws, random, gfycat'
 		},
+
 		diskFilePath: {
 			description: 'Relative path to save uploads to',
 			type: 'string',

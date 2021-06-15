@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, gfyIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -98,7 +98,7 @@ function startup() {
 		};
 
 		// Save the file information
-		let resourceId = generateId(generator, resourceIdSize, req.file.originalname);
+		let resourceId = generateId(generator, resourceIdSize, gfyIdSize, req.file.originalname);
 		data[resourceId.split('.')[0]] = req.file;
 		saveData(data);
 
