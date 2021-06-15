@@ -3,12 +3,13 @@ const Path = require('path');
 const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
+const gfyGen = require('./generators/gfycat');
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
-	r: 'random'     // Use a randomly generated ID with a mixed-case alphanumeric character set
-	// todo: gfycat-style ID's (example.com/correct-horse-battery-staple)
+	r: 'random',    // Use a randomly generated ID with a mixed-case alphanumeric character set
+	gfy: 'gfycat'   //gfycat-style ID's (example.com/correct-horse-battery-staple)
 };
 
 module.exports = {
@@ -17,10 +18,11 @@ module.exports = {
 	saveData: (data) => fs.writeJsonSync(Path.join(__dirname, 'data.json'), data, { spaces: 4 }),
 	verify: (req, tokens) => req.headers.authorization && tokens.includes(req.headers.authorization),
 	generateToken: () => token(),
-	generateId: (mode, lenth, originalName) =>
+	generateId: (mode, lenth, gfyLength, originalName) =>
 		(mode == idModes.zws) ? zwsGen(lenth)
 			: (mode == idModes.r) ? randomGen(lenth)
-				: originalName,
+				: (mode == idModes.gfy) ? gfyGen(gfyLength)
+					: originalName,
 	formatBytes: (bytes, decimals = 2) => {
 		if (bytes === 0) return '0 Bytes';
 		let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
