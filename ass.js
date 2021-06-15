@@ -13,6 +13,7 @@ const { host, port, domain, useSsl, resourceIdSize, resourceIdType, isProxied, d
 const fs = require('fs-extra');
 const express = require('express');
 const useragent = require('express-useragent');
+const rateLimit = require("express-rate-limit");
 const multer = require('multer');
 const DateTime = require('luxon').DateTime;
 const { WebhookClient, MessageEmbed } = require('discord.js');
@@ -92,6 +93,12 @@ function startup() {
 		// If the ID is invalid, return 404. Otherwise, continue normally
 		(!req.ass.resourceId || !data[req.ass.resourceId]) ? res.sendStatus(404) : next();
 	});
+
+	// Rate limit
+	app.post('/', rateLimit({
+		windowMs: 1000 * 60, // 60 seconds
+		max: 30 // Limit each IP to 30 requests per windowMs
+	}));
 
 	// Upload file
 	app.post('/', upload.single('file'), (req, res) => {
