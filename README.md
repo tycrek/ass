@@ -23,6 +23,7 @@
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
    - **Mixed-case alphanumeric**
+   - **Gfycat**
    - **Original**
 - ❌ Thumbnail support
 - ❌ Multiple database types 
@@ -39,6 +40,7 @@
 | ---- | ----------- |
 | **[ZWS](https://zws.im)** (Zero-width spaces) | The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name. ![ZWS sample](https://user-images.githubusercontent.com/29926144/113785625-bf43a480-96f4-11eb-8dd7-7f164f33ada2.png "ZWS sample") |
 | **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
+| **Gfycat** | Gfycat-style ID's (for example: `https://gfycat.com/unsungdiscretegrub` "unsung discrete grub") |
 | **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
 
 ## Installation
@@ -90,7 +92,7 @@ If you need to override a specific part of the config to be different from the g
 | Header | Purpose |
 | ------ | ------- |
 | **`X-Ass-Domain`** | Override the domain returned for the clipboard (useful for multi-domain hosts) |
-| **`X-Ass-Access`** | Override the generator used for the resource URI. Must be one of: `original`, `zws`, or `random` ([see above](#access-types)) |
+| **`X-Ass-Access`** | Override the generator used for the resource URI. Must be one of: `original`, `zws`, `gfycat`, or `random` ([see above](#access-types)) |
 
 ### Fancy embeds
 

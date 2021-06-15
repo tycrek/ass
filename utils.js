@@ -9,8 +9,13 @@ const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
 	r: 'random',    // Use a randomly generated ID with a mixed-case alphanumeric character set
-	gfy: 'gfycat'   //gfycat-style ID's (example.com/correct-horse-battery-staple)
+	gfy: 'gfycat'   // Gfycat-style ID's (https://gfycat.com/unsungdiscretegrub)
 };
+
+const GENERATORS = new Map();
+GENERATORS.set(idModes.zws, zwsGen);
+GENERATORS.set(idModes.r, randomGen);
+GENERATORS.set(idModes.gfy, gfyGen);
 
 module.exports = {
 	log: console.log,
@@ -18,11 +23,7 @@ module.exports = {
 	saveData: (data) => fs.writeJsonSync(Path.join(__dirname, 'data.json'), data, { spaces: 4 }),
 	verify: (req, tokens) => req.headers.authorization && tokens.includes(req.headers.authorization),
 	generateToken: () => token(),
-	generateId: (mode, lenth, gfyLength, originalName) =>
-		(mode == idModes.zws) ? zwsGen(lenth)
-			: (mode == idModes.r) ? randomGen(lenth)
-				: (mode == idModes.gfy) ? gfyGen(gfyLength)
-					: originalName,
+	generateId: (mode, length, gfyLength, originalName) => GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName,
 	formatBytes: (bytes, decimals = 2) => {
 		if (bytes === 0) return '0 Bytes';
 		let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -32,7 +33,8 @@ module.exports = {
 	randomHexColour: () => { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
 		let letters = "0123456789ABCDEF";
 		let colour = '#';
-		for (var i = 0; i < 6; i++) colour += letters[(Math.floor(Math.random() * 16))];
+		for (var i = 0; i < 6; i++)
+			colour += letters[(Math.floor(Math.random() * 16))];
 		return colour;
 	}
 }
