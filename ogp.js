@@ -3,7 +3,7 @@ const DateTime = require('luxon').DateTime;
 const github = require('./package.json').homepage;
 const { formatBytes, randomHexColour } = require('./utils');
 
-// 
+// https://ogp.me/
 class OpenGraph {
 	http;
 	domain;
@@ -65,6 +65,7 @@ const html = `
     <title>ass</title>
     <meta property="og:type" content="{{{ogtype}}}">
     <meta property="og:{{{type}}}" content="{{{http}}}{{{domain}}}/{{{resourceId}}}{{{ext}}}">
+	<link type="application/json+oembed" href="/{{{resourceId}}}/oembed">
     {{{title}}}
     {{{description}}}
     {{{site}}}

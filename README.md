@@ -101,6 +101,9 @@ If you primarily share media on Discord, you can add these additional (optional)
 | **`X-Ass-OG-Title`** | Large text shown above your media |
 | **`X-Ass-OG-Description`** | Small text shown below the title but above the media (does not show up on videos yet) |
 | **`X-Ass-OG-Author`** | Small text shown above the title |
+| **`X-Ass-OG-Author-Url`** | URL to open when the Author is clicked |
+| **`X-Ass-OG-Provider`** | Similar to Author. Used to describe the site serving the resource |
+| **`X-Ass-OG-Provider-Url`** | URL to open when the Provider is clicked |
 | **`X-Ass-OG-Color`** | Colour shown on the left side of the embed. Must be either a hex colour value (for example: `#fe3c29`) or `&random` |
 
 #### Embed placeholders

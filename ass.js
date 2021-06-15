@@ -103,6 +103,9 @@ function startup() {
 			title: req.headers['x-ass-og-title'],
 			description: req.headers['x-ass-og-description'],
 			author: req.headers['x-ass-og-author'],
+			authorUrl: req.headers['x-ass-og-author-url'],
+			provider: req.headers['x-ass-og-provider'],
+			providerUrl: req.headers['x-ass-og-provider-url'],
 			color: req.headers['x-ass-og-color']
 		};
 
@@ -174,6 +177,28 @@ function startup() {
 				.header('Content-Length', fileData.byteLength)
 				.type(data[resourceId].mimetype).send(fileData))
 			.catch(console.error);
+	});
+
+	// oEmbed response for clickable authors/providers
+	// https://oembed.com/
+	// https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
+	app.get('/:resourceId/oembed', (req, res) => {
+		// Parse the resource ID
+		let resourceId = req.params.resourceId.split('.')[0];
+
+		// If the ID is invalid, return 404
+		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
+
+		// Build the oEmbed object
+		let { opengraph } = data[resourceId];
+		let oembed = {};
+		opengraph.author && (oembed.author_name = opengraph.author);
+		opengraph.authorUrl && (oembed.author_url = opengraph.authorUrl);
+		opengraph.provider && (oembed.provider_name = opengraph.provider);
+		opengraph.providerUrl && (oembed.provider_url = opengraph.providerUrl);
+
+		// Send the oEmbed resonse
+		res.type('application/json+oembed').send(oembed);
 	});
 
 	// Delete file
