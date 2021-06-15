@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
-const adjectiveList = fs.readFileSync("./gfycat/adjectives.txt", "utf-8").split('\n');
-const animalsList = fs.readFileSync("./gfycat/animals.txt", "utf-8").split('\n');
+const adjectiveList = fs.readFileSync("./generators/gfycat/adjectives.txt", "utf-8").split('\n');
+const animalsList = fs.readFileSync("./generators/gfycat/animals.txt", "utf-8").split('\n');
 
 function genString(adjCount) {
     let adjectivesString = "";
