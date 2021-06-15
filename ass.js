@@ -133,7 +133,7 @@ function startup() {
 		};
 
 		// Save the file information
-		let resourceId = generateId(generator, resourceIdSize, gfyIdSize, req.file.originalname);
+		let resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
 		data[resourceId.split('.')[0]] = req.file;
 		saveData(data);
 
