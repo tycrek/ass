@@ -65,7 +65,7 @@ const html = `
     <title>ass</title>
     <meta property="og:type" content="{{{ogtype}}}">
     <meta property="og:{{{type}}}" content="{{{http}}}{{{domain}}}/{{{resourceId}}}{{{ext}}}">
-	<link type="application/json+oembed" href="/{{{resourceId}}}/oembed">
+	<link rel="alternate" type="application/json+oembed" href="/{{{resourceId}}}/oembed.json" title="oEmbed">
     {{{title}}}
     {{{description}}}
     {{{site}}}

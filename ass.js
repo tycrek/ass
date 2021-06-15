@@ -182,7 +182,7 @@ function startup() {
 	// oEmbed response for clickable authors/providers
 	// https://oembed.com/
 	// https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
-	app.get('/:resourceId/oembed', (req, res) => {
+	app.get('/:resourceId/oembed.json', (req, res) => {
 		// Parse the resource ID
 		let resourceId = req.params.resourceId.split('.')[0];
 
@@ -191,7 +191,7 @@ function startup() {
 
 		// Build the oEmbed object
 		let { opengraph } = data[resourceId];
-		let oembed = {};
+		let oembed = { version: '1.0' };
 		opengraph.author && (oembed.author_name = opengraph.author);
 		opengraph.authorUrl && (oembed.author_url = opengraph.authorUrl);
 		opengraph.provider && (oembed.provider_name = opengraph.provider);
