@@ -21,7 +21,7 @@ const { path, saveData, log, verify, generateToken, generateId, formatBytes, ran
 //#endregion
 
 //#region Variables, module setup
-const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/3437bfa0b32103d91e294d794ad1205d.png?size=1024'; // todo: change this to the logo eventually
+const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 const app = express();
 
 // Configure filename and location settings
