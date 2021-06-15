@@ -63,14 +63,16 @@ const html = `
 <html>
   <head>
     <title>ass</title>
+	<!-- Open Graph (https://ogp.me/) -->
     <meta property="og:type" content="{{{ogtype}}}">
     <meta property="og:{{{type}}}" content="{{{http}}}{{{domain}}}/{{{resourceId}}}{{{ext}}}">
-	<link rel="alternate" type="application/json+oembed" href="{{{http}}}{{{domain}}}/{{{resourceId}}}/oembed.json" title="oEmbed">
     {{{title}}}
     {{{description}}}
     {{{site}}}
     {{{color}}}
     {{{card}}}
+	<!-- oEmbed (https://oembed.com/) -->
+	<link rel="alternate" type="application/json+oembed" href="{{{http}}}{{{domain}}}/{{{resourceId}}}/oembed.json" title="oEmbed">
   </head>
   <body>
     Open Graph response for <a href="{{{github}}}" target="_blank">ass</a>.

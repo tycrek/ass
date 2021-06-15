@@ -189,16 +189,16 @@ function startup() {
 		// If the ID is invalid, return 404
 		if (!resourceId || !data[resourceId]) return res.sendStatus(404);
 
-		// Build the oEmbed object
+		// Build the oEmbed object & send the response
 		let { opengraph, mimetype } = data[resourceId];
-		let oembed = { version: '1.0', type: mimetype.includes('video') ? 'video' : 'photo' };
-		opengraph.author && (oembed.author_name = opengraph.author);
-		opengraph.authorUrl && (oembed.author_url = opengraph.authorUrl);
-		opengraph.provider && (oembed.provider_name = opengraph.provider);
-		opengraph.providerUrl && (oembed.provider_url = opengraph.providerUrl);
-
-		// Send the oEmbed resonse
-		res.type('json').send(oembed);
+		res.type('json').send({
+			version: '1.0',
+			type: mimetype.includes('video') ? 'video' : 'photo',
+			author_name: opengraph.author,
+			author_url: opengraph.authorUrl,
+			provider_name: opengraph.provider,
+			provider_url: opengraph.providerUrl
+		});
 	});
 
 	// Delete file
