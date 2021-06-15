@@ -198,7 +198,7 @@ function startup() {
 		opengraph.providerUrl && (oembed.provider_url = opengraph.providerUrl);
 
 		// Send the oEmbed resonse
-		res.type('application/json+oembed').send(oembed);
+		res.type('json').send(oembed);
 	});
 
 	// Delete file
