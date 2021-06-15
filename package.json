@@ -1,7 +1,7 @@
 {
   "name": "ass",
   "version": "0.3.0",
-  "description": "A Not Shitty ShareX Upload Server That Actually Works As Intended",
+  "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "scripts": {
     "start": "node ass.js",
