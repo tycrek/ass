@@ -11,6 +11,11 @@ var config = {
 	diskFilePath: "uploads/",
 	saveWithDate: false,
 	saveAsOriginal: true,
+	s3enabled: false,
+	s3endpoint: 'sfo3.digitaloceanspaces.com',
+	s3bucket: 'bucket-name',
+	s3accessKey: 'accessKey',
+	s3secretKey: 'secretKey',
 };
 
 // If directly called on the command line, run setup script
@@ -99,6 +104,36 @@ if (require.main === module) {
 				description: 'Save as original file name instead of random',
 				type: 'boolean',
 				default: config.saveAsOriginal,
+				required: false
+			},
+			s3enabled: {
+				description: 'Enable uploading to S3 storage endpoints',
+				type: 'boolean',
+				default: config.s3enabled,
+				required: false
+			},
+			s3endpoint: {
+				description: 'S3 Endpoint URL to upload objects to',
+				type: 'string',
+				default: config.s3endpoint,
+				required: false
+			},
+			s3bucket: {
+				description: 'S3 Bucket name to upload objects to',
+				type: 'string',
+				default: config.s3bucket,
+				required: false
+			},
+			s3accessKey: {
+				description: 'Access key for the specified S3 API',
+				type: 'string',
+				default: config.s3accessKey,
+				required: false
+			},
+			s3secretKey: {
+				description: 'Secret key for the specified S3 API',
+				type: 'string',
+				default: config.s3secretKey,
 				required: false
 			},
 		}
