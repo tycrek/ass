@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, gfyIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, gfyIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal, s3enabled, s3bucket } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -21,6 +21,7 @@ const { WebhookClient, MessageEmbed } = require('discord.js');
 const OpenGraph = require('./ogp');
 const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
+const uploadS3 = require('./s3');
 const { path, saveData, log, verify, generateToken, generateId, formatBytes, randomHexColour, arrayEquals } = require('./utils');
 //#endregion
 
@@ -110,7 +111,12 @@ function startup() {
 	}));
 
 	// Upload file
-	app.post('/', upload.single('file'), (req, res) => {
+	!s3enabled
+		? app.post('/', upload.single('file'), ({ next }) => next())
+		: app.post('/', (req, res, next) => uploadS3(req, res, (error) => (error ? console.error(error) : log(`File uploaded to S3 [${s3bucket}]`), next())));
+
+	// Process uploaded file
+	app.post('/', (req, res) => {
 		// Prevent uploads from unauthorized clients
 		if (!verify(req, users)) return res.sendStatus(401);
 

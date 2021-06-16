@@ -1,6 +1,7 @@
 const Mustache = require('mustache');
 const DateTime = require('luxon').DateTime;
-const github = require('./package.json').homepage;
+const { homepage, version } = require('./package.json');
+const { s3enabled, s3endpoint, s3bucket } = require('./config.json');
 const { formatBytes, randomHexColour } = require('./utils');
 
 // https://ogp.me/
@@ -38,17 +39,18 @@ class OpenGraph {
 	}
 
 	build() {
+		let resourceUrl = !s3enabled ? (this.http + this.domain + "/" + this.resourceId + (this.type.includes('video') ? '.mp4' : this.type.includes('gif') ? '.gif' : '')) : `https://${s3bucket}.${s3endpoint}/${this.filename}`;
 		return Mustache.render(html, {
-			github,
+			homepage,
+			version,
 
 			http: this.http,
 			domain: this.domain,
 			resourceId: this.resourceId,
+			resourceUrl,
 
 			ogtype: this.type.includes('video') ? 'video.other' : 'image',
 			type: this.type.includes('video') ? 'video' : 'image',
-			ext: this.type.includes('video') ? '.mp4' : this.type.includes('gif') ? '.gif' : '',
-
 			title: (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '',
 			description: (this.description.length != 0) ? `<meta property="og:description" content="${this.description}">` : '',
 			site: (this.author.length != 0) ? `<meta property="og:site_name" content="${this.author}">` : '',
@@ -71,7 +73,7 @@ const html = `
     <title>ass</title>
 	<!-- Open Graph (https://ogp.me/) -->
     <meta property="og:type" content="{{{ogtype}}}">
-    <meta property="og:{{{type}}}" content="{{{http}}}{{{domain}}}/{{{resourceId}}}{{{ext}}}">
+    <meta property="og:{{{type}}}" content="{{{resourceUrl}}}">
     {{{title}}}
     {{{description}}}
     {{{site}}}
@@ -81,7 +83,7 @@ const html = `
 	<link rel="alternate" type="application/json+oembed" href="{{{http}}}{{{domain}}}/{{{resourceId}}}/oembed.json" title="oEmbed">
   </head>
   <body>
-    Open Graph response for <a href="{{{github}}}" target="_blank">ass</a>.
+    Open Graph response for <a href="{{{homepage}}}" target="_blank">ass</a> {{{version}}}
   </body>
 </html>
 `;
