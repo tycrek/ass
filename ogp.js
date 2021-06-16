@@ -49,6 +49,8 @@ class OpenGraph {
 			resourceId: this.resourceId,
 			resourceUrl,
 
+			media: this.type.includes('video') ? `<video src="${resourceUrl}" style="height: 50vh;">` : `<img src="${resourceUrl}" style="height: 50vh;">`,
+
 			ogtype: this.type.includes('video') ? 'video.other' : 'image',
 			type: this.type.includes('video') ? 'video' : 'image',
 			title: (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '',
@@ -84,6 +86,8 @@ const html = `
   </head>
   <body>
     Open Graph response for <a href="{{{homepage}}}" target="_blank">ass</a> {{{version}}}
+	<br>
+	{{{media}}}
   </body>
 </html>
 `;
