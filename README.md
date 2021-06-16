@@ -20,12 +20,12 @@
 - ✔️ Upload log via customizable Discord Webhooks
 - ✔️ File deletion
 - ✔️ Usage metrics
+- ✔️ Thumbnail support
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
    - **Mixed-case alphanumeric**
    - **Gfycat**
    - **Original**
-- ❌ Thumbnail support
 - ❌ Multiple database types 
    - **JSON**
    - **Mongo** (soon!)
