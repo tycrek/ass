@@ -1,5 +1,5 @@
 // Default configuration
-const config = {
+var config = {
 	host: '0.0.0.0',
 	port: 40115,
 	domain: 'upload.example.com',
@@ -18,6 +18,11 @@ if (require.main === module) {
 	const { path, log } = require('./utils');
 	const fs = require('fs-extra');
 	const prompt = require('prompt');
+
+	try {
+		let existingConfig = require('./config.json');
+		Object.keys(existingConfig).forEach((key) => config.hasOwnProperty(key) && (config[key] = existingConfig[key]))
+	} catch (ex) { console.log(ex) }
 
 	// Disabled the annoying "prompt: " prefix and removes colours
 	prompt.message = '';
