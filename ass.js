@@ -76,6 +76,9 @@ function preStartup() {
 	fs.watch(path('auth.json'), { persistent: false }, (eventType, _filename) => eventType === 'change' && fs.readJson(path('auth.json'))
 		.then((json) => (tokens.toString() != json.tokens.toString()) && (tokens = json.tokens) && (users = json.users) && log(`New token added: ${tokens[tokens.length - 1]}`))
 		.catch(console.error));
+
+	// Create thumbnails directory
+	fs.ensureDirSync(path('uploads/thumbnails'));
 }
 
 function startup() {
