@@ -138,7 +138,7 @@ function startup() {
 		};
 
 		// Generate a thumbnail & get the Vibrant colour
-		Promise.all([Thumbnail(req.file), Vibrant(req.file)])
+		Promise.all([Thumbnail(req.file), (req.file.mimetype.includes('video') ? randomHexColour() : Vibrant(req.file))])
 			.then(([thumbnail, vibrant]) => (req.file.thumbnail = thumbnail, req.file.vibrant = vibrant))
 			.catch(console.error)
 
