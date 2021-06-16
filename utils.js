@@ -21,7 +21,7 @@ module.exports = {
 	log: console.log,
 	path: (...paths) => Path.join(__dirname, ...paths),
 	saveData: (data) => fs.writeJsonSync(Path.join(__dirname, 'data.json'), data, { spaces: 4 }),
-	verify: (req, tokens) => req.headers.authorization && tokens.includes(req.headers.authorization),
+	verify: (req, users) => req.headers.authorization && users.hasOwnProperty(req.headers.authorization),
 	generateToken: () => token(),
 	generateId: (mode, length, gfyLength, originalName) => GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName,
 	formatBytes: (bytes, decimals = 2) => {
@@ -36,5 +36,6 @@ module.exports = {
 		for (var i = 0; i < 6; i++)
 			colour += letters[(Math.floor(Math.random() * 16))];
 		return colour;
-	}
+	},
+	arrayEquals: (arr1, arr2) => arr1.length === arr2.length && arr1.slice().sort().every((value, index) => value === arr2.slice().sort()[index])
 }

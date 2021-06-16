@@ -14,10 +14,8 @@ if (require.main === module) {
 
 	fs.readJson(authPath)
 		.then((auth) => {
-			auth.tokens.push(token);
-
 			// Generate the user
-			let username = process.argv[2] ? process.argv[2].replace(/[^\da-z]/gi, '').substring(0, MAX_USERNAME) : randomGen({ length: 20 });
+			let username = process.argv[2] ? process.argv[2].replace(/[^\da-z_]/gi, '').substring(0, MAX_USERNAME) : randomGen({ length: 20 });
 			if (!auth.users) auth.users = {};
 			if (Object.values(auth.users).findIndex((user) => user.username == username) != -1) {
 				console.log('Username already exists!');

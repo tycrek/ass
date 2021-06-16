@@ -21,7 +21,7 @@ const { WebhookClient, MessageEmbed } = require('discord.js');
 const OpenGraph = require('./ogp');
 const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
-const { path, saveData, log, verify, generateToken, generateId, formatBytes, randomHexColour } = require('./utils');
+const { path, saveData, log, verify, generateToken, generateId, formatBytes, randomHexColour, arrayEquals } = require('./utils');
 //#endregion
 
 //#region Variables, module setup
@@ -46,7 +46,6 @@ const storage = multer.diskStorage({
 });
 
 var upload = multer({ storage });
-var tokens = [];
 var users = {};
 var data = {};
 //#endregion
@@ -63,20 +62,20 @@ function preStartup() {
 
 	// Make sure auth.json exists and generate the first key
 	if (!fs.existsSync(path('auth.json'))) {
-		tokens.push(generateToken());
-		fs.writeJsonSync(path('auth.json'), { tokens, users }, { spaces: 4 });
-		log(`File [auth.json] created\n!! Important: save this token in a secure spot: ${tokens[0]}\n`);
+		let token = generateToken();
+		users[token] = { username: 'ass', count: 0 };
+		fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
+		log(`File [auth.json] created\n!! Important: save this token in a secure spot: ${Object.keys(users)[0]}\n`);
 	} else log('File [auth.json] exists');
 
-	// Read tokens and data
-	tokens = fs.readJsonSync(path('auth.json')).tokens;
+	// Read users and data
 	users = fs.readJsonSync(path('auth.json')).users || {};
 	data = fs.readJsonSync(path('data.json'));
-	log('Tokens & data read from filesystem');
+	log('Users & data read from filesystem');
 
 	// Monitor auth.json for changes (triggered by running 'npm run new-token')
 	fs.watch(path('auth.json'), { persistent: false }, (eventType, _filename) => eventType === 'change' && fs.readJson(path('auth.json'))
-		.then((json) => (tokens.toString() != json.tokens.toString()) && (tokens = json.tokens) && (users = json.users) && log(`New token added: ${tokens[tokens.length - 1]}`))
+		.then((json) => !(arrayEquals(Object.keys(users), Object.keys(json.users))) && (users = json.users) && log(`New token added: ${Object.keys(users)[Object.keys(users).length - 1]}`))
 		.catch(console.error));
 
 	// Create thumbnails directory
@@ -113,7 +112,7 @@ function startup() {
 	// Upload file
 	app.post('/', upload.single('file'), (req, res) => {
 		// Prevent uploads from unauthorized clients
-		if (!verify(req, tokens)) return res.sendStatus(401);
+		if (!verify(req, users)) return res.sendStatus(401);
 
 		// Load overrides
 		let trueDomain = getTrueDomain(req.headers["x-ass-domain"]);
@@ -192,7 +191,7 @@ function startup() {
 							users[uploadToken] = { username, count: 0 };
 						}
 						users[uploadToken].count += 1;
-						fs.writeJsonSync(path('auth.json'), { tokens, users }, { spaces: 4 })
+						fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
 					});
 			});
 	});
@@ -259,7 +258,7 @@ function startup() {
 		res.type('text').send('File has been deleted!');
 	})
 
-	app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized tokens: ${tokens.length}\nAvailable files: ${Object.keys(data).length}`));
+	app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized users: ${Object.keys(users).length}\nAvailable files: ${Object.keys(data).length}`));
 }
 
 function getTrueHttp() {
