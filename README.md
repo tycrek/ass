@@ -81,6 +81,7 @@ In your Cloudflare DNS dashboard, make sure your domain/subdomain is set to **DN
 	  - Value: (the value provided by `npm start` on first run)
 5. **Response** tab:
    - URL: `$json:.resource$`
+   - Thumbnail: `$json:.thumbnail$`
    - Deletion URL: `$json:.delete$`
    - MagicCap users: **do not** include the `.` in the above (i.e. `$json:resource$`)
 6. The file `sample_config.sxcu` can also be modified & imported to suit your needs
@@ -107,7 +108,7 @@ If you primarily share media on Discord, you can add these additional (optional)
 | **`X-Ass-OG-Author-Url`** | URL to open when the Author is clicked |
 | **`X-Ass-OG-Provider`** | Smaller text shown above the author |
 | **`X-Ass-OG-Provider-Url`** | URL to open when the Provider is clicked |
-| **`X-Ass-OG-Color`** | Colour shown on the left side of the embed. Must be either a hex colour value (for example: `#fe3c29`) or `&random` |
+| **`X-Ass-OG-Color`** | Colour shown on the left side of the embed. Must be one of `&random`, `&vibrant`, or a hex colour value (for example: `#fe3c29`). Random is a randomly generated hex value and Vibrant is sourced from the image itself |
 
 #### Embed placeholders
 

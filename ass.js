@@ -19,6 +19,8 @@ const multer = require('multer');
 const DateTime = require('luxon').DateTime;
 const { WebhookClient, MessageEmbed } = require('discord.js');
 const OpenGraph = require('./ogp');
+const Thumbnail = require('./thumbnails');
+const Vibrant = require('./vibrant');
 const { path, saveData, log, verify, generateToken, generateId, formatBytes, randomHexColour } = require('./utils');
 //#endregion
 
@@ -135,53 +137,63 @@ function startup() {
 			color: req.headers['x-ass-og-color']
 		};
 
-		// Save the file information
-		let resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
-		data[resourceId.split('.')[0]] = req.file;
-		saveData(data);
+		// Generate a thumbnail & get the Vibrant colour
+		Promise.all([Thumbnail(req.file), Vibrant(req.file)])
+			.then(([thumbnail, vibrant]) => (req.file.thumbnail = thumbnail, req.file.vibrant = vibrant))
+			.catch(console.error)
 
-		// Log the upload
-		let logInfo = `${req.file.originalname} (${req.file.mimetype})`;
-		log(`Uploaded: ${logInfo} (user: ${users[uploadToken] ? users[uploadToken].username : '<token-only>'})`);
+			// Finish processing the file
+			.then(() => {
+				// Save the file information
+				let resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
+				data[resourceId.split('.')[0]] = req.file;
+				saveData(data);
 
-		// Build the URLs
-		let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
-		let deleteUrl = `${getTrueHttp()}${trueDomain}/delete/${req.file.filename}`;
+				// Log the upload
+				let logInfo = `${req.file.originalname} (${req.file.mimetype})`;
+				log(`Uploaded: ${logInfo} (user: ${users[uploadToken] ? users[uploadToken].username : '<token-only>'})`);
 
-		// Send the response
-		res.type('json').send({ resource: resourceUrl, delete: deleteUrl })
-			.on('finish', () => {
+				// Build the URLs
+				let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
+				let thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
+				let deleteUrl = `${getTrueHttp()}${trueDomain}/delete/${req.file.filename}`;
 
-				// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
-				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
+				// Send the response
+				res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
+					.on('finish', () => {
 
-					// Build the webhook client & embed
-					let whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
-					let embed = new MessageEmbed()
-						.setTitle(logInfo)
-						.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
-						.setThumbnail(resourceUrl)
-						.setColor(randomHexColour())
-						.setTimestamp(req.file.timestamp);
+						// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
+						if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
 
-					// Send the embed to the webhook, then delete the client after to free resources
-					whc.send(null, {
-						username: req.headers['x-ass-webhook-username'] || 'ass',
-						avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
-						embeds: [embed]
-					}).then((_msg) => whc.destroy());
-				}
+							// Build the webhook client & embed
+							let whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
+							let embed = new MessageEmbed()
+								.setTitle(logInfo)
+								.setURL(resourceUrl)
+								.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
+								.setThumbnail(thumbnailUrl)
+								.setColor(req.file.vibrant)
+								.setTimestamp(req.file.timestamp);
 
-				// Also update the users upload count
-				if (!users[uploadToken]) {
-					let generator = () => generateId('random', 20, null);
-					let username = generator();
-					while (Object.values(users).findIndex((user) => user.username == username) != -1)
-						username = generator();
-					users[uploadToken] = { username, count: 0 };
-				}
-				users[uploadToken].count += 1;
-				fs.writeJsonSync(path('auth.json'), { tokens, users }, { spaces: 4 })
+							// Send the embed to the webhook, then delete the client after to free resources
+							whc.send(null, {
+								username: req.headers['x-ass-webhook-username'] || 'ass',
+								avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
+								embeds: [embed]
+							}).then((_msg) => whc.destroy());
+						}
+
+						// Also update the users upload count
+						if (!users[uploadToken]) {
+							let generator = () => generateId('random', 20, null);
+							let username = generator();
+							while (Object.values(users).findIndex((user) => user.username == username) != -1)
+								username = generator();
+							users[uploadToken] = { username, count: 0 };
+						}
+						users[uploadToken].count += 1;
+						fs.writeJsonSync(path('auth.json'), { tokens, users }, { spaces: 4 })
+					});
 			});
 	});
 
@@ -198,6 +210,16 @@ function startup() {
 				.header('Accept-Ranges', 'bytes')
 				.header('Content-Length', fileData.byteLength)
 				.type(data[resourceId].mimetype).send(fileData))
+			.catch(console.error);
+	});
+
+	// Thumbnail response
+	app.get('/:resourceId/thumbnail', (req, res) => {
+		let resourceId = req.ass.resourceId;
+
+		// Read the file and send it to the client
+		fs.readFile(path('uploads/thumbnails/', data[resourceId].thumbnail))
+			.then((fileData) => res.type('jpg').send(fileData))
 			.catch(console.error);
 	});
 

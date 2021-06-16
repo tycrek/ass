@@ -13,13 +13,14 @@ class OpenGraph {
 	type;
 	size;
 	timestamp;
+	vibrant;
 
 	title;
 	description;
 	author;
 	color;
 
-	constructor(http, domain, resourceId, { originalname, mimetype, size, timestamp, opengraph }) {
+	constructor(http, domain, resourceId, { originalname, mimetype, size, timestamp, opengraph, vibrant }) {
 		this.http = http;
 		this.domain = domain;
 		this.resourceId = resourceId;
@@ -28,6 +29,7 @@ class OpenGraph {
 		this.filename = originalname;
 		this.size = size;
 		this.timestamp = timestamp;
+		this.vibrant = vibrant;
 
 		this.title = opengraph.title || '';
 		this.description = opengraph.description || '';
@@ -50,12 +52,16 @@ class OpenGraph {
 			title: (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '',
 			description: (this.description.length != 0) ? `<meta property="og:description" content="${this.description}">` : '',
 			site: (this.author.length != 0) ? `<meta property="og:site_name" content="${this.author}">` : '',
-			color: (this.color.length != 0) ? `<meta name="theme-color" content="${this.color === '&random' ? randomHexColour() : this.color}">` : '',
+			color: (this.color.length != 0) ? `<meta name="theme-color" content="${this.getBuildColor()}">` : '',
 			card: !this.type.includes('video') ? `<meta name="twitter:card" content="summary_large_image">` : '',
 		})
 			.replace(new RegExp('&size', 'g'), formatBytes(this.size))
 			.replace(new RegExp('&filename', 'g'), this.filename)
 			.replace(new RegExp('&timestamp', 'g'), DateTime.fromMillis(this.timestamp).toLocaleString(DateTime.DATETIME_MED));
+	}
+
+	getBuildColor() {
+		return this.color === '&random' ? randomHexColour() : this.color === '&vibrant' ? this.vibrant : this.color;
 	}
 }
 
