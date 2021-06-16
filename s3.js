@@ -13,7 +13,8 @@ const upload = multer({
 		s3: s3,
 		bucket: s3bucket,
 		acl: 'public-read',
-		key: (_req, file, cb) => cb(null, file.originalname)
+		key: (_req, file, cb) => cb(null, file.originalname),
+		contentType: (_req, file, cb) => cb(null, file.mimetype)
 	})
 }).single('file');
 
