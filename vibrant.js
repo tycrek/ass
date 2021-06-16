@@ -8,4 +8,5 @@ module.exports = (file) =>
 	new Promise((resolve, reject) =>
 		Vibrant.from(path(file.path))
 			.maxColorCount(COLOR_COUNT).quality(QUALITY).getPalette()
+			.then((palettes) => resolve(palettes[Object.keys(palettes).sort((a, b) => palettes[b].population - palettes[a].population)[0]].hex))
 			.catch(reject));
