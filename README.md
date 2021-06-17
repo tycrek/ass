@@ -21,6 +21,8 @@
 - ✔️ File deletion
 - ✔️ Usage metrics
 - ✔️ Thumbnail support
+- ✔️ Basic multi-user support
+- ✔️ Block-storage support for Amazon S3 (including DigitalOcean Spaces)
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
    - **Mixed-case alphanumeric**
@@ -31,8 +33,6 @@
    - **Mongo** (soon!)
    - **MySQL** (soon!)
    - **PostgreSQL** (soon!)
-- ❌ Multi-user support (upload restrictions, web library, etc.)
-- ❌ Block-storage support including Amazon S3
 
 ### Access types
 
