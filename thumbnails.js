@@ -2,7 +2,8 @@ const ffmpeg = require('ffmpeg-static');
 const Jimp = require('jimp');
 const shell = require('any-shell-escape');
 const { exec } = require('child_process');
-const { path } = require('./utils');
+const { path, getS3url } = require('./utils');
+const { s3enabled } = require('./config.json');
 
 const THUMBNAIL_QUALITY = 50;
 const THUMBNAIL_SIZE = 512;
@@ -19,12 +20,12 @@ function getCommand(src, dest) {
 }
 
 function getVideoThumbnail(file) {
-	return new Promise((resolve, reject) => exec(getCommand(path(file.path), getNewNamePath(file.originalname)), (err) => err ? reject(err) : resolve()));
+	return new Promise((resolve, reject) => exec(getCommand(s3enabled ? path('uploads/', file.originalname) : path(file.path), getNewNamePath(file.originalname)), (err) => err ? reject(err) : resolve()));
 }
 
 function getResizedThumbnail(file) {
 	return new Promise((resolve, reject) =>
-		Jimp.read(path(file.path))
+		Jimp.read(s3enabled ? getS3url(file.originalname) : path(file.path))
 			.then((image) => image
 				.quality(THUMBNAIL_QUALITY)
 				.resize(THUMBNAIL_SIZE, THUMBNAIL_SIZE, Jimp.RESIZE_BICUBIC)

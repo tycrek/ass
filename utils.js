@@ -1,9 +1,11 @@
 const fs = require('fs-extra');
 const Path = require('path');
+const fetch = require('node-fetch');
 const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
 const gfyGen = require('./generators/gfycat');
+const { s3bucket, s3endpoint } = require('./config.json');
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
@@ -37,5 +39,14 @@ module.exports = {
 			colour += letters[(Math.floor(Math.random() * 16))];
 		return colour;
 	},
-	arrayEquals: (arr1, arr2) => arr1.length === arr2.length && arr1.slice().sort().every((value, index) => value === arr2.slice().sort()[index])
+	arrayEquals: (arr1, arr2) => arr1.length === arr2.length && arr1.slice().sort().every((value, index) => value === arr2.slice().sort()[index]),
+	downloadTempS3: (file) => new Promise((resolve, reject) =>
+		fetch(getS3url(file.originalname))
+			.then((f2) => f2.body.pipe(fs.createWriteStream(Path.join(__dirname, 'uploads/', file.originalname)).on('close', () => resolve())))
+			.catch(reject)),
+	getS3url,
+}
+
+function getS3url(originalName) {
+	return `https://${s3bucket}.${s3endpoint}/${originalName}`;
 }

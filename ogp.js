@@ -2,7 +2,7 @@ const Mustache = require('mustache');
 const DateTime = require('luxon').DateTime;
 const { homepage, version } = require('./package.json');
 const { s3enabled, s3endpoint, s3bucket } = require('./config.json');
-const { formatBytes, randomHexColour } = require('./utils');
+const { formatBytes, randomHexColour, getS3url } = require('./utils');
 
 // https://ogp.me/
 class OpenGraph {
@@ -39,7 +39,7 @@ class OpenGraph {
 	}
 
 	build() {
-		let resourceUrl = !s3enabled ? (this.http + this.domain + "/" + this.resourceId + (this.type.includes('video') ? '.mp4' : this.type.includes('gif') ? '.gif' : '')) : `https://${s3bucket}.${s3endpoint}/${this.filename}`;
+		let resourceUrl = !s3enabled ? (this.http + this.domain + "/" + this.resourceId + (this.type.includes('video') ? '.mp4' : this.type.includes('gif') ? '.gif' : '')) : getS3url(this.filename);
 		return Mustache.render(html, {
 			homepage,
 			version,
@@ -49,8 +49,7 @@ class OpenGraph {
 			resourceId: this.resourceId,
 			resourceUrl,
 
-			media: this.type.includes('video') ? `<video src="${resourceUrl}" style="height: 50vh;">` : `<img src="${resourceUrl}" style="height: 50vh;">`,
-
+			media: `<${this.type.includes('video') ? 'video' : 'img'} src="${resourceUrl}" style="height: 50vh;">`,
 			ogtype: this.type.includes('video') ? 'video.other' : 'image',
 			type: this.type.includes('video') ? 'video' : 'image',
 			title: (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '',

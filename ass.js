@@ -7,13 +7,14 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, gfyIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal, s3enabled, s3bucket } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, gfyIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal, s3enabled } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
 const express = require('express');
 const useragent = require('express-useragent');
 const rateLimit = require("express-rate-limit");
+const fetch = require('node-fetch');
 const marked = require('marked');
 const multer = require('multer');
 const DateTime = require('luxon').DateTime;
@@ -22,7 +23,7 @@ const OpenGraph = require('./ogp');
 const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const uploadS3 = require('./s3');
-const { path, saveData, log, verify, generateToken, generateId, formatBytes, randomHexColour, arrayEquals } = require('./utils');
+const { path, saveData, log, verify, generateToken, generateId, formatBytes, arrayEquals, getS3url, downloadTempS3 } = require('./utils');
 //#endregion
 
 //#region Variables, module setup
@@ -110,10 +111,26 @@ function startup() {
 		max: 30 // Limit each IP to 30 requests per windowMs
 	}));
 
-	// Upload file
-	!s3enabled
-		? app.post('/', upload.single('file'), ({ next }) => next())
-		: app.post('/', (req, res, next) => uploadS3(req, res, (error) => (error ? console.error(error) : log(`File uploaded to S3 [${s3bucket}]`), next())));
+	// Upload file (local & S3)
+	s3enabled
+		? app.post('/', (req, res, next) => uploadS3(req, res, (error) => ((error) && console.error(error), next())))
+		: app.post('/', upload.single('file'), ({ next }) => next());
+
+	// Generate a thumbnail & get the Vibrant colour
+	app.post('/', (req, _res, next) => {
+
+		// Download a temp copy to work with if using S3 storage
+		(s3enabled ? downloadTempS3(req.file) : new Promise((resolve) => resolve()))
+
+			// Generate the thumbnail/vibrant
+			.then(() => Promise.all([Thumbnail(req.file), Vibrant(req.file)]))
+			.then(([thumbnail, vibrant]) => (req.file.thumbnail = thumbnail, req.file.vibrant = vibrant))
+
+			// Remove the temp file if using S3 storage
+			.then(() => s3enabled ? fs.remove(path('uploads/', req.file.originalname)) : null)
+			.then(() => next())
+			.catch((err) => next(err));
+	});
 
 	// Process uploaded file
 	app.post('/', (req, res) => {
@@ -142,80 +159,79 @@ function startup() {
 			color: req.headers['x-ass-og-color']
 		};
 
-		// Generate a thumbnail & get the Vibrant colour
-		Promise.all([Thumbnail(req.file), (req.file.mimetype.includes('video') ? randomHexColour() : Vibrant(req.file))])
-			.then(([thumbnail, vibrant]) => (req.file.thumbnail = thumbnail, req.file.vibrant = vibrant))
-			.catch(console.error)
+		// Save the file information
+		let resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
+		data[resourceId.split('.')[0]] = req.file;
+		saveData(data);
 
-			// Finish processing the file
-			.then(() => {
-				// Save the file information
-				let resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
-				data[resourceId.split('.')[0]] = req.file;
-				saveData(data);
+		// Log the upload
+		let logInfo = `${req.file.originalname} (${req.file.mimetype})`;
+		log(`Uploaded: ${logInfo} (user: ${users[uploadToken] ? users[uploadToken].username : '<token-only>'})`);
 
-				// Log the upload
-				let logInfo = `${req.file.originalname} (${req.file.mimetype})`;
-				log(`Uploaded: ${logInfo} (user: ${users[uploadToken] ? users[uploadToken].username : '<token-only>'})`);
+		// Build the URLs
+		let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
+		let thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
+		let deleteUrl = `${getTrueHttp()}${trueDomain}/delete/${req.file.filename}`;
 
-				// Build the URLs
-				let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
-				let thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
-				let deleteUrl = `${getTrueHttp()}${trueDomain}/delete/${req.file.filename}`;
+		// Send the response
+		res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
+			.on('finish', () => {
 
-				// Send the response
-				res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
-					.on('finish', () => {
+				// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
+				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
 
-						// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
-						if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
+					// Build the webhook client & embed
+					let whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
+					let embed = new MessageEmbed()
+						.setTitle(logInfo)
+						.setURL(resourceUrl)
+						.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
+						.setThumbnail(thumbnailUrl)
+						.setColor(req.file.vibrant)
+						.setTimestamp(req.file.timestamp);
 
-							// Build the webhook client & embed
-							let whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
-							let embed = new MessageEmbed()
-								.setTitle(logInfo)
-								.setURL(resourceUrl)
-								.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
-								.setThumbnail(thumbnailUrl)
-								.setColor(req.file.vibrant)
-								.setTimestamp(req.file.timestamp);
+					// Send the embed to the webhook, then delete the client after to free resources
+					whc.send(null, {
+						username: req.headers['x-ass-webhook-username'] || 'ass',
+						avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
+						embeds: [embed]
+					}).then((_msg) => whc.destroy());
+				}
 
-							// Send the embed to the webhook, then delete the client after to free resources
-							whc.send(null, {
-								username: req.headers['x-ass-webhook-username'] || 'ass',
-								avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
-								embeds: [embed]
-							}).then((_msg) => whc.destroy());
-						}
-
-						// Also update the users upload count
-						if (!users[uploadToken]) {
-							let generator = () => generateId('random', 20, null);
-							let username = generator();
-							while (Object.values(users).findIndex((user) => user.username == username) != -1)
-								username = generator();
-							users[uploadToken] = { username, count: 0 };
-						}
-						users[uploadToken].count += 1;
-						fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
-					});
+				// Also update the users upload count
+				if (!users[uploadToken]) {
+					let generator = () => generateId('random', 20, null);
+					let username = generator();
+					while (Object.values(users).findIndex((user) => user.username == username) != -1)
+						username = generator();
+					users[uploadToken] = { username, count: 0 };
+				}
+				users[uploadToken].count += 1;
+				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
 			});
 	});
 
 	// View file
 	app.get('/:resourceId', (req, res) => {
 		let resourceId = req.ass.resourceId;
+		let fileData = data[resourceId];
 
 		// If the client is Discord, send an Open Graph embed
-		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, data[resourceId]).build());
+		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, fileData).build());
 
-		// Read the file and send it to the client
-		fs.readFile(path(data[resourceId].path))
-			.then((fileData) => res
-				.header('Accept-Ranges', 'bytes')
-				.header('Content-Length', fileData.byteLength)
-				.type(data[resourceId].mimetype).send(fileData))
-			.catch(console.error);
+		// Return the file differently depending on what storage option was used
+		let uploaders = {
+			s3: () => fetch(getS3url(fileData.originalname)).then((file) => {
+				file.headers.forEach((value, header) => res.setHeader(header, value));
+				file.body.pipe(res);
+			}),
+			local: () => {
+				res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.size).type(fileData.mimetype);
+				fs.createReadStream(path(fileData.path)).pipe(res);
+			}
+		};
+
+		uploaders[s3enabled ? 's3' : 'local']();
 	});
 
 	// Thumbnail response
