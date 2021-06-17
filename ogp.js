@@ -22,7 +22,7 @@ class OpenGraph {
 	author;
 	color;
 
-	constructor(http, domain, resourceId, randomId, { originalname, mimetype, size, timestamp, opengraph, vibrant }) {
+	constructor(http, domain, resourceId, { randomId, originalname, mimetype, size, timestamp, opengraph, vibrant }) {
 		this.http = http;
 		this.domain = domain;
 		this.resourceId = resourceId;

@@ -229,8 +229,18 @@ function startup() {
 		let resourceId = req.ass.resourceId;
 		let fileData = data[resourceId];
 
+		let requiredItems = {
+			randomId: fileData.randomId,
+			originalname: escape(fileData.originalname),
+			mimetype: fileData.mimetype,
+			size: fileData.size,
+			timestamp: fileData.timestamp,
+			opengraph: fileData.opengraph,
+			vibrant: fileData.vibrant,
+		};
+
 		// If the client is Discord, send an Open Graph embed
-		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, fileData.randomId, fileData).build());
+		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, requiredItems).build());
 
 		// Return the file differently depending on what storage option was used
 		let uploaders = {
