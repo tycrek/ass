@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, gfyIdSize, resourceIdType, isProxied, diskFilePath, saveWithDate, saveAsOriginal, s3enabled } = require('./config.json');
+const { host, port, domain, useSsl, resourceIdSize, gfyIdSize, resourceIdType, isProxied, s3enabled, saveAsOriginal } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -16,13 +16,14 @@ const useragent = require('express-useragent');
 const rateLimit = require("express-rate-limit");
 const fetch = require('node-fetch');
 const marked = require('marked');
-const multer = require('multer');
 const DateTime = require('luxon').DateTime;
 const { WebhookClient, MessageEmbed } = require('discord.js');
 const OpenGraph = require('./ogp');
 const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
-const uploadS3 = require('./s3');
+const Hash = require('./hash');
+const Path = require('path');
+const { uploadLocal, uploadS3 } = require('./storage');
 const { path, saveData, log, verify, generateToken, generateId, formatBytes, arrayEquals, getS3url, downloadTempS3 } = require('./utils');
 //#endregion
 
@@ -31,23 +32,6 @@ const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f
 const app = express();
 
 // Configure filename and location settings
-const storage = multer.diskStorage({
-	filename: saveAsOriginal ? (_req, file, callback) => callback(null, file.originalname) : null,
-	destination: !saveWithDate ? diskFilePath : (_req, _file, callback) => {
-		// Get current month and year
-		let [month, _day, year] = new Date().toLocaleDateString("en-US").split("/");
-
-		// Add 0 before single digit months eg ( 6 turns into 06)
-		let folder = `${diskFilePath}/${year}-${("0" + month).slice(-2)}`;
-
-		// Create folder if it doesn't exist
-		fs.ensureDirSync(folder);
-
-		callback(null, folder);
-	}
-});
-
-var upload = multer({ storage });
 var users = {};
 var data = {};
 //#endregion
@@ -90,6 +74,8 @@ function startup() {
 	app.set('view engine', 'pug');
 	app.use(useragent.express());
 
+	app.use((req, _res, next) => (req.randomId = generateId('random', 32, null, null), next()));
+
 	// Don't process favicon requests
 	app.use((req, res, next) => req.url.includes('favicon.ico') ? res.sendStatus(204) : next());
 
@@ -114,22 +100,40 @@ function startup() {
 	// Upload file (local & S3)
 	s3enabled
 		? app.post('/', (req, res, next) => uploadS3(req, res, (error) => ((error) && console.error(error), next())))
-		: app.post('/', upload.single('file'), ({ next }) => next());
+		: app.post('/', uploadLocal, ({ next }) => next());
 
-	// Generate a thumbnail & get the Vibrant colour
+	// Pre-response operations
 	app.post('/', (req, _res, next) => {
+		req.file.randomId = req.randomId;
 
 		// Download a temp copy to work with if using S3 storage
 		(s3enabled ? downloadTempS3(req.file) : new Promise((resolve) => resolve()))
 
-			// Generate the thumbnail/vibrant
-			.then(() => Promise.all([Thumbnail(req.file), Vibrant(req.file)]))
-			.then(([thumbnail, vibrant]) => (req.file.thumbnail = thumbnail, req.file.vibrant = vibrant))
+			// Generate the Thumbnail, Vibrant, and SHA1 hash
+			.then(() => Promise.all([Thumbnail(req.file), Vibrant(req.file), Hash(req.file)]))
+			.then(([thumbnail, vibrant, sha1]) => (
+				req.file.thumbnail = thumbnail,
+				req.file.vibrant = vibrant,
+				req.file.sha1 = sha1
+			))
 
-			// Remove the temp file if using S3 storage
-			.then(() => s3enabled ? fs.remove(path('uploads/', req.file.originalname)) : null)
+			// Remove the temp file if using S3 storage, otherwise rename the local file
+			.then(() => s3enabled ? fs.remove(path('uploads/', req.file.originalname)) : renameFile(saveAsOriginal ? req.file.originalname : req.file.sha1))
 			.then(() => next())
 			.catch((err) => next(err));
+
+		function renameFile(newName) {
+			return new Promise((resolve, reject) => {
+				try {
+					let paths = [req.file.destination, newName];
+					fs.rename(path(req.file.path), path(...paths));
+					req.file.path = Path.join(...paths);
+					resolve();
+				} catch (err) {
+					reject(err);
+				}
+			});
+		}
 	});
 
 	// Process uploaded file
@@ -217,11 +221,11 @@ function startup() {
 		let fileData = data[resourceId];
 
 		// If the client is Discord, send an Open Graph embed
-		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, fileData).build());
+		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, fileData.randomId, fileData).build());
 
 		// Return the file differently depending on what storage option was used
 		let uploaders = {
-			s3: () => fetch(getS3url(fileData.originalname)).then((file) => {
+			s3: () => fetch(getS3url(fileData.randomId)).then((file) => {
 				file.headers.forEach((value, header) => res.setHeader(header, value));
 				file.body.pipe(res);
 			}),

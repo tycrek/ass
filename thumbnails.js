@@ -25,7 +25,7 @@ function getVideoThumbnail(file) {
 
 function getResizedThumbnail(file) {
 	return new Promise((resolve, reject) =>
-		Jimp.read(s3enabled ? getS3url(file.originalname) : path(file.path))
+		Jimp.read(s3enabled ? getS3url(file.randomId) : path(file.path))
 			.then((image) => image
 				.quality(THUMBNAIL_QUALITY)
 				.resize(THUMBNAIL_SIZE, THUMBNAIL_SIZE, Jimp.RESIZE_BICUBIC)
