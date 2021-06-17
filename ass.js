@@ -25,7 +25,7 @@ const Vibrant = require('./vibrant');
 const Hash = require('./hash');
 const Path = require('path');
 const { uploadLocal, uploadS3, deleteS3 } = require('./storage');
-const { path, saveData, log, verify, generateToken, generateId, formatBytes, arrayEquals, getS3url, downloadTempS3 } = require('./utils');
+const { path, saveData, log, verify, generateToken, generateId, formatBytes, arrayEquals, getS3url, downloadTempS3, sanitize } = require('./utils');
 //#endregion
 
 //#region Variables, module setup
@@ -106,6 +106,9 @@ function startup() {
 	app.post('/', (req, _res, next) => {
 		req.file.randomId = req.randomId;
 		req.file.deleteId = req.deleteId;
+
+		// Sanitize filename just in case Multer didn't catch it
+		req.file.originalname = sanitize(req.file.originalname);
 
 		// Download a temp copy to work with if using S3 storage
 		(s3enabled ? downloadTempS3(req.file) : new Promise((resolve) => resolve()))

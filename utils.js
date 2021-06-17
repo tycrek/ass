@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const Path = require('path');
 const fetch = require('node-fetch');
+const sanitize = require("sanitize-filename");
 const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
@@ -45,7 +46,8 @@ module.exports = {
 			.then((f2) => f2.body.pipe(fs.createWriteStream(Path.join(__dirname, 'uploads/', file.originalname)).on('close', () => resolve())))
 			.catch(reject)),
 	getS3url,
-	getSafeExt
+	getSafeExt,
+	sanitize
 }
 
 function getS3url(s3key, type) {
