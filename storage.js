@@ -6,7 +6,7 @@ const aws = require('aws-sdk');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const { getSafeExt } = require('./utils');
-const { diskFilePath, saveWithDate, s3endpoint, s3bucket, s3accessKey, s3secretKey } = require('./config.json');
+const { diskFilePath, saveWithDate, s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey } = require('./config.json');
 
 const s3 = new aws.S3({
 	endpoint: new aws.Endpoint(s3endpoint),
@@ -44,4 +44,14 @@ const uploadLocal = multer({
 	})
 }).single('file');
 
-module.exports = { uploadLocal, uploadS3, deleteS3 };
+const bucketSize = () =>
+	new Promise((resolve, reject) => s3enabled ? listAllKeys(resolve, reject) : resolve(0));
+
+function listAllKeys(resolve, reject, token) {
+	let allKeys = [];
+	s3.listObjectsV2({ Bucket: s3bucket, ContinuationToken: token }).promise()
+		.then((data) => (allKeys = allKeys.concat(data.Contents), data.IsTruncated ? listAllKeys(resolve, reject, data.NextContinuationToken) : resolve(allKeys.length)))
+		.catch(reject);
+}
+
+module.exports = { uploadLocal, uploadS3, deleteS3, bucketSize };
