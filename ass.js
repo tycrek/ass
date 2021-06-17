@@ -12,6 +12,7 @@ const { host, port, domain, useSsl, resourceIdSize, gfyIdSize, resourceIdType, i
 //#region Imports
 const fs = require('fs-extra');
 const express = require('express');
+const escape = require('escape-html');
 const useragent = require('express-useragent');
 const rateLimit = require("express-rate-limit");
 const fetch = require('node-fetch');
@@ -81,15 +82,6 @@ function startup() {
 	// Don't process favicon requests
 	app.use((req, res, next) => req.url.includes('favicon.ico') ? res.sendStatus(204) : next());
 
-	// Middleware for parsing the resource ID and handling 404
-	app.use('/:resourceId', (req, res, next) => {
-		// Parse the resource ID
-		req.ass = { resourceId: req.params.resourceId.split('.')[0] };
-
-		// If the ID is invalid, return 404. Otherwise, continue normally
-		(!req.ass.resourceId || !data[req.ass.resourceId]) ? res.sendStatus(404) : next();
-	});
-
 	// Index
 	app.get('/', (_req, res) => fs.readFile(path('README.md')).then((bytes) => bytes.toString()).then(marked).then((data) => res.render('index', { data })));
 
@@ -98,6 +90,12 @@ function startup() {
 		windowMs: 1000 * 60, // 60 seconds
 		max: 30 // Limit each IP to 30 requests per windowMs
 	}));
+
+	// Block unauthorized requests and attempt token sanitization
+	app.post('/', (req, res, next) => {
+		req.headers.authorization = req.headers.authorization.replace(/[^\da-z]/gi, '');
+		!verify(req, users) ? res.sendStatus(401) : next();
+	});
 
 	// Upload file (local & S3)
 	s3enabled
@@ -141,9 +139,6 @@ function startup() {
 
 	// Process uploaded file
 	app.post('/', (req, res) => {
-		// Prevent uploads from unauthorized clients
-		if (!verify(req, users)) return res.sendStatus(401);
-
 		// Load overrides
 		let trueDomain = getTrueDomain(req.headers["x-ass-domain"]);
 		let generator = req.headers["x-ass-access"] || resourceIdType;
@@ -152,8 +147,7 @@ function startup() {
 		req.file.timestamp = DateTime.now().toMillis();
 
 		// Keep track of the token that uploaded the resource
-		let uploadToken = req.headers.authorization;
-		req.file.token = uploadToken;
+		req.file.token = req.headers.authorization;
 
 		// Attach any embed overrides, if necessary
 		req.file.opengraph = {
@@ -173,7 +167,7 @@ function startup() {
 
 		// Log the upload
 		let logInfo = `${req.file.originalname} (${req.file.mimetype})`;
-		log(`Uploaded: ${logInfo} (user: ${users[uploadToken] ? users[uploadToken].username : '<token-only>'})`);
+		log(`Uploaded: ${logInfo} (user: ${users[req.headers.authorization] ? users[req.headers.authorization].username : '<token-only>'})`);
 
 		// Build the URLs
 		let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
@@ -206,16 +200,25 @@ function startup() {
 				}
 
 				// Also update the users upload count
-				if (!users[uploadToken]) {
+				if (!users[req.headers.authorization]) {
 					let generator = () => generateId('random', 20, null);
 					let username = generator();
 					while (Object.values(users).findIndex((user) => user.username == username) != -1)
 						username = generator();
-					users[uploadToken] = { username, count: 0 };
+					users[req.headers.authorization] = { username, count: 0 };
 				}
-				users[uploadToken].count += 1;
+				users[req.headers.authorization].count += 1;
 				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
 			});
+	});
+
+	// Middleware for parsing the resource ID and handling 404
+	app.use('/:resourceId', (req, res, next) => {
+		// Parse the resource ID
+		req.ass = { resourceId: escape(req.params.resourceId).split('.')[0] };
+
+		// If the ID is invalid, return 404. Otherwise, continue normally
+		(!req.ass.resourceId || !data[req.ass.resourceId]) ? res.sendStatus(404) : next();
 	});
 
 	// View file
@@ -271,8 +274,8 @@ function startup() {
 
 	// Delete file
 	app.get('/:resourceId/delete/:deleteId', (req, res) => {
-		let resourceId = req.params.resourceId;
-		let deleteId = req.params.deleteId;
+		let resourceId = req.ass.resourceId;
+		let deleteId = escape(req.params.deleteId);
 		let fileData = data[resourceId];
 
 		// If the delete ID doesn't match, don't delete the file
