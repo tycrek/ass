@@ -4,7 +4,7 @@
 const fs = require('fs-extra');
 const aws = require('aws-sdk');
 const multer = require('multer');
-const multerS3 = require('multer-s3');
+const multerS3 = require('tycrek-s3-transform');
 const { getSafeExt } = require('./utils');
 const { diskFilePath, saveWithDate, s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey } = require('./config.json');
 
