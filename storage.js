@@ -17,7 +17,7 @@ const uploadS3 = multer({
 		s3: s3,
 		bucket: s3bucket,
 		acl: 'public-read',
-		key: (req, _file, cb) => cb(null, req.randomId),
+		key: (req, file, cb) => cb(null, req.randomId.concat(file.mimetype.includes('video') ? '.mp4' : file.mimetype.includes('gif') ? '.gif' : '')),
 		contentType: (_req, file, cb) => cb(null, file.mimetype)
 	})
 }).single('file');

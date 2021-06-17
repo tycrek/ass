@@ -41,7 +41,7 @@ class OpenGraph {
 	}
 
 	build() {
-		let resourceUrl = !s3enabled ? (this.http + this.domain + "/" + this.resourceId + (this.type.includes('video') ? '.mp4' : this.type.includes('gif') ? '.gif' : '')) : getS3url(this.randomId);
+		let resourceUrl = !s3enabled ? (this.http + this.domain + "/" + this.resourceId + (this.type.includes('video') ? '.mp4' : this.type.includes('gif') ? '.gif' : '')) : getS3url(this.randomId, this.type);
 		return Mustache.render(html, {
 			homepage,
 			version,

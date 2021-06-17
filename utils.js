@@ -41,12 +41,12 @@ module.exports = {
 	},
 	arrayEquals: (arr1, arr2) => arr1.length === arr2.length && arr1.slice().sort().every((value, index) => value === arr2.slice().sort()[index]),
 	downloadTempS3: (file) => new Promise((resolve, reject) =>
-		fetch(getS3url(file.randomId))
+		fetch(getS3url(file.randomId, file.mimetype))
 			.then((f2) => f2.body.pipe(fs.createWriteStream(Path.join(__dirname, 'uploads/', file.originalname)).on('close', () => resolve())))
 			.catch(reject)),
 	getS3url,
 }
 
-function getS3url(s3key) {
-	return `https://${s3bucket}.${s3endpoint}/${s3key}`;
+function getS3url(s3key, type) {
+	return `https://${s3bucket}.${s3endpoint}/${s3key}${type.includes('video') ? '.mp4' : type.includes('gif') ? '.gif' : ''}`;
 }

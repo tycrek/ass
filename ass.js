@@ -225,7 +225,7 @@ function startup() {
 
 		// Return the file differently depending on what storage option was used
 		let uploaders = {
-			s3: () => fetch(getS3url(fileData.randomId)).then((file) => {
+			s3: () => fetch(getS3url(fileData.randomId, fileData.mimetype)).then((file) => {
 				file.headers.forEach((value, header) => res.setHeader(header, value));
 				file.body.pipe(res);
 			}),
