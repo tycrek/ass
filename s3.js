@@ -1,3 +1,6 @@
+// https://docs.digitalocean.com/products/spaces/resources/s3-sdk-examples/
+// https://www.digitalocean.com/community/tutorials/how-to-upload-a-file-to-object-storage-with-node-js
+
 const aws = require('aws-sdk');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
