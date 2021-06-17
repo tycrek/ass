@@ -23,7 +23,7 @@ const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
 const Path = require('path');
-const { uploadLocal, uploadS3 } = require('./storage');
+const { uploadLocal, uploadS3, deleteS3 } = require('./storage');
 const { path, saveData, log, verify, generateToken, generateId, formatBytes, arrayEquals, getS3url, downloadTempS3 } = require('./utils');
 //#endregion
 
@@ -74,7 +74,9 @@ function startup() {
 	app.set('view engine', 'pug');
 	app.use(useragent.express());
 
+	// Generate ID's to use for other functions
 	app.use((req, _res, next) => (req.randomId = generateId('random', 32, null, null), next()));
+	app.use((req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next()));
 
 	// Don't process favicon requests
 	app.use((req, res, next) => req.url.includes('favicon.ico') ? res.sendStatus(204) : next());
@@ -105,6 +107,7 @@ function startup() {
 	// Pre-response operations
 	app.post('/', (req, _res, next) => {
 		req.file.randomId = req.randomId;
+		req.file.deleteId = req.deleteId;
 
 		// Download a temp copy to work with if using S3 storage
 		(s3enabled ? downloadTempS3(req.file) : new Promise((resolve) => resolve()))
@@ -175,7 +178,7 @@ function startup() {
 		// Build the URLs
 		let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
 		let thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
-		let deleteUrl = `${getTrueHttp()}${trueDomain}/delete/${req.file.filename}`;
+		let deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
 
 		// Send the response
 		res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
@@ -267,22 +270,28 @@ function startup() {
 	});
 
 	// Delete file
-	app.get('/delete/:filename', (req, res) => {
-		let filename = req.params.filename;
-		let resourceId = Object.keys(data)[Object.values(data).indexOf(Object.values(data).find((d) => d.filename == filename))];
+	app.get('/:resourceId/delete/:deleteId', (req, res) => {
+		let resourceId = req.params.resourceId;
+		let deleteId = req.params.deleteId;
+		let fileData = data[resourceId];
+
+		// If the delete ID doesn't match, don't delete the file
+		if (deleteId !== fileData.deleteId) return res.sendStatus(401);
 
 		// If the ID is invalid, return 400 because we are unable to process the resource
-		if (!resourceId || !data[resourceId]) return res.sendStatus(400);
+		if (!resourceId || !fileData) return res.sendStatus(400);
 
-		log(`Deleted: ${data[resourceId].originalname} (${data[resourceId].mimetype})`);
+		log(`Deleted: ${fileData.originalname} (${fileData.mimetype})`);
 
 		// Save the file information
-		fs.rmSync(path(data[resourceId].path));
-		delete data[resourceId];
-		saveData(data);
-
-		res.type('text').send('File has been deleted!');
-	})
+		Promise.all([s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)), fs.rmSync(path('uploads/thumbnails/', fileData.thumbnail))])
+			.then(() => {
+				delete data[resourceId];
+				saveData(data);
+				res.type('text').send('File has been deleted!');
+			})
+			.catch(console.error);
+	});
 
 	app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized users: ${Object.keys(users).length}\nAvailable files: ${Object.keys(data).length}`));
 }

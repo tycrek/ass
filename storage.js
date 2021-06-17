@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const aws = require('aws-sdk');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
+const { getSafeExt } = require('./utils');
 const { diskFilePath, saveWithDate, s3endpoint, s3bucket, s3accessKey, s3secretKey } = require('./config.json');
 
 const s3 = new aws.S3({
@@ -17,10 +18,14 @@ const uploadS3 = multer({
 		s3: s3,
 		bucket: s3bucket,
 		acl: 'public-read',
-		key: (req, file, cb) => cb(null, req.randomId.concat(file.mimetype.includes('video') ? '.mp4' : file.mimetype.includes('gif') ? '.gif' : '')),
+		key: (req, file, cb) => cb(null, req.randomId.concat(getSafeExt(file.mimetype))),
 		contentType: (_req, file, cb) => cb(null, file.mimetype)
 	})
 }).single('file');
+
+const deleteS3 = (file) =>
+	new Promise((resolve, reject) =>
+		s3.deleteObject({ Bucket: s3bucket, Key: file.randomId.concat(getSafeExt(file.mimetype)) }).promise().then(resolve).catch(reject));
 
 const uploadLocal = multer({
 	storage: multer.diskStorage({
@@ -39,7 +44,4 @@ const uploadLocal = multer({
 	})
 }).single('file');
 
-module.exports = { uploadLocal, uploadS3 };
-
-// This deletes everything from the Bucket
-//s3.listObjects({ Bucket: s3bucket }, (err, data) => err ? console.error(err) : data['Contents'].forEach((obj) => s3.deleteObject({ Bucket: s3bucket, Key: obj['Key'] }, (err, data) => err ? console.log(err) : console.log(data))));
+module.exports = { uploadLocal, uploadS3, deleteS3 };

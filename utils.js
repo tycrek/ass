@@ -45,8 +45,13 @@ module.exports = {
 			.then((f2) => f2.body.pipe(fs.createWriteStream(Path.join(__dirname, 'uploads/', file.originalname)).on('close', () => resolve())))
 			.catch(reject)),
 	getS3url,
+	getSafeExt
 }
 
 function getS3url(s3key, type) {
-	return `https://${s3bucket}.${s3endpoint}/${s3key}${type.includes('video') ? '.mp4' : type.includes('gif') ? '.gif' : ''}`;
+	return `https://${s3bucket}.${s3endpoint}/${s3key}${getSafeExt(type)}`;
+}
+
+function getSafeExt(type) {
+	return type.includes('video') ? '.mp4' : type.includes('gif') ? '.gif' : '';
 }

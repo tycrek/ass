@@ -2,7 +2,7 @@ const Mustache = require('mustache');
 const DateTime = require('luxon').DateTime;
 const { homepage, version } = require('./package.json');
 const { s3enabled } = require('./config.json');
-const { formatBytes, randomHexColour, getS3url } = require('./utils');
+const { formatBytes, randomHexColour, getS3url, getSafeExt } = require('./utils');
 
 // https://ogp.me/
 class OpenGraph {
@@ -41,7 +41,7 @@ class OpenGraph {
 	}
 
 	build() {
-		let resourceUrl = !s3enabled ? (this.http + this.domain + "/" + this.resourceId + (this.type.includes('video') ? '.mp4' : this.type.includes('gif') ? '.gif' : '')) : getS3url(this.randomId, this.type);
+		let resourceUrl = !s3enabled ? (this.http + this.domain + "/" + this.resourceId + getSafeExt(this.type)) : getS3url(this.randomId, this.type);
 		return Mustache.render(html, {
 			homepage,
 			version,
