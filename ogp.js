@@ -1,13 +1,15 @@
 const Mustache = require('mustache');
 const DateTime = require('luxon').DateTime;
-const github = require('./package.json').homepage;
-const { formatBytes, randomHexColour } = require('./utils');
+const { homepage, version } = require('./package.json');
+const { s3enabled } = require('./config.json');
+const { formatBytes, randomHexColour, getS3url, getSafeExt } = require('./utils');
 
 // https://ogp.me/
 class OpenGraph {
 	http;
 	domain;
 	resourceId;
+	randomId;
 
 	filename;
 	type;
@@ -20,10 +22,11 @@ class OpenGraph {
 	author;
 	color;
 
-	constructor(http, domain, resourceId, { originalname, mimetype, size, timestamp, opengraph, vibrant }) {
+	constructor(http, domain, resourceId, { randomId, originalname, mimetype, size, timestamp, opengraph, vibrant }) {
 		this.http = http;
 		this.domain = domain;
 		this.resourceId = resourceId;
+		this.randomId = randomId;
 
 		this.type = mimetype;
 		this.filename = originalname;
@@ -38,17 +41,19 @@ class OpenGraph {
 	}
 
 	build() {
+		let resourceUrl = !s3enabled ? (this.http + this.domain + "/" + this.resourceId + getSafeExt(this.type)) : getS3url(this.randomId, this.type);
 		return Mustache.render(html, {
-			github,
+			homepage,
+			version,
 
 			http: this.http,
 			domain: this.domain,
 			resourceId: this.resourceId,
+			resourceUrl,
 
+			media: `<${this.type.includes('video') ? 'video' : 'img'} src="${resourceUrl}" style="height: 50vh;">`,
 			ogtype: this.type.includes('video') ? 'video.other' : 'image',
 			type: this.type.includes('video') ? 'video' : 'image',
-			ext: this.type.includes('video') ? '.mp4' : this.type.includes('gif') ? '.gif' : '',
-
 			title: (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '',
 			description: (this.description.length != 0) ? `<meta property="og:description" content="${this.description}">` : '',
 			site: (this.author.length != 0) ? `<meta property="og:site_name" content="${this.author}">` : '',
@@ -71,7 +76,7 @@ const html = `
     <title>ass</title>
 	<!-- Open Graph (https://ogp.me/) -->
     <meta property="og:type" content="{{{ogtype}}}">
-    <meta property="og:{{{type}}}" content="{{{http}}}{{{domain}}}/{{{resourceId}}}{{{ext}}}">
+    <meta property="og:{{{type}}}" content="{{{resourceUrl}}}">
     {{{title}}}
     {{{description}}}
     {{{site}}}
@@ -81,7 +86,9 @@ const html = `
 	<link rel="alternate" type="application/json+oembed" href="{{{http}}}{{{domain}}}/{{{resourceId}}}/oembed.json" title="oEmbed">
   </head>
   <body>
-    Open Graph response for <a href="{{{github}}}" target="_blank">ass</a>.
+    Open Graph response for <a href="{{{homepage}}}" target="_blank">ass</a> {{{version}}}
+	<br>
+	{{{media}}}
   </body>
 </html>
 `;

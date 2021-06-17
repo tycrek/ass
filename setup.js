@@ -1,5 +1,5 @@
 // Default configuration
-const config = {
+var config = {
 	host: '0.0.0.0',
 	port: 40115,
 	domain: 'upload.example.com',
@@ -11,6 +11,11 @@ const config = {
 	diskFilePath: "uploads/",
 	saveWithDate: false,
 	saveAsOriginal: true,
+	s3enabled: false,
+	s3endpoint: 'sfo3.digitaloceanspaces.com',
+	s3bucket: 'bucket-name',
+	s3accessKey: 'accessKey',
+	s3secretKey: 'secretKey',
 };
 
 // If directly called on the command line, run setup script
@@ -18,6 +23,11 @@ if (require.main === module) {
 	const { path, log } = require('./utils');
 	const fs = require('fs-extra');
 	const prompt = require('prompt');
+
+	try {
+		let existingConfig = require('./config.json');
+		Object.keys(existingConfig).forEach((key) => config.hasOwnProperty(key) && (config[key] = existingConfig[key]))
+	} catch (ex) { console.log(ex) }
 
 	// Disabled the annoying "prompt: " prefix and removes colours
 	prompt.message = '';
@@ -63,21 +73,20 @@ if (require.main === module) {
 				default: config.resourceIdSize,
 				required: false
 			},
-			gfyIdSize: {
-				description: 'Adjective count for "gfycat" Resource ID type',
-				type: 'integer',
-				default: config.gfyIdSize,
-				required: false
-			},
 			resourceIdType: {
-				description: 'Resource ID type (determines what kind of URL your uploads are visible at. Can be one of: original, zws, random)',
+				description: 'Resource ID type (determines what kind of URL your uploads are visible at. Can be one of: original, zws, random, gfycat)',
 				type: 'string',
 				default: config.resourceIdType,
 				require: false,
 				pattern: /(original|zws|random|gfycat)/gi,
 				message: 'Must be one of: original, zws, random, gfycat'
 			},
-
+			gfyIdSize: {
+				description: 'Adjective count for "gfycat" Resource ID type',
+				type: 'integer',
+				default: config.gfyIdSize,
+				required: false
+			},
 			diskFilePath: {
 				description: 'Relative path to save uploads to',
 				type: 'string',
@@ -94,6 +103,36 @@ if (require.main === module) {
 				description: 'Save as original file name instead of random',
 				type: 'boolean',
 				default: config.saveAsOriginal,
+				required: false
+			},
+			s3enabled: {
+				description: 'Enable uploading to S3 storage endpoints',
+				type: 'boolean',
+				default: config.s3enabled,
+				required: false
+			},
+			s3endpoint: {
+				description: 'S3 Endpoint URL to upload objects to',
+				type: 'string',
+				default: config.s3endpoint,
+				required: false
+			},
+			s3bucket: {
+				description: 'S3 Bucket name to upload objects to',
+				type: 'string',
+				default: config.s3bucket,
+				required: false
+			},
+			s3accessKey: {
+				description: 'Access key for the specified S3 API',
+				type: 'string',
+				default: config.s3accessKey,
+				required: false
+			},
+			s3secretKey: {
+				description: 'Secret key for the specified S3 API',
+				type: 'string',
+				default: config.s3secretKey,
 				required: false
 			},
 		}
