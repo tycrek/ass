@@ -73,21 +73,20 @@ if (require.main === module) {
 				default: config.resourceIdSize,
 				required: false
 			},
-			gfyIdSize: {
-				description: 'Adjective count for "gfycat" Resource ID type',
-				type: 'integer',
-				default: config.gfyIdSize,
-				required: false
-			},
 			resourceIdType: {
-				description: 'Resource ID type (determines what kind of URL your uploads are visible at. Can be one of: original, zws, random)',
+				description: 'Resource ID type (determines what kind of URL your uploads are visible at. Can be one of: original, zws, random, gfycat)',
 				type: 'string',
 				default: config.resourceIdType,
 				require: false,
 				pattern: /(original|zws|random|gfycat)/gi,
 				message: 'Must be one of: original, zws, random, gfycat'
 			},
-
+			gfyIdSize: {
+				description: 'Adjective count for "gfycat" Resource ID type',
+				type: 'integer',
+				default: config.gfyIdSize,
+				required: false
+			},
 			diskFilePath: {
 				description: 'Relative path to save uploads to',
 				type: 'string',
