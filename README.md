@@ -22,7 +22,7 @@
 - ✔️ Usage metrics
 - ✔️ Thumbnail support
 - ✔️ Basic multi-user support
-- ✔️ Block-storage support for Amazon S3 (including DigitalOcean Spaces)
+- ✔️ Local storage *or* block-storage support for [Amazon S3](https://aws.amazon.com/s3/) (including [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces/))
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
    - **Mixed-case alphanumeric**
@@ -40,7 +40,7 @@
 | ---- | ----------- |
 | **[ZWS](https://zws.im)** (Zero-width spaces) | The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name. ![ZWS sample](https://user-images.githubusercontent.com/29926144/113785625-bf43a480-96f4-11eb-8dd7-7f164f33ada2.png "ZWS sample") |
 | **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
-| **Gfycat** | Gfycat-style ID's (for example: `https://gfycat.com/unsungdiscretegrub` "unsung discrete grub") |
+| **Gfycat** | Gfycat-style ID's (for example: `https://gfycat.com/unsungdiscretegrub` "unsung discrete grub"). Thanks to [Gfycat](https://gfycat.com) for the wordlists |
 | **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
 
 ## Installation
@@ -152,3 +152,5 @@ No strict contributing rules at this time. I appreciate any Issues or Pull Reque
 ## Credits
 
 - Special thanks to [hlsl#1359](http://be.net/zevwolf) for the awesome logo!
+- [@ToxicAven](https://github.com/ToxicAven) for the Flameshot script
+- [Gfycat](https://gfycat.com) for their wordlists
