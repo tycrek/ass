@@ -75,9 +75,11 @@ function startup() {
 	app.set('view engine', 'pug');
 	app.use(useragent.express());
 
-	// Generate ID's to use for other functions
-	app.use((req, _res, next) => (req.randomId = generateId('random', 32, null, null), next()));
-	app.use((req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next()));
+	// Rate limit
+	app.use(rateLimit({
+		windowMs: 1000 * 60, // 60 seconds
+		max: 90 // Limit each IP to 30 requests per windowMs
+	}));
 
 	// Don't process favicon requests
 	app.use((req, res, next) => req.url.includes('favicon.ico') ? res.sendStatus(204) : next());
@@ -85,17 +87,15 @@ function startup() {
 	// Index
 	app.get('/', (_req, res) => fs.readFile(path('README.md')).then((bytes) => bytes.toString()).then(marked).then((data) => res.render('index', { data })));
 
-	// Rate limit
-	app.post('/', rateLimit({
-		windowMs: 1000 * 60, // 60 seconds
-		max: 30 // Limit each IP to 30 requests per windowMs
-	}));
-
 	// Block unauthorized requests and attempt token sanitization
 	app.post('/', (req, res, next) => {
-		req.headers.authorization = req.headers.authorization.replace(/[^\da-z]/gi, '');
+		req.token = req.headers.authorization.replace(/[^\da-z]/gi, '');
 		!verify(req, users) ? res.sendStatus(401) : next();
 	});
+
+	// Generate ID's to use for other functions
+	app.post('/', (req, _res, next) => (req.randomId = generateId('random', 32, null, null), next()));
+	app.post('/', (req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next()));
 
 	// Upload file (local & S3)
 	s3enabled
@@ -147,7 +147,7 @@ function startup() {
 		req.file.timestamp = DateTime.now().toMillis();
 
 		// Keep track of the token that uploaded the resource
-		req.file.token = req.headers.authorization;
+		req.file.token = req.token;
 
 		// Attach any embed overrides, if necessary
 		req.file.opengraph = {
@@ -167,7 +167,7 @@ function startup() {
 
 		// Log the upload
 		let logInfo = `${req.file.originalname} (${req.file.mimetype})`;
-		log(`Uploaded: ${logInfo} (user: ${users[req.headers.authorization] ? users[req.headers.authorization].username : '<token-only>'})`);
+		log(`Uploaded: ${logInfo} (user: ${users[req.token] ? users[req.token].username : '<token-only>'})`);
 
 		// Build the URLs
 		let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
@@ -200,14 +200,14 @@ function startup() {
 				}
 
 				// Also update the users upload count
-				if (!users[req.headers.authorization]) {
+				if (!users[req.token]) {
 					let generator = () => generateId('random', 20, null);
 					let username = generator();
 					while (Object.values(users).findIndex((user) => user.username == username) != -1)
 						username = generator();
-					users[req.headers.authorization] = { username, count: 0 };
+					users[req.token] = { username, count: 0 };
 				}
-				users[req.headers.authorization].count += 1;
+				users[req.token].count += 1;
 				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
 			});
 	});
