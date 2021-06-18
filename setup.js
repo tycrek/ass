@@ -1,5 +1,5 @@
 // Default configuration
-var config = {
+const config = {
 	host: '0.0.0.0',
 	port: 40115,
 	domain: 'upload.example.com',
@@ -26,7 +26,7 @@ if (require.main === module) {
 
 	try {
 		let existingConfig = require('./config.json');
-		Object.keys(existingConfig).forEach((key) => config.hasOwnProperty(key) && (config[key] = existingConfig[key]))
+		Object.keys(existingConfig).forEach((key) => Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]))
 	} catch (ex) { console.log(ex) }
 
 	// Disabled the annoying "prompt: " prefix and removes colours
@@ -153,19 +153,16 @@ if (require.main === module) {
 		}
 	};
 
-	function setup() {
-		log('<<< ass setup >>>\n');
-		let results;
-		prompt.get(setupSchema)
-			.then((r) => results = r)
-			.then(() => log('\nPlease verify your information:\n\n' + Object.keys(results).map((result) => (` ${result}: ${results[result]}`)).join('\n') + '\n'))
-			.then(() => prompt.get(confirmSchema))
-			.then(({ confirm }) => confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : process.exit(1))
-			.then(() => log('\nConfig has been saved!'))
-			.catch((err) => console.error(err));
-	}
-
-	setup();
+	log('<<< ass setup >>>\n');
+	let results = {};
+	prompt.get(setupSchema)
+		.then((r) => results = r)
+		.then(() => Object.keys(results).map((result) => (` ${result}: ${results[result]}`)).join('\n'))
+		.then((resultString) => log(`\nPlease verify your information:\n\n${resultString}\n`))
+		.then(() => prompt.get(confirmSchema))
+		.then(({ confirm }) => confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : process.exit(1))
+		.then(() => log('\nConfig has been saved!'))
+		.catch((err) => console.error(err));
 }
 
 module.exports = config;

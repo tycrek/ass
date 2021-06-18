@@ -5,7 +5,7 @@ const MIN_LENGTH = require('../setup').gfyIdSize;
 
 function genString(count = MIN_LENGTH) {
     let gfycat = '';
-    for (i = 0; i < (count < MIN_LENGTH ? MIN_LENGTH : count); i++)
+    for (let i = 0; i < (count < MIN_LENGTH ? MIN_LENGTH : count); i++)
         gfycat += getWord(adjectives, '-');
     return gfycat.concat(getWord(animals));
 };

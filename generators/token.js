@@ -17,7 +17,7 @@ if (require.main === module) {
 			// Generate the user
 			let username = process.argv[2] ? process.argv[2].replace(/[^\da-z_]/gi, '').substring(0, MAX_USERNAME) : randomGen({ length: 20 });
 			if (!auth.users) auth.users = {};
-			if (Object.values(auth.users).findIndex((user) => user.username == username) != -1) {
+			if (Object.values(auth.users).findIndex((user) => user.username === username) !== -1) {
 				console.log('Username already exists!');
 				process.exit(1);
 			}

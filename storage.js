@@ -15,7 +15,7 @@ const s3 = new aws.S3({
 
 const uploadS3 = multer({
 	storage: multerS3({
-		s3: s3,
+		s3,
 		bucket: s3bucket,
 		acl: 'public-read',
 		key: (req, file, cb) => cb(null, req.randomId.concat(getSafeExt(file.mimetype))),
@@ -31,10 +31,10 @@ const uploadLocal = multer({
 	storage: multer.diskStorage({
 		destination: !saveWithDate ? diskFilePath : (_req, _file, cb) => {
 			// Get current month and year
-			let [month, _day, year] = new Date().toLocaleDateString("en-US").split("/");
+			let [month, , year] = new Date().toLocaleDateString('en-US').split('/');
 
-			// Add 0 before single digit months eg ( 6 turns into 06)
-			let folder = `${diskFilePath}/${year}-${("0" + month).slice(-2)}`;
+			// Add 0 before single digit months (6 turns into 06)
+			let folder = `${diskFilePath}/${year}-${`0${month}`.slice(-2)}`;
 
 			// Create folder if it doesn't exist
 			fs.ensureDirSync(folder);

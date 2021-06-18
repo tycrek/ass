@@ -17,7 +17,7 @@ const useragent = require('express-useragent');
 const rateLimit = require("express-rate-limit");
 const fetch = require('node-fetch');
 const marked = require('marked');
-const DateTime = require('luxon').DateTime;
+const { DateTime } = require('luxon');
 const { WebhookClient, MessageEmbed } = require('discord.js');
 const OpenGraph = require('./ogp');
 const Thumbnail = require('./thumbnails');
@@ -33,8 +33,8 @@ const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f
 const app = express();
 
 // Configure filename and location settings
-var users = {};
-var data = {};
+let users = {};
+let data = {};
 //#endregion
 
 preStartup();
@@ -61,7 +61,7 @@ function preStartup() {
 	log('Users & data read from filesystem');
 
 	// Monitor auth.json for changes (triggered by running 'npm run new-token')
-	fs.watch(path('auth.json'), { persistent: false }, (eventType, _filename) => eventType === 'change' && fs.readJson(path('auth.json'))
+	fs.watch(path('auth.json'), { persistent: false }, (eventType) => eventType === 'change' && fs.readJson(path('auth.json'))
 		.then((json) => !(arrayEquals(Object.keys(users), Object.keys(json.users))) && (users = json.users) && log(`New token added: ${Object.keys(users)[Object.keys(users).length - 1]}`))
 		.catch(console.error));
 
@@ -199,15 +199,15 @@ function startup() {
 						username: req.headers['x-ass-webhook-username'] || 'ass',
 						avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
 						embeds: [embed]
-					}).then((_msg) => whc.destroy());
+					}).then(() => whc.destroy());
 				}
 
 				// Also update the users upload count
 				if (!users[req.token]) {
-					let generator = () => generateId('random', 20, null);
-					let username = generator();
-					while (Object.values(users).findIndex((user) => user.username == username) != -1)
-						username = generator();
+					let generateUsername = () => generateId('random', 20, null);
+					let username = generateUsername();
+					while (Object.values(users).findIndex((user) => user.username === username) !== -1)
+						username = generateUsername();
 					users[req.token] = { username, count: 0 };
 				}
 				users[req.token].count += 1;
@@ -226,7 +226,7 @@ function startup() {
 
 	// View file
 	app.get('/:resourceId', (req, res) => {
-		let resourceId = req.ass.resourceId;
+		let { resourceId } = req.ass;
 		let fileData = data[resourceId];
 
 		let requiredItems = {
@@ -259,7 +259,7 @@ function startup() {
 
 	// Thumbnail response
 	app.get('/:resourceId/thumbnail', (req, res) => {
-		let resourceId = req.ass.resourceId;
+		let { resourceId } = req.ass;
 
 		// Read the file and send it to the client
 		fs.readFile(path('uploads/thumbnails/', data[resourceId].thumbnail))
@@ -271,7 +271,7 @@ function startup() {
 	// https://oembed.com/
 	// https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
 	app.get('/:resourceId/oembed.json', (req, res) => {
-		let resourceId = req.ass.resourceId;
+		let { resourceId } = req.ass;
 
 		// Build the oEmbed object & send the response
 		let { opengraph, mimetype } = data[resourceId];
@@ -287,7 +287,7 @@ function startup() {
 
 	// Delete file
 	app.get('/:resourceId/delete/:deleteId', (req, res) => {
-		let resourceId = req.ass.resourceId;
+		let { resourceId } = req.ass;
 		let deleteId = escape(req.params.deleteId);
 		let fileData = data[resourceId];
 
@@ -317,5 +317,5 @@ function getTrueHttp() {
 }
 
 function getTrueDomain(d = domain) {
-	return d.concat((port == 80 || port == 443 || isProxied) ? '' : `:${port}`);
+	return d.concat((port === 80 || port === 443 || isProxied) ? '' : `:${port}`);
 }

@@ -13,7 +13,7 @@ module.exports = () => {
 	Object.values(data).forEach(({ token, size }) => {
 		try {
 			totalSize += size;
-			if (token == null) oldSize += size;
+			if (token === undefined) oldSize += size;
 			else {
 				if (!users[token].size) users[token].size = 0;
 				users[token].size += size;

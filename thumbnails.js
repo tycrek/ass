@@ -10,7 +10,7 @@ const THUMBNAIL_SIZE = 512;
 
 function getCommand(src, dest) {
 	return shell([
-		ffmpeg, '-y', '-v', process.env.NODE_ENV == 'production' ? 'error' : 'debug',
+		ffmpeg, '-y', '-v', process.env.NODE_ENV === 'production' ? 'error' : 'debug',
 		'-i', src,
 		'-ss', '00:00:01.000',
 		'-frames:v', '1',
