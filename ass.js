@@ -62,7 +62,7 @@ function preStartup() {
 
 	// Monitor auth.json for changes (triggered by running 'npm run new-token')
 	fs.watch(path('auth.json'), { persistent: false }, (eventType) => eventType === 'change' && fs.readJson(path('auth.json'))
-		.then((json) => !(arrayEquals(Object.keys(users), Object.keys(json.users))) && (users = json.users) && log(`New token added: ${Object.keys(users)[Object.keys(users).length - 1]}`))
+		.then((json) => !(arrayEquals(Object.keys(users), Object.keys(json.users))) && (users = json.users) && log(`New token added: ${Object.keys(users)[Object.keys(users).length - 1]}`)) // skipcq: JS-0243
 		.catch(console.error));
 
 	// Create thumbnails directory
@@ -85,7 +85,7 @@ function startup() {
 	app.use((req, res, next) => req.url.includes('favicon.ico') ? res.sendStatus(204) : next());
 
 	// Index
-	app.get('/', (_req, res) => fs.readFile(path('README.md')).then((bytes) => bytes.toString()).then(marked).then((data) => res.render('index', { data })));
+	app.get('/', (_req, res) => fs.readFile(path('README.md')).then((bytes) => bytes.toString()).then(marked).then((d) => res.render('index', { data: d })));
 
 	// Block unauthorized requests and attempt token sanitization
 	app.post('/', (req, res, next) => {
@@ -94,12 +94,12 @@ function startup() {
 	});
 
 	// Generate ID's to use for other functions
-	app.post('/', (req, _res, next) => (req.randomId = generateId('random', 32, null, null), next())); // skipcq: JS-0086
-	app.post('/', (req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next())); // skipcq: JS-0086
+	app.post('/', (req, _res, next) => (req.randomId = generateId('random', 32, null, null), next())); // skipcq: JS-0086, JS-0090
+	app.post('/', (req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next())); // skipcq: JS-0086, JS-0090
 
 	// Upload file (local & S3) // skipcq: JS-0093
 	s3enabled
-		? app.post('/', (req, res, next) => uploadS3(req, res, (error) => ((error) && console.error(error), next())))
+		? app.post('/', (req, res, next) => uploadS3(req, res, (error) => ((error) && console.error(error), next())))  // skipcq: JS-0090
 		: app.post('/', uploadLocal, ({ next }) => next());
 
 	// Pre-response operations

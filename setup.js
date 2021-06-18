@@ -78,7 +78,7 @@ if (require.main === module) {
 				type: 'string',
 				default: config.resourceIdType,
 				require: false,
-				pattern: /(original|zws|random|gfycat)/gi,
+				pattern: /(original|zws|random|gfycat)/gi, // skipcq: JS-0113
 				message: 'Must be one of: original, zws, random, gfycat'
 			},
 			gfyIdSize: {
