@@ -15,7 +15,7 @@ if (require.main === module) {
 	fs.readJson(authPath)
 		.then((auth) => {
 			// Generate the user
-			const username = process.argv[2] ? process.argv[2].replace(/[^\da-z_]/gi, '').substring(0, MAX_USERNAME) : randomGen({ length: 20 });
+			const username = process.argv[2] ? process.argv[2].replace(/[^\da-z_]/gi, '').substring(0, MAX_USERNAME) : randomGen({ length: 20 }); // skipcq: JS-0074
 			if (!auth.users) auth.users = {};
 			if (Object.values(auth.users).findIndex((user) => user.username === username) !== -1) {
 				console.log('Username already exists!');

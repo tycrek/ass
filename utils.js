@@ -6,14 +6,17 @@ const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
 const gfyGen = require('./generators/gfycat');
-const { useSsl, port, isProxied, s3bucket, s3endpoint } = require('./config.json');
+const { useSsl, port, domain, isProxied, s3bucket, s3endpoint } = require('./config.json');
+const { HTTP, HTTPS, KILOBYTES } = require('./MagicNumbers.json');
 
-function getS3url(s3key, type) {
-	return `https://${s3bucket}.${s3endpoint}/${s3key}${getSafeExt(type)}`;
-}
+const path = (...paths) => Path.join(__dirname, ...paths);
 
 function getSafeExt(type) {
 	return type.includes('video') ? '.mp4' : type.includes('gif') ? '.gif' : '';
+}
+
+function getS3url(s3key, type) {
+	return `https://${s3bucket}.${s3endpoint}/${s3key}${getSafeExt(type)}`;
 }
 
 const idModes = {
@@ -29,12 +32,12 @@ GENERATORS.set(idModes.r, randomGen);
 GENERATORS.set(idModes.gfy, gfyGen);
 
 module.exports = {
+	path,
 	log: console.log,
-	path: (...paths) => Path.join(__dirname, ...paths),
 	saveData: (data) => fs.writeJsonSync(Path.join(__dirname, 'data.json'), data, { spaces: 4 }),
 	verify: (req, users) => req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization),
 	getTrueHttp: () => ('http').concat(useSsl ? 's' : '').concat('://'),
-	getTrueDomain: (d = domain) => d.concat((port === 80 || port === 443 || isProxied) ? '' : `:${port}`),
+	getTrueDomain: (d = domain) => d.concat((port === HTTP || port === HTTPS || isProxied) ? '' : `:${port}`),
 	renameFile: (req, newName) => new Promise((resolve, reject) => {
 		try {
 			const paths = [req.file.destination, newName];
@@ -47,16 +50,16 @@ module.exports = {
 	}),
 	generateToken: () => token(),
 	generateId: (mode, length, gfyLength, originalName) => (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName),
-	formatBytes: (bytes, decimals = 2) => {
+	formatBytes: (bytes, decimals = 2) => { // skipcq: JS-0074
 		if (bytes === 0) return '0 Bytes';
 		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-		const i = Math.floor(Math.log(bytes) / Math.log(1024));
-		return parseFloat((bytes / Math.pow(1024, i)).toFixed(decimals < 0 ? 0 : decimals)).toString().concat(` ${sizes[i]}`);
+		const i = Math.floor(Math.log(bytes) / Math.log(KILOBYTES));
+		return parseFloat((bytes / Math.pow(KILOBYTES, i)).toFixed(decimals < 0 ? 0 : decimals)).toString().concat(` ${sizes[i]}`);
 	},
 	randomHexColour: () => { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
 		const letters = "0123456789ABCDEF";
 		let colour = '#';
-		for (let i = 0; i < 6; i++)
+		for (let i = 0; i < 6; i++) // skipcq: JS-0074
 			colour += letters[(Math.floor(Math.random() * letters.length))];
 		return colour;
 	},

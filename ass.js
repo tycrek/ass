@@ -23,9 +23,9 @@ const OpenGraph = require('./ogp');
 const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
-const Path = require('path');
 const { uploadLocal, uploadS3, deleteS3 } = require('./storage');
 const { path, saveData, log, verify, getTrueHttp, getTrueDomain, renameFile, generateToken, generateId, formatBytes, arrayEquals, getS3url, downloadTempS3, sanitize } = require('./utils');
+const { CODE_NO_CONTENT, CODE_BAD_REQUEST, CODE_UNAUTHORIZED, CODE_NOT_FOUND } = require('./MagicNumbers.json');
 //#endregion
 
 //#region Variables, module setup
@@ -74,12 +74,12 @@ function startup() {
 
 	// Rate limit
 	app.use(rateLimit({
-		windowMs: 1000 * 60, // 60 seconds
-		max: 90 // Limit each IP to 30 requests per windowMs
+		windowMs: 1000 * 60, // 60 seconds // skipcq: JS-0074
+		max: 90 // Limit each IP to 30 requests per windowMs // skipcq: JS-0074
 	}));
 
 	// Don't process favicon requests
-	app.use((req, res, next) => (req.url.includes('favicon.ico') ? res.sendStatus(204) : next()));
+	app.use((req, res, next) => (req.url.includes('favicon.ico') ? res.sendStatus(CODE_NO_CONTENT) : next()));
 
 	// Index
 	app.get('/', (_req, res) => fs.readFile(path('README.md')).then((bytes) => bytes.toString()).then(marked).then((d) => res.render('index', { data: d })));
@@ -87,12 +87,12 @@ function startup() {
 	// Block unauthorized requests and attempt token sanitization
 	app.post('/', (req, res, next) => {
 		req.token = req.headers.authorization.replace(/[^\da-z]/gi, '');
-		!verify(req, users) ? res.sendStatus(401) : next(); // skipcq: JS-0093
+		!verify(req, users) ? res.sendStatus(CODE_UNAUTHORIZED) : next(); // skipcq: JS-0093
 	});
 
 	// Generate ID's to use for other functions
-	app.post('/', (req, _res, next) => (req.randomId = generateId('random', 32, null, null), next())); // skipcq: JS-0086, JS-0090
-	app.post('/', (req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next())); // skipcq: JS-0086, JS-0090
+	app.post('/', (req, _res, next) => (req.randomId = generateId('random', 32, null, null), next())); // skipcq: JS-0074, JS-0086, JS-0090
+	app.post('/', (req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next())); // skipcq: JS-0074, JS-0086, JS-0090
 
 	// Upload file (local & S3) // skipcq: JS-0093
 	s3enabled
@@ -189,7 +189,7 @@ function startup() {
 
 				// Also update the users upload count
 				if (!users[req.token]) {
-					const generateUsername = () => generateId('random', 20, null);
+					const generateUsername = () => generateId('random', 20, null); // skipcq: JS-0074
 					let username = generateUsername();
 					while (Object.values(users).findIndex((user) => user.username === username) !== -1)  // skipcq: JS-0073
 						username = generateUsername();
@@ -206,7 +206,7 @@ function startup() {
 		req.ass = { resourceId: escape(req.params.resourceId).split('.')[0] };
 
 		// If the ID is invalid, return 404. Otherwise, continue normally // skipcq: JS-0093
-		(!req.ass.resourceId || !data[req.ass.resourceId]) ? res.sendStatus(404) : next();
+		(!req.ass.resourceId || !data[req.ass.resourceId]) ? res.sendStatus(CODE_NOT_FOUND) : next();
 	});
 
 	// View file
@@ -277,10 +277,10 @@ function startup() {
 		const fileData = data[resourceId];
 
 		// If the delete ID doesn't match, don't delete the file
-		if (deleteId !== fileData.deleteId) return res.sendStatus(401);
+		if (deleteId !== fileData.deleteId) return res.sendStatus(CODE_UNAUTHORIZED);
 
 		// If the ID is invalid, return 400 because we are unable to process the resource
-		if (!resourceId || !fileData) return res.sendStatus(400);
+		if (!resourceId || !fileData) return res.sendStatus(CODE_BAD_REQUEST);
 
 		log(`Deleted: ${fileData.originalname} (${fileData.mimetype})`);
 

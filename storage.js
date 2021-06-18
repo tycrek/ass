@@ -34,7 +34,7 @@ const uploadLocal = multer({
 			const [month, , year] = new Date().toLocaleDateString('en-US').split('/');
 
 			// Add 0 before single digit months (6 turns into 06)
-			const folder = `${diskFilePath}/${year}-${`0${month}`.slice(-2)}`;
+			const folder = `${diskFilePath}/${year}-${`0${month}`.slice(-2)}`; // skipcq: JS-0074
 
 			// Create folder if it doesn't exist
 			fs.ensureDirSync(folder);
