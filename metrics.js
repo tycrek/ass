@@ -13,7 +13,7 @@ module.exports = () => {
 	Object.values(data).forEach(({ token, size }) => {
 		try {
 			totalSize += size;
-			if (token === undefined) oldSize += size;
+			if (token === undefined) oldSize += size; // skipcq: JS-0127
 			else {
 				if (!users[token].size) users[token].size = 0;
 				users[token].size += size;

@@ -90,14 +90,14 @@ function startup() {
 	// Block unauthorized requests and attempt token sanitization
 	app.post('/', (req, res, next) => {
 		req.token = req.headers.authorization.replace(/[^\da-z]/gi, '');
-		!verify(req, users) ? res.sendStatus(401) : next();
+		!verify(req, users) ? res.sendStatus(401) : next(); // skipcq: JS-0093
 	});
 
 	// Generate ID's to use for other functions
 	app.post('/', (req, _res, next) => (req.randomId = generateId('random', 32, null, null), next()));
 	app.post('/', (req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next()));
 
-	// Upload file (local & S3)
+	// Upload file (local & S3) // skipcq: JS-0093
 	s3enabled
 		? app.post('/', (req, res, next) => uploadS3(req, res, (error) => ((error) && console.error(error), next())))
 		: app.post('/', uploadLocal, ({ next }) => next());
@@ -220,7 +220,7 @@ function startup() {
 		// Parse the resource ID
 		req.ass = { resourceId: escape(req.params.resourceId).split('.')[0] };
 
-		// If the ID is invalid, return 404. Otherwise, continue normally
+		// If the ID is invalid, return 404. Otherwise, continue normally // skipcq: JS-0093
 		(!req.ass.resourceId || !data[req.ass.resourceId]) ? res.sendStatus(404) : next();
 	});
 
