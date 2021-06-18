@@ -160,7 +160,7 @@ if (require.main === module) {
 		.then(() => Object.keys(results).map((result) => (` ${result}: ${results[result]}`)).join('\n'))
 		.then((resultString) => log(`\nPlease verify your information:\n\n${resultString}\n`))
 		.then(() => prompt.get(confirmSchema))
-		.then(({ confirm }) => confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : process.exit(1))
+		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : process.exit(1)))
 		.then(() => log('\nConfig has been saved!'))
 		.catch((err) => console.error(err));
 }

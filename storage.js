@@ -44,14 +44,14 @@ const uploadLocal = multer({
 	})
 }).single('file');
 
-const bucketSize = () =>
-	new Promise((resolve, reject) => s3enabled ? listAllKeys(resolve, reject) : resolve(0));
-
 function listAllKeys(resolve, reject, token) {
 	let allKeys = [];
 	s3.listObjectsV2({ Bucket: s3bucket, ContinuationToken: token }).promise()
 		.then((data) => (allKeys = allKeys.concat(data.Contents), data.IsTruncated ? listAllKeys(resolve, reject, data.NextContinuationToken) : resolve(allKeys.length))) // skipcq: JS-0086, JS-0090
 		.catch(reject);
 }
+
+const bucketSize = () =>
+	new Promise((resolve, reject) => (s3enabled ? listAllKeys(resolve, reject) : resolve(0)));
 
 module.exports = { uploadLocal, uploadS3, deleteS3, bucketSize };

@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, domain, useSsl, resourceIdSize, gfyIdSize, resourceIdType, isProxied, s3enabled, saveAsOriginal } = require('./config.json');
+const { host, port, resourceIdSize, gfyIdSize, resourceIdType, isProxied, s3enabled, saveAsOriginal } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -25,7 +25,7 @@ const Vibrant = require('./vibrant');
 const Hash = require('./hash');
 const Path = require('path');
 const { uploadLocal, uploadS3, deleteS3 } = require('./storage');
-const { path, saveData, log, verify, generateToken, generateId, formatBytes, arrayEquals, getS3url, downloadTempS3, sanitize } = require('./utils');
+const { path, saveData, log, verify, getTrueHttp, getTrueDomain, renameFile, generateToken, generateId, formatBytes, arrayEquals, getS3url, downloadTempS3, sanitize } = require('./utils');
 //#endregion
 
 //#region Variables, module setup
@@ -36,9 +36,6 @@ const app = express();
 let users = {};
 let data = {};
 //#endregion
-
-preStartup();
-startup();
 
 function preStartup() {
 	// Make sure data.json exists
@@ -82,7 +79,7 @@ function startup() {
 	}));
 
 	// Don't process favicon requests
-	app.use((req, res, next) => req.url.includes('favicon.ico') ? res.sendStatus(204) : next());
+	app.use((req, res, next) => (req.url.includes('favicon.ico') ? res.sendStatus(204) : next()));
 
 	// Index
 	app.get('/', (_req, res) => fs.readFile(path('README.md')).then((bytes) => bytes.toString()).then(marked).then((d) => res.render('index', { data: d })));
@@ -123,22 +120,9 @@ function startup() {
 			))
 
 			// Remove the temp file if using S3 storage, otherwise rename the local file
-			.then(() => s3enabled ? fs.remove(path('uploads/', req.file.originalname)) : renameFile(saveAsOriginal ? req.file.originalname : req.file.sha1))
+			.then(() => (s3enabled ? fs.remove(path('uploads/', req.file.originalname)) : renameFile(req, saveAsOriginal ? req.file.originalname : req.file.sha1)))
 			.then(() => next())
 			.catch((err) => next(err));
-
-		function renameFile(newName) {
-			return new Promise((resolve, reject) => {
-				try {
-					const paths = [req.file.destination, newName];
-					fs.rename(path(req.file.path), path(...paths));
-					req.file.path = Path.join(...paths);
-					resolve();
-				} catch (err) {
-					reject(err);
-				}
-			});
-		}
 	});
 
 	// Process uploaded file
@@ -313,10 +297,5 @@ function startup() {
 	app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized users: ${Object.keys(users).length}\nAvailable files: ${Object.keys(data).length}`));
 }
 
-function getTrueHttp() {
-	return ('http').concat(useSsl ? 's' : '').concat('://');
-}
-
-function getTrueDomain(d = domain) {
-	return d.concat((port === 80 || port === 443 || isProxied) ? '' : `:${port}`);
-}
+preStartup();
+startup();

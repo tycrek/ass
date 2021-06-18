@@ -19,8 +19,16 @@ function getCommand(src, dest) {
 	]);
 }
 
+function getNewName(oldName) {
+	return oldName.concat('.thumbnail.jpg');
+}
+
+function getNewNamePath(oldName) {
+	return path('uploads/thumbnails/', getNewName(oldName));
+}
+
 function getVideoThumbnail(file) {
-	return new Promise((resolve, reject) => exec(getCommand(s3enabled ? path('uploads/', file.originalname) : path(file.path), getNewNamePath(file.originalname)), (err) => err ? reject(err) : resolve()));
+	return new Promise((resolve, reject) => exec(getCommand((s3enabled ? path('uploads/', file.originalname) : path(file.path)), getNewNamePath(file.originalname)), (err) => (err ? reject(err) : resolve())));
 }
 
 function getResizedThumbnail(file) {
@@ -32,14 +40,6 @@ function getResizedThumbnail(file) {
 				.write(getNewNamePath(file.originalname)))
 			.then(resolve)
 			.catch(reject));
-}
-
-function getNewNamePath(oldName) {
-	return path('uploads/thumbnails/', getNewName(oldName));
-}
-
-function getNewName(oldName) {
-	return oldName.concat('.thumbnail.jpg');
 }
 
 module.exports = (file) =>

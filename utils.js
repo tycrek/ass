@@ -6,7 +6,15 @@ const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
 const gfyGen = require('./generators/gfycat');
-const { s3bucket, s3endpoint } = require('./config.json');
+const { useSsl, port, isProxied, s3bucket, s3endpoint } = require('./config.json');
+
+function getS3url(s3key, type) {
+	return `https://${s3bucket}.${s3endpoint}/${s3key}${getSafeExt(type)}`;
+}
+
+function getSafeExt(type) {
+	return type.includes('video') ? '.mp4' : type.includes('gif') ? '.gif' : '';
+}
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
@@ -25,8 +33,20 @@ module.exports = {
 	path: (...paths) => Path.join(__dirname, ...paths),
 	saveData: (data) => fs.writeJsonSync(Path.join(__dirname, 'data.json'), data, { spaces: 4 }),
 	verify: (req, users) => req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization),
+	getTrueHttp: () => ('http').concat(useSsl ? 's' : '').concat('://'),
+	getTrueDomain: (d = domain) => d.concat((port === 80 || port === 443 || isProxied) ? '' : `:${port}`),
+	renameFile: (req, newName) => new Promise((resolve, reject) => {
+		try {
+			const paths = [req.file.destination, newName];
+			fs.rename(path(req.file.path), path(...paths));
+			req.file.path = Path.join(...paths);
+			resolve();
+		} catch (err) {
+			reject(err);
+		}
+	}),
 	generateToken: () => token(),
-	generateId: (mode, length, gfyLength, originalName) => GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName,
+	generateId: (mode, length, gfyLength, originalName) => (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName),
 	formatBytes: (bytes, decimals = 2) => {
 		if (bytes === 0) return '0 Bytes';
 		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -48,12 +68,4 @@ module.exports = {
 	getS3url,
 	getSafeExt,
 	sanitize
-}
-
-function getS3url(s3key, type) {
-	return `https://${s3bucket}.${s3endpoint}/${s3key}${getSafeExt(type)}`;
-}
-
-function getSafeExt(type) {
-	return type.includes('video') ? '.mp4' : type.includes('gif') ? '.gif' : '';
 }
