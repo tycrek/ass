@@ -114,9 +114,9 @@ function startup() {
 			.then(() => Promise.all([Thumbnail(req.file), Vibrant(req.file), Hash(req.file)]))
 			// skipcq: JS-0086
 			.then(([thumbnail, vibrant, sha1]) => (
-				req.file.thumbnail = thumbnail,
-				req.file.vibrant = vibrant,
-				req.file.sha1 = sha1
+				req.file.thumbnail = thumbnail,// skipcq: JS-0090
+				req.file.vibrant = vibrant,// skipcq: JS-0090
+				req.file.sha1 = sha1// skipcq: JS-0090
 			))
 
 			// Remove the temp file if using S3 storage, otherwise rename the local file
