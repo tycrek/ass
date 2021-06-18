@@ -11,6 +11,10 @@
 
 **ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite.
 
+#### DeepSource status
+[![DeepSource Active Issues](https://deepsource.io/gh/tycrek/ass.svg/?label=active+issues&token=BtbWb2UNuISW8jXX4VoYtdwp)](https://deepsource.io/gh/tycrek/ass/?ref=repository-badge)
+[![DeepSource Resolved Issues](https://deepsource.io/gh/tycrek/ass.svg/?label=resolved+issues&token=BtbWb2UNuISW8jXX4VoYtdwp)](https://deepsource.io/gh/tycrek/ass/?ref=repository-badge)
+
 ## Features
 
 - ✔️ Token authorization via HTTP `Authorization` header
