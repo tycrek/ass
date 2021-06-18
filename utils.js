@@ -29,12 +29,12 @@ module.exports = {
 	generateId: (mode, length, gfyLength, originalName) => GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName,
 	formatBytes: (bytes, decimals = 2) => {
 		if (bytes === 0) return '0 Bytes';
-		let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-		let i = Math.floor(Math.log(bytes) / Math.log(1024));
+		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+		const i = Math.floor(Math.log(bytes) / Math.log(1024));
 		return parseFloat((bytes / Math.pow(1024, i)).toFixed(decimals < 0 ? 0 : decimals)).toString().concat(` ${sizes[i]}`);
 	},
 	randomHexColour: () => { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
-		let letters = "0123456789ABCDEF";
+		const letters = "0123456789ABCDEF";
 		let colour = '#';
 		for (let i = 0; i < 6; i++)
 			colour += letters[(Math.floor(Math.random() * letters.length))];

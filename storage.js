@@ -31,10 +31,10 @@ const uploadLocal = multer({
 	storage: multer.diskStorage({
 		destination: !saveWithDate ? diskFilePath : (_req, _file, cb) => {
 			// Get current month and year
-			let [month, , year] = new Date().toLocaleDateString('en-US').split('/');
+			const [month, , year] = new Date().toLocaleDateString('en-US').split('/');
 
 			// Add 0 before single digit months (6 turns into 06)
-			let folder = `${diskFilePath}/${year}-${`0${month}`.slice(-2)}`;
+			const folder = `${diskFilePath}/${year}-${`0${month}`.slice(-2)}`;
 
 			// Create folder if it doesn't exist
 			fs.ensureDirSync(folder);
@@ -50,7 +50,7 @@ const bucketSize = () =>
 function listAllKeys(resolve, reject, token) {
 	let allKeys = [];
 	s3.listObjectsV2({ Bucket: s3bucket, ContinuationToken: token }).promise()
-		.then((data) => (allKeys = allKeys.concat(data.Contents), data.IsTruncated ? listAllKeys(resolve, reject, data.NextContinuationToken) : resolve(allKeys.length)))
+		.then((data) => (allKeys = allKeys.concat(data.Contents), data.IsTruncated ? listAllKeys(resolve, reject, data.NextContinuationToken) : resolve(allKeys.length))) // skipcq: JS-0086
 		.catch(reject);
 }
 

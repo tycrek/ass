@@ -9,13 +9,13 @@ module.exports = () => uuid().replace(/-/g, '');
 
 // If directly called on the command line, generate a new token
 if (require.main === module) {
-	let token = module.exports();
-	let authPath = path.join(__dirname, '..', 'auth.json');
+	const token = module.exports();
+	const authPath = path.join(__dirname, '..', 'auth.json');
 
 	fs.readJson(authPath)
 		.then((auth) => {
 			// Generate the user
-			let username = process.argv[2] ? process.argv[2].replace(/[^\da-z_]/gi, '').substring(0, MAX_USERNAME) : randomGen({ length: 20 });
+			const username = process.argv[2] ? process.argv[2].replace(/[^\da-z_]/gi, '').substring(0, MAX_USERNAME) : randomGen({ length: 20 });
 			if (!auth.users) auth.users = {};
 			if (Object.values(auth.users).findIndex((user) => user.username === username) !== -1) {
 				console.log('Username already exists!');

@@ -49,7 +49,7 @@ function preStartup() {
 
 	// Make sure auth.json exists and generate the first key
 	if (!fs.existsSync(path('auth.json'))) {
-		let token = generateToken();
+		const token = generateToken();
 		users[token] = { username: 'ass', count: 0 };
 		fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
 		log(`File [auth.json] created\n!! Important: save this token in a secure spot: ${Object.keys(users)[0]}\n`);
@@ -94,8 +94,8 @@ function startup() {
 	});
 
 	// Generate ID's to use for other functions
-	app.post('/', (req, _res, next) => (req.randomId = generateId('random', 32, null, null), next()));
-	app.post('/', (req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next()));
+	app.post('/', (req, _res, next) => (req.randomId = generateId('random', 32, null, null), next())); // skipcq: JS-0086
+	app.post('/', (req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next())); // skipcq: JS-0086
 
 	// Upload file (local & S3) // skipcq: JS-0093
 	s3enabled
@@ -115,6 +115,7 @@ function startup() {
 
 			// Generate the Thumbnail, Vibrant, and SHA1 hash
 			.then(() => Promise.all([Thumbnail(req.file), Vibrant(req.file), Hash(req.file)]))
+			// skipcq: JS-0086
 			.then(([thumbnail, vibrant, sha1]) => (
 				req.file.thumbnail = thumbnail,
 				req.file.vibrant = vibrant,
@@ -129,7 +130,7 @@ function startup() {
 		function renameFile(newName) {
 			return new Promise((resolve, reject) => {
 				try {
-					let paths = [req.file.destination, newName];
+					const paths = [req.file.destination, newName];
 					fs.rename(path(req.file.path), path(...paths));
 					req.file.path = Path.join(...paths);
 					resolve();
@@ -143,8 +144,8 @@ function startup() {
 	// Process uploaded file
 	app.post('/', (req, res) => {
 		// Load overrides
-		let trueDomain = getTrueDomain(req.headers["x-ass-domain"]);
-		let generator = req.headers["x-ass-access"] || resourceIdType;
+		const trueDomain = getTrueDomain(req.headers["x-ass-domain"]);
+		const generator = req.headers["x-ass-access"] || resourceIdType;
 
 		// Get the uploaded time in milliseconds
 		req.file.timestamp = DateTime.now().toMillis();
@@ -164,18 +165,18 @@ function startup() {
 		};
 
 		// Save the file information
-		let resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
+		const resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
 		data[resourceId.split('.')[0]] = req.file;
 		saveData(data);
 
 		// Log the upload
-		let logInfo = `${req.file.originalname} (${req.file.mimetype})`;
+		const logInfo = `${req.file.originalname} (${req.file.mimetype})`;
 		log(`Uploaded: ${logInfo} (user: ${users[req.token] ? users[req.token].username : '<token-only>'})`);
 
 		// Build the URLs
-		let resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
-		let thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
-		let deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
+		const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
+		const thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
+		const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
 
 		// Send the response
 		res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
@@ -185,8 +186,8 @@ function startup() {
 				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
 
 					// Build the webhook client & embed
-					let whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
-					let embed = new MessageEmbed()
+					const whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
+					const embed = new MessageEmbed()
 						.setTitle(logInfo)
 						.setURL(resourceUrl)
 						.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
@@ -204,9 +205,9 @@ function startup() {
 
 				// Also update the users upload count
 				if (!users[req.token]) {
-					let generateUsername = () => generateId('random', 20, null);
+					const generateUsername = () => generateId('random', 20, null);
 					let username = generateUsername();
-					while (Object.values(users).findIndex((user) => user.username === username) !== -1)
+					while (Object.values(users).findIndex((user) => user.username === username) !== -1)  // skipcq: JS-0073
 						username = generateUsername();
 					users[req.token] = { username, count: 0 };
 				}
@@ -226,10 +227,10 @@ function startup() {
 
 	// View file
 	app.get('/:resourceId', (req, res) => {
-		let { resourceId } = req.ass;
-		let fileData = data[resourceId];
+		const { resourceId } = req.ass;
+		const fileData = data[resourceId];
 
-		let requiredItems = {
+		const requiredItems = {
 			randomId: fileData.randomId,
 			originalname: escape(fileData.originalname),
 			mimetype: fileData.mimetype,
@@ -243,7 +244,7 @@ function startup() {
 		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, requiredItems).build());
 
 		// Return the file differently depending on what storage option was used
-		let uploaders = {
+		const uploaders = {
 			s3: () => fetch(getS3url(fileData.randomId, fileData.mimetype)).then((file) => {
 				file.headers.forEach((value, header) => res.setHeader(header, value));
 				file.body.pipe(res);
@@ -259,7 +260,7 @@ function startup() {
 
 	// Thumbnail response
 	app.get('/:resourceId/thumbnail', (req, res) => {
-		let { resourceId } = req.ass;
+		const { resourceId } = req.ass;
 
 		// Read the file and send it to the client
 		fs.readFile(path('uploads/thumbnails/', data[resourceId].thumbnail))
@@ -271,10 +272,10 @@ function startup() {
 	// https://oembed.com/
 	// https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
 	app.get('/:resourceId/oembed.json', (req, res) => {
-		let { resourceId } = req.ass;
+		const { resourceId } = req.ass;
 
 		// Build the oEmbed object & send the response
-		let { opengraph, mimetype } = data[resourceId];
+		const { opengraph, mimetype } = data[resourceId];
 		res.type('json').send({
 			version: '1.0',
 			type: mimetype.includes('video') ? 'video' : 'photo',
@@ -287,9 +288,9 @@ function startup() {
 
 	// Delete file
 	app.get('/:resourceId/delete/:deleteId', (req, res) => {
-		let { resourceId } = req.ass;
-		let deleteId = escape(req.params.deleteId);
-		let fileData = data[resourceId];
+		const { resourceId } = req.ass;
+		const deleteId = escape(req.params.deleteId);
+		const fileData = data[resourceId];
 
 		// If the delete ID doesn't match, don't delete the file
 		if (deleteId !== fileData.deleteId) return res.sendStatus(401);

@@ -5,8 +5,8 @@ const { formatBytes } = require('./utils');
 const { bucketSize } = require('./storage');
 
 module.exports = () => {
-	let data = fs.readJsonSync(path.join(__dirname, 'data.json'));
-	let { users } = fs.readJsonSync(path.join(__dirname, 'auth.json'));
+	const data = fs.readJsonSync(path.join(__dirname, 'data.json'));
+	const { users } = fs.readJsonSync(path.join(__dirname, 'auth.json'));
 
 	let totalSize = 0;
 	let oldSize = 0;

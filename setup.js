@@ -25,7 +25,7 @@ if (require.main === module) {
 	const prompt = require('prompt');
 
 	try {
-		let existingConfig = require('./config.json');
+		const existingConfig = require('./config.json');
 		Object.keys(existingConfig).forEach((key) => Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]))
 	} catch (ex) { console.log(ex) }
 
@@ -156,7 +156,7 @@ if (require.main === module) {
 	log('<<< ass setup >>>\n');
 	let results = {};
 	prompt.get(setupSchema)
-		.then((r) => results = r)
+		.then((r) => results = r) // skipcq: JS-0086
 		.then(() => Object.keys(results).map((result) => (` ${result}: ${results[result]}`)).join('\n'))
 		.then((resultString) => log(`\nPlease verify your information:\n\n${resultString}\n`))
 		.then(() => prompt.get(confirmSchema))
