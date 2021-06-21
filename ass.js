@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, resourceIdSize, gfyIdSize, resourceIdType, isProxied, s3enabled, saveAsOriginal } = require('./config.json');
+const { host, port, resourceIdSize, diskFilePath, gfyIdSize, resourceIdType, isProxied, s3enabled, saveAsOriginal } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -63,7 +63,7 @@ function preStartup() {
 		.catch(console.error));
 
 	// Create thumbnails directory
-	fs.ensureDirSync(path('uploads/thumbnails'));
+	fs.ensureDirSync(path(diskFilePath, 'thumbnails'));
 }
 
 function startup() {
@@ -120,7 +120,7 @@ function startup() {
 			))
 
 			// Remove the temp file if using S3 storage, otherwise rename the local file
-			.then(() => (s3enabled ? fs.remove(path('uploads/', req.file.originalname)) : renameFile(req, saveAsOriginal ? req.file.originalname : req.file.sha1)))
+			.then(() => (s3enabled ? fs.remove(path(diskFilePath, req.file.originalname)) : renameFile(req, saveAsOriginal ? req.file.originalname : req.file.sha1)))
 			.then(() => next())
 			.catch((err) => next(err));
 	});
@@ -247,7 +247,7 @@ function startup() {
 		const { resourceId } = req.ass;
 
 		// Read the file and send it to the client
-		fs.readFile(path('uploads/thumbnails/', data[resourceId].thumbnail))
+		fs.readFile(path(diskFilePath, 'thumbnails/', data[resourceId].thumbnail))
 			.then((fileData) => res.type('jpg').send(fileData))
 			.catch(console.error);
 	});
@@ -285,7 +285,7 @@ function startup() {
 		log(`Deleted: ${fileData.originalname} (${fileData.mimetype})`);
 
 		// Save the file information
-		Promise.all([s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)), fs.rmSync(path('uploads/thumbnails/', fileData.thumbnail))])
+		Promise.all([s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)), fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))])
 			.then(() => {
 				delete data[resourceId];
 				saveData(data);

@@ -3,7 +3,7 @@ const Jimp = require('jimp');
 const shell = require('any-shell-escape');
 const { exec } = require('child_process');
 const { path, getS3url } = require('./utils');
-const { s3enabled } = require('./config.json');
+const { s3enabled, diskFilePath } = require('./config.json');
 
 const THUMBNAIL_QUALITY = 50;
 const THUMBNAIL_SIZE = 512;
@@ -24,11 +24,11 @@ function getNewName(oldName) {
 }
 
 function getNewNamePath(oldName) {
-	return path('uploads/thumbnails/', getNewName(oldName));
+	return path(diskFilePath, 'thumbnails/', getNewName(oldName));
 }
 
 function getVideoThumbnail(file) {
-	return new Promise((resolve, reject) => exec(getCommand((s3enabled ? path('uploads/', file.originalname) : path(file.path)), getNewNamePath(file.originalname)), (err) => (err ? reject(err) : resolve())));
+	return new Promise((resolve, reject) => exec(getCommand((s3enabled ? path(diskFilePath, file.originalname) : path(file.path)), getNewNamePath(file.originalname)), (err) => (err ? reject(err) : resolve())));
 }
 
 function getResizedThumbnail(file) {
