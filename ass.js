@@ -37,6 +37,9 @@ let users = {};
 let data = {};
 //#endregion
 
+/**
+ * Operations to run to ensure ass can start properly
+ */
 function preStartup() {
 	// Make sure data.json exists
 	if (!fs.existsSync(path('data.json'))) {
@@ -66,6 +69,10 @@ function preStartup() {
 	fs.ensureDirSync(path(diskFilePath, 'thumbnails'));
 }
 
+/**
+ * Builds the router
+ * ///todo: make this separate
+ */
 function startup() {
 	app.enable('case sensitive routing');
 	app.set('trust proxy', isProxied);
@@ -294,6 +301,7 @@ function startup() {
 			.catch(console.error);
 	});
 
+	// Host the server
 	app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized users: ${Object.keys(users).length}\nAvailable files: ${Object.keys(data).length}`));
 }
 
