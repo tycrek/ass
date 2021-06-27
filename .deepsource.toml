@@ -6,4 +6,7 @@ enabled = true
 
 [[analyzers]]
 name = "javascript"
+dependency_file_paths = ["package.json"]
+environment = ["nodejs", "browser"]
+module_system = "commonjs"
 enabled = true
