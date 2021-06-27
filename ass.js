@@ -92,7 +92,7 @@ function startup() {
 	app.use(helmet.xssFilter());
 	app.use(helmet.referrerPolicy());
 	app.use(helmet.dnsPrefetchControl());
-	useSsl && app.use(helmet.hsts({ includeSubDomains: false, preload: true }));
+	useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 
 	// Rate limit middleware
 	app.use(rateLimit({
