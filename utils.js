@@ -57,9 +57,9 @@ function formatBytes(bytes, decimals = 2) { // skipcq: JS-0074
 
 function replaceholder(data, { size, timestamp, originalname }) {
 	return data
-		.replace(new RegExp('&size', 'g'), formatBytes(size))
-		.replace(new RegExp('&filename', 'g'), originalname)
-		.replace(new RegExp('&timestamp', 'g'), formatTimestamp(timestamp));
+		.replace(/&size/g, formatBytes(size))
+		.replace(/&filename/g, originalname)
+		.replace(/&timestamp/g, formatTimestamp(timestamp));
 }
 
 const idModes = {

@@ -14,7 +14,6 @@ const fs = require('fs-extra');
 const express = require('express');
 const helmet = require("helmet");
 const escape = require('escape-html');
-const useragent = require('express-useragent');
 const rateLimit = require("express-rate-limit");
 const fetch = require('node-fetch');
 const marked = require('marked');
@@ -81,9 +80,6 @@ function startup() {
 	// Set Express variables
 	app.set('trust proxy', isProxied);
 	app.set('view engine', 'pug');
-
-	// Express middleware
-	app.use(useragent.express());
 
 	// Helmet security middleware
 	app.use(helmet.noSniff());
@@ -243,11 +239,11 @@ function startup() {
 
 		// Build OpenGraph meta tags
 		const og = fileData.opengraph, ogs = [''];
-		og.title && (ogs.push(`<meta property="og:title" content="${og.title}">`));
-		og.description && (ogs.push(`<meta property="og:description" content="${og.description}">`));
-		og.author && (ogs.push(`<meta property="og:site_name" content="${og.author}">`));
-		og.color && (ogs.push(`<meta name="theme-color" content="${getResourceColor(og.color, fileData.vibrant)}">`));
-		!isVideo && (ogs.push(`<meta name="twitter:card" content="summary_large_image">`));
+		og.title && (ogs.push(`<meta property="og:title" content="${og.title}">`)); // skipcq: JS-0093
+		og.description && (ogs.push(`<meta property="og:description" content="${og.description}">`)); // skipcq: JS-0093
+		og.author && (ogs.push(`<meta property="og:site_name" content="${og.author}">`)); // skipcq: JS-0093
+		og.color && (ogs.push(`<meta name="theme-color" content="${getResourceColor(og.color, fileData.vibrant)}">`)); // skipcq: JS-0093
+		!isVideo && (ogs.push(`<meta name="twitter:card" content="summary_large_image">`)); // skipcq: JS-0093
 
 		// Send the view to the client
 		res.render('view', {
