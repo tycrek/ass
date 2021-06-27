@@ -7,11 +7,12 @@ try {
 }
 
 // Load the config
-const { host, port, resourceIdSize, diskFilePath, gfyIdSize, resourceIdType, isProxied, s3enabled, saveAsOriginal } = require('./config.json');
+const { host, port, useSsl, resourceIdSize, diskFilePath, gfyIdSize, resourceIdType, isProxied, s3enabled, saveAsOriginal } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
 const express = require('express');
+const helmet = require("helmet");
 const escape = require('escape-html');
 const useragent = require('express-useragent');
 const rateLimit = require("express-rate-limit");
@@ -74,26 +75,45 @@ function preStartup() {
  * ///todo: make this separate
  */
 function startup() {
+	// Enable/disable Express features
 	app.enable('case sensitive routing');
+	app.disable("x-powered-by");
+
+	// Set Express variables
 	app.set('trust proxy', isProxied);
 	app.set('view engine', 'pug');
+
+	// Express middleware
 	app.use(useragent.express());
 
-	// Rate limit
+	// Helmet security middleware
+	app.use(helmet.noSniff());
+	app.use(helmet.ieNoOpen());
+	app.use(helmet.xssFilter());
+	app.use(helmet.referrerPolicy());
+	app.use(helmet.dnsPrefetchControl());
+	useSsl && app.use(helmet.hsts({ includeSubDomains: false, preload: true }));
+
+	// Rate limit middleware
 	app.use(rateLimit({
 		windowMs: 1000 * 60, // 60 seconds // skipcq: JS-0074
 		max: 90 // Limit each IP to 30 requests per windowMs // skipcq: JS-0074
 	}));
 
-	// Don't process favicon requests
+	// Don't process favicon requests (custom middleware)
 	app.use((req, res, next) => (req.url.includes('favicon.ico') ? res.sendStatus(CODE_NO_CONTENT) : next()));
 
 	// Index
-	app.get('/', (_req, res) => fs.readFile(path('README.md')).then((bytes) => bytes.toString()).then(marked).then((d) => res.render('index', { data: d })));
+	app.get('/', (_req, res, next) =>
+		fs.readFile(path('README.md'))
+			.then((bytes) => bytes.toString())
+			.then(marked)
+			.then((d) => res.render('index', { data: d }))
+			.catch(next));
 
 	// Block unauthorized requests and attempt token sanitization
 	app.post('/', (req, res, next) => {
-		req.token = req.headers.authorization.replace(/[^\da-z]/gi, '');
+		req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
 		!verify(req, users) ? res.sendStatus(CODE_UNAUTHORIZED) : next(); // skipcq: JS-0093
 	});
 
