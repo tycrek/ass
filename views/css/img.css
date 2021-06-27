@@ -1,0 +1,5 @@
+img, video {
+	border-left-width: 4px;
+	border-left-style: solid;
+	border-radius: 4px;
+}

@@ -1,7 +1,8 @@
 const fs = require('fs-extra');
 const Path = require('path');
 const fetch = require('node-fetch');
-const sanitize = require("sanitize-filename");
+const sanitize = require('sanitize-filename');
+const { DateTime } = require('luxon');
 const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
@@ -27,12 +28,24 @@ function getS3url(s3key, type) {
 	return `https://${s3bucket}.${s3endpoint}/${s3key}${getSafeExt(type)}`;
 }
 
+function getDirectUrl(resourceId) {
+	return getTrueHttp() + getTrueDomain() + `/${resourceId}/direct`;
+}
+
 function randomHexColour() { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
 	const letters = "0123456789ABCDEF";
 	let colour = '#';
 	for (let i = 0; i < 6; i++) // skipcq: JS-0074
 		colour += letters[(Math.floor(Math.random() * letters.length))];
 	return colour;
+}
+
+function getResourceColor(colorValue, vibrantValue) {
+	return colorValue === '&random' ? randomHexColour() : colorValue === '&vibrant' ? vibrantValue : colorValue;
+}
+
+function formatTimestamp(timestamp) {
+	return DateTime.fromMillis(timestamp).toLocaleString(DateTime.DATETIME_MED);
 }
 
 const idModes = {
@@ -51,7 +64,13 @@ module.exports = {
 	path,
 	getTrueHttp,
 	getTrueDomain,
+	getS3url,
+	getDirectUrl,
+	getResourceColor,
+	formatTimestamp,
+	getSafeExt,
 	randomHexColour,
+	sanitize,
 	log: console.log,
 	saveData: (data) => fs.writeJsonSync(Path.join(__dirname, 'data.json'), data, { spaces: 4 }),
 	verify: (req, users) => req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization),
@@ -78,7 +97,4 @@ module.exports = {
 		fetch(getS3url(file.randomId, file.mimetype))
 			.then((f2) => f2.body.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))
 			.catch(reject)),
-	getS3url,
-	getSafeExt,
-	sanitize
 }

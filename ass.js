@@ -25,7 +25,7 @@ const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
 const { uploadLocal, uploadS3, deleteS3 } = require('./storage');
-const { path, saveData, log, verify, getTrueHttp, getTrueDomain, renameFile, generateToken, generateId, formatBytes, arrayEquals, getS3url, downloadTempS3, sanitize } = require('./utils');
+const { path, saveData, log, verify, getTrueHttp, getTrueDomain, renameFile, generateToken, generateId, formatBytes, formatTimestamp, arrayEquals, getS3url, getDirectUrl, getResourceColor, downloadTempS3, sanitize } = require('./utils');
 const { CODE_NO_CONTENT, CODE_BAD_REQUEST, CODE_UNAUTHORIZED, CODE_NOT_FOUND } = require('./MagicNumbers.json');
 //#endregion
 
@@ -252,8 +252,16 @@ function startup() {
 		};
 
 		// If the client is a social bot (such as Discord or Instagram), send an Open Graph embed
-		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, requiredItems).build());
-		else res.redirect(`${req.url}/direct`);
+		if (req.useragent.isBot) res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, requiredItems).build());
+		else res.render('view', {
+			title: requiredItems.originalname,
+			uploader: users[fileData.token].username,
+			timestamp: formatTimestamp(fileData.timestamp),
+			size: formatBytes(fileData.size),
+			color: getResourceColor(fileData.opengraph.color || null, fileData.vibrant),
+			isVideo: fileData.mimetype.includes('video'),
+			resourceAttr: { src: getDirectUrl(resourceId) },
+		});
 	});
 
 	// Direct resource

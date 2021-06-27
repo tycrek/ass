@@ -1,0 +1,25 @@
+html
+	head
+		title!=title
+		include head
+		style: include css/font.css
+		style: include css/view.css
+		if color !== null
+			style: include css/img.css
+			style.
+				img, video { border-color: #{color}; }
+	body
+		#container
+			#content
+				h4!=title
+				figure
+					if isVideo 
+						video#media(controls loop muted playsinline preload='metadata')&attributes(resourceAttr)
+					else
+						img#media(decoding='async')&attributes(resourceAttr)
+					figcaption
+						br
+						span Uploaded by #[strong!=uploader]
+						br
+						small #{timestamp} (#{size})
+				#footer: p Image hosted by #[a(href='https://github.com/tycrek/ass' target='_blank'): strong ass], the superior self-hosted ShareX server

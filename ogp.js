@@ -1,8 +1,6 @@
 const Mustache = require('mustache');
-const DateTime = require('luxon').DateTime;
 const { homepage, version } = require('./package.json');
-const { s3enabled } = require('./config.json');
-const { formatBytes, randomHexColour, getS3url, getSafeExt } = require('./utils');
+const { formatBytes, getDirectUrl, getResourceColor, formatTimestamp, getSafeExt } = require('./utils');
 
 // https://ogp.me/
 class OpenGraph {
@@ -41,7 +39,7 @@ class OpenGraph {
 	}
 
 	build() {
-		let resourceUrl = !s3enabled ? (this.http + this.domain + '/' + this.resourceId + '/direct' + getSafeExt(this.type)) : getS3url(this.randomId, this.type);
+		let resourceUrl = getDirectUrl(this.resourceId) + getSafeExt(this.type);
 		return Mustache.render(html, {
 			homepage,
 			version,
@@ -57,16 +55,12 @@ class OpenGraph {
 			title: (this.title.length != 0) ? `<meta property="og:title" content="${this.title}">` : '',
 			description: (this.description.length != 0) ? `<meta property="og:description" content="${this.description}">` : '',
 			site: (this.author.length != 0) ? `<meta property="og:site_name" content="${this.author}">` : '',
-			color: (this.color.length != 0) ? `<meta name="theme-color" content="${this.getBuildColor()}">` : '',
+			color: (this.color.length != 0) ? `<meta name="theme-color" content="${getResourceColor(this.color, this.vibrant)}">` : '',
 			card: !this.type.includes('video') ? `<meta name="twitter:card" content="summary_large_image">` : '',
 		})
 			.replace(new RegExp('&size', 'g'), formatBytes(this.size))
 			.replace(new RegExp('&filename', 'g'), this.filename)
-			.replace(new RegExp('&timestamp', 'g'), DateTime.fromMillis(this.timestamp).toLocaleString(DateTime.DATETIME_MED));
-	}
-
-	getBuildColor() {
-		return this.color === '&random' ? randomHexColour() : this.color === '&vibrant' ? this.vibrant : this.color;
+			.replace(new RegExp('&timestamp', 'g'), formatTimestamp(this.timestamp));
 	}
 }
 

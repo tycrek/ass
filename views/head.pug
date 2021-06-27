@@ -1,18 +1,16 @@
 meta(name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover')
 
+//- Markdown stylesheet & Highlight.js theme
 style: include css/modest.css
 style: include css/dracula.highlight.js.css
 
+//- DarkReader for easy dark modes & Highlight.js for codeblocks
 script(src='https://cdn.jsdelivr.net/npm/darkreader@4/darkreader.min.js')
 script(src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.7.1/build/highlight.min.js')
 script.
 	// Dark mode with Dark Reader
 	DarkReader.setFetchMethod(window.fetch);
-	DarkReader.enable({
-		brightness: 100,
-		contrast: 100,
-		sepia: 0
-	});
+	DarkReader.enable({}, { css: '#content { background-color: #121212 !important; }' }); // Fix the card colour
 
 	// Highlight code blocks
 	hljs.highlightAll();
