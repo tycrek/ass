@@ -251,8 +251,15 @@ function startup() {
 			vibrant: fileData.vibrant,
 		};
 
-		// If the client is Discord, send an Open Graph embed
+		// If the client is a social bot (such as Discord or Instagram), send an Open Graph embed
 		if (req.useragent.isBot) return res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, requiredItems).build());
+		else res.redirect(`${req.url}/direct`);
+	});
+
+	// Direct resource
+	app.get('/:resourceId/direct*', (req, res) => {
+		const { resourceId } = req.ass;
+		const fileData = data[resourceId];
 
 		// Return the file differently depending on what storage option was used
 		const uploaders = {
