@@ -8,6 +8,16 @@ html
 			style: include css/img.css
 			style.
 				img, video { border-color: #{color}; }
+
+		// Open Graph (https://ogp.me/)
+		meta(property='og:type' content=ogtype)
+		meta(property=urlType content=discordUrl)
+		.
+			!{opengraph}
+
+		// oEmbed (https://oembed.com/)
+		link(href=oembedUrl title='oEmbed' rel='alternate' type='application/json+oembed')
+
 	body
 		#container
 			#content

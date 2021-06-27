@@ -48,6 +48,20 @@ function formatTimestamp(timestamp) {
 	return DateTime.fromMillis(timestamp).toLocaleString(DateTime.DATETIME_MED);
 }
 
+function formatBytes(bytes, decimals = 2) { // skipcq: JS-0074
+	if (bytes === 0) return '0 Bytes';
+	const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+	const i = Math.floor(Math.log(bytes) / Math.log(KILOBYTES));
+	return parseFloat((bytes / Math.pow(KILOBYTES, i)).toFixed(decimals < 0 ? 0 : decimals)).toString().concat(` ${sizes[i]}`);
+}
+
+function replaceholder(data, { size, timestamp, originalname }) {
+	return data
+		.replace(new RegExp('&size', 'g'), formatBytes(size))
+		.replace(new RegExp('&filename', 'g'), originalname)
+		.replace(new RegExp('&timestamp', 'g'), formatTimestamp(timestamp));
+}
+
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
@@ -68,6 +82,8 @@ module.exports = {
 	getDirectUrl,
 	getResourceColor,
 	formatTimestamp,
+	formatBytes,
+	replaceholder,
 	getSafeExt,
 	randomHexColour,
 	sanitize,
@@ -86,12 +102,6 @@ module.exports = {
 	}),
 	generateToken: () => token(),
 	generateId: (mode, length, gfyLength, originalName) => (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName),
-	formatBytes: (bytes, decimals = 2) => { // skipcq: JS-0074
-		if (bytes === 0) return '0 Bytes';
-		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-		const i = Math.floor(Math.log(bytes) / Math.log(KILOBYTES));
-		return parseFloat((bytes / Math.pow(KILOBYTES, i)).toFixed(decimals < 0 ? 0 : decimals)).toString().concat(` ${sizes[i]}`);
-	},
 	arrayEquals: (arr1, arr2) => arr1.length === arr2.length && arr1.slice().sort().every((value, index) => value === arr2.slice().sort()[index]),
 	downloadTempS3: (file) => new Promise((resolve, reject) =>
 		fetch(getS3url(file.randomId, file.mimetype))

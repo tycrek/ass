@@ -20,12 +20,11 @@ const fetch = require('node-fetch');
 const marked = require('marked');
 const { DateTime } = require('luxon');
 const { WebhookClient, MessageEmbed } = require('discord.js');
-const OpenGraph = require('./ogp');
 const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
 const { uploadLocal, uploadS3, deleteS3 } = require('./storage');
-const { path, saveData, log, verify, getTrueHttp, getTrueDomain, renameFile, generateToken, generateId, formatBytes, formatTimestamp, arrayEquals, getS3url, getDirectUrl, getResourceColor, downloadTempS3, sanitize } = require('./utils');
+const { path, saveData, log, verify, getTrueHttp, getTrueDomain, renameFile, generateToken, generateId, formatBytes, formatTimestamp, arrayEquals, getS3url, getDirectUrl, getSafeExt, getResourceColor, downloadTempS3, sanitize, replaceholder } = require('./utils');
 const { CODE_NO_CONTENT, CODE_BAD_REQUEST, CODE_UNAUTHORIZED, CODE_NOT_FOUND } = require('./MagicNumbers.json');
 //#endregion
 
@@ -240,27 +239,30 @@ function startup() {
 	app.get('/:resourceId', (req, res) => {
 		const { resourceId } = req.ass;
 		const fileData = data[resourceId];
+		const isVideo = fileData.mimetype.includes('video');
 
-		const requiredItems = {
-			randomId: fileData.randomId,
-			originalname: escape(fileData.originalname),
-			mimetype: fileData.mimetype,
-			size: fileData.size,
-			timestamp: fileData.timestamp,
-			opengraph: fileData.opengraph,
-			vibrant: fileData.vibrant,
-		};
+		// Build OpenGraph meta tags
+		const og = fileData.opengraph, ogs = [''];
+		og.title && (ogs.push(`<meta property="og:title" content="${og.title}">`));
+		og.description && (ogs.push(`<meta property="og:description" content="${og.description}">`));
+		og.author && (ogs.push(`<meta property="og:site_name" content="${og.author}">`));
+		og.color && (ogs.push(`<meta name="theme-color" content="${getResourceColor(og.color, fileData.vibrant)}">`));
+		!isVideo && (ogs.push(`<meta name="twitter:card" content="summary_large_image">`));
 
-		// If the client is a social bot (such as Discord or Instagram), send an Open Graph embed
-		if (req.useragent.isBot) res.type('html').send(new OpenGraph(getTrueHttp(), getTrueDomain(), resourceId, requiredItems).build());
-		else res.render('view', {
-			title: requiredItems.originalname,
+		// Send the view to the client
+		res.render('view', {
+			isVideo,
+			title: escape(fileData.originalname),
 			uploader: users[fileData.token].username,
 			timestamp: formatTimestamp(fileData.timestamp),
 			size: formatBytes(fileData.size),
 			color: getResourceColor(fileData.opengraph.color || null, fileData.vibrant),
-			isVideo: fileData.mimetype.includes('video'),
 			resourceAttr: { src: getDirectUrl(resourceId) },
+			discordUrl: `${getDirectUrl(resourceId)}${getSafeExt(fileData.mimetype)}`,
+			oembedUrl: `${getTrueHttp()}${getTrueDomain()}/${resourceId}/oembed.json`,
+			ogtype: isVideo ? 'video.other' : 'image',
+			urlType: `og:${isVideo ? 'video' : 'image'}`,
+			opengraph: replaceholder(ogs.join('\n'), fileData)
 		});
 	});
 
@@ -305,10 +307,10 @@ function startup() {
 		res.type('json').send({
 			version: '1.0',
 			type: mimetype.includes('video') ? 'video' : 'photo',
-			author_name: opengraph.author,
 			author_url: opengraph.authorUrl,
-			provider_name: opengraph.provider,
-			provider_url: opengraph.providerUrl
+			provider_url: opengraph.providerUrl,
+			author_name: replaceholder(opengraph.author || '', data[resourceId]),
+			provider_name: replaceholder(opengraph.provider || '', data[resourceId])
 		});
 	});
 

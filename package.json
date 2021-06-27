@@ -32,7 +32,6 @@
     "escape-html": "^1.0.3",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.6",
-    "express-useragent": "^1.0.15",
     "ffmpeg-static": "^4.3.0",
     "fs-extra": "^9.1.0",
     "helmet": "^4.6.0",
