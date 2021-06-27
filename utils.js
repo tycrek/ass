@@ -11,12 +11,28 @@ const { HTTP, HTTPS, KILOBYTES } = require('./MagicNumbers.json');
 
 const path = (...paths) => Path.join(__dirname, ...paths);
 
+function getTrueHttp() {
+	return ('http').concat(useSsl ? 's' : '').concat('://');
+}
+
+function getTrueDomain(d = domain) {
+	return d.concat((port === HTTP || port === HTTPS || isProxied) ? '' : `:${port}`);
+}
+
 function getSafeExt(type) {
 	return type.includes('video') ? '.mp4' : type.includes('gif') ? '.gif' : '';
 }
 
 function getS3url(s3key, type) {
 	return `https://${s3bucket}.${s3endpoint}/${s3key}${getSafeExt(type)}`;
+}
+
+function randomHexColour() { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
+	const letters = "0123456789ABCDEF";
+	let colour = '#';
+	for (let i = 0; i < 6; i++) // skipcq: JS-0074
+		colour += letters[(Math.floor(Math.random() * letters.length))];
+	return colour;
 }
 
 const idModes = {
@@ -33,11 +49,12 @@ GENERATORS.set(idModes.gfy, gfyGen);
 
 module.exports = {
 	path,
+	getTrueHttp,
+	getTrueDomain,
+	randomHexColour,
 	log: console.log,
 	saveData: (data) => fs.writeJsonSync(Path.join(__dirname, 'data.json'), data, { spaces: 4 }),
 	verify: (req, users) => req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization),
-	getTrueHttp: () => ('http').concat(useSsl ? 's' : '').concat('://'),
-	getTrueDomain: (d = domain) => d.concat((port === HTTP || port === HTTPS || isProxied) ? '' : `:${port}`),
 	renameFile: (req, newName) => new Promise((resolve, reject) => {
 		try {
 			const paths = [req.file.destination, newName];
@@ -55,13 +72,6 @@ module.exports = {
 		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 		const i = Math.floor(Math.log(bytes) / Math.log(KILOBYTES));
 		return parseFloat((bytes / Math.pow(KILOBYTES, i)).toFixed(decimals < 0 ? 0 : decimals)).toString().concat(` ${sizes[i]}`);
-	},
-	randomHexColour: () => { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
-		const letters = "0123456789ABCDEF";
-		let colour = '#';
-		for (let i = 0; i < 6; i++) // skipcq: JS-0074
-			colour += letters[(Math.floor(Math.random() * letters.length))];
-		return colour;
 	},
 	arrayEquals: (arr1, arr2) => arr1.length === arr2.length && arr1.slice().sort().every((value, index) => value === arr2.slice().sort()[index]),
 	downloadTempS3: (file) => new Promise((resolve, reject) =>
