@@ -29,7 +29,7 @@ function getS3url(s3key, type) {
 }
 
 function getDirectUrl(resourceId) {
-	return getTrueHttp() + getTrueDomain() + `/${resourceId}/direct`;
+	return `${getTrueHttp()}${getTrueDomain()}/${resourceId}/direct`;
 }
 
 function randomHexColour() { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
