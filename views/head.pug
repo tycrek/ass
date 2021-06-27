@@ -1,0 +1,14 @@
+style: include modest.css
+style: include dracula.highlight.js.css
+script(src='https://cdn.jsdelivr.net/npm/darkreader@4/darkreader.min.js')
+script(src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.7.1/build/highlight.min.js')
+script.
+	// Dark mode with Dark Reader
+	DarkReader.enable({
+		brightness: 100,
+		contrast: 100,
+		sepia: 0
+	});
+
+	// Highlight code blocks
+	hljs.highlightAll();
