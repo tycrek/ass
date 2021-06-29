@@ -4,45 +4,90 @@
 const fs = require('fs-extra');
 const aws = require('aws-sdk');
 const multer = require('multer');
-const multerS3 = require('tycrek-s3-transform');
-const { getSafeExt } = require('./utils');
-const { diskFilePath, saveWithDate, s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey } = require('./config.json');
+const Thumbnail = require('./thumbnails');
+const Vibrant = require('./vibrant');
+const Hash = require('./hash');
+const { getSafeExt, getDatedDirname, sanitize, generateId } = require('./utils');
+const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOriginal } = require('./config.json');
 
 const s3 = new aws.S3({
 	endpoint: new aws.Endpoint(s3endpoint),
 	credentials: new aws.Credentials({ accessKeyId: s3accessKey, secretAccessKey: s3secretKey })
 });
 
-const uploadS3 = multer({
-	storage: multerS3({
-		s3,
-		bucket: s3bucket,
-		acl: 'public-read',
-		key: (req, file, cb) => cb(null, req.randomId.concat(getSafeExt(file.mimetype))),
-		contentType: (_req, file, cb) => cb(null, file.mimetype)
-	})
-}).single('file');
+function saveFile(req) {
+	return new Promise((resolve, reject) =>
+		fs.ensureDir(getDatedDirname())
+			.then(() => fs.createWriteStream(req.file.path.concat('.temp')))
+			.then((stream) => req.file.stream.pipe(stream).on('finish', resolve).on('error', reject))
+			.catch(reject));
+}
 
-const deleteS3 = (file) =>
-	new Promise((resolve, reject) =>
-		s3.deleteObject({ Bucket: s3bucket, Key: file.randomId.concat(getSafeExt(file.mimetype)) }).promise().then(resolve).catch(reject));
+function getLocalFilename(req) {
+	return `${getDatedDirname()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
+}
 
-const uploadLocal = multer({
-	storage: multer.diskStorage({
-		destination: !saveWithDate ? diskFilePath : (_req, _file, cb) => {
-			// Get current month and year
-			const [month, , year] = new Date().toLocaleDateString('en-US').split('/');
+function processUploaded(req, _, next) {
+	// Fixes
+	req.file.mimetype = req.file.detectedMimeType;
+	req.file.originalname = sanitize(req.file.originalName);
+	req.file.randomId = generateId('random', 32, null, null);
+	req.file.deleteId = generateId('random', 32, null, null);
 
-			// Add 0 before single digit months (6 turns into 06)
-			const folder = `${diskFilePath}/${year}-${`0${month}`.slice(-2)}`; // skipcq: JS-0074
+	// Remove unwanted fields
+	delete req.file.fieldName;
+	delete req.file.originalName;
+	delete req.file.clientReportedMimeType;
+	delete req.file.clientReportedFileExtension;
+	delete req.file.detectedMimeType;
+	delete req.file.detectedFileExtension;
 
-			// Create folder if it doesn't exist
-			fs.ensureDirSync(folder);
+	// Operations
+	saveFile(req)
+		.then(() => req.file.path = req.file.path.concat('.temp'))
+		.then(() => Promise.all([Thumbnail(req.file), Vibrant(req.file), Hash(req.file)]))
+		.then(([thumbnail, vibrant, sha1]) => (
+			req.file.thumbnail = thumbnail, // skipcq: JS-0090
+			req.file.vibrant = vibrant, // skipcq: JS-0090
+			req.file.sha1 = sha1 // skipcq: JS-0090
+		))
 
-			cb(null, folder);
-		}
-	})
-}).single('file');
+		.then(() =>
+			new Promise((resolve, reject) => s3enabled
+
+				// Upload to Amazon S3
+				? s3.putObject({
+					Bucket: s3bucket,
+					Key: req.file.randomId.concat(getSafeExt(req.file.mimetype)),
+					ACL: 'public-read',
+					ContentType: req.file.mimetype,
+					Body: fs.createReadStream(req.file.path)
+				}).promise().then(resolve).catch(reject)
+
+				// Save to local storage
+				: fs.ensureDir(getDatedDirname())
+					.then(() => fs.copy(req.file.path, getLocalFilename(req), { preserveTimestamps: true }))
+					.then(resolve)
+					.catch(reject)
+			))
+		.then(() => fs.remove(req.file.path))
+		.then(() => !s3enabled && (req.file.path = getLocalFilename(req))) // skipcq: JS-0090
+		.then(() => delete req.file.stream)
+		.then(() => next())
+		.catch(next);
+}
+
+function deleteS3(file) {
+	return new Promise((resolve, reject) => s3
+		.deleteObject({ Bucket: s3bucket, Key: file.randomId.concat(getSafeExt(file.mimetype)) })
+		.promise()
+		.then(resolve)
+		.catch(reject));
+}
+
+function bucketSize() {
+	return new Promise((resolve, reject) => (s3enabled ? listAllKeys(resolve, reject) : resolve(0)));
+}
 
 function listAllKeys(resolve, reject, token) {
 	let allKeys = [];
@@ -51,7 +96,9 @@ function listAllKeys(resolve, reject, token) {
 		.catch(reject);
 }
 
-const bucketSize = () =>
-	new Promise((resolve, reject) => (s3enabled ? listAllKeys(resolve, reject) : resolve(0)));
-
-module.exports = { uploadLocal, uploadS3, deleteS3, bucketSize };
+module.exports = {
+	doUpload: multer({ limits: { fileSize: '100MB' } }).single('file'),
+	processUploaded,
+	deleteS3,
+	bucketSize
+};

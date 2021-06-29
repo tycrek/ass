@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, useSsl, resourceIdSize, diskFilePath, gfyIdSize, resourceIdType, isProxied, s3enabled, saveAsOriginal } = require('./config.json');
+const { host, port, useSsl, resourceIdSize, diskFilePath, gfyIdSize, resourceIdType, isProxied, s3enabled } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -19,11 +19,9 @@ const fetch = require('node-fetch');
 const marked = require('marked');
 const { DateTime } = require('luxon');
 const { WebhookClient, MessageEmbed } = require('discord.js');
-const Thumbnail = require('./thumbnails');
-const Vibrant = require('./vibrant');
-const Hash = require('./hash');
-const { uploadLocal, uploadS3, deleteS3 } = require('./storage');
-const { path, saveData, log, verify, getTrueHttp, getTrueDomain, renameFile, generateToken, generateId, formatBytes, formatTimestamp, arrayEquals, getS3url, getDirectUrl, getSafeExt, getResourceColor, downloadTempS3, sanitize, replaceholder } = require('./utils');
+const { doUpload, deleteS3, processUploaded } = require('./storage');
+const { path, saveData, log, verify, getTrueHttp, getTrueDomain, generateToken, generateId, formatBytes,
+	formatTimestamp, arrayEquals, getS3url, getDirectUrl, getSafeExt, getResourceColor, replaceholder } = require('./utils');
 const { CODE_NO_CONTENT, CODE_BAD_REQUEST, CODE_UNAUTHORIZED, CODE_NOT_FOUND } = require('./MagicNumbers.json');
 //#endregion
 
@@ -112,40 +110,8 @@ function startup() {
 		!verify(req, users) ? res.sendStatus(CODE_UNAUTHORIZED) : next(); // skipcq: JS-0093
 	});
 
-	// Generate ID's to use for other functions
-	app.post('/', (req, _res, next) => (req.randomId = generateId('random', 32, null, null), next())); // skipcq: JS-0074, JS-0086, JS-0090
-	app.post('/', (req, _res, next) => (req.deleteId = generateId('random', 32, null, null), next())); // skipcq: JS-0074, JS-0086, JS-0090
-
-	// Upload file (local & S3) // skipcq: JS-0093
-	s3enabled
-		? app.post('/', (req, res, next) => uploadS3(req, res, (error) => ((error) && console.error(error), next())))  // skipcq: JS-0090
-		: app.post('/', uploadLocal, ({ next }) => next());
-
-	// Pre-response operations
-	app.post('/', (req, _res, next) => {
-		req.file.randomId = req.randomId;
-		req.file.deleteId = req.deleteId;
-
-		// Sanitize filename just in case Multer didn't catch it
-		req.file.originalname = sanitize(req.file.originalname);
-
-		// Download a temp copy to work with if using S3 storage
-		(s3enabled ? downloadTempS3(req.file) : new Promise((resolve) => resolve()))
-
-			// Generate the Thumbnail, Vibrant, and SHA1 hash
-			.then(() => Promise.all([Thumbnail(req.file), Vibrant(req.file), Hash(req.file)]))
-			// skipcq: JS-0086
-			.then(([thumbnail, vibrant, sha1]) => (
-				req.file.thumbnail = thumbnail,// skipcq: JS-0090
-				req.file.vibrant = vibrant,// skipcq: JS-0090
-				req.file.sha1 = sha1// skipcq: JS-0090
-			))
-
-			// Remove the temp file if using S3 storage, otherwise rename the local file
-			.then(() => (s3enabled ? fs.remove(path(diskFilePath, req.file.originalname)) : renameFile(req, saveAsOriginal ? req.file.originalname : req.file.sha1)))
-			.then(() => next())
-			.catch((err) => next(err));
-	});
+	// Upload file
+	app.post('/', doUpload, processUploaded, ({ next }) => next());
 
 	// Process uploaded file
 	app.post('/', (req, res) => {
@@ -275,7 +241,7 @@ function startup() {
 			}),
 			local: () => {
 				res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.size).type(fileData.mimetype);
-				fs.createReadStream(path(fileData.path)).pipe(res);
+				fs.createReadStream(fileData.path).pipe(res);
 			}
 		};
 
@@ -332,6 +298,11 @@ function startup() {
 				res.type('text').send('File has been deleted!');
 			})
 			.catch(console.error);
+	});
+
+	app.use((err, _req, res, _next) => {
+		console.error(err);
+		res.sendStatus(500);
 	});
 
 	// Host the server
