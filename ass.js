@@ -106,6 +106,7 @@ function startup() {
 
 	// Block unauthorized requests and attempt token sanitization
 	app.post('/', (req, res, next) => {
+		req.headers.authorization = req.headers.authorization || '';
 		req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
 		!verify(req, users) ? res.sendStatus(CODE_UNAUTHORIZED) : next(); // skipcq: JS-0093
 	});
