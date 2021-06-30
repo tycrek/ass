@@ -8,7 +8,7 @@ const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
 const { getSafeExt, getDatedDirname, sanitize, generateId } = require('./utils');
-const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOriginal } = require('./config.json');
+const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOriginal, maxUploadSize } = require('./config.json');
 
 const s3 = new aws.S3({
 	endpoint: new aws.Endpoint(s3endpoint),
@@ -97,7 +97,7 @@ function listAllKeys(resolve, reject, token) {
 }
 
 module.exports = {
-	doUpload: multer({ limits: { fileSize: '100MB' } }).single('file'),
+	doUpload: multer({ limits: { fileSize: `${maxUploadSize}MB` } }).single('file'),
 	processUploaded,
 	deleteS3,
 	bucketSize

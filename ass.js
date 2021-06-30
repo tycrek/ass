@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, useSsl, resourceIdSize, diskFilePath, gfyIdSize, resourceIdType, isProxied, s3enabled } = require('./config.json');
+const { host, port, maxUploadSize, useSsl, resourceIdSize, diskFilePath, gfyIdSize, resourceIdType, isProxied, s3enabled } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -113,6 +113,7 @@ function startup() {
 
 	// Upload file
 	app.post('/', doUpload, processUploaded, ({ next }) => next());
+	app.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? res.status(413).send(`Max upload size: ${maxUploadSize}MB`) : next(err));
 
 	// Process uploaded file
 	app.post('/', (req, res) => {
