@@ -28,6 +28,7 @@
 - ✔️ Usage metrics
 - ✔️ Thumbnail support
 - ✔️ Basic multi-user support
+- ✔️ Configurable global upload limit (per-user coming soon!)
 - ✔️ Local storage *or* block-storage support for [Amazon S3](https://aws.amazon.com/s3/) (including [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces/))
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
@@ -89,6 +90,7 @@ In your Cloudflare DNS dashboard, make sure your domain/subdomain is set to **DN
    - URL: `$json:.resource$`
    - Thumbnail: `$json:.thumbnail$`
    - Deletion URL: `$json:.delete$`
+   - Error message: `$response$`
    - MagicCap users: **do not** include the `.` in the above (i.e. `$json:resource$`)
 6. The file `sample_config.sxcu` can also be modified & imported to suit your needs
 
