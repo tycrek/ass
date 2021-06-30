@@ -7,7 +7,7 @@ const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
 const gfyGen = require('./generators/gfycat');
-const { useSsl, port, domain, isProxied, diskFilePath, s3bucket, s3endpoint } = require('./config.json');
+const { useSsl, port, domain, isProxied, diskFilePath, saveWithDate, s3bucket, s3endpoint } = require('./config.json');
 const { HTTP, HTTPS, KILOBYTES } = require('./MagicNumbers.json');
 
 const path = (...paths) => Path.join(__dirname, ...paths);
@@ -62,6 +62,16 @@ function replaceholder(data, { size, timestamp, originalname }) {
 		.replace(/&timestamp/g, formatTimestamp(timestamp));
 }
 
+function getDatedDirname() {
+	if (!saveWithDate) return diskFilePath;
+
+	// Get current month and year
+	const [month, , year] = new Date().toLocaleDateString('en-US').split('/');
+
+	// Add 0 before single digit months (6 turns into 06)
+	return `${diskFilePath}${diskFilePath.endsWith('/') ? '' : '/'}${year}-${`0${month}`.slice(-2)}`; // skipcq: JS-0074
+}
+
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
@@ -84,6 +94,7 @@ module.exports = {
 	formatTimestamp,
 	formatBytes,
 	replaceholder,
+	getDatedDirname,
 	getSafeExt,
 	randomHexColour,
 	sanitize,

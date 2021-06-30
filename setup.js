@@ -3,6 +3,7 @@ const config = {
 	host: '0.0.0.0',
 	port: 40115,
 	domain: 'upload.example.com',
+	maxUploadSize: 50,
 	useSsl: true,
 	isProxied: true,
 	resourceIdSize: 12,
@@ -54,6 +55,12 @@ if (require.main === module) {
 				type: 'string',
 				required: true,
 				message: 'You must input a valid domain name or IP to continue'
+			},
+			maxUploadSize: {
+				description: `Max allowable uploaded filesize, in megabytes`,
+				type: 'integer',
+				default: config.maxUploadSize,
+				require: false
 			},
 			useSsl: {
 				description: 'Use SSL (requires reverse proxy!)',
