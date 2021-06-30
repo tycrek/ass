@@ -113,7 +113,7 @@ function startup() {
 
 	// Upload file
 	app.post('/', doUpload, processUploaded, ({ next }) => next());
-	app.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`) : next(err));
+	app.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`) : next(err)); // skipcq: JS-0229
 
 	// Process uploaded file
 	app.post('/', (req, res) => {
