@@ -22,7 +22,7 @@ const { WebhookClient, MessageEmbed } = require('discord.js');
 const { doUpload, deleteS3, processUploaded } = require('./storage');
 const { path, saveData, log, verify, getTrueHttp, getTrueDomain, generateToken, generateId, formatBytes,
 	formatTimestamp, arrayEquals, getS3url, getDirectUrl, getSafeExt, getResourceColor, replaceholder } = require('./utils');
-const { CODE_NO_CONTENT, CODE_BAD_REQUEST, CODE_UNAUTHORIZED, CODE_NOT_FOUND } = require('./MagicNumbers.json');
+const { CODE_NO_CONTENT, CODE_BAD_REQUEST, CODE_UNAUTHORIZED, CODE_NOT_FOUND, CODE_PAYLOAD_TOO_LARGE, CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.json');
 //#endregion
 
 //#region Variables, module setup
@@ -113,7 +113,7 @@ function startup() {
 
 	// Upload file
 	app.post('/', doUpload, processUploaded, ({ next }) => next());
-	app.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? res.status(413).send(`Max upload size: ${maxUploadSize}MB`) : next(err));
+	app.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`) : next(err));
 
 	// Process uploaded file
 	app.post('/', (req, res) => {
@@ -302,9 +302,9 @@ function startup() {
 			.catch(console.error);
 	});
 
-	app.use((err, _req, res, _next) => {
+	app.use(([err, , res,]) => {
 		console.error(err);
-		res.sendStatus(500);
+		res.sendStatus(CODE_INTERNAL_SERVER_ERROR);
 	});
 
 	// Host the server

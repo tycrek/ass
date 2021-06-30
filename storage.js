@@ -10,6 +10,8 @@ const Hash = require('./hash');
 const { getSafeExt, getDatedDirname, sanitize, generateId } = require('./utils');
 const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOriginal, maxUploadSize } = require('./config.json');
 
+const ID_GEN_LENGTH = 32;
+
 const s3 = new aws.S3({
 	endpoint: new aws.Endpoint(s3endpoint),
 	credentials: new aws.Credentials({ accessKeyId: s3accessKey, secretAccessKey: s3secretKey })
@@ -31,8 +33,8 @@ function processUploaded(req, _, next) {
 	// Fixes
 	req.file.mimetype = req.file.detectedMimeType;
 	req.file.originalname = sanitize(req.file.originalName);
-	req.file.randomId = generateId('random', 32, null, null);
-	req.file.deleteId = generateId('random', 32, null, null);
+	req.file.randomId = generateId('random', ID_GEN_LENGTH, null, null);
+	req.file.deleteId = generateId('random', ID_GEN_LENGTH, null, null);
 
 	// Remove unwanted fields
 	delete req.file.fieldName;
@@ -44,8 +46,9 @@ function processUploaded(req, _, next) {
 
 	// Operations
 	saveFile(req)
-		.then(() => req.file.path = req.file.path.concat('.temp'))
+		.then(() => req.file.path = req.file.path.concat('.temp')) // skipcq: JS-0086
 		.then(() => Promise.all([Thumbnail(req.file), Vibrant(req.file), Hash(req.file)]))
+		// skipcq: JS-0086
 		.then(([thumbnail, vibrant, sha1]) => (
 			req.file.thumbnail = thumbnail, // skipcq: JS-0090
 			req.file.vibrant = vibrant, // skipcq: JS-0090
@@ -53,6 +56,7 @@ function processUploaded(req, _, next) {
 		))
 
 		.then(() =>
+			// skipcq: JS-0229
 			new Promise((resolve, reject) => s3enabled
 
 				// Upload to Amazon S3
@@ -85,15 +89,15 @@ function deleteS3(file) {
 		.catch(reject));
 }
 
-function bucketSize() {
-	return new Promise((resolve, reject) => (s3enabled ? listAllKeys(resolve, reject) : resolve(0)));
-}
-
 function listAllKeys(resolve, reject, token) {
 	let allKeys = [];
 	s3.listObjectsV2({ Bucket: s3bucket, ContinuationToken: token }).promise()
 		.then((data) => (allKeys = allKeys.concat(data.Contents), data.IsTruncated ? listAllKeys(resolve, reject, data.NextContinuationToken) : resolve(allKeys.length))) // skipcq: JS-0086, JS-0090
 		.catch(reject);
+}
+
+function bucketSize() {
+	return new Promise((resolve, reject) => (s3enabled ? listAllKeys(resolve, reject) : resolve(0)));
 }
 
 module.exports = {
