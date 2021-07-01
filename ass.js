@@ -223,7 +223,7 @@ function startup() {
 			color: getResourceColor(fileData.opengraph.color || null, fileData.vibrant),
 			resourceAttr: { src: getDirectUrl(resourceId) },
 			discordUrl: `${getDirectUrl(resourceId)}${getSafeExt(fileData.mimetype)}`,
-			oembedUrl: `${getTrueHttp()}${getTrueDomain()}/${resourceId}/oembed.json`,
+			oembedUrl: `${getTrueHttp()}${getTrueDomain()}/${resourceId}/oembed`,
 			ogtype: isVideo ? 'video.other' : 'image',
 			urlType: `og:${isVideo ? 'video' : 'image'}`,
 			opengraph: replaceholder(ogs.join('\n'), fileData)
@@ -263,7 +263,7 @@ function startup() {
 	// oEmbed response for clickable authors/providers
 	// https://oembed.com/
 	// https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
-	app.get('/:resourceId/oembed.json', (req, res) => {
+	app.get('/:resourceId/oembed', (req, res) => {
 		const { resourceId } = req.ass;
 
 		// Build the oEmbed object & send the response
