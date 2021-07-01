@@ -7,27 +7,25 @@ try {
 }
 
 // Load the config
-const { host, port, maxUploadSize, useSsl, resourceIdSize, diskFilePath, gfyIdSize, resourceIdType, isProxied, s3enabled } = require('./config.json');
+const { host, port, useSsl, diskFilePath, isProxied } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
 const express = require('express');
 const helmet = require("helmet");
-const escape = require('escape-html');
 const rateLimit = require("express-rate-limit");
-const fetch = require('node-fetch');
-const marked = require('marked');
-const { DateTime } = require('luxon');
-const { WebhookClient, MessageEmbed } = require('discord.js');
-const { doUpload, deleteS3, processUploaded } = require('./storage');
-const { path, saveData, log, verify, getTrueHttp, getTrueDomain, generateToken, generateId, formatBytes,
-	formatTimestamp, arrayEquals, getS3url, getDirectUrl, getSafeExt, getResourceColor, replaceholder } = require('./utils');
-const { CODE_NO_CONTENT, CODE_BAD_REQUEST, CODE_UNAUTHORIZED, CODE_NOT_FOUND, CODE_PAYLOAD_TOO_LARGE, CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.json');
+const uploadRouter = require('./routers/upload');
+const resourceRouter = require('./routers/resource');
+const { path, log, generateToken } = require('./utils');
+const { CODE_NO_CONTENT, CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.json');
 //#endregion
 
 //#region Variables, module setup
-const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 const app = express();
+const ROUTERS = {
+	upload: uploadRouter,
+	resource: resourceRouter
+};
 
 // Configure filename and location settings
 let users = {};
@@ -53,22 +51,16 @@ function preStartup() {
 	} else log('File [auth.json] exists');
 
 	// Read users and data
-	users = fs.readJsonSync(path('auth.json')).users || {};
-	data = fs.readJsonSync(path('data.json'));
+	users = require('./auth');
+	data = require('./data');
 	log('Users & data read from filesystem');
-
-	// Monitor auth.json for changes (triggered by running 'npm run new-token')
-	fs.watch(path('auth.json'), { persistent: false }, (eventType) => eventType === 'change' && fs.readJson(path('auth.json'))
-		.then((json) => !(arrayEquals(Object.keys(users), Object.keys(json.users))) && (users = json.users) && log(`New token added: ${Object.keys(users)[Object.keys(users).length - 1]}`)) // skipcq: JS-0243
-		.catch(console.error));
 
 	// Create thumbnails directory
 	fs.ensureDirSync(path(diskFilePath, 'thumbnails'));
 }
 
 /**
- * Builds the router
- * ///todo: make this separate
+ * Builds the router & starts the server
  */
 function startup() {
 	// Enable/disable Express features
@@ -96,212 +88,11 @@ function startup() {
 	// Don't process favicon requests (custom middleware)
 	app.use((req, res, next) => (req.url.includes('favicon.ico') ? res.sendStatus(CODE_NO_CONTENT) : next()));
 
-	// Index
-	app.get('/', (_req, res, next) =>
-		fs.readFile(path('README.md'))
-			.then((bytes) => bytes.toString())
-			.then(marked)
-			.then((d) => res.render('index', { data: d }))
-			.catch(next));
+	// Assign routers
+	app.use('/', ROUTERS.upload);
+	app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource);
 
-	// Block unauthorized requests and attempt token sanitization
-	app.post('/', (req, res, next) => {
-		req.headers.authorization = req.headers.authorization || '';
-		req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
-		!verify(req, users) ? res.sendStatus(CODE_UNAUTHORIZED) : next(); // skipcq: JS-0093
-	});
-
-	// Upload file
-	app.post('/', doUpload, processUploaded, ({ next }) => next());
-	app.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`) : next(err)); // skipcq: JS-0229
-
-	// Process uploaded file
-	app.post('/', (req, res) => {
-		// Load overrides
-		const trueDomain = getTrueDomain(req.headers["x-ass-domain"]);
-		const generator = req.headers["x-ass-access"] || resourceIdType;
-
-		// Get the uploaded time in milliseconds
-		req.file.timestamp = DateTime.now().toMillis();
-
-		// Keep track of the token that uploaded the resource
-		req.file.token = req.token;
-
-		// Attach any embed overrides, if necessary
-		req.file.opengraph = {
-			title: req.headers['x-ass-og-title'],
-			description: req.headers['x-ass-og-description'],
-			author: req.headers['x-ass-og-author'],
-			authorUrl: req.headers['x-ass-og-author-url'],
-			provider: req.headers['x-ass-og-provider'],
-			providerUrl: req.headers['x-ass-og-provider-url'],
-			color: req.headers['x-ass-og-color']
-		};
-
-		// Save the file information
-		const resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
-		data[resourceId.split('.')[0]] = req.file;
-		saveData(data);
-
-		// Log the upload
-		const logInfo = `${req.file.originalname} (${req.file.mimetype})`;
-		log(`Uploaded: ${logInfo} (user: ${users[req.token] ? users[req.token].username : '<token-only>'})`);
-
-		// Build the URLs
-		const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
-		const thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
-		const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
-
-		// Send the response
-		res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
-			.on('finish', () => {
-
-				// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
-				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
-
-					// Build the webhook client & embed
-					const whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
-					const embed = new MessageEmbed()
-						.setTitle(logInfo)
-						.setURL(resourceUrl)
-						.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
-						.setThumbnail(thumbnailUrl)
-						.setColor(req.file.vibrant)
-						.setTimestamp(req.file.timestamp);
-
-					// Send the embed to the webhook, then delete the client after to free resources
-					whc.send(null, {
-						username: req.headers['x-ass-webhook-username'] || 'ass',
-						avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
-						embeds: [embed]
-					}).then(() => whc.destroy());
-				}
-
-				// Also update the users upload count
-				if (!users[req.token]) {
-					const generateUsername = () => generateId('random', 20, null); // skipcq: JS-0074
-					let username = generateUsername();
-					while (Object.values(users).findIndex((user) => user.username === username) !== -1)  // skipcq: JS-0073
-						username = generateUsername();
-					users[req.token] = { username, count: 0 };
-				}
-				users[req.token].count += 1;
-				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
-			});
-	});
-
-	// Middleware for parsing the resource ID and handling 404
-	app.use('/:resourceId', (req, res, next) => {
-		// Parse the resource ID
-		req.ass = { resourceId: escape(req.params.resourceId).split('.')[0] };
-
-		// If the ID is invalid, return 404. Otherwise, continue normally // skipcq: JS-0093
-		(!req.ass.resourceId || !data[req.ass.resourceId]) ? res.sendStatus(CODE_NOT_FOUND) : next();
-	});
-
-	// View file
-	app.get('/:resourceId', (req, res) => {
-		const { resourceId } = req.ass;
-		const fileData = data[resourceId];
-		const isVideo = fileData.mimetype.includes('video');
-
-		// Build OpenGraph meta tags
-		const og = fileData.opengraph, ogs = [''];
-		og.title && (ogs.push(`<meta property="og:title" content="${og.title}">`)); // skipcq: JS-0093
-		og.description && (ogs.push(`<meta property="og:description" content="${og.description}">`)); // skipcq: JS-0093
-		og.author && (ogs.push(`<meta property="og:site_name" content="${og.author}">`)); // skipcq: JS-0093
-		og.color && (ogs.push(`<meta name="theme-color" content="${getResourceColor(og.color, fileData.vibrant)}">`)); // skipcq: JS-0093
-		!isVideo && (ogs.push(`<meta name="twitter:card" content="summary_large_image">`)); // skipcq: JS-0093
-
-		// Send the view to the client
-		res.render('view', {
-			isVideo,
-			title: escape(fileData.originalname),
-			uploader: users[fileData.token].username,
-			timestamp: formatTimestamp(fileData.timestamp),
-			size: formatBytes(fileData.size),
-			color: getResourceColor(fileData.opengraph.color || null, fileData.vibrant),
-			resourceAttr: { src: getDirectUrl(resourceId) },
-			discordUrl: `${getDirectUrl(resourceId)}${getSafeExt(fileData.mimetype)}`,
-			oembedUrl: `${getTrueHttp()}${getTrueDomain()}/${resourceId}/oembed`,
-			ogtype: isVideo ? 'video.other' : 'image',
-			urlType: `og:${isVideo ? 'video' : 'image'}`,
-			opengraph: replaceholder(ogs.join('\n'), fileData)
-		});
-	});
-
-	// Direct resource
-	app.get('/:resourceId/direct*', (req, res) => {
-		const { resourceId } = req.ass;
-		const fileData = data[resourceId];
-
-		// Return the file differently depending on what storage option was used
-		const uploaders = {
-			s3: () => fetch(getS3url(fileData.randomId, fileData.mimetype)).then((file) => {
-				file.headers.forEach((value, header) => res.setHeader(header, value));
-				file.body.pipe(res);
-			}),
-			local: () => {
-				res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.size).type(fileData.mimetype);
-				fs.createReadStream(fileData.path).pipe(res);
-			}
-		};
-
-		uploaders[s3enabled ? 's3' : 'local']();
-	});
-
-	// Thumbnail response
-	app.get('/:resourceId/thumbnail', (req, res) => {
-		const { resourceId } = req.ass;
-
-		// Read the file and send it to the client
-		fs.readFile(path(diskFilePath, 'thumbnails/', data[resourceId].thumbnail))
-			.then((fileData) => res.type('jpg').send(fileData))
-			.catch(console.error);
-	});
-
-	// oEmbed response for clickable authors/providers
-	// https://oembed.com/
-	// https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
-	app.get('/:resourceId/oembed', (req, res) => {
-		const { resourceId } = req.ass;
-
-		// Build the oEmbed object & send the response
-		const { opengraph, mimetype } = data[resourceId];
-		res.type('json').send({
-			version: '1.0',
-			type: mimetype.includes('video') ? 'video' : 'photo',
-			author_url: opengraph.authorUrl,
-			provider_url: opengraph.providerUrl,
-			author_name: replaceholder(opengraph.author || '', data[resourceId]),
-			provider_name: replaceholder(opengraph.provider || '', data[resourceId])
-		});
-	});
-
-	// Delete file
-	app.get('/:resourceId/delete/:deleteId', (req, res) => {
-		const { resourceId } = req.ass;
-		const deleteId = escape(req.params.deleteId);
-		const fileData = data[resourceId];
-
-		// If the delete ID doesn't match, don't delete the file
-		if (deleteId !== fileData.deleteId) return res.sendStatus(CODE_UNAUTHORIZED);
-
-		// If the ID is invalid, return 400 because we are unable to process the resource
-		if (!resourceId || !fileData) return res.sendStatus(CODE_BAD_REQUEST);
-
-		log(`Deleted: ${fileData.originalname} (${fileData.mimetype})`);
-
-		// Save the file information
-		Promise.all([s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)), fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))])
-			.then(() => {
-				delete data[resourceId];
-				saveData(data);
-				res.type('text').send('File has been deleted!');
-			})
-			.catch(console.error);
-	});
-
+	// Error handler
 	app.use(([err, , res,]) => {
 		console.error(err);
 		res.sendStatus(CODE_INTERNAL_SERVER_ERROR);
