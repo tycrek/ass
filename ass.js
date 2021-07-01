@@ -90,7 +90,7 @@ function startup() {
 
 	// Assign routers
 	app.use('/', ROUTERS.upload);
-	app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource);
+	app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 	// Error handler
 	app.use(([err, , res,]) => {

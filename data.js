@@ -2,7 +2,7 @@
  * Used for global data management
  */
 
-let data;
+let data = {};
 try {
 	data = require('./data.json');
 } catch (ex) {

@@ -5,7 +5,7 @@
 const fs = require('fs-extra');
 const { log, path, arrayEquals } = require('./utils');
 
-let users;
+let users = {};
 try {
 	users = require('./auth.json').users || {};
 
