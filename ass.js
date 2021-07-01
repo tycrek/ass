@@ -12,8 +12,8 @@ const { host, port, useSsl, diskFilePath, isProxied } = require('./config.json')
 //#region Imports
 const fs = require('fs-extra');
 const express = require('express');
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const uploadRouter = require('./routers/upload');
 const resourceRouter = require('./routers/resource');
 const { path, log, generateToken } = require('./utils');
@@ -65,7 +65,7 @@ function preStartup() {
 function startup() {
 	// Enable/disable Express features
 	app.enable('case sensitive routing');
-	app.disable("x-powered-by");
+	app.disable('x-powered-by');
 
 	// Set Express variables
 	app.set('trust proxy', isProxied);

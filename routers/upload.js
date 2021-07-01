@@ -35,8 +35,8 @@ router.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_S
 // Process uploaded file
 router.post('/', (req, res) => {
 	// Load overrides
-	const trueDomain = getTrueDomain(req.headers["x-ass-domain"]);
-	const generator = req.headers["x-ass-access"] || resourceIdType;
+	const trueDomain = getTrueDomain(req.headers['x-ass-domain']);
+	const generator = req.headers['x-ass-access'] || resourceIdType;
 
 	// Get the uploaded time in milliseconds
 	req.file.timestamp = DateTime.now().toMillis();

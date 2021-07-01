@@ -9,7 +9,7 @@ const config = {
 	resourceIdSize: 12,
 	gfyIdSize: 2,
 	resourceIdType: 'zws',
-	diskFilePath: "uploads/",
+	diskFilePath: 'uploads/',
 	saveWithDate: false,
 	saveAsOriginal: true,
 	s3enabled: false,

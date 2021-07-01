@@ -33,7 +33,7 @@ function getDirectUrl(resourceId) {
 }
 
 function randomHexColour() { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
-	const letters = "0123456789ABCDEF";
+	const letters = '0123456789ABCDEF';
 	let colour = '#';
 	for (let i = 0; i < 6; i++) // skipcq: JS-0074
 		colour += letters[(Math.floor(Math.random() * letters.length))];
