@@ -97,7 +97,7 @@ function startup() {
 
 	// Assign routers ('/:resouceId' always needs to be LAST since it's a catch-all route)
 	app.use('/', ROUTERS.upload);
-	ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router);
+	ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router); // skipcq: JS-0093
 	app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 	// Error handler
