@@ -22,7 +22,7 @@ const { CODE_NO_CONTENT, CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.
 
 // Set up premium frontend
 const FRONTEND_NAME = 'ass-x'; // <-- Change this to use a custom frontend
-const ASS_PREMIUM = fs.existsSync(`./${FRONTEND_NAME}/package.json`) ? require(`./${FRONTEND_NAME}`) : { enabled: false };
+const ASS_PREMIUM = fs.existsSync(`./${FRONTEND_NAME}/package.json`) ? (require('submodule'), require(`./${FRONTEND_NAME}`)) : { enabled: false };
 
 //#region Variables, module setup
 const app = express();
@@ -63,7 +63,7 @@ function preStartup() {
 	fs.ensureDirSync(path(diskFilePath, 'thumbnails'));
 
 	// Print frontend operating mode
-	log(`Frontend: ${ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : '<none>'}`)
+	log(`Frontend: ${ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : '<none>'}`);
 }
 
 /**

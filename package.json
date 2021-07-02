@@ -45,6 +45,7 @@
     "pug": "^3.0.2",
     "sanitize-filename": "^1.6.3",
     "stream-to-array": "^2.3.0",
+    "submodule": "^1.2.1",
     "tycrek-s3-transform": "^3.3.0",
     "uuid": "^8.3.2"
   }
