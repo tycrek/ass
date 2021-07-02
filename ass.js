@@ -62,7 +62,7 @@ function preStartup() {
 	// Create thumbnails directory
 	fs.ensureDirSync(path(diskFilePath, 'thumbnails'));
 
-	// Print front-end operating mode
+	// Print frontend operating mode
 	log(`Frontend: ${ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : '<none>'}`)
 }
 

@@ -149,6 +149,32 @@ Once you have these, add the following HTTP headers to your ShareX config:
 
 Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, and a link to delete the file. To disable webhooks, simply remove the headers from your config.
 
+## Dashboard frontends
+
+ass is intended to provide a strong backend for developers to build their own frontends around. The easiest way to do this is with a [Git Submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). Your submodule should be a **separate** git repo. Make sure you [adjust the `FRONTEND_NAME`](https://github.com/tycrek/ass/blob/d766bd15cf8ac851058c8abf37238f1608d8c305/ass.js#L24) to match your frontend. To make updates easier, it is recommended to make a new branch. Since submodules are their own dedicated projects, you are free to build the router however you wish, as long as it exports the required items detailed below.
+
+Sample submodule entry file:
+
+```js
+const { name, version } = require('./package.json');
+const express = require('express');
+const router = express.Router();
+
+router.all('/', (_req, res) => res.send('My awesome dashboard!'));
+
+// These exports are REQUIRED by ass, so don't forget to set them!
+module.exports = {
+	router,                       // The dashboard router itself
+	enabled: true,                // Required to activate frontend in ass; DO NOT change unless you want to disable your frontend
+	brand: `${name} v${version}`, // Printed in ass logs & reported to client. Can be changed to your liking
+	endpoint: '/dashboard'        // URL to use for your dashboard router. ass will automatically set up Express to use this value. Can be changed to your liking
+};
+```
+
+Now you should see `My awesome dashboard!` when you navigate to `http://your-ass-url/dashboard`.
+
+**Disclaimer:** custom frontends are still experimental. Currently ass has no API, but I already plan on writing that very soon. For now, you can make your dashboard use `const users = require('../auth')` & `const data = require('../data')` (these values are recognized globally throughout ass, so they will stay up-to-date as users upload).
+
 ## Flameshot users (Linux)
 
 Use [this script](https://github.com/tycrek/ass/blob/master/flameshot_example.sh) kindly provided by [@ToxicAven](https://github.com/ToxicAven). For the `KEY`, put your token.
