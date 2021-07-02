@@ -20,8 +20,9 @@ const { path, log, generateToken } = require('./utils');
 const { CODE_NO_CONTENT, CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.json');
 //#endregion
 
-// Set up ass-x
-const ASS_PREMIUM = fs.existsSync('./ass-x/package.json') ? require('./ass-x') : { enabled: false };
+// Set up premium frontend
+const FRONTEND_NAME = 'ass-x'; // <-- Change this to use a custom frontend
+const ASS_PREMIUM = fs.existsSync(`./${FRONTEND_NAME}/package.json`) ? require(`./${FRONTEND_NAME}`) : { enabled: false };
 
 //#region Variables, module setup
 const app = express();
