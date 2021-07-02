@@ -65,7 +65,7 @@ The installation may look daunting but it's really pretty straightforward. Just 
 
 ### Generating new tokens
 
-If you need to generate a new token at any time, run `npm run new-token`. This will **automatically** load the new token so there is no need to restart ass.
+If you need to generate a new token at any time, run `npm run new-token <username>`. This will **automatically** load the new token so there is no need to restart ass. Username field is optional; if left blank, a random username will be created.
 
 ### Cloudflare users
 
