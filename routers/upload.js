@@ -15,7 +15,7 @@ const router = express.Router();
 
 // Index
 router.get('/', (_req, res, next) =>
-	fs.readFile(path('../README.md'))
+	fs.readFile(path('README.md'))
 		.then((bytes) => bytes.toString())
 		.then(marked)
 		.then((d) => res.render('index', { data: d }))
