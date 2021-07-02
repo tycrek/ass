@@ -20,6 +20,9 @@ const { path, log, generateToken } = require('./utils');
 const { CODE_NO_CONTENT, CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.json');
 //#endregion
 
+// Set up ass-x
+const ASS_PREMIUM = fs.existsSync('./ass-x/package.json') ? require('./ass-x') : { enabled: false };
+
 //#region Variables, module setup
 const app = express();
 const ROUTERS = {
@@ -57,6 +60,9 @@ function preStartup() {
 
 	// Create thumbnails directory
 	fs.ensureDirSync(path(diskFilePath, 'thumbnails'));
+
+	// Print front-end operating mode
+	log(`Frontend: ${ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : '<none>'}`)
 }
 
 /**
@@ -88,8 +94,9 @@ function startup() {
 	// Don't process favicon requests (custom middleware)
 	app.use((req, res, next) => (req.url.includes('favicon.ico') ? res.sendStatus(CODE_NO_CONTENT) : next()));
 
-	// Assign routers
+	// Assign routers ('/:resouceId' always needs to be LAST since it's a catch-all route)
 	app.use('/', ROUTERS.upload);
+	ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router);
 	app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 	// Error handler
