@@ -30,6 +30,7 @@
 - ✔️ Basic multi-user support
 - ✔️ Configurable global upload limit (per-user coming soon!)
 - ✔️ Local storage *or* block-storage support for [Amazon S3](https://aws.amazon.com/s3/) (including [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces/))
+- ✔️ Custom pluggable frontend dashboards using [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
    - **Mixed-case alphanumeric**
