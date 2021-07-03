@@ -13,7 +13,6 @@ const { host, port, useSsl, diskFilePath, isProxied } = require('./config.json')
 const fs = require('fs-extra');
 const express = require('express');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const uploadRouter = require('./routers/upload');
 const resourceRouter = require('./routers/resource');
 const { path, log } = require('./utils');
@@ -56,12 +55,6 @@ app.use(helmet.xssFilter());
 app.use(helmet.referrerPolicy());
 app.use(helmet.dnsPrefetchControl());
 useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
-
-// Rate limit middleware
-app.use(rateLimit({
-	windowMs: 1000 * 60, // 60 seconds // skipcq: JS-0074
-	max: 90 // Limit each IP to 30 requests per windowMs // skipcq: JS-0074
-}));
 
 // Don't process favicon requests (custom middleware)
 app.use((req, res, next) => (req.url.includes('favicon.ico') ? res.sendStatus(CODE_NO_CONTENT) : next()));
