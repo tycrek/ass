@@ -7,6 +7,7 @@ const { bucketSize } = require('./storage');
 module.exports = () => {
 	const data = fs.readJsonSync(path.join(__dirname, 'data.json'));
 	const { users } = fs.readJsonSync(path.join(__dirname, 'auth.json'));
+	Object.keys(users).forEach((token) => users[token].count = 0);
 
 	let totalSize = 0;
 	let oldSize = 0;
@@ -17,6 +18,7 @@ module.exports = () => {
 			else {
 				if (!users[token].size) users[token].size = 0;
 				users[token].size += size;
+				users[token].count++;
 			}
 		} catch (ex) {
 			// Silently handle missing tokens from dev environment -tycrek
