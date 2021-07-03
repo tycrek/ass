@@ -10,6 +10,7 @@
     "new-token": "node generators/token.js",
     "update": "git restore package-lock.json && git pull && npm i && npm run restart",
     "restart": "systemctl restart ass.service",
+    "reset": "rm data.json && rm -dr uploads/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
