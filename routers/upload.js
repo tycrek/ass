@@ -103,7 +103,7 @@ router.post('/', (req, res) => {
 				users[req.token] = { username, count: 0 };
 			}
 			users[req.token].count += 1;
-			fs.writeJsonSync(path('../auth.json'), { users }, { spaces: 4 })
+			fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
 		});
 });
 
