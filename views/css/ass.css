@@ -1,13 +1,14 @@
-/* Modest dark fixes */
-pre, code { background-color: unset !important; }
+/* Modest fixes */
+pre, code { background-color: #1A1A1A !important; }
 h1, h2, h3 { border-bottom: 2px solid #323232 !important; }
+pre { overflow-x: hidden !important; }
 
 /* Dark theme */
 body {
-	background-color: #212121;
-	color: #BDBDBD;
+	background-color: #212121 !important;
+	color: #BDBDBD !important;
 }
 
-body, button {
-	text-shadow: 1px 1px 2px black;
-}
+body, button { text-shadow: 1px 1px 1px black; }
+code { color: #EEE !important; }
+pre { border-radius: 16px; }
