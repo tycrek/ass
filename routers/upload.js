@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const marked = require('marked');
-const rateLimit = require('express-rate-limit');
+//const rateLimit = require('express-rate-limit');
 const { DateTime } = require('luxon');
 const { WebhookClient, MessageEmbed } = require('discord.js');
 const { doUpload, processUploaded } = require('../storage');
@@ -23,10 +23,10 @@ router.get('/', (_req, res, next) =>
 		.catch(next));
 
 // Rate limit middleware
-router.use('/', rateLimit({
+/* router.use('/', rateLimit({
 	windowMs: 1000 * 60, // 60 seconds // skipcq: JS-0074
 	max: 90 // Limit each IP to 30 requests per windowMs // skipcq: JS-0074
-}));
+})); */
 
 // Block unauthorized requests and attempt token sanitization
 router.post('/', (req, res, next) => {
