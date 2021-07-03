@@ -6,7 +6,6 @@ let data = {};
 try {
 	data = require('./data.json');
 } catch (ex) {
-	console.error(ex);
 	data = {};
 }
 
