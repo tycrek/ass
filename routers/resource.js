@@ -56,6 +56,10 @@ router.get('/direct*', (req, res) => {
 	const { resourceId } = req.ass;
 	const fileData = data[resourceId];
 
+	// Send file as an attachement for downloads
+	if (req.query.download)
+		res.header('Content-Disposition', `attachment; filename="${fileData.originalname}"`);
+
 	// Return the file differently depending on what storage option was used
 	const uploaders = {
 		s3: () => fetch(getS3url(fileData.randomId, fileData.mimetype)).then((file) => {
