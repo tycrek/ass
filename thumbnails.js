@@ -6,8 +6,11 @@ const { path } = require('./utils');
 const { diskFilePath } = require('./config.json');
 
 // Thumbnail parameters
-const THUMBNAIL_QUALITY = 50;
-const THUMBNAIL_SIZE = 512;
+const THUMBNAIL = {
+	QUALITY: 75,
+	WIDTH: 200 * 2,
+	HEIGHT: 140 * 2,
+}
 
 /**
  * Builds a safe escaped ffmpeg command
@@ -22,7 +25,7 @@ function getCommand(src, dest) {
 		'-i', src,                                                         // Input file
 		'-ss', '00:00:01.000',                                             // Timestamp of frame to grab
 		'-frames:v', '1',                                                  // Number of frames to grab
-		'-s', `${THUMBNAIL_SIZE}x${THUMBNAIL_SIZE}`,                       // Dimensions of output file
+		'-s', `${THUMBNAIL.WIDTH}x${THUMBNAIL.HEIGHT}`,                    // Dimensions of output file
 		dest                                                               // Output file
 	]);
 }
@@ -64,8 +67,8 @@ function getImageThumbnail(file) {
 	return new Promise((resolve, reject) =>
 		Jimp.read(file.path)
 			.then((image) => image
-				.quality(THUMBNAIL_QUALITY)
-				.resize(THUMBNAIL_SIZE, THUMBNAIL_SIZE, Jimp.RESIZE_BICUBIC)
+				.quality(THUMBNAIL.QUALITY)
+				.resize(THUMBNAIL.WIDTH, THUMBNAIL.HEIGHT, Jimp.RESIZE_BICUBIC)
 				.write(getNewNamePath(file.originalname)))
 			.then(resolve)
 			.catch(reject));
