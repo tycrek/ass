@@ -38,6 +38,9 @@ router.post('/', (req, res) => {
 	const trueDomain = getTrueDomain(req.headers['x-ass-domain']);
 	const generator = req.headers['x-ass-access'] || resourceIdType;
 
+	// Save domain with file
+	req.file.domain = `${getTrueHttp()}${trueDomain}`;
+
 	// Get the uploaded time in milliseconds
 	req.file.timestamp = DateTime.now().toMillis();
 
