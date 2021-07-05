@@ -25,10 +25,13 @@ if (require.main === module) {
 	const fs = require('fs-extra');
 	const prompt = require('prompt');
 
+	// Override default config with existing config to allow migrating configs
 	try {
 		const existingConfig = require('./config.json');
 		Object.keys(existingConfig).forEach((key) => Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]))
-	} catch (ex) { console.log(ex) }
+	} catch (ex) {
+		if (ex.code !== 'MODULE_NOT_FOUND') console.log(ex);
+	}
 
 	// Disabled the annoying "prompt: " prefix and removes colours
 	prompt.message = '';

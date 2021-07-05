@@ -7,8 +7,14 @@ const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
 const gfyGen = require('./generators/gfycat');
-const { useSsl, port, domain, isProxied, diskFilePath, saveWithDate, s3bucket, s3endpoint } = require('./config.json');
 const { HTTP, HTTPS, KILOBYTES } = require('./MagicNumbers.json');
+
+// Catch config.json not existing when running setup script
+try {
+	var { useSsl, port, domain, isProxied, diskFilePath, saveWithDate, s3bucket, s3endpoint } = require('./config.json');
+} catch (ex) {
+	if (ex.code !== 'MODULE_NOT_FOUND') console.log(ex);
+}
 
 const path = (...paths) => Path.join(__dirname, ...paths);
 
