@@ -15,11 +15,10 @@
     "update": "git restore package-lock.json && git pull && npm i && npm run restart",
     "restart": "systemctl restart ass.service",
     "reset": "rm data.json && rm -dr uploads/",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tycrek/ass.git"
+    "engine-check": "node checkEngine.js",
+    "prestart": "npm run engine-check",
+    "presetup": "npm run engine-check",
+    "test": "npm run engine-check"
   },
   "repository": "github:tycrek/ass",
   "keywords": [
@@ -37,6 +36,7 @@
   "dependencies": {
     "any-shell-escape": "^0.1.1",
     "aws-sdk": "^2.930.0",
+    "check-node-version": "^4.1.0",
     "crypto-random-string": "3.3.1",
     "discord.js": "^12.5.3",
     "escape-html": "^1.0.3",
