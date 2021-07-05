@@ -3,6 +3,10 @@
   "version": "0.5.1",
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
+  "engines": {
+    "node": "^14.x.x",
+    "npm": "^7.x.x"
+  },
   "scripts": {
     "start": "node ass.js",
     "setup": "node setup.js",

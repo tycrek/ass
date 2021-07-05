@@ -55,7 +55,7 @@
 
 The installation may look daunting but it's really pretty straightforward. Just follow it word-for-word & you'll be fine. If you are not fine, then by all means [open an Issue](https://github.com/tycrek/ass/issues/new) & I'll try my best to help.
 
-1. First of all you must have Node.js 14 or later installed. It might work with Node.js 12 but just use 14.
+1. First of all you must have **Node.js 14 or later** & **npm 7 or later** installed. 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
 3. Run `npm i` to install the required dependencies
 4. Run `npm run setup` to start the easy configuration
