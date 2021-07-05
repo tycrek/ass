@@ -21,16 +21,19 @@
     "type": "git",
     "url": "git+https://github.com/tycrek/ass.git"
   },
+  "repository": "github:tycrek/ass",
   "keywords": [
     "sharex",
     "sharex-server"
   ],
-  "author": "tycrek",
+  "author": "tycrek <t@tycrek.com> (https://tycrek.com/)",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tycrek/ass/issues"
-  },
+  "bugs": "https://github.com/tycrek/ass/issues",
   "homepage": "https://github.com/tycrek/ass#readme",
+  "funding": {
+    "type": "patreon",
+    "url": "https://patreon.com/tycrek"
+  },
   "dependencies": {
     "any-shell-escape": "^0.1.1",
     "aws-sdk": "^2.930.0",
@@ -53,7 +56,6 @@
     "sanitize-filename": "^1.6.3",
     "stream-to-array": "^2.3.0",
     "submodule": "^1.2.1",
-    "tycrek-s3-transform": "^3.3.0",
     "uuid": "^8.3.2"
   }
 }
