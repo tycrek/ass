@@ -4,7 +4,7 @@ const animals = fs.readFileSync('./generators/gfycat/animals.txt').toString().sp
 
 // Don't trigger circular dependency during setup
 if (!require.main.filename.includes('setup.js'))
-    var MIN_LENGTH = require('../setup').gfyIdSize;
+    var MIN_LENGTH = require('../setup').gfyIdSize; // skipcq: JS-0239, JS-0102
 
 function getWord(list, delim = '') {
     return list[Math.floor(Math.random() * list.length)].concat(delim);

@@ -11,7 +11,7 @@ const { HTTP, HTTPS, KILOBYTES } = require('./MagicNumbers.json');
 
 // Catch config.json not existing when running setup script
 try {
-	var { useSsl, port, domain, isProxied, diskFilePath, saveWithDate, s3bucket, s3endpoint } = require('./config.json');
+	var { useSsl, port, domain, isProxied, diskFilePath, saveWithDate, s3bucket, s3endpoint } = require('./config.json'); // skipcq: JS-0239, JS-0102
 } catch (ex) {
 	if (ex.code !== 'MODULE_NOT_FOUND') console.log(ex);
 }
