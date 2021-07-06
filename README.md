@@ -182,7 +182,7 @@ Now you should see `My awesome dashboard!` when you navigate to `http://your-ass
 
 ***This feature is currently a work-in-progress & may not work.***
 
-Storage engines are responsible for managing your data. "Data" is anything that has two or more parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
+[Storage engines](https://github.com/tycrek/ass-storage-engine) are responsible for managing your data. "Data" is anything that has two or more parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
 
 ass aims to support these storage methods at a minimum:
 
