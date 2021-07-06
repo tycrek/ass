@@ -18,7 +18,7 @@ router.use((req, res, next) => {
 
 	// If the ID is invalid, return 404. Otherwise, continue normally
 	data.has(req.ass.resourceId)
-		.then((has) => has ? next() : res.sendStatus(CODE_NOT_FOUND))
+		.then((has) => has ? next() : res.sendStatus(CODE_NOT_FOUND)) // skipcq: JS-0229
 		.catch(next);
 });
 
@@ -98,7 +98,7 @@ router.get('/oembed', (req, res, next) =>
 
 // Delete file
 router.get('/delete/:deleteId', (req, res, next) => {
-	let oldName, oldType;
+	let oldName, oldType; // skipcq: JS-0119
 	data.get(req.ass.resourceId)
 		.then((fileData) => {
 			// Extract info for logs
@@ -115,7 +115,7 @@ router.get('/delete/:deleteId', (req, res, next) => {
 			return Promise.all([s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)), fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))]);
 		})
 		.then(() => data.del(req.ass.resourceId))
-		.then(() => (log(`Deleted: ${oldName} (${oldType})`), res.type('text').send('File has been deleted!')))
+		.then(() => (log(`Deleted: ${oldName} (${oldType})`), res.type('text').send('File has been deleted!'))) // skipcq: JS-0090
 		.catch(next);
 });
 
