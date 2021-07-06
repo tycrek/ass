@@ -61,7 +61,7 @@ function formatBytes(bytes, decimals = 2) { // skipcq: JS-0074
 	return parseFloat((bytes / Math.pow(KILOBYTES, i)).toFixed(decimals < 0 ? 0 : decimals)).toString().concat(` ${sizes[i]}`);
 }
 
-function replaceholder(data, { size, timestamp, originalname }) {
+function replaceholder(data, size, timestamp, originalname) {
 	return data
 		.replace(/&size/g, formatBytes(size))
 		.replace(/&filename/g, originalname)
@@ -105,7 +105,6 @@ module.exports = {
 	randomHexColour,
 	sanitize,
 	log: console.log,
-	saveData: (data) => fs.writeJsonSync(Path.join(__dirname, 'data.json'), data, { spaces: 4 }),
 	verify: (req, users) => req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization),
 	renameFile: (req, newName) => new Promise((resolve, reject) => {
 		try {

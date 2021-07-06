@@ -34,7 +34,7 @@ const ROUTERS = {
 // Read users and data
 const users = require('./auth');
 const data = require('./data');
-log('Users & data read from filesystem');
+log(`StorageEngine: ${data.name} (${data.type})`);
 //#endregion
 
 // Create thumbnails directory
@@ -71,4 +71,4 @@ app.use(([err, , res,]) => {
 });
 
 // Host the server
-app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized users: ${Object.keys(users).length}\nAvailable files: ${Object.keys(data).length}`));
+app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized users: ${Object.keys(users).length}\nAvailable files: ${data.size}`));
