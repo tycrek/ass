@@ -178,11 +178,9 @@ Now you should see `My awesome dashboard!` when you navigate to `http://your-ass
 
 **For a detailed walkthrough on developing your first frontend, [consult the wiki](https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend).**
 
-## Storage engines (WIP)
+## StorageEngines
 
-***This feature is currently a work-in-progress & may not work.***
-
-[Storage engines](https://github.com/tycrek/ass-storage-engine) are responsible for managing your data. "Data" is anything that has two or more parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
+[StorageEngines](https://github.com/tycrek/ass-storage-engine) are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
 
 ass aims to support these storage methods at a minimum:
 
@@ -191,9 +189,11 @@ ass aims to support these storage methods at a minimum:
 - **MySQL** (soon)
 - **PostgreSQL** (soon)
 
-An ass storage engine implements support for one type of database (or file, such as JSON or YAML). This lets developers & system administrators pick their database of choice, because all they'll have to do is plugin the connection/authentication details, then ass will handle the rest, using the resource ID as the key.
+An ass StorageEngine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is plugin the connection/authentication details, then ass will handle the rest, using the resource ID as the key.
 
-The only storage engine ass comes with by default is **JSON**. Others will be published to [npm](https://www.npmjs.com/).
+The only storage engine ass comes with by default is **JSON**. Others will be published to [npm](https://www.npmjs.com/) and listed here.
+
+**A wiki page on writing a custom StorageEngine is coming soon. Once complete, you can find it [here](https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine).**
 
 ## Flameshot users (Linux)
 
