@@ -5,7 +5,7 @@ const { DateTime } = require('luxon');
 const { WebhookClient, MessageEmbed } = require('discord.js');
 const { doUpload, processUploaded } = require('../storage');
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType } = require('../config.json');
-const { path, saveData, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } = require('../utils');
+const { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } = require('../utils');
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE } = require('../MagicNumbers.json');
 const data = require('../data');
 const users = require('../auth');
@@ -40,7 +40,7 @@ router.post('/', doUpload, processUploaded, ({ next }) => next());
 router.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`) : next(err)); // skipcq: JS-0229
 
 // Process uploaded file
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
 	// Load overrides
 	const trueDomain = getTrueDomain(req.headers['x-ass-domain']);
 	const generator = req.headers['x-ass-access'] || resourceIdType;
@@ -67,54 +67,53 @@ router.post('/', (req, res) => {
 
 	// Save the file information
 	const resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
-	data[resourceId.split('.')[0]] = req.file;
-	saveData(data);
+	data.put(resourceId.split('.')[0], req.file).then(() => {
+		// Log the upload
+		const logInfo = `${req.file.originalname} (${req.file.mimetype})`;
+		log(`Uploaded: ${logInfo} (user: ${users[req.token] ? users[req.token].username : '<token-only>'})`);
 
-	// Log the upload
-	const logInfo = `${req.file.originalname} (${req.file.mimetype})`;
-	log(`Uploaded: ${logInfo} (user: ${users[req.token] ? users[req.token].username : '<token-only>'})`);
+		// Build the URLs
+		const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
+		const thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
+		const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
 
-	// Build the URLs
-	const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
-	const thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
-	const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
+		// Send the response
+		res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
+			.on('finish', () => {
 
-	// Send the response
-	res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
-		.on('finish', () => {
+				// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
+				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
 
-			// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
-			if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
+					// Build the webhook client & embed
+					const whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
+					const embed = new MessageEmbed()
+						.setTitle(logInfo)
+						.setURL(resourceUrl)
+						.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
+						.setThumbnail(thumbnailUrl)
+						.setColor(req.file.vibrant)
+						.setTimestamp(req.file.timestamp);
 
-				// Build the webhook client & embed
-				const whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
-				const embed = new MessageEmbed()
-					.setTitle(logInfo)
-					.setURL(resourceUrl)
-					.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
-					.setThumbnail(thumbnailUrl)
-					.setColor(req.file.vibrant)
-					.setTimestamp(req.file.timestamp);
+					// Send the embed to the webhook, then delete the client after to free resources
+					whc.send(null, {
+						username: req.headers['x-ass-webhook-username'] || 'ass',
+						avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
+						embeds: [embed]
+					}).then(() => whc.destroy());
+				}
 
-				// Send the embed to the webhook, then delete the client after to free resources
-				whc.send(null, {
-					username: req.headers['x-ass-webhook-username'] || 'ass',
-					avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
-					embeds: [embed]
-				}).then(() => whc.destroy());
-			}
-
-			// Also update the users upload count
-			if (!users[req.token]) {
-				const generateUsername = () => generateId('random', 20, null); // skipcq: JS-0074
-				let username = generateUsername();
-				while (Object.values(users).findIndex((user) => user.username === username) !== -1)  // skipcq: JS-0073
-					username = generateUsername();
-				users[req.token] = { username, count: 0 };
-			}
-			users[req.token].count += 1;
-			fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
-		});
+				// Also update the users upload count
+				if (!users[req.token]) {
+					const generateUsername = () => generateId('random', 20, null); // skipcq: JS-0074
+					let username = generateUsername();
+					while (Object.values(users).findIndex((user) => user.username === username) !== -1)  // skipcq: JS-0073
+						username = generateUsername();
+					users[req.token] = { username, count: 0 };
+				}
+				users[req.token].count += 1;
+				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
+			});
+	}).catch(next);
 });
 
 module.exports = router;

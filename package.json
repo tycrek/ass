@@ -1,6 +1,6 @@
 {
   "name": "ass",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
@@ -34,6 +34,7 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
+    "@tycrek/ass-storage-engine": "0.2.4",
     "any-shell-escape": "^0.1.1",
     "aws-sdk": "^2.930.0",
     "check-node-version": "^4.1.0",
