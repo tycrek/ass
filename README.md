@@ -176,7 +176,7 @@ Now you should see `My awesome dashboard!` when you navigate to `http://your-ass
 
 **Disclaimer:** custom frontends are still experimental. Currently ass has no API, but I already plan on writing that very soon. For now, you can make your dashboard use `const users = require('../auth')` & `const data = require('../data')` (these values are recognized globally throughout ass, so they will stay up-to-date as users upload).
 
-**For a detailed walkthrough on developing your first frontend, [consult the wiki](https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend).
+**For a detailed walkthrough on developing your first frontend, [consult the wiki](https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend).**
 
 ## Flameshot users (Linux)
 
