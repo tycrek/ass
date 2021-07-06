@@ -29,6 +29,7 @@
 - ✔️ Thumbnail support
 - ✔️ Basic multi-user support
 - ✔️ Configurable global upload limit (per-user coming soon!)
+- ✔️ Basic macOS/Linux support using other clients including [Flameshot](https://flameshot.org/) ([ass-compatible Flameshot script](https://github.com/tycrek/ass#flameshot-users-linux)) & [MagicCap](https://magiccap.me/)
 - ✔️ Local storage *or* block-storage support for [Amazon S3](https://aws.amazon.com/s3/) (including [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces/))
 - ✔️ Custom pluggable frontend dashboards using [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 - ✔️ Multiple access types
@@ -36,11 +37,14 @@
    - **Mixed-case alphanumeric**
    - **Gfycat**
    - **Original**
-- ❌ Multiple database types 
-   - **JSON**
-   - **Mongo** (soon!)
-   - **MySQL** (soon!)
-   - **PostgreSQL** (soon!)
+- ✔️ Multiple storage methods using [ass StorageEngines](https://github.com/tycrek/ass-storage-engine) (JSON by default)
+   - **File**
+      - **JSON**
+      - **YAML** (soon!)
+   - **Databases**
+      - **Mongo** (soon!)
+      - **MySQL** (soon!)
+      - **PostgreSQL** (soon!)
 
 ### Access types
 
@@ -186,12 +190,41 @@ ass aims to support these storage methods at a minimum:
 
 - **JSON**
 - **Mongo** (soon)
-- **MySQL** (soon)
-- **PostgreSQL** (soon)
 
 An ass StorageEngine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is plugin the connection/authentication details, then ass will handle the rest, using the resource ID as the key.
 
-The only storage engine ass comes with by default is **JSON**. Others will be published to [npm](https://www.npmjs.com/) and listed here.
+The only storage engine ass comes with by default is **JSON**. Others will be published to [npm](https://www.npmjs.com/) and listed here. If you find (or create!) a StorageEngine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`](https://github.com/tycrek/ass/blob/master/data.js). At this time, a modified `data.js` might look like this:
+
+```js
+/**
+ * Used for global data management
+ */
+
+//const { JsonStorageEngine } = require('@tycrek/ass-storage-engine');
+const { CustomStorageEngine } = require('my-custom-ass-storage-engine');
+
+//const data = new JsonStorageEngine();
+
+// StorageEngines may take no parameters...
+const data1 = new CustomStorageEngine();
+
+// multiple parameters...
+const data2 = new CustomStorageEngine('Parameters!!', 420);
+
+// or object-based parameters, depending on what the StorageEngine dev decides on.
+const data3 = new CustomStorageEngine({ key1: 'value1', key2: { key3: 44 } });
+
+module.exports = data1;
+
+```
+
+As long as the StorageEngine properly implements `GET`/`PUT`/`DEL`/`HAS`
+StorageFunctions, replacing the file/database system is just that easy.
+
+If you develop & publish a Engine, feel free to [open a PR on this README](https://github.com/tycrek/ass/edit/master/README.md) to add it.
+
+- [`npm publish` docs](https://docs.npmjs.com/cli/v7/commands/npm-publish)
+- ["How to publish packages to npm (the way the industry does things)"](https://zellwk.com/blog/publish-to-npm/)([`@tycrek/ass-storage-engine`](https://www.npmjs.com/package/@tycrek/ass-storage-engine) is published using the software this guide recommends, [np](https://github.com/sindresorhus/np))
 
 **A wiki page on writing a custom StorageEngine is coming soon. Once complete, you can find it [here](https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine).**
 
