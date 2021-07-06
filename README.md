@@ -117,7 +117,7 @@ If you primarily share media on Discord, you can add these additional (optional)
 | **`X-Ass-OG-Author-Url`** | URL to open when the Author is clicked |
 | **`X-Ass-OG-Provider`** | Smaller text shown above the author |
 | **`X-Ass-OG-Provider-Url`** | URL to open when the Provider is clicked |
-| **`X-Ass-OG-Color`** | Colour shown on the left side of the embed. Must be one of `&random`, `&vibrant`, or a hex colour value (for example: `#fe3c29`). Random is a randomly generated hex value and Vibrant is sourced from the image itself |
+| **`X-Ass-OG-Color`** | Colour shown on the left side of the embed. Must be one of `&random`, `&vibrant`, or a hex colour value (for example: `#fe3c29`). Random is a randomly generated hex value & Vibrant is sourced from the image itself |
 
 #### Embed placeholders
 
@@ -177,6 +177,23 @@ Now you should see `My awesome dashboard!` when you navigate to `http://your-ass
 **Disclaimer:** custom frontends are still experimental. Currently ass has no API, but I already plan on writing that very soon. For now, you can make your dashboard use `const users = require('../auth')` & `const data = require('../data')` (these values are recognized globally throughout ass, so they will stay up-to-date as users upload).
 
 **For a detailed walkthrough on developing your first frontend, [consult the wiki](https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend).**
+
+## Storage engines (WIP)
+
+***This feature is currently a work-in-progress & may not work.***
+
+Storage engines are responsible for managing your data. "Data" is anything that has two or more parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
+
+ass aims to support these storage methods at a minimum:
+
+- **JSON**
+- **Mongo** (soon)
+- **MySQL** (soon)
+- **PostgreSQL** (soon)
+
+An ass storage engine implements support for one type of database (or file, such as JSON or YAML). This lets developers & system administrators pick their database of choice, because all they'll have to do is plugin the connection/authentication details, then ass will handle the rest, using the resource ID as the key.
+
+The only storage engine ass comes with by default is **JSON**. Others will be published to [npm](https://www.npmjs.com/).
 
 ## Flameshot users (Linux)
 
