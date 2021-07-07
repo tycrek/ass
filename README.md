@@ -37,7 +37,7 @@
    - **Mixed-case alphanumeric**
    - **Gfycat**
    - **Original**
-- ✔️ Multiple storage methods using [ass StorageEngines](https://github.com/tycrek/ass-storage-engine) (JSON by default)
+- ✔️ Multiple storage methods using [ass StorageEngines](https://github.com/tycrek/ass#storageengines) (JSON by default)
    - **File**
       - **JSON**
       - **YAML** (soon!)
@@ -221,12 +221,7 @@ module.exports = data1;
 As long as the StorageEngine properly implements `GET`/`PUT`/`DEL`/`HAS`
 StorageFunctions, replacing the file/database system is just that easy.
 
-If you develop & publish a Engine, feel free to [open a PR on this README](https://github.com/tycrek/ass/edit/master/README.md) to add it.
-
-- [`npm publish` docs](https://docs.npmjs.com/cli/v7/commands/npm-publish)
-- ["How to publish packages to npm (the way the industry does things)"](https://zellwk.com/blog/publish-to-npm/)([`@tycrek/ass-storage-engine`](https://www.npmjs.com/package/@tycrek/ass-storage-engine) is published using the software this guide recommends, [np](https://github.com/sindresorhus/np))
-
-**A wiki page on writing a custom StorageEngine is coming soon. Once complete, you can find it [here](https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine).**
+**For a detailed walkthrough on developing StorageEngines, [consult the wiki](https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine).**
 
 ## Flameshot users (Linux)
 
