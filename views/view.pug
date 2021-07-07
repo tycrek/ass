@@ -9,7 +9,7 @@ html
 		if color !== null
 			style: include css/img.css
 			style.
-				img, video { border-color: #{color}; }
+				img, video, audio { border-color: #{color}; }
 
 		// Open Graph (https://ogp.me/)
 		meta(property='og:type' content=ogtype)
@@ -29,6 +29,8 @@ html
 						video#media(controls loop muted playsinline preload='metadata')&attributes(resourceAttr)
 					else if fileIs.image
 						img#media(decoding='async')&attributes(resourceAttr)
+					else if fileIs.audio
+						audio#media(controls loop preload='metadata')&attributes(resourceAttr)
 					else
 						code!=title
 					figcaption

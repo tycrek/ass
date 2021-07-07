@@ -20,7 +20,7 @@
 ## Features
 
 - ✔️ Token authorization via HTTP `Authorization` header
-- ✔️ Upload images, videos, gifs, files
+- ✔️ Upload images, videos, gifs, audio, files
 - ✔️ Fancy embeds on Discord
 - ✔️ Seamless inline video embeds on Discord
 - ✔️ Personal upload log via customizable Discord Webhooks

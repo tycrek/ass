@@ -20,7 +20,7 @@
 	margin-right: 16px;
 }
 
-img, video {
+img, video, audio {
 	max-height: 50vh;
 }
 

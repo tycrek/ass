@@ -12,7 +12,7 @@ const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOrigina
 const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('./MagicNumbers.json');
 
 const ID_GEN_LENGTH = 32;
-const ALLOWED_MIMETYPES = /(image)|(video)\//;
+const ALLOWED_MIMETYPES = /(image)|(video)|(audio)\//;
 
 const s3 = new aws.S3({
 	endpoint: new aws.Endpoint(s3endpoint),

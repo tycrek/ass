@@ -117,7 +117,7 @@ if (require.main === module) {
 				required: false
 			},
 			mediaStrict: {
-				description: 'Only allow uploads of media files (images, videos)',
+				description: 'Only allow uploads of media files (images, videos, audio)',
 				type: 'boolean',
 				default: config.mediaStrict,
 				required: false
