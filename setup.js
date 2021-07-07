@@ -12,6 +12,7 @@ const config = {
 	diskFilePath: 'uploads/',
 	saveWithDate: false,
 	saveAsOriginal: true,
+	mediaStrict: false,
 	s3enabled: false,
 	s3endpoint: 'sfo3.digitaloceanspaces.com',
 	s3bucket: 'bucket-name',
@@ -113,6 +114,12 @@ if (require.main === module) {
 				description: 'Save as original file name instead of random',
 				type: 'boolean',
 				default: config.saveAsOriginal,
+				required: false
+			},
+			mediaStrict: {
+				description: 'Only allow uploads of media files (images, videos)',
+				type: 'boolean',
+				default: config.mediaStrict,
 				required: false
 			},
 			s3enabled: {

@@ -23,7 +23,8 @@
 - ✔️ Upload images, videos, gifs, files
 - ✔️ Fancy embeds on Discord
 - ✔️ Seamless inline video embeds on Discord
-- ✔️ Upload log via customizable Discord Webhooks
+- ✔️ Personal upload log via customizable Discord Webhooks
+- ✔️ Mimetype blocking
 - ✔️ File deletion
 - ✔️ Usage metrics
 - ✔️ Thumbnail support

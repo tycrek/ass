@@ -8,9 +8,11 @@ const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
 const { getSafeExt, getDatedDirname, sanitize, generateId } = require('./utils');
-const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOriginal, maxUploadSize } = require('./config.json');
+const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOriginal, maxUploadSize, mediaStrict } = require('./config.json');
+const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('./MagicNumbers.json');
 
 const ID_GEN_LENGTH = 32;
+const ALLOWED_MIMETYPES = /(image)|(video)\//;
 
 const s3 = new aws.S3({
 	endpoint: new aws.Endpoint(s3endpoint),
@@ -29,12 +31,18 @@ function getLocalFilename(req) {
 	return `${getDatedDirname()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
 }
 
-function processUploaded(req, _, next) {
+function processUploaded(req, res, next) {
 	// Fixes
 	req.file.mimetype = req.file.detectedMimeType;
 	req.file.originalname = sanitize(req.file.originalName);
 	req.file.randomId = generateId('random', ID_GEN_LENGTH, null, null);
 	req.file.deleteId = generateId('random', ID_GEN_LENGTH, null, null);
+
+	// Block the resource if the mimetype is not an image or video
+	if (mediaStrict && !ALLOWED_MIMETYPES.test(req.file.mimetype)) {
+		fs.remove(req.file.path.concat('.temp'));
+		return res.sendStatus(CODE_UNSUPPORTED_MEDIA_TYPE);
+	}
 
 	// Remove unwanted fields
 	delete req.file.fieldName;
