@@ -26,12 +26,8 @@ function getTrueDomain(d = domain) {
 	return d.concat((port === HTTP || port === HTTPS || isProxied) ? '' : `:${port}`);
 }
 
-function getSafeExt(type) {
-	return type.includes('video') ? '.mp4' : type.includes('gif') ? '.gif' : '';
-}
-
-function getS3url(s3key, type) {
-	return `https://${s3bucket}.${s3endpoint}/${s3key}${getSafeExt(type)}`;
+function getS3url(s3key, ext) {
+	return `https://${s3bucket}.${s3endpoint}/${s3key}${ext}`;
 }
 
 function getDirectUrl(resourceId) {
@@ -101,7 +97,6 @@ module.exports = {
 	formatBytes,
 	replaceholder,
 	getDatedDirname,
-	getSafeExt,
 	randomHexColour,
 	sanitize,
 	log: console.log,
@@ -120,7 +115,7 @@ module.exports = {
 	generateId: (mode, length, gfyLength, originalName) => (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName),
 	arrayEquals: (arr1, arr2) => arr1.length === arr2.length && arr1.slice().sort().every((value, index) => value === arr2.slice().sort()[index]),
 	downloadTempS3: (file) => new Promise((resolve, reject) =>
-		fetch(getS3url(file.randomId, file.mimetype))
+		fetch(getS3url(file.randomId, file.ext))
 			.then((f2) => f2.body.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))
 			.catch(reject)),
 }

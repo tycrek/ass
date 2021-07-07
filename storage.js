@@ -7,7 +7,7 @@ const multer = require('multer');
 const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
-const { getSafeExt, getDatedDirname, sanitize, generateId } = require('./utils');
+const { getDatedDirname, sanitize, generateId } = require('./utils');
 const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOriginal, maxUploadSize, mediaStrict } = require('./config.json');
 const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('./MagicNumbers.json');
 
@@ -34,9 +34,22 @@ function getLocalFilename(req) {
 function processUploaded(req, res, next) {
 	// Fixes
 	req.file.mimetype = req.file.detectedMimeType;
+	req.file.ext = req.file.detectedFileExtension;
 	req.file.originalname = sanitize(req.file.originalName);
 	req.file.randomId = generateId('random', ID_GEN_LENGTH, null, null);
 	req.file.deleteId = generateId('random', ID_GEN_LENGTH, null, null);
+
+	// Set up types
+	req.file.is = {
+		image: false,
+		video: false,
+		audio: false,
+		other: false
+	};
+
+	// Specify correct type
+	const isType = req.file.mimetype.includes('image') ? 'image' : req.file.mimetype.includes('video') ? 'video' : req.file.mimetype.includes('audio') ? 'audio' : 'other';
+	req.file.is[isType] = true;
 
 	// Block the resource if the mimetype is not an image or video
 	if (mediaStrict && !ALLOWED_MIMETYPES.test(req.file.mimetype)) {
@@ -70,7 +83,7 @@ function processUploaded(req, res, next) {
 				// Upload to Amazon S3
 				? s3.putObject({
 					Bucket: s3bucket,
-					Key: req.file.randomId.concat(getSafeExt(req.file.mimetype)),
+					Key: req.file.randomId.concat(req.file.ext),
 					ACL: 'public-read',
 					ContentType: req.file.mimetype,
 					Body: fs.createReadStream(req.file.path)
@@ -91,7 +104,7 @@ function processUploaded(req, res, next) {
 
 function deleteS3(file) {
 	return new Promise((resolve, reject) => s3
-		.deleteObject({ Bucket: s3bucket, Key: file.randomId.concat(getSafeExt(file.mimetype)) })
+		.deleteObject({ Bucket: s3bucket, Key: file.randomId.concat(file.ext) })
 		.promise()
 		.then(resolve)
 		.catch(reject));

@@ -25,10 +25,12 @@ html
 			#content
 				h4!=title
 				figure
-					if isVideo 
+					if fileIs.video 
 						video#media(controls loop muted playsinline preload='metadata')&attributes(resourceAttr)
-					else
+					else if fileIs.image
 						img#media(decoding='async')&attributes(resourceAttr)
+					else
+						code!=title
 					figcaption
 						br
 						span Uploaded by #[strong!=uploader]

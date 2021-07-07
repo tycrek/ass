@@ -3,7 +3,7 @@ const escape = require('escape-html');
 const fetch = require('node-fetch');
 const { deleteS3 } = require('../storage');
 const { diskFilePath, s3enabled } = require('../config.json');
-const { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getSafeExt, getResourceColor, replaceholder } = require('../utils');
+const { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } = require('../utils');
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../MagicNumbers.json');
 const data = require('../data');
 const users = require('../auth');
@@ -25,7 +25,6 @@ router.use((req, res, next) => {
 // View file
 router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData) => {
 	const { resourceId } = req.ass;
-	const isVideo = fileData.mimetype.includes('video');
 
 	// Build OpenGraph meta tags
 	const og = fileData.opengraph, ogs = [''];
@@ -33,21 +32,21 @@ router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData)
 	og.description && (ogs.push(`<meta property="og:description" content="${og.description}">`)); // skipcq: JS-0093
 	og.author && (ogs.push(`<meta property="og:site_name" content="${og.author}">`)); // skipcq: JS-0093
 	og.color && (ogs.push(`<meta name="theme-color" content="${getResourceColor(og.color, fileData.vibrant)}">`)); // skipcq: JS-0093
-	!isVideo && (ogs.push(`<meta name="twitter:card" content="summary_large_image">`)); // skipcq: JS-0093
+	!fileData.is.video && (ogs.push(`<meta name="twitter:card" content="summary_large_image">`)); // skipcq: JS-0093
 
 	// Send the view to the client
 	res.render('view', {
-		isVideo,
+		fileIs: fileData.is,
 		title: escape(fileData.originalname),
 		uploader: users[fileData.token].username,
 		timestamp: formatTimestamp(fileData.timestamp),
 		size: formatBytes(fileData.size),
 		color: getResourceColor(fileData.opengraph.color || null, fileData.vibrant),
 		resourceAttr: { src: getDirectUrl(resourceId) },
-		discordUrl: `${getDirectUrl(resourceId)}${getSafeExt(fileData.mimetype)}`,
+		discordUrl: `${getDirectUrl(resourceId)}${fileData.ext}`,
 		oembedUrl: `${getTrueHttp()}${getTrueDomain()}/${resourceId}/oembed`,
-		ogtype: isVideo ? 'video.other' : 'image',
-		urlType: `og:${isVideo ? 'video' : 'image'}`,
+		ogtype: fileData.is.video ? 'video.other' : fileData.is.image ? 'image' : 'website',
+		urlType: `og:${fileData.is.video ? 'video' : fileData.is.audio ? 'audio' : 'image'}`,
 		opengraph: replaceholder(ogs.join('\n'), fileData.size, fileData.timestamp, fileData.originalname)
 	});
 }).catch(next));
@@ -60,7 +59,7 @@ router.get('/direct*', (req, res, next) => data.get(req.ass.resourceId).then((fi
 
 	// Return the file differently depending on what storage option was used
 	const uploaders = {
-		s3: () => fetch(getS3url(fileData.randomId, fileData.mimetype)).then((file) => {
+		s3: () => fetch(getS3url(fileData.randomId, fileData.ext)).then((file) => {
 			file.headers.forEach((value, header) => res.setHeader(header, value));
 			file.body.pipe(res);
 		}),
@@ -76,7 +75,7 @@ router.get('/direct*', (req, res, next) => data.get(req.ass.resourceId).then((fi
 // Thumbnail response
 router.get('/thumbnail', (req, res, next) =>
 	data.get(req.ass.resourceId)
-		.then(({ thumbnail }) => fs.readFile(path(diskFilePath, 'thumbnails/', thumbnail)))
+		.then(({ is, thumbnail }) => fs.readFile((!is || (is.image || is.video)) ? path(diskFilePath, 'thumbnails/', thumbnail) : 'views/ass-audio-icon.png'))
 		.then((fileData) => res.type('jpg').send(fileData))
 		.catch(next));
 
@@ -85,10 +84,10 @@ router.get('/thumbnail', (req, res, next) =>
 // https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
 router.get('/oembed', (req, res, next) =>
 	data.get(req.ass.resourceId)
-		.then(({ opengraph, mimetype, size, timestamp, originalname }) =>
+		.then(({ opengraph, is, size, timestamp, originalname }) =>
 			res.type('json').send({
 				version: '1.0',
-				type: mimetype.includes('video') ? 'video' : 'photo',
+				type: is.video ? 'video' : is.image ? 'photo' : 'link',
 				author_url: opengraph.authorUrl,
 				provider_url: opengraph.providerUrl,
 				author_name: replaceholder(opengraph.author || '', size, timestamp, originalname),
@@ -112,7 +111,7 @@ router.get('/delete/:deleteId', (req, res, next) => {
 			if (deleteId !== fileData.deleteId) return res.sendStatus(CODE_UNAUTHORIZED);
 
 			// Save the file information
-			return Promise.all([s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)), fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))]);
+			return Promise.all([s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)), (!fileData.is || (fileData.is.image || fileData.is.video)) ? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)) : () => Promise.resolve()]);
 		})
 		.then(() => data.del(req.ass.resourceId))
 		.then(() => (log(`Deleted: ${oldName} (${oldType})`), res.type('text').send('File has been deleted!'))) // skipcq: JS-0090
