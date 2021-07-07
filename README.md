@@ -178,7 +178,39 @@ module.exports = {
 
 Now you should see `My awesome dashboard!` when you navigate to `http://your-ass-url/dashboard`.
 
-**Disclaimer:** custom frontends are still experimental. Currently ass has no API, but I already plan on writing that very soon. For now, you can make your dashboard use `const users = require('../auth')` & `const data = require('../data')` (these values are recognized globally throughout ass, so they will stay up-to-date as users upload).
+#### Accessing data
+
+If you want to access resource & user data within your frontend router, just add these two lines near the top of your router:
+
+```js
+const users = require('../auth');
+const data = require('../data');
+```
+
+These values are recognized globally throughout ass, so they will stay up-to-date as users upload.
+
+#### Custom index
+
+By default, ass directs the app index to this README. To change it, just add an `index` function to your router exports:
+
+```js
+
+function index(req, res, next) {
+   // redirect user to dashboard
+   res.redirect('/dashboard/user');
+
+   // you can also use req & next as you normally
+   // would in an Express route handler
+}
+
+module.exports = {
+   router,
+   index,
+   enabled: true,
+   brand: `${name} v${version}`,
+   endpoint: '/dashboard',
+};
+```
 
 **For a detailed walkthrough on developing your first frontend, [consult the wiki](https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend).**
 

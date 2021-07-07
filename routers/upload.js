@@ -1,5 +1,4 @@
 const fs = require('fs-extra');
-const marked = require('marked');
 //const rateLimit = require('express-rate-limit');
 const { DateTime } = require('luxon');
 const { WebhookClient, MessageEmbed } = require('discord.js');
@@ -13,14 +12,6 @@ const users = require('../auth');
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 const express = require('express');
 const router = express.Router();
-
-// Index
-router.get('/', (_req, res, next) =>
-	fs.readFile(path('README.md'))
-		.then((bytes) => bytes.toString())
-		.then(marked)
-		.then((d) => res.render('index', { data: d }))
-		.catch(next));
 
 // Rate limit middleware
 /* router.use('/', rateLimit({

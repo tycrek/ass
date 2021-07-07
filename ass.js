@@ -13,6 +13,7 @@ const { host, port, useSsl, diskFilePath, isProxied } = require('./config.json')
 const fs = require('fs-extra');
 const express = require('express');
 const helmet = require('helmet');
+const marked = require('marked');
 const uploadRouter = require('./routers/upload');
 const resourceRouter = require('./routers/resource');
 const { path, log } = require('./utils');
@@ -59,9 +60,23 @@ useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 // Don't process favicon requests (custom middleware)
 app.use((req, res, next) => (req.url.includes('favicon.ico') ? res.sendStatus(CODE_NO_CONTENT) : next()));
 
-// Assign routers ('/:resouceId' always needs to be LAST since it's a catch-all route)
+// Index can be overridden by a frontend
+app.get('/', (req, res, next) =>
+	(ASS_PREMIUM.enabled && ASS_PREMIUM.index)
+		? ASS_PREMIUM.index(req, res, next)
+		: fs.readFile(path('README.md'))
+			.then((bytes) => bytes.toString())
+			.then(marked)
+			.then((d) => res.render('index', { data: d }))
+			.catch(next));
+
+// Upload router
 app.use('/', ROUTERS.upload);
+
+// Attach frontend, if enabled
 ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router); // skipcq: JS-0093
+
+// '/:resouceId' always needs to be LAST since it's a catch-all route
 app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 // Error handler
