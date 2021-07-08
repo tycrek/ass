@@ -82,5 +82,5 @@ function getImageThumbnail(file) {
 module.exports = (file) =>
 	new Promise((resolve, reject) =>
 		(file.is.video ? getVideoThumbnail : file.is.image ? getImageThumbnail : () => Promise.resolve())(file)
-			.then(() => resolve((file.is.video || file.is.image) ? getNewName(file.originalname) : 'views/ass-audio-icon.png'))
+			.then(() => resolve((file.is.video || file.is.image) ? getNewName(file.originalname) : file.is.audio ? 'views/ass-audio-icon.png' : 'views/ass-file-icon.png'))
 			.catch(reject));

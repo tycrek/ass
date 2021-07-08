@@ -75,7 +75,7 @@ router.get('/direct*', (req, res, next) => data.get(req.ass.resourceId).then((fi
 // Thumbnail response
 router.get('/thumbnail', (req, res, next) =>
 	data.get(req.ass.resourceId)
-		.then(({ is, thumbnail }) => fs.readFile((!is || (is.image || is.video)) ? path(diskFilePath, 'thumbnails/', thumbnail) : 'views/ass-audio-icon.png'))
+		.then(({ is, thumbnail }) => fs.readFile((!is || (is.image || is.video)) ? path(diskFilePath, 'thumbnails/', thumbnail) : is.audio ? 'views/ass-audio-icon.png' : 'views/ass-file-icon.png'))
 		.then((fileData) => res.type('jpg').send(fileData))
 		.catch(next));
 
