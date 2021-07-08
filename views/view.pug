@@ -32,7 +32,7 @@ html
 					else if fileIs.audio
 						audio#media(controls loop preload='metadata')&attributes(resourceAttr)
 					else
-						code!=title
+						code!=mimetype
 					figcaption
 						br
 						span Uploaded by #[strong!=uploader]
