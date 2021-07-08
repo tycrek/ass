@@ -60,7 +60,7 @@ router.post('/', (req, res, next) => {
 	const resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
 	data.put(resourceId.split('.')[0], req.file).then(() => {
 		// Log the upload
-		const logInfo = `${req.file.originalname} (${req.file.mimetype})`;
+		const logInfo = `${req.file.originalname} (${req.file.mimetype}, ${formatBytes(req.file.size)})`;
 		log(`Uploaded: ${logInfo} (user: ${users[req.token] ? users[req.token].username : '<token-only>'})`);
 
 		// Build the URLs

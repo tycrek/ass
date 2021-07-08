@@ -10,8 +10,8 @@ if (!fs.existsSync(path('auth.json'))) {
 	let users = {};
 	users[generateToken()] = { username: 'ass', count: 0 };
 	fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
-	log(`File [auth.json] created\n\n!! Important: save this token in a secure spot: ${Object.keys(users)[0]}\n`);
-} else log('File [auth.json] exists');
+	log(`File created: auth.json\n\n!! Important: save this token in a secure spot: ${Object.keys(users)[0]}`);
+}
 
 const users = require('./auth.json').users || {};
 

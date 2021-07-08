@@ -16,14 +16,18 @@ const helmet = require('helmet');
 const marked = require('marked');
 const uploadRouter = require('./routers/upload');
 const resourceRouter = require('./routers/resource');
-const { path, log } = require('./utils');
+const { path, log, getTrueHttp, getTrueDomain } = require('./utils');
 const { CODE_NO_CONTENT, CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.json');
+const { name: ASS_NAME, version: ASS_VERSION } = require('./package.json');
 //#endregion
+
+// Welcome :D
+log(`\n * ${ASS_NAME} v${ASS_VERSION} * \n`);
 
 // Set up premium frontend
 const FRONTEND_NAME = 'ass-x'; // <-- Change this to use a custom frontend
 const ASS_PREMIUM = fs.existsSync(`./${FRONTEND_NAME}/package.json`) ? (require('submodule'), require(`./${FRONTEND_NAME}`)) : { enabled: false };
-log(`Frontend: ${ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : '<none>'}`);
+log(`Frontend: ${ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : '<none>'}${ASS_PREMIUM.enabled && ASS_PREMIUM.index ? ' (with index)' : ''}`);
 
 //#region Variables, module setup
 const app = express();
@@ -86,4 +90,4 @@ app.use(([err, , res,]) => {
 });
 
 // Host the server
-app.listen(port, host, () => log(`Server started on [${host}:${port}]\nAuthorized users: ${Object.keys(users).length}\nAvailable files: ${data.size}`));
+app.listen(port, host, () => log(`Users: ${Object.keys(users).length}\nFiles: ${data.size}\n\nListening on: ${host}:${port}${ASS_PREMIUM.enabled ? ` (frontend: ${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint})` : ''}\n`));
