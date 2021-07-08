@@ -13,7 +13,7 @@ const { HTTP, HTTPS, KILOBYTES } = require('./MagicNumbers.json');
 try {
 	var { useSsl, port, domain, isProxied, diskFilePath, saveWithDate, s3bucket, s3endpoint } = require('./config.json'); // skipcq: JS-0239, JS-0102
 } catch (ex) {
-	if (ex.code !== 'MODULE_NOT_FOUND') console.log(ex);
+	if (ex.code !== 'MODULE_NOT_FOUND') console.error(ex);
 }
 
 const path = (...paths) => Path.join(__dirname, ...paths);
