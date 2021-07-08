@@ -38,5 +38,6 @@ html
 						span Uploaded by #[strong!=uploader]
 						br
 						small #{timestamp} (#{size})
-				#footer: p Image hosted by #[a(href='https://github.com/tycrek/ass' target='_blank'): strong ass], the superior self-hosted ShareX server
+						br
+						small: a(href='#' onclick=`window.location = '${resourceAttr.src}?download=yes';` download=title) Download
 				#footer: p Image hosted by #[a#footer-link(href='https://github.com/tycrek/ass' target='_blank'): strong ass], the superior self-hosted ShareX server
