@@ -23,6 +23,7 @@
 - ✔️ Upload images, videos, gifs, audio, files
 - ✔️ Fancy embeds on Discord
 - ✔️ Seamless inline video embeds on Discord
+- ✔️ Sexy web viewer with video & audio player
 - ✔️ Personal upload log via customizable Discord Webhooks
 - ✔️ Mimetype blocking
 - ✔️ File deletion
