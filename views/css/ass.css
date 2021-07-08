@@ -21,3 +21,16 @@ body {
 body, button { text-shadow: 1px 1px 1px black; }
 code { color: #EEE !important; }
 pre { border-radius: 16px; }
+
+/* Remove styles and colors from links */
+a, a:hover, a:active, a:visited { text-decoration: none; }
+a, a:visited {
+	color: var(--color-primary) !important;
+	border-bottom: 2px solid;
+	border-bottom-color: transparent;
+	border-radius: 2px;
+	transition: color 150ms linear, border-bottom-color 150ms linear;
+}
+a:hover { color: var(--color-link-hover) !important; border-bottom-color: var(--color-primary-dim); }
+a:active { color: var(--color-link-active) !important; }
+

@@ -38,6 +38,7 @@ router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData)
 	res.render('view', {
 		fileIs: fileData.is,
 		title: escape(fileData.originalname),
+		mimetype: fileData.mimetype,
 		uploader: users[fileData.token].username,
 		timestamp: formatTimestamp(fileData.timestamp),
 		size: formatBytes(fileData.size),
