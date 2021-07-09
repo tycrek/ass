@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@tycrek/ass-storage-engine": "0.2.6",
+    "@tycrek/log": "^0.2.2",
     "any-shell-escape": "^0.1.1",
     "aws-sdk": "^2.930.0",
     "check-node-version": "^4.1.0",

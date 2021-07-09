@@ -10,7 +10,8 @@ if (!fs.existsSync(path('auth.json'))) {
 	let users = {};
 	users[generateToken()] = { username: 'ass', count: 0 };
 	fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
-	log(`File created: auth.json\n\n!! Important: save this token in a secure spot: ${Object.keys(users)[0]}`);
+	log.debug('File created', 'auth.json')
+		.success('!! Important', `Save this token in a secure spot: ${Object.keys(users)[0]}`)
 }
 
 const users = require('./auth.json').users || {};
@@ -21,9 +22,9 @@ fs.watch(path('auth.json'), { persistent: false },
 		.then((json) => {
 			if (!(arrayEquals(Object.keys(users), Object.keys(json.users)))) {
 				Object.keys(json.users).forEach((token) => (!Object.prototype.hasOwnProperty.call(users, token)) && (users[token] = json.users[token]));
-				log(`New token added: ${Object.keys(users)[Object.keys(users).length - 1]}`);
+				log.info('New token added', Object.keys(users)[Object.keys(users).length - 1] || 'No new token');
 			}
 		})
-		.catch(console.error));
+		.catch(log.c.error));
 
 module.exports = users;

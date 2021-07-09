@@ -115,7 +115,7 @@ router.get('/delete/:deleteId', (req, res, next) => {
 			return Promise.all([s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)), (!fileData.is || (fileData.is.image || fileData.is.video)) ? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)) : () => Promise.resolve()]);
 		})
 		.then(() => data.del(req.ass.resourceId))
-		.then(() => (log(`Deleted: ${oldName} (${oldType})`), res.type('text').send('File has been deleted!'))) // skipcq: JS-0090
+		.then(() => (log.success('Deleted', oldName, oldType), res.type('text').send('File has been deleted!'))) // skipcq: JS-0090
 		.catch(next);
 });
 

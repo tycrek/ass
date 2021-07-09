@@ -61,7 +61,7 @@ router.post('/', (req, res, next) => {
 	data.put(resourceId.split('.')[0], req.file).then(() => {
 		// Log the upload
 		const logInfo = `${req.file.originalname} (${req.file.mimetype}, ${formatBytes(req.file.size)})`;
-		log(`Uploaded: ${logInfo} (user: ${users[req.token] ? users[req.token].username : '<token-only>'})`);
+		log.success('File uploaded', logInfo, `uploaded by ${users[req.token] ? users[req.token].username : '<token-only>'}`);
 
 		// Build the URLs
 		const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;

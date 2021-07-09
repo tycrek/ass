@@ -22,12 +22,12 @@ const { name: ASS_NAME, version: ASS_VERSION } = require('./package.json');
 //#endregion
 
 // Welcome :D
-log(`\n * ${ASS_NAME} v${ASS_VERSION} * \n`);
+log.blank().info(`* ${ASS_NAME} v${ASS_VERSION} *`).blank();
 
 // Set up premium frontend
 const FRONTEND_NAME = 'ass-x'; // <-- Change this to use a custom frontend
 const ASS_PREMIUM = fs.existsSync(`./${FRONTEND_NAME}/package.json`) ? (require('submodule'), require(`./${FRONTEND_NAME}`)) : { enabled: false };
-log(`Frontend: ${ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : '<none>'}${ASS_PREMIUM.enabled && ASS_PREMIUM.index ? ' (with index)' : ''}`);
+log.info('Frontend: ', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : '<none>', ASS_PREMIUM.enabled && ASS_PREMIUM.index ? 'with index' : null);
 
 //#region Variables, module setup
 const app = express();
@@ -39,7 +39,7 @@ const ROUTERS = {
 // Read users and data
 const users = require('./auth');
 const data = require('./data');
-log(`StorageEngine: ${data.name} (${data.type})`);
+log.info('StorageEngine: ', data.name, data.type);
 //#endregion
 
 // Create thumbnails directory
@@ -85,9 +85,14 @@ app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceI
 
 // Error handler
 app.use(([err, , res,]) => {
-	console.error(err);
+	log.error(err);
 	res.sendStatus(CODE_INTERNAL_SERVER_ERROR);
 });
 
 // Host the server
-app.listen(port, host, () => log(`Users: ${Object.keys(users).length}\nFiles: ${data.size}\n\nListening on: ${host}:${port}${ASS_PREMIUM.enabled ? ` (frontend: ${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint})` : ''}\n`));
+app.listen(port, host, () => {
+	log.info('Users', `${Object.keys(users).length}`)
+		.info('Files', `${data.size}`)
+		.blank()
+		.info('Listening on', `${host}:${port}`, `${ASS_PREMIUM.enabled ? `frontend: ${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`);
+});

@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { s3enabled } = require('./config.json');
-const { formatBytes } = require('./utils');
+const { formatBytes, log } = require('./utils');
 const { bucketSize } = require('./storage');
 
 module.exports = () => {
@@ -28,20 +28,19 @@ module.exports = () => {
 	// Get AWS size
 	bucketSize()
 		.then((s3size) => {
-			console.log('---- Usage metrics ----\n');
-			console.log(`Users: ${Object.keys(users).length}`);
-			console.log(`Files: ${Object.keys(data).length}`);
-			console.log(`S3 size: ${s3enabled ? s3size : '--'}`);
-			console.log('');
-			console.log(`Total size: ${formatBytes(totalSize)}`);
-			console.log(`Untracked size: ${formatBytes(oldSize)}`);
-			console.log('');
+			log.info('---- Usage metrics ----')
+				.blank()
+				.info('Users', Object.keys(users).length)
+				.info('Files', Object.keys(data).length)
+				.info('S3 size', s3enabled ? s3size : '--')
+				.blank()
+				.info('Total size', formatBytes(totalSize))
+				.info('Old files', formatBytes(oldSize))
+				.blank();
 
-			Object.values(users).forEach(({ username, count, size }) => {
-				console.log(`- ${username}: ${formatBytes(size)} (${count} files)`);
-			});
+			Object.values(users).forEach(({ username, count, size }) => log.info(`- ${username}`, formatBytes(size), `${count} files`));
 		})
-		.catch(console.error);
+		.catch(log.c.error);
 }
 
 if (require.main === module) module.exports();

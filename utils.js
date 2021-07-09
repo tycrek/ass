@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const Path = require('path');
+const TLog = require('@tycrek/log');
 const fetch = require('node-fetch');
 const sanitize = require('sanitize-filename');
 const { DateTime } = require('luxon');
@@ -15,8 +16,6 @@ try {
 } catch (ex) {
 	if (ex.code !== 'MODULE_NOT_FOUND') console.error(ex);
 }
-
-const path = (...paths) => Path.join(__dirname, ...paths);
 
 function getTrueHttp() {
 	return ('http').concat(useSsl ? 's' : '').concat('://');
@@ -74,6 +73,9 @@ function getDatedDirname() {
 	return `${diskFilePath}${diskFilePath.endsWith('/') ? '' : '/'}${year}-${`0${month}`.slice(-2)}`; // skipcq: JS-0074
 }
 
+const path = (...paths) => Path.join(__dirname, ...paths);
+const logger = new TLog();
+
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
@@ -99,7 +101,7 @@ module.exports = {
 	getDatedDirname,
 	randomHexColour,
 	sanitize,
-	log: console.log,
+	log: logger,
 	verify: (req, users) => req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization),
 	renameFile: (req, newName) => new Promise((resolve, reject) => {
 		try {

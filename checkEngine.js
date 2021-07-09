@@ -1,6 +1,9 @@
 const check = require("check-node-version");
 const ENGINES = require('./package.json').engines;
 
+const TLog = require('@tycrek/log');
+const logger = new TLog();
+
 function doCheck() {
 	return new Promise((resolve, reject) =>
 		check(ENGINES, (err, { isSatisfied: allSatisfied }) =>
@@ -15,5 +18,5 @@ function doCheck() {
 
 if (require.main !== module) module.exports = doCheck;
 else doCheck()
-	.then(console.log)
-	.catch((err) => console.error(err) && process.exit(1));
+	.then((result) => logger.success(result))
+	.catch((err) => logger.error(err) && process.exit(1));
