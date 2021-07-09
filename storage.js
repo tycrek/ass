@@ -33,7 +33,7 @@ function getLocalFilename(req) {
 
 function processUploaded(req, res, next) {
 	// Fixes
-	req.file.mimetype = req.file.detectedMimeType;
+	req.file.mimetype = req.file.detectedMimeType || req.file.clientReportedMimeType;
 	req.file.ext = req.file.detectedFileExtension || req.file.clientReportedFileExtension;
 	req.file.originalname = sanitize(req.file.originalName);
 	req.file.randomId = generateId('random', ID_GEN_LENGTH, null, null);
