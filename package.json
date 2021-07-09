@@ -4,8 +4,8 @@
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
-    "node": "^14.x.x",
-    "npm": "^7.x.x"
+    "node": ">=14.x.x",
+    "npm": ">=7.x.x"
   },
   "scripts": {
     "start": "node ass.js",
@@ -34,7 +34,7 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
-    "@tycrek/ass-storage-engine": "0.2.5",
+    "@tycrek/ass-storage-engine": "0.2.6",
     "any-shell-escape": "^0.1.1",
     "aws-sdk": "^2.930.0",
     "check-node-version": "^4.1.0",
