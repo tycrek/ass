@@ -39,5 +39,5 @@ html
 						br
 						small #{timestamp} (#{size})
 						br
-						small: a(href='#' onclick=`window.location = '${resourceAttr.src}?download=yes';` download=title) Download
+						small: a(href='#' onclick=`window.location = '${resourceAttr.src}?download=yes'; return false;` download=title) Download
 				#footer: p Image hosted by #[a#footer-link(href='https://github.com/tycrek/ass' target='_blank'): strong ass], the superior self-hosted ShareX server
