@@ -21,6 +21,7 @@ const router = express.Router();
 
 // Block unauthorized requests and attempt token sanitization
 router.post('/', (req, res, next) => {
+	log.express().Header(req, 'authorization');
 	req.headers.authorization = req.headers.authorization || '';
 	req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
 	!verify(req, users) ? res.sendStatus(CODE_UNAUTHORIZED) : next(); // skipcq: JS-0093
@@ -71,12 +72,14 @@ router.post('/', (req, res, next) => {
 		// Send the response
 		res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
 			.on('finish', () => {
+				log.debug('Upload response sent');
 
 				// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
 				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
+					const client = req.headers['x-ass-webhook-client']
 
 					// Build the webhook client & embed
-					const whc = new WebhookClient(req.headers['x-ass-webhook-client'], req.headers['x-ass-webhook-token']);
+					const whc = new WebhookClient(client, req.headers['x-ass-webhook-token']);
 					const embed = new MessageEmbed()
 						.setTitle(logInfo)
 						.setURL(resourceUrl)
@@ -86,11 +89,12 @@ router.post('/', (req, res, next) => {
 						.setTimestamp(req.file.timestamp);
 
 					// Send the embed to the webhook, then delete the client after to free resources
+					log.debug('Sending webhook to', ` to ${client}`);
 					whc.send(null, {
 						username: req.headers['x-ass-webhook-username'] || 'ass',
 						avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
 						embeds: [embed]
-					}).then(() => whc.destroy());
+					}).then(() => log.debug('Webhook sent').callback(() => whc.destroy()));
 				}
 
 				// Also update the users upload count
@@ -102,7 +106,9 @@ router.post('/', (req, res, next) => {
 					users[req.token] = { username, count: 0 };
 				}
 				users[req.token].count += 1;
-				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 })
+				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
+
+				log.debug('Upload request flow completed', '').epoch();
 			});
 	}).catch(next);
 });

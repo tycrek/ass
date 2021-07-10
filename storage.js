@@ -7,7 +7,7 @@ const multer = require('multer');
 const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
-const { getDatedDirname, sanitize, generateId } = require('./utils');
+const { getDatedDirname, sanitize, generateId, formatBytes, log } = require('./utils');
 const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOriginal, maxUploadSize, mediaStrict } = require('./config.json');
 const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('./MagicNumbers.json');
 
@@ -20,10 +20,11 @@ const s3 = new aws.S3({
 });
 
 function saveFile(req) {
+	log.debug('Saving temp file to disk', req.file.path, formatBytes(req.file.size));
 	return new Promise((resolve, reject) =>
 		fs.ensureDir(getDatedDirname())
 			.then(() => fs.createWriteStream(req.file.path.concat('.temp')))
-			.then((stream) => req.file.stream.pipe(stream).on('finish', resolve).on('error', reject))
+			.then((stream) => req.file.stream.pipe(stream).on('finish', log.debug('Temp file', 'saved').callback(resolve)).on('error', reject))
 			.catch(reject));
 }
 
@@ -54,6 +55,7 @@ function processUploaded(req, res, next) {
 	// Block the resource if the mimetype is not an image or video
 	if (mediaStrict && !ALLOWED_MIMETYPES.test(req.file.mimetype)) {
 		fs.remove(req.file.path.concat('.temp'));
+		log.warn('Upload blocked', req.file.originalname, req.file.mimetype).warn('Strict media mode', 'only images, videos, & audio are file permitted');
 		return res.sendStatus(CODE_UNSUPPORTED_MEDIA_TYPE);
 	}
 
@@ -76,6 +78,7 @@ function processUploaded(req, res, next) {
 			req.file.sha1 = sha1 // skipcq: JS-0090
 		))
 
+		.then(() => log.debug('Saving file', req.file.originalname, s3enabled ? 'in S3' : 'on disk'))
 		.then(() =>
 			// skipcq: JS-0229
 			new Promise((resolve, reject) => s3enabled
@@ -95,7 +98,9 @@ function processUploaded(req, res, next) {
 					.then(resolve)
 					.catch(reject)
 			))
+		.then(() => log.debug('File saved', req.file.originalname, s3enabled ? 'in S3' : 'on disk'))
 		.then(() => fs.remove(req.file.path))
+		.then(() => log.debug('Temp file', 'deleted'))
 		.then(() => !s3enabled && (req.file.path = getLocalFilename(req))) // skipcq: JS-0090
 		.then(() => delete req.file.stream)
 		.then(() => next())

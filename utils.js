@@ -76,6 +76,7 @@ function getDatedDirname() {
 // Set up pathing & the logger
 const path = (...paths) => Path.join(__dirname, ...paths);
 const logger = new TLog({
+	level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
 	plugins: {
 		express: true
 	},

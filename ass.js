@@ -27,7 +27,6 @@ log.blank().info(`* ${ASS_NAME} v${ASS_VERSION} *`).blank();
 // Set up premium frontend
 const FRONTEND_NAME = 'ass-x'; // <-- Change this to use a custom frontend
 const ASS_PREMIUM = fs.existsSync(`./${FRONTEND_NAME}/package.json`) ? (require('submodule'), require(`./${FRONTEND_NAME}`)) : { enabled: false };
-log.info('Frontend: ', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : '<none>', ASS_PREMIUM.enabled && ASS_PREMIUM.index ? 'with index' : null);
 
 //#region Variables, module setup
 const app = express();
@@ -39,7 +38,6 @@ const ROUTERS = {
 // Read users and data
 const users = require('./auth');
 const data = require('./data');
-log.info('StorageEngine: ', data.name, data.type);
 //#endregion
 
 // Create thumbnails directory
@@ -55,6 +53,7 @@ app.set('view engine', 'pug');
 
 // Express logger middleware
 app.use(log.express(true));
+app.use((_req, _res, next) => log.epoch().callback(() => next()));
 
 // Helmet security middleware
 app.use(helmet.noSniff());
@@ -86,16 +85,11 @@ ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router); // ski
 // '/:resouceId' always needs to be LAST since it's a catch-all route
 app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
-// Error handler
-app.use(([err, , res,]) => {
-	log.error(err);
-	res.sendStatus(CODE_INTERNAL_SERVER_ERROR);
-});
-
 // Host the server
 log
 	.info('Users', `${Object.keys(users).length}`)
 	.info('Files', `${data.size}`)
+	.info('StorageEngine', data.name, data.type)
 	.info('Frontend', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : 'disabled', `${ASS_PREMIUM.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`)
 	.info('Index redirect', ASS_PREMIUM.enabled && ASS_PREMIUM.index ? `enable` : 'disabled')
 	.blank()
