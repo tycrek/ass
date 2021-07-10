@@ -31,7 +31,7 @@ if (require.main === module) {
 		const existingConfig = require('./config.json');
 		Object.keys(existingConfig).forEach((key) => Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]))
 	} catch (ex) {
-		if (ex.code !== 'MODULE_NOT_FOUND') console.log(ex);
+		if (ex.code !== 'MODULE_NOT_FOUND') log.error(ex);
 	}
 
 	// Disabled the annoying "prompt: " prefix and removes colours
@@ -170,16 +170,25 @@ if (require.main === module) {
 		}
 	};
 
-	log('<<< ass setup >>>\n');
+	log.blank().blank().blank().blank()
+		.info('<<< ass setup >>>').blank();
 	let results = {};
 	prompt.get(setupSchema)
 		.then((r) => results = r) // skipcq: JS-0086
-		.then(() => Object.keys(results).map((result) => (` ${result}: ${results[result]}`)).join('\n'))
-		.then((resultString) => log(`\nPlease verify your information:\n\n${resultString}\n`))
+		/* .then(() => log.blank().warn('Please verify your information', ''))
+		.then(() => Object.entries(results).forEach(([setting, value]) => log.info(`--> ${setting}`, `${value}`)))
+		.then(() => log.blank()) */
+
+		.then(() => log
+			.blank()
+			.warn('Please verify your information', '')
+			.callback(() => Object.entries(results).forEach(([setting, value]) => log.info(`--> ${setting}`, `${value}`)))
+			.blank())
+
 		.then(() => prompt.get(confirmSchema))
 		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : process.exit(1)))
-		.then(() => log('\nConfig has been saved!'))
-		.catch((err) => console.error(err));
+		.then(() => log.blank().success('Config has been saved!'))
+		.catch((err) => log.blank().error(err));
 }
 
 module.exports = config;
