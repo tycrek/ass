@@ -73,8 +73,21 @@ function getDatedDirname() {
 	return `${diskFilePath}${diskFilePath.endsWith('/') ? '' : '/'}${year}-${`0${month}`.slice(-2)}`; // skipcq: JS-0074
 }
 
+// Set up pathing & the logger
 const path = (...paths) => Path.join(__dirname, ...paths);
-const logger = new TLog();
+const logger = new TLog({
+	plugins: {
+		express: true
+	},
+	timestamp: {
+		enabled: true,
+		colour: 'grey',
+		preset: 'DATETIME_MED'
+	},
+});
+
+// Enable the Express logger
+logger.enable.express().debug('Plugin enabled', 'Express middleware');
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
@@ -101,7 +114,6 @@ module.exports = {
 	getDatedDirname,
 	randomHexColour,
 	sanitize,
-	log: logger,
 	verify: (req, users) => req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization),
 	renameFile: (req, newName) => new Promise((resolve, reject) => {
 		try {
@@ -121,3 +133,8 @@ module.exports = {
 			.then((f2) => f2.body.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))
 			.catch(reject)),
 }
+
+/**
+ * @type {TLog}
+ */
+module.exports.log = logger;
