@@ -24,7 +24,7 @@ function saveFile(req) {
 	return new Promise((resolve, reject) =>
 		fs.ensureDir(getDatedDirname())
 			.then(() => fs.createWriteStream(req.file.path.concat('.temp')))
-			.then((stream) => req.file.stream.pipe(stream).on('finish', log.debug('Temp file', 'saved').callback(resolve)).on('error', reject))
+			.then((stream) => req.file.stream.pipe(stream).on('finish', () => log.debug('Temp file', 'saved').callback(resolve)).on('error', reject))
 			.catch(reject));
 }
 
