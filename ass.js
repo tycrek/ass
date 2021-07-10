@@ -7,7 +7,7 @@ try {
 }
 
 // Load the config
-const { host, port, useSsl, diskFilePath, isProxied } = require('./config.json');
+const { host, port, useSsl, diskFilePath, isProxied, s3enabled } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -53,6 +53,9 @@ app.disable('x-powered-by');
 app.set('trust proxy', isProxied);
 app.set('view engine', 'pug');
 
+// Express logger middleware
+app.use(log.express(true));
+
 // Helmet security middleware
 app.use(helmet.noSniff());
 app.use(helmet.ieNoOpen());
@@ -90,9 +93,10 @@ app.use(([err, , res,]) => {
 });
 
 // Host the server
-app.listen(port, host, () => {
-	log.info('Users', `${Object.keys(users).length}`)
-		.info('Files', `${data.size}`)
-		.blank()
-		.info('Listening on', `${host}:${port}`, `${ASS_PREMIUM.enabled ? `frontend: ${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`);
-});
+log
+	.info('Users', `${Object.keys(users).length}`)
+	.info('Files', `${data.size}`)
+	.info('Frontend', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : 'disabled', `${ASS_PREMIUM.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`)
+	.info('Index redirect', ASS_PREMIUM.enabled && ASS_PREMIUM.index ? `enable` : 'disabled')
+	.blank()
+	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
