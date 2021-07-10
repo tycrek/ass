@@ -21,7 +21,6 @@ const router = express.Router();
 
 // Block unauthorized requests and attempt token sanitization
 router.post('/', (req, res, next) => {
-	log.express().Header(req, 'authorization');
 	req.headers.authorization = req.headers.authorization || '';
 	req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
 	!verify(req, users) ? res.sendStatus(CODE_UNAUTHORIZED) : next(); // skipcq: JS-0093
@@ -89,7 +88,7 @@ router.post('/', (req, res, next) => {
 						.setTimestamp(req.file.timestamp);
 
 					// Send the embed to the webhook, then delete the client after to free resources
-					log.debug('Sending webhook to', ` to ${client}`);
+					log.debug('Sending webhook to client', client);
 					whc.send(null, {
 						username: req.headers['x-ass-webhook-username'] || 'ass',
 						avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
@@ -108,7 +107,7 @@ router.post('/', (req, res, next) => {
 				users[req.token].count += 1;
 				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
 
-				log.debug('Upload request flow completed', '').epoch();
+				log.debug('Upload request flow completed', '');
 			});
 	}).catch(next);
 });

@@ -53,7 +53,6 @@ app.set('view engine', 'pug');
 
 // Express logger middleware
 app.use(log.express(true));
-app.use((_req, _res, next) => log.epoch().callback(() => next()));
 
 // Helmet security middleware
 app.use(helmet.noSniff());
