@@ -85,6 +85,11 @@ ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router); // ski
 // '/:resouceId' always needs to be LAST since it's a catch-all route
 app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
+app.use((err, req, res, next) => {
+	console.error(err);
+	res.sendStatus(CODE_INTERNAL_SERVER_ERROR);
+});
+
 // Host the server
 log
 	.info('Users', `${Object.keys(users).length}`)
