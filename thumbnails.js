@@ -54,7 +54,7 @@ function getNewNamePath(oldName) {
  */
 function getVideoThumbnail(file) {
 	return new Promise((resolve, reject) => exec(
-		getCommand(file.path, getNewNamePath(file.originalname)),
+		getCommand(file.path, getNewNamePath(file.randomId)),
 		(err) => (err ? reject(err) : resolve())
 	));
 }
@@ -69,7 +69,7 @@ function getImageThumbnail(file) {
 			.then((image) => image
 				.quality(THUMBNAIL.QUALITY)
 				.resize(THUMBNAIL.WIDTH, THUMBNAIL.HEIGHT, Jimp.RESIZE_BICUBIC)
-				.write(getNewNamePath(file.originalname)))
+				.write(getNewNamePath(file.randomId)))
 			.then(resolve)
 			.catch(reject));
 }
