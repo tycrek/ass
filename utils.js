@@ -77,9 +77,6 @@ function getDatedDirname() {
 const path = (...paths) => Path.join(__dirname, ...paths);
 const logger = new TLog({
 	level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-	plugins: {
-		express: true
-	},
 	timestamp: {
 		enabled: true,
 		colour: 'grey',
@@ -88,7 +85,9 @@ const logger = new TLog({
 });
 
 // Enable the Express logger
-logger.enable.express().debug('Plugin enabled', 'Express middleware');
+logger
+	.enable.process({ uncaughtException: false }).debug('Plugin enabled', 'Process')
+	.enable.express().debug('Plugin enabled', 'Express');
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
