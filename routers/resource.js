@@ -112,7 +112,10 @@ router.get('/delete/:deleteId', (req, res, next) => {
 			if (deleteId !== fileData.deleteId) return res.sendStatus(CODE_UNAUTHORIZED);
 
 			// Save the file information
-			return Promise.all([s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)), (!fileData.is || (fileData.is.image || fileData.is.video)) ? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)).catch((err) => ({})) : () => Promise.resolve()]);
+			return Promise.all([
+				s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)),
+				(!fileData.is || (fileData.is.image || fileData.is.video)) && fs.existsSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))
+					? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)) : () => Promise.resolve()]);
 		})
 		.then(() => data.del(req.ass.resourceId))
 		.then(() => (log.success('Deleted', oldName, oldType), res.type('text').send('File has been deleted!'))) // skipcq: JS-0090
