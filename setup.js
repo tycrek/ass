@@ -145,7 +145,7 @@ if (require.main === module) {
 				required: false
 			},
 			s3bucketEndpoint: {
-				description: 'Whether the provided endpoint is a bucket (true) or a bucket subdomain (false)',
+				description: 'Whether the provided endpoint is a bucket path (true) or a bucket subdomain (false)',
 				type: 'boolean',
 				default: config.s3bucketEndpoint,
 				required: false
