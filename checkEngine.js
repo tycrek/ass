@@ -6,9 +6,9 @@ const logger = new TLog();
 
 function doCheck() {
 	return new Promise((resolve, reject) =>
-		check(ENGINES, (err, { isSatisfied: allSatisfied }) =>
+		check(ENGINES, (err, { isSatisfied: allSatisfied, versions }) =>
 			err ? reject(err) : allSatisfied ? resolve('Node & npm version requirements satisfied!')
-				: reject(Object.entries(result.versions)
+				: reject(Object.entries(versions)
 					.filter(([, { isSatisfied }]) => (!isSatisfied))
 					.map(([packageName, { version: current, wanted: minimum }]) =>
 						`\nInvalid ${packageName} version!\n- Current: ${current}\n- Minimum: ${minimum}`)
