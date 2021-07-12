@@ -86,7 +86,7 @@ const logger = new TLog({
 
 // Enable the Express logger
 logger
-	.enable.process({ uncaughtException: false }).debug('Plugin enabled', 'Process')
+	//.enable.process({ uncaughtException: false }).debug('Plugin enabled', 'Process')
 	.enable.express().debug('Plugin enabled', 'Express');
 
 const idModes = {
