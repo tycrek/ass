@@ -11,7 +11,7 @@ function doCheck() {
 				: reject(Object.entries(versions)
 					.filter(([, { isSatisfied }]) => (!isSatisfied))
 					.map(([packageName, { version: current, wanted: minimum }]) =>
-						`\nInvalid ${packageName} version!\n- Current: ${current}\n- Minimum: ${minimum}`)
+						`\nInvalid ${packageName} version!\n- Current: ${current}\n- Required: ${minimum}`)
 					.join('')
 					.concat('\nPlease update to continue!'))));
 }
