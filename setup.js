@@ -16,7 +16,7 @@ const config = {
 	s3enabled: false,
 	s3endpoint: 'sfo3.digitaloceanspaces.com',
 	s3bucket: 'bucket-name',
-	s3bucketEndpoint: false,
+	s3usePathStyle: false,
 	s3accessKey: 'accessKey',
 	s3secretKey: 'secretKey',
 };
@@ -144,10 +144,10 @@ if (require.main === module) {
 				default: config.s3bucket,
 				required: false
 			},
-			s3bucketEndpoint: {
-				description: 'Whether the provided endpoint is a bucket path (true) or a bucket subdomain (false)',
+			s3usePathStyle: {
+				description: 'S3 path endpoint, otherwise uses subdomain endpoint',
 				type: 'boolean',
-				default: config.s3bucketEndpoint,
+				default: config.s3usePathStyle,
 				required: false
 			},
 			s3accessKey: {
