@@ -23,14 +23,14 @@ const router = express.Router();
 router.post('/', (req, res, next) => {
 	req.headers.authorization = req.headers.authorization || '';
 	req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
-	!verify(req, users) ? log.warn('Upload blocked', 'Unauthorized').callback(res.sendStatus, CODE_UNAUTHORIZED) : next(); // skipcq: JS-0093
+	!verify(req, users) ? log.warn('Upload blocked', 'Unauthorized').callback(() => res.sendStatus(CODE_UNAUTHORIZED)) : next(); // skipcq: JS-0093
 });
 
 // Upload file
 //router.post('/', doUpload, processUploaded, ({ next }) => next());
 router.post('/', (req, res, next) => doUpload(req, res, (err) => {
 	log.express().Header(req, 'Content-Type');
-	(err) ? log.error(`Multer encountered an ${!(err instanceof multer.MulterError) ? 'unknown ' : ''}error`, err).callback(next, err) : log.debug('Multer', 'File saved in temp dir').callback(next);
+	(err) ? log.error(`Multer encountered an ${!(err.toString().includes('MulterError')) ? 'unknown ' : ''}error`, err).callback(next, err) : log.debug('Multer', 'File saved in temp dir').callback(next);
 }), processUploaded, ({ next }) => next());
 
 router.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? log.warn('Upload blocked', 'File too large').callback(() => res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`)) : next(err)); // skipcq: JS-0229
@@ -63,6 +63,7 @@ router.post('/', (req, res, next) => {
 
 	// Save the file information
 	const resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
+	log.debug('Saving data', data.name);
 	data.put(resourceId.split('.')[0], req.file).then(() => {
 		// Log the upload
 		const logInfo = `${req.file.originalname} (${req.file.mimetype}, ${formatBytes(req.file.size)})`;

@@ -21,11 +21,11 @@ const s3 = new aws.S3({
 
 function saveFile(req) {
 	log.null(req.file, 'Unable to save req.file!')
-		.debug('Saving temp file to disk', req.file.path, formatBytes(req.file.size));
+		.debug('Temp file saving');
 	return new Promise((resolve, reject) =>
 		fs.ensureDir(getDatedDirname())
 			.then(() => fs.createWriteStream(req.file.path.concat('.temp')))
-			.then((stream) => req.file.stream.pipe(stream).on('finish', () => log.debug('Temp file', 'saved').callback(resolve)).on('error', reject))
+			.then((stream) => req.file.stream.pipe(stream).on('finish', () => log.debug('Temp file saved', req.file.path, formatBytes(req.file.size)).callback(resolve)).on('error', reject))
 			.catch(reject));
 }
 
@@ -55,9 +55,17 @@ function processUploaded(req, res, next) {
 
 	// Block the resource if the mimetype is not an image or video
 	if (mediaStrict && !ALLOWED_MIMETYPES.test(req.file.mimetype)) {
-		fs.remove(req.file.path.concat('.temp'));
-		log.warn('Upload blocked', req.file.originalname, req.file.mimetype).warn('Strict media mode', 'only images, videos, & audio are file permitted');
-		return res.sendStatus(CODE_UNSUPPORTED_MEDIA_TYPE);
+		return log
+			.warn('Upload blocked', req.file.originalname, req.file.mimetype)
+			.warn('Strict media mode', 'only images, videos, & audio are file permitted')
+			.callback(() =>
+				fs.remove(req.file.path.concat('.temp'))
+					.then(() => log
+						.debug('Temp file', 'deleted')
+						.callback(() => res.sendStatus(CODE_UNSUPPORTED_MEDIA_TYPE)))
+					.catch((err) => log
+						.error('Temp file could not be deleted', err)
+						.callback(next, err)));
 	}
 
 	// Remove unwanted fields
