@@ -87,7 +87,8 @@ const logger = new TLog({
 // Enable the Express logger
 logger
 	//.enable.process({ uncaughtException: false }).debug('Plugin enabled', 'Process')
-	.enable.express().debug('Plugin enabled', 'Express');
+	.enable.express().debug('Plugin enabled', 'Express')
+	.enable.socket().debug('Plugin enabled', 'Socket');
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
