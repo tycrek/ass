@@ -20,7 +20,8 @@ const s3 = new aws.S3({
 });
 
 function saveFile(req) {
-	log.debug('Saving temp file to disk', req.file.path, formatBytes(req.file.size));
+	log.null(req.file, 'Unable to save req.file!')
+		.debug('Saving temp file to disk', req.file.path, formatBytes(req.file.size));
 	return new Promise((resolve, reject) =>
 		fs.ensureDir(getDatedDirname())
 			.then(() => fs.createWriteStream(req.file.path.concat('.temp')))

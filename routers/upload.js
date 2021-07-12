@@ -27,7 +27,10 @@ router.post('/', (req, res, next) => {
 });
 
 // Upload file
-router.post('/', doUpload, processUploaded, ({ next }) => next());
+//router.post('/', doUpload, processUploaded, ({ next }) => next());
+router.post('/', (req, res, next) => doUpload(req, res, (err) =>
+	(err) ? log.error(`Multer encountered an ${!(err instanceof multer.MulterError) ? 'unknown ' : ''}error`, err).callback(next, err) : log.debug('Multer', 'File saved in temp dir').callback(next)), processUploaded, ({ next }) => next());
+
 router.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`) : next(err)); // skipcq: JS-0229
 
 // Process uploaded file
