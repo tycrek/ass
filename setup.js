@@ -79,7 +79,7 @@ if (require.main === module) {
 				required: false
 			},
 			resourceIdSize: {
-				description: 'Resource ID size (by using a higher value, you will be able to upload more files)',
+				description: 'Resource ID length (length of ID\'s for your files, recommended: 6-15. Higher = more uploads)',
 				type: 'integer',
 				default: config.resourceIdSize,
 				required: false
