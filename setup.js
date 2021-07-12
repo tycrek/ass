@@ -16,15 +16,19 @@ const config = {
 	s3enabled: false,
 	s3endpoint: 'sfo3.digitaloceanspaces.com',
 	s3bucket: 'bucket-name',
+	s3bucketEndpoint: false,
 	s3accessKey: 'accessKey',
 	s3secretKey: 'secretKey',
 };
 
 // If directly called on the command line, run setup script
 if (require.main === module) {
-	const { path, log } = require('./utils');
+	const TLog = require('@tycrek/log');
+	const path = (...paths) => require('path').join(__dirname, ...paths);
 	const fs = require('fs-extra');
 	const prompt = require('prompt');
+
+	const log = new TLog({ timestamp: { enabled: false } });
 
 	// Override default config with existing config to allow migrating configs
 	try {
@@ -138,6 +142,12 @@ if (require.main === module) {
 				description: 'S3 Bucket name to upload objects to',
 				type: 'string',
 				default: config.s3bucket,
+				required: false
+			},
+			s3bucketEndpoint: {
+				description: 'Whether the provided endpoint is a bucket (true) or a bucket subdomain (false)',
+				type: 'boolean',
+				default: config.s3bucketEndpoint,
 				required: false
 			},
 			s3accessKey: {

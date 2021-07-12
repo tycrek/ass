@@ -8,13 +8,14 @@ const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
 const { getDatedDirname, sanitize, generateId, formatBytes, log } = require('./utils');
-const { s3enabled, s3endpoint, s3bucket, s3accessKey, s3secretKey, saveAsOriginal, maxUploadSize, mediaStrict } = require('./config.json');
+const { s3enabled, s3endpoint, s3bucket, s3bucketEndpoint, s3accessKey, s3secretKey, saveAsOriginal, maxUploadSize, mediaStrict } = require('./config.json');
 const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('./MagicNumbers.json');
 
 const ID_GEN_LENGTH = 32;
 const ALLOWED_MIMETYPES = /(image)|(video)|(audio)\//;
 
 const s3 = new aws.S3({
+	s3BucketEndpoint: s3bucketEndpoint,
 	endpoint: new aws.Endpoint(s3endpoint),
 	credentials: new aws.Credentials({ accessKeyId: s3accessKey, secretAccessKey: s3secretKey })
 });
