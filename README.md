@@ -21,32 +21,35 @@
 
 - ✔️ Token authorization via HTTP `Authorization` header
 - ✔️ Upload images, videos, gifs, audio, files
-- ✔️ Fancy embeds on Discord
-- ✔️ Seamless inline video embeds on Discord
-- ✔️ Sexy web viewer with video & audio player
-- ✔️ Personal upload log via customizable Discord Webhooks
-- ✔️ Mimetype blocking
-- ✔️ File deletion
 - ✔️ Usage metrics
+- ✔️ File deletion
+- ✔️ File downloading
 - ✔️ Thumbnail support
+- ✔️ Mimetype blocking
 - ✔️ Basic multi-user support
+- ✔️ Fully customizable Discord embeds
+- ✔️ Seamless inline video embeds on Discord
+- ✔️ Built-in web viewer with video & audio player
+- ✔️ Personal upload log via customizable Discord Webhooks
 - ✔️ Configurable global upload limit (per-user coming soon!)
-- ✔️ Basic macOS/Linux support using other clients including [Flameshot](https://flameshot.org/) ([ass-compatible Flameshot script](https://github.com/tycrek/ass#flameshot-users-linux)) & [MagicCap](https://magiccap.me/)
-- ✔️ Local storage *or* block-storage support for [Amazon S3](https://aws.amazon.com/s3/) (including [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces/))
-- ✔️ Custom pluggable frontend dashboards using [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
+- ✔️ Basic macOS/Linux support using other clients including [Flameshot](https://flameshot.org/) ([ass-compatible Flameshot script](#flameshot-users-linux)) & [MagicCap](https://magiccap.me/)
+- ✔️ Custom pluggable frontends using [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 - ✔️ Multiple access types
    - **[ZWS](https://zws.im)**
    - **Mixed-case alphanumeric**
    - **Gfycat**
    - **Original**
-- ✔️ Multiple storage methods using [ass StorageEngines](https://github.com/tycrek/ass#storageengines) (JSON by default)
+- ✔️ Multiple file storage methods:
+   - **Local file system**
+   - **Amazon S3** (including [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces/))
+- ✔️ Multiple data storage methods using [ass StorageEngines](#storageengines) (JSON by default)
    - **File**
-      - **JSON**
+      - **JSON** (default, [ass-storage-engine](https://github.com/tycrek/ass-storage-engine))
       - **YAML** (soon!)
    - **Databases**
+      - **PostgreSQL** ([ass-psql](https://github.com/tycrek/ass-psql))
       - **Mongo** (soon!)
       - **MySQL** (soon!)
-      - **PostgreSQL** (soon!)
 
 ### Access types
 
@@ -154,7 +157,7 @@ Once you have these, add the following HTTP headers to your ShareX config:
 | **`X-Ass-Webhook-Username`** | (Optional) the "username" of the Webhook; can be set to whatever you want |
 | **`X-Ass-Webhook-Avatar`** | (Optional) URL to an image to use as the Webhook avatar. Use the **full** URL including `https://` |
 
-Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, and a link to delete the file. To disable webhooks, simply remove the headers from your config.
+Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, & a link to delete the file. To disable webhooks, simply remove the headers from your config.
 
 ## Dashboard frontends
 
@@ -220,14 +223,16 @@ module.exports = {
 
 [StorageEngines](https://github.com/tycrek/ass-storage-engine) are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
 
-ass aims to support these storage methods at a minimum:
+**Supported StorageEngines:**
 
-- **JSON**
-- **Mongo** (soon)
+| Name | Description | Links |
+| ---- | ----------- | ----- |
+| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). This is the default StorageEngine. | [GitHub](https://github.com/tycrek/ass-storage-engine/), [npm](https://www.npmjs.com/package/@tycrek/ass-storage-engine) |
+| **PostgreSQL** | Data storage using a [PostgreSQL](https://www.postgresql.org/) database. [node-postgres](https://node-postgres.com/) is used for communicating with the database. | [GitHub](https://github.com/tycrek/ass-psql/), [npm](https://www.npmjs.com/package/@tycrek/ass-psql) |
 
 An ass StorageEngine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is plugin the connection/authentication details, then ass will handle the rest, using the resource ID as the key.
 
-The only storage engine ass comes with by default is **JSON**. Others will be published to [npm](https://www.npmjs.com/) and listed here. If you find (or create!) a StorageEngine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`](https://github.com/tycrek/ass/blob/master/data.js). At this time, a modified `data.js` might look like this:
+The only StorageEngine ass comes with by default is **JSON**. If you find (or create!) a StorageEngine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`](https://github.com/tycrek/ass/blob/master/data.js). The StorageEngines own README file should also instruct how to use it. At this time, a modified `data.js` might look like this:
 
 ```js
 /**
@@ -252,10 +257,13 @@ module.exports = data1;
 
 ```
 
-As long as the StorageEngine properly implements `GET`/`PUT`/`DEL`/`HAS`
-StorageFunctions, replacing the file/database system is just that easy.
+As long as the StorageEngine properly implements `GET`/`PUT`/`DEL`/`HAS` StorageFunctions, replacing the file/database system is just that easy.
 
 **For a detailed walkthrough on developing StorageEngines, [consult the wiki](https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine).**
+
+#### But why not "DataEngine"?
+
+Because I was dumb and didn't know what to call it, totally forgetting that "storage engine" would also imply a way to store *files*, not just *data*.
 
 ## Flameshot users (Linux)
 
