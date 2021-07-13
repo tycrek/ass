@@ -19,7 +19,7 @@
     "prestart": "npm run engine-check",
     "presetup": "npm run engine-check",
     "logs": "node ./node_modules/@tycrek/log/socketClient.js",
-    "docker-compose": "npm i && npm run setup && docker-compose up -d && echo \"Check the logs to see if the server is running:\" && echo \"$ docker-compose logs -f -n 50 ass-docker\""
+    "docker-compose": "npm i && npm run setup && mkdir -p /opt/ass/uploads/thumbnails && docker-compose up -d && echo \"Check the logs to see if the server is running:\" && echo \"$ docker-compose logs -f -n 50 ass-docker\""
   },
   "repository": "github:tycrek/ass",
   "keywords": [
