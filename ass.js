@@ -97,4 +97,10 @@ log
 	.info('Frontend', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : 'disabled', `${ASS_PREMIUM.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`)
 	.info('Index redirect', ASS_PREMIUM.enabled && ASS_PREMIUM.index ? `enable` : 'disabled')
 	.blank()
+	.callback(() => {
+		console.log(process.argv[1]);
+		if (process.argv[2] && process.argv[2] === '--docker-compose')
+			log.info('docker-compose', 'Exiting in 5 seconds...')
+				.callback(() => setTimeout(() => process.exit(0), 5000))
+	})
 	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
