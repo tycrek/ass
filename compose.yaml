@@ -1,0 +1,26 @@
+# ass Docker compose.yaml v0.1.0
+# authors:
+#  - tycrek <t@tycrek.com> (https://tycrek.com/)
+#  - Zusier <zusier@pm.me> (https://github.com/Zusier)
+
+services:
+	ass:
+	  build: .
+	  command: npm start
+	  container_name: ass-docker
+	  restart: unless-stopped
+	  ports:
+		- "40115:40115"
+		- "45375:45375"
+	  volumes:
+		- type: bind
+		  source: /opt/ass/uploads
+		  target: /opt/ass/uploads
+		- type: bind
+		  source: /opt/ass/config.json
+		  target: /opt/ass/config.json
+		- type: bind
+		  source: /opt/ass/auth.json
+		  target: /opt/ass/auth.json
+	  tmpfs: /tmp
+	  working_dir: /opt/ass

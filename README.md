@@ -62,6 +62,8 @@
 
 ## Installation
 
+**See [docker-compose](#docker-compose) chapter below for a quick & easy way to get up and running.**
+
 The installation may look daunting but it's really pretty straightforward. Just follow it word-for-word & you'll be fine. If you are not fine, then by all means [open an Issue](https://github.com/tycrek/ass/issues/new) & I'll try my best to help.
 
 1. First of all you must have **Node.js 14 or later** & **npm 7 or later** installed. 
@@ -280,6 +282,62 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `restart` | Restarts the ass server using `systemctl`. More info soon (should work fine if you have an existing `ass.service` file) |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
 | `logs` | Uses the [tlog Socket plugin](https://github.com/tycrek/tlog#socket) to stream logs from the ass server to your terminal, with full colour support (Remember to set [`FORCE_COLOR`](https://nodejs.org/dist/latest-v14.x/docs/api/cli.html#cli_force_color_1_2_3) if you're using Systemd) |
+
+## docker-compose
+
+You may also install ass using [docker-compose](https://docs.docker.com/compose/). Please be aware that this has not been extensively tested, so use at your own risk. These steps assume you are already family with Docker, so if you're not, please [read the docs](https://docs.docker.com/). It also assumes that you have a working Docker installation with `docker-compose` installed.
+
+Installation is as follows:
+
+```bash
+# Step 1:
+# Create the install directory as root and change ownership to the current user
+# (if someone has a better way to do this, please let me know in an Isuue or PR!)
+sudo mkdir -p /opt/ass && \
+sudo chown -R $USER:$USER /opt/ass && \
+sudo chmod -R 774 /opt/ass && \
+cd /opt/ass
+
+# Step 2:
+# Clone the ass repo into the current directory (don't forget the `.`!)
+git clone https://github.com/tycrek/ass.git .
+
+# Step 3:
+#  - Use the npm script: see Step 3.1
+#  - Manual install (safer): see Step 3.2
+
+# Step 3.1:
+# Use the npm script
+npm run docker-compose
+
+# Step 3.2:
+# Manual install
+# (This is safer since it manually verifies that the server will start properly)
+
+# 3.2.1: Install the ass dependencies
+npm i
+
+# 3.2.2: Run the setup script
+npm run setup
+
+# 3.2.3: Test your installation by running the start script
+# This will also print the inital admin token, so copy it somewhere safe!
+npm start
+
+# If it works, press Ctr-C to stop ass
+# <Ctrl-C>
+
+# 3.2.4: Finally, use docker-compose to build & run the ass container as a daemon (background process)
+docker-compose up -d
+
+# Step 4:
+# Check the logs to see if the server is running
+docker-compose logs -f -n 50 ass-docker
+```
+
+You can get your initial `ass` admin token by running `docker-compose logs -f -n 50 ass-docker` and copying the token from the output (if you ran the manual install, it will be printed with `npm start`, so copy it from there).
+
+You should now be able to access the ass server at `http://localhost:40115/` (ass-docker will bind to host `0.0.0.0` to allow external access). You can configure a reverse proxy such as [Caddy](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/) to make it accessible from the internet with automatic SSL.
 
 ## Flameshot users (Linux)
 
