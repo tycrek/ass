@@ -105,6 +105,7 @@ dist
 
 # tokens
 auth.json
+auth.*.json
 
 # data
 data.json
@@ -114,3 +115,6 @@ uploads/
 
 # config
 config.json
+
+# certificates
+*.crt
