@@ -12,7 +12,7 @@
     "setup": "node setup.js",
     "metrics": "node metrics.js",
     "new-token": "node generators/token.js",
-    "update": "git restore package-lock.json && git pull && npm i",
+    "update": "git pull && npm i",
     "update-full": "npm run update && npm run setup",
     "restart": "systemctl restart ass.service",
     "engine-check": "node checkEngine.js",

@@ -22,9 +22,9 @@ const config = {
 };
 
 // If directly called on the command line, run setup script
-if (require.main === module) {
-	const TLog = require('@tycrek/log');
+function doSetup() {
 	const path = (...paths) => require('path').join(__dirname, ...paths);
+	const TLog = require('@tycrek/log');
 	const fs = require('fs-extra');
 	const prompt = require('prompt');
 
@@ -185,23 +185,31 @@ if (require.main === module) {
 	let results = {};
 	prompt.get(setupSchema)
 		.then((r) => results = r) // skipcq: JS-0086
-		/* .then(() => log.blank().warn('Please verify your information', ''))
-		.then(() => Object.entries(results).forEach(([setting, value]) => log.info(`--> ${setting}`, `${value}`)))
-		.then(() => log.blank()) */
 
+		// Verify information is correct
 		.then(() => log
 			.blank()
 			.warn('Please verify your information', '')
 			.callback(() => Object.entries(results).forEach(([setting, value]) => log.info(`--> ${setting}`, `${value}`)))
 			.blank())
 
+		// Confirm
 		.then(() => prompt.get(confirmSchema))
 		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : process.exit(1)))
 		.then(() => log.blank().success('Config has been saved!'))
 		.catch((err) => log.blank().error(err));
 }
 
-module.exports = config;
+module.exports = {
+	doSetup,
+	config
+};
+
+// If called on the command line, run the setup.
+// Using this makes sure setup is not run when imported by another file
+if (require.main === module) {
+	doSetup();
+}
 
 /*{
 	description: 'Enter your password',     // Prompt displayed to the user. If not supplied name will be used.

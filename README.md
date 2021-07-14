@@ -277,7 +277,7 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `setup` | Starts the easy setup process. Should be run once after installing ass, & also after any updates that introduce new configuration options. |
 | `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
 | `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
-| `update` | Runs update tasks. These will update ass to the latest version by first restoring `package-lock.json` (which tends to overrite on `git pull`), pulling changes with `git pull`, then running `npm i` to install any new dependencies. This is the recommended way to update ass.  After updating, you will need to restart ass. |
+| `update` | Runs update tasks. These will update ass to the latest version by first pulling changes with `git pull`, then running `npm i` to install any new dependencies. This is the recommended way to update ass.  After updating, you will need to restart ass. |
 | `update-full` | Runs the previous update script, followed by `npm run setup` to ensure that all the latest configuration options are set. The setup script uses your **existing** config for setting defaults to make updates much quicker. If any ass Release Notes say to use `update-full` instead of `update`, then use `update-full`. |
 | `restart` | Restarts the ass server using `systemctl`. More info soon (should work fine if you have an existing `ass.service` file) |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
