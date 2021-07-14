@@ -19,8 +19,8 @@
     "prestart": "npm run engine-check",
     "presetup": "npm run engine-check",
     "logs": "node ./node_modules/@tycrek/log/socketClient.js",
-    "docker-compose": "npm i && npm run setup && node . --docker-compose && docker-compose up -d && echo \"Check the logs to see if the server is running:\" && echo \"$ docker logs -f -n 50 ass-docker\"",
-    "docker-logs": "docker logs -f -n 50 ass-docker",
+    "docker-compose": "docker-compose up -d && docker-compose exec ass npm run setup && docker-compose restart",
+    "docker-logs": "docker-compose logs -f --tail=50 --no-log-prefix ass",
     "docker-stop": "docker-compose stop",
     "docker-start": "docker-compose start",
     "docker-restart": "docker-compose restart"

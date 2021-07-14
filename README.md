@@ -332,12 +332,12 @@ docker-compose up -d
 
 # Step 4:
 # Check the logs to see if the server is running
-docker-compose logs -f -n 50 ass-docker
+npm run docker-logs
 ```
 
 If you used `npm run docker-compose`, you'll have to scroll up to find your initial `ass` admin token. Look at the output of `npm start` to see find it. If you ran the manual install, it was printed when you ran `npm start`, so copy it from there.
 
-To view the container live logs, use `docker-compose logs -f -n 50 ass-docker`.
+To view the container live logs, use `npm run docker-logs`.
 
 You should now be able to access the ass server at `http://localhost:40115/` (ass-docker will bind to host `0.0.0.0` to allow external access). You can configure a reverse proxy such as [Caddy](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/) to make it accessible from the internet with automatic SSL.
 
