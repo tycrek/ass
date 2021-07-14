@@ -20,16 +20,15 @@ PAUSE
 ECHO Running setup...
 
 REM docker-compose up -d
-docker-compose up -d
+docker-compose up -d &&
 
 REM Run setup within the container
-docker-compose exec ass npm run setup
+docker-compose exec ass npm run setup &&
 
 REM Restart the container when complete
-docker-compose restart
-
-REM Open the logs to ensure it is running
-docker-compose logs -f --tail=50 --no-log-prefix ass
+docker-compose restart &&
 
 REM Done!
-echo ass-docker for Windows installed!
+ECHO ass-docker for Windows installed!
+ECHO Run the following to view commands:
+ECHO > docker-compose logs -f --tail=50 --no-log-prefix ass
