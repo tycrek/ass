@@ -32,24 +32,25 @@
 - ✔️ Built-in web viewer with video & audio player
 - ✔️ Personal upload log via customizable Discord Webhooks
 - ✔️ Configurable global upload limit (per-user coming soon!)
-- ✔️ Basic macOS/Linux support using other clients including [Flameshot](https://flameshot.org/) ([ass-compatible Flameshot script](#flameshot-users-linux)) & [MagicCap](https://magiccap.me/)
+- ✔️ Basic macOS/Linux client support including [Flameshot](https://flameshot.org/) ([ass-compatible Flameshot script](#flameshot-users-linux)) & [MagicCap](https://magiccap.me/)
 - ✔️ Custom pluggable frontends using [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 - ✔️ Multiple access types
-   - **[ZWS](https://zws.im)**
-   - **Mixed-case alphanumeric**
-   - **Gfycat**
-   - **Original**
-- ✔️ Multiple file storage methods:
-   - **Local file system**
-   - **Amazon S3** (including [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces/))
-- ✔️ Multiple data storage methods using [ass StorageEngines](#storageengines) (JSON by default)
+- ✔️ **Multiple access types**
+   - [ZWS](https://zws.im)
+   - Mixed-case alphanumeric
+   - Gfycat
+   - Original
+- ✔️ **Multiple file storage methods**
+   - Local file system
+   - Amazon S3 (including [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces/))
+- ✔️ **Multiple data storage methods** using [ass StorageEngines](#storageengines) (JSON by default)
    - **File**
-      - **JSON** (default, [ass-storage-engine](https://github.com/tycrek/ass-storage-engine))
-      - **YAML** (soon!)
-   - **Databases**
-      - **PostgreSQL** ([ass-psql](https://github.com/tycrek/ass-psql))
-      - **Mongo** (soon!)
-      - **MySQL** (soon!)
+      - JSON (default, [ass-storage-engine](https://github.com/tycrek/ass-storage-engine))
+      - YAML (soon!)
+   - **Database**
+      - PostgreSQL ([ass-psql](https://github.com/tycrek/ass-psql))
+      - Mongo (soon!)
+      - MySQL (soon!)
 
 ### Access types
 
@@ -62,9 +63,7 @@
 
 ## Installation
 
-**See [docker-compose](#docker-compose) chapter below for a quick & easy way to get up and running.**
-
-The installation may look daunting but it's really pretty straightforward. Just follow it word-for-word & you'll be fine. If you are not fine, then by all means [open an Issue](https://github.com/tycrek/ass/issues/new) & I'll try my best to help.
+1. You should have **Node.js 14 or later** & **npm 7 or later** installed. 
 
 1. First of all you must have **Node.js 14 or later** & **npm 7 or later** installed. 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
