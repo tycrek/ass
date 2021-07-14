@@ -99,7 +99,8 @@ log
 	.blank()
 	.callback(() => {
 		if (process.argv[2] && process.argv[2] === '--docker-compose')
-			log.info('docker-compose', 'Exiting in 5 seconds...')
-				.callback(() => setTimeout(() => process.exit(0), 5000))
+			fs.ensureDir(require('path').join(process.cwd(), 'share')).then(() => log
+				.info('docker-compose', 'Exiting in 5 seconds...')
+				.callback(() => setTimeout(() => process.exit(0), 5000)))
 	})
 	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
