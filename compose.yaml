@@ -10,24 +10,15 @@ services:
     container_name: ass-docker
     restart: unless-stopped
     ports:
-    - "40115:40115"
-    - "45375:45375"
+      - "40115:40115"
+      - "45375:45375"
     volumes:
-    - type: bind # default local file storage
-      source: ./uploads
-      target: /opt/ass/uploads
-    - type: bind # config data
-      source: ./config.json
-      target: /opt/ass/config.json
-    - type: bind # user data
-      source: ./auth.json
-      target: /opt/ass/auth.json
-    - type: bind # file data (for the default JSONStorageEngine)
-      source: ./data.json
-      target: /opt/ass/data.json
-    - type: bind # share directory (for future use)
-      source: ./share
-      target: /opt/ass/share
+      - ./uploads:/opt/ass/uploads
+      - ./config.json:/opt/ass/config.json
+      - ./auth.json:/opt/ass/auth.json
+      - ./data.json:/opt/ass/data.json
+      - ./share:/opt/ass/share
+      - weird:/opt/ass/weird
     tmpfs: /tmp # temp files such as uploads are stored here
     working_dir: /opt/ass # this is where the ass files are located within the container
     tty: true
@@ -36,3 +27,11 @@ services:
       - ASS_ENV=docker # docker, local, production (not widely used yet)
       - LOG_LEVEL=debug # debug, info, warn, error
       - FORCE_COLOR=3 # force colour output
+
+volumes:
+  weird:
+    driver: local
+    driver_opts:
+       o: bind
+       type: none
+       device: ./weirdness
