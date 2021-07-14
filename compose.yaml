@@ -18,7 +18,6 @@ services:
       - ./auth.json:/opt/ass/auth.json
       - ./data.json:/opt/ass/data.json
       - ./share:/opt/ass/share
-      - weird:/opt/ass/weird
     tmpfs: /tmp # temp files such as uploads are stored here
     working_dir: /opt/ass # this is where the ass files are located within the container
     tty: true
@@ -27,11 +26,3 @@ services:
       - ASS_ENV=docker # docker, local, production (not widely used yet)
       - LOG_LEVEL=debug # debug, info, warn, error
       - FORCE_COLOR=3 # force colour output
-
-volumes:
-  weird:
-    driver: local
-    driver_opts:
-       o: bind
-       type: none
-       device: ./weirdness
