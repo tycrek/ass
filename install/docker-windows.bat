@@ -13,6 +13,10 @@ if not exist "./config.json" echo. >> "./config.json"
 if not exist "./auth.json" echo. >> "./auth.json"
 if not exist "./data.json" echo. >> "./data.json"
 
+REM Wait for user to confirm
+ECHO Continuing will run docker-compose. Continue? (Press Ctrl+C to abort)
+PAUSE
+
 ECHO Running setup...
 
 REM docker-compose up -d
@@ -26,3 +30,6 @@ docker-compose restart
 
 REM Open the logs to ensure it is running
 docker-compose logs -f --tail=50 --no-log-prefix ass
+
+REM Done!
+echo ass-docker for Windows installed!

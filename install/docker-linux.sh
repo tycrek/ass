@@ -17,16 +17,23 @@ do
 	fi
 done
 
+# Wait for user to confirm
+echo "Continuing will run docker-compose. Continue? (Press Ctrl+C to abort)"
+read -n 1 -s -r -p "Press any key to continue..."
+
 echo Running setup...
 
 # docker-compose up -d
-docker-compose up -d
+docker-compose up -d && \
 
 # Run setup within the container
-docker-compose exec ass npm run setup
+docker-compose exec ass npm run setup && \
 
 # Restart the container when complete
-docker-compose restart
+docker-compose restart && \
 
 # Open the logs to ensure it is running
-docker-compose logs -f --tail=50 --no-log-prefix ass
+docker-compose logs -f --tail=50 --no-log-prefix ass && \
+
+# Done!
+echo "ass-docker for Linux installed!"
