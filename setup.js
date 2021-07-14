@@ -29,7 +29,7 @@ function doSetup() {
 	const prompt = require('prompt');
 	const token = require('./generators/token');
 
-	const log = new TLog({ timestamp: { enabled: false } });
+	const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
 
 	// Override default config with existing config to allow migrating configs
 	try {
