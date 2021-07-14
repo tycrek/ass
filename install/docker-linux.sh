@@ -9,13 +9,7 @@ mkdir -p ./uploads/thumbnails/
 mkdir -p ./share/
 
 # Ensure that files config.json, auth.json, & data.json exist
-for value in config.json auth.json data.json
-do
-	if [ ! -f $value ]; then
-		echo "File $value does not exist. Creating..."
-		touch $value
-	fi
-done
+for value in config.json auth.json data.json do if [ ! -f $value ]; then touch $value; fi; done
 
 # Wait for user to confirm
 echo "Continuing will run docker-compose. Continue? (Press Ctrl+C to abort)"
