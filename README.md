@@ -282,6 +282,7 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `restart` | Restarts the ass server using `systemctl`. More info soon (should work fine if you have an existing `ass.service` file) |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
 | `logs` | Uses the [tlog Socket plugin](https://github.com/tycrek/tlog#socket) to stream logs from the ass server to your terminal, with full colour support (Remember to set [`FORCE_COLOR`](https://nodejs.org/dist/latest-v14.x/docs/api/cli.html#cli_force_color_1_2_3) if you're using Systemd) |
+| `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
 
 ## docker-compose
 
