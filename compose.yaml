@@ -22,7 +22,7 @@ services:
     - type: bind
       source: /opt/ass/auth.json
       target: /opt/ass/auth.json
-	- type: bind
+    - type: bind
       source: /opt/ass/data.json
       target: /opt/ass/data.json
     tmpfs: /tmp
