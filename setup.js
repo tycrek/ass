@@ -202,11 +202,14 @@ function doSetup() {
 		.then(() => {
 
 			// Make sure auth.json exists and generate the first key
-			let users = {};
-			users[token()] = { username: 'ass', count: 0 };
-			fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
-			log.debug('File created', 'auth.json')
-				.success('!! Important', `Save this token in a secure spot: ${Object.keys(users)[0]}`)
+			if (!fs.existsSync(path('auth.json'))) {
+				let users = {};
+				users[token()] = { username: 'ass', count: 0 };
+				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
+				log.debug('File created', 'auth.json')
+					.success('!! Important', `Save this token in a secure spot: ${Object.keys(users)[0]}`)
+					.blank();
+			}
 
 			let existingData = {}
 			try {
