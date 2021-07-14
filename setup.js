@@ -27,6 +27,7 @@ function doSetup() {
 	const TLog = require('@tycrek/log');
 	const fs = require('fs-extra');
 	const prompt = require('prompt');
+	const token = require('./generators/token');
 
 	const log = new TLog({ timestamp: { enabled: false } });
 
@@ -196,7 +197,34 @@ function doSetup() {
 		// Confirm
 		.then(() => prompt.get(confirmSchema))
 		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : process.exit(1)))
-		.then(() => log.blank().success('Config has been saved!'))
+
+		// Other setup tasks
+		.then(() => {
+
+			// Make sure auth.json exists and generate the first key
+			let users = {};
+			users[token()] = { username: 'ass', count: 0 };
+			fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
+			log.debug('File created', 'auth.json')
+				.success('!! Important', `Save this token in a secure spot: ${Object.keys(users)[0]}`)
+
+			let existingData = {}
+			try {
+				existingData = fs.readJsonSync(path('data.json'));
+			} catch (ex) {
+				log.warn('data.json', 'File empty, fixing')
+			}
+
+			// All 3 as a Promise.all
+			return Promise.all([
+				fs.ensureDir(path('share')),
+				fs.ensureDir(path(results.diskFilePath, 'thumbnails')),
+				fs.writeJson(path('data.json'), existingData, { spaces: 4 })
+			]);
+		})
+
+		// Complete & exit
+		.then(() => log.blank().success('Setup complete').callback(() => process.exit(0)))
 		.catch((err) => log.blank().error(err));
 }
 

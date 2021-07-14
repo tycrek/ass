@@ -1,13 +1,19 @@
+let doSetup = null;
 try {
 	// Check if config.json exists
 	require('./config.json');
 } catch (err) {
-	console.error('No config.json found! Please run \'npm run setup\'');
-	process.exit(1);
+	doSetup = require('./setup').doSetup;
+}
+
+// Run first time setup if using Docker (pseudo-process, setup will be run with docker exec)
+if (doSetup) {
+	doSetup();
+	return;
 }
 
 // Load the config
-const { host, port, useSsl, diskFilePath, isProxied, s3enabled } = require('./config.json');
+const { host, port, useSsl, isProxied, s3enabled } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -39,9 +45,6 @@ const ROUTERS = {
 const users = require('./auth');
 const data = require('./data');
 //#endregion
-
-// Create thumbnails directory
-fs.ensureDirSync(path(diskFilePath, 'thumbnails'));
 
 // Enable/disable Express features
 app.enable('case sensitive routing');
@@ -97,10 +100,4 @@ log
 	.info('Frontend', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : 'disabled', `${ASS_PREMIUM.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`)
 	.info('Index redirect', ASS_PREMIUM.enabled && ASS_PREMIUM.index ? `enable` : 'disabled')
 	.blank()
-	.callback(() => {
-		if (process.argv[2] && process.argv[2] === '--docker-compose')
-			fs.ensureDir(require('path').join(process.cwd(), 'share')).then(() => log
-				.info('docker-compose', 'Exiting in 5 seconds...')
-				.callback(() => setTimeout(() => process.exit(0), 5000)))
-	})
 	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));

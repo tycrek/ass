@@ -3,16 +3,7 @@
  */
 
 const fs = require('fs-extra');
-const { log, path, arrayEquals, generateToken } = require('./utils');
-
-// Make sure auth.json exists and generate the first key
-if (!fs.existsSync(path('auth.json'))) {
-	let users = {};
-	users[generateToken()] = { username: 'ass', count: 0 };
-	fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
-	log.debug('File created', 'auth.json')
-		.success('!! Important', `Save this token in a secure spot: ${Object.keys(users)[0]}`)
-}
+const { log, path, arrayEquals } = require('./utils');
 
 const users = require('./auth.json').users || {};
 
