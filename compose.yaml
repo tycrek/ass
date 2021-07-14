@@ -13,12 +13,8 @@ services:
       - "40115:40115"
       - "45375:45375"
     volumes:
-      - type: volume
-        source: ./uploads
-        target: /opt/ass/uploads
-      - type: volume
-        source: ./share
-        target: /opt/ass/share
+      - ./uploads:/opt/ass/uploads
+      - ./share:/opt/ass/share
       - type: bind
         source: ./config.json
         target: /opt/ass/config.json
