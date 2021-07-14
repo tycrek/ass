@@ -39,6 +39,7 @@ module.exports = () => {
 				.blank();
 
 			Object.values(users).forEach(({ username, count, size }) => log.info(`- ${username}`, formatBytes(size), `${count} files`));
+			process.exit(0);
 		})
 		.catch(log.c.error);
 }
