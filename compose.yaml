@@ -24,3 +24,9 @@ services:
       target: /opt/ass/auth.json
     tmpfs: /tmp
     working_dir: /opt/ass
+    tty: true
+    env_file: ./Docker.env
+    environment:
+      - NODE_ENV=production
+      - ASS_ENV=docker
+      - FORCE_COLOR=3
