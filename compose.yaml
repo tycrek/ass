@@ -28,8 +28,6 @@ services:
     - type: bind # share directory (for future use)
       source: ./share
       target: /opt/ass/share
-      bind:
-        create_host_path: true
     tmpfs: /tmp # temp files such as uploads are stored here
     working_dir: /opt/ass # this is where the ass files are located within the container
     tty: true
