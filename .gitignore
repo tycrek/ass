@@ -118,3 +118,6 @@ config.json
 
 # certificates
 *.crt
+
+# share/ directory
+share/

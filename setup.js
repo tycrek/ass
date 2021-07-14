@@ -36,7 +36,7 @@ function doSetup() {
 		const existingConfig = require('./config.json');
 		Object.keys(existingConfig).forEach((key) => Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]))
 	} catch (ex) {
-		if (ex.code !== 'MODULE_NOT_FOUND') log.error(ex);
+		if (ex.code !== 'MODULE_NOT_FOUND' && !ex.toString().includes('Unexpected end')) log.error(ex);
 	}
 
 	// Disabled the annoying "prompt: " prefix and removes colours
