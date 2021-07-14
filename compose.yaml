@@ -13,13 +13,23 @@ services:
       - "40115:40115"
       - "45375:45375"
     volumes:
-      - ./uploads:/opt/ass/uploads
-      - ./config.json:/opt/ass/config.json
-      - ./auth.json:/opt/ass/auth.json
-      - ./data.json:/opt/ass/data.json
-      - ./share:/opt/ass/share
+      - type: volume
+        source: ./uploads
+        target: /opt/ass/uploads
+      - type: volume
+        source: ./share
+        target: /opt/ass/share
+      - type: bind
+        source: ./config.json
+        target: /opt/ass/config.json
+      - type: bind
+        source: ./auth.json
+        target: /opt/ass/auth.json
+      - type: bind
+        source: ./data.json
+        target: /opt/ass/data.json
     tmpfs: /tmp # temp files such as uploads are stored here
-    working_dir: /opt/ass # this is where the ass files are located within the container
+    working_dir: /opt/ass
     tty: true
     environment:
       - NODE_ENV=production # for production
