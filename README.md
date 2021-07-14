@@ -289,6 +289,16 @@ You may also install ass using [docker-compose](https://docs.docker.com/compose/
 
 Installation is as follows:
 
+#### New steps, work-in-progress
+
+1. Clone the ass repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
+2. Run the command that corresponds to your OS:
+   - **Linux**: `./install/docker-linux.sh`
+   - **Windows**: `install/docker-windows.bat` (from Command Prompt)
+3. When prompted for setup, enter your details.
+
+#### Old steps
+
 ```bash
 # Step 1:
 # Create the install directory as root and change ownership to the current user
