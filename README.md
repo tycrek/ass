@@ -34,7 +34,7 @@
 - ✔️ Configurable global upload limit (per-user coming soon!)
 - ✔️ Basic macOS/Linux client support including [Flameshot](https://flameshot.org/) ([ass-compatible Flameshot script](#flameshot-users-linux)) & [MagicCap](https://magiccap.me/)
 - ✔️ Custom pluggable frontends using [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
-- ✔️ Multiple access types
+- ✔️ Run locally or in a Docker container
 - ✔️ **Multiple access types**
    - [ZWS](https://zws.im)
    - Mixed-case alphanumeric
@@ -64,8 +64,6 @@
 ## Installation
 
 1. You should have **Node.js 14 or later** & **npm 7 or later** installed. 
-
-1. First of all you must have **Node.js 14 or later** & **npm 7 or later** installed. 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
 3. Run `npm i` to install the required dependencies
 4. Run `npm run setup` to start the easy configuration
@@ -73,6 +71,56 @@
 6. **(Optional)** You must also configure an SSL-enabled reverse proxy (only if you want to use HTTPS):
    - I personally use Caddy, see [my tutorial](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/) on setting that up
    - You may also use Apache or Nginx as reverse proxies
+
+## Docker
+
+<details>
+<summary><em>Expand for steps to install with Docker & docker-compose</em></summary>
+
+You may also install ass using [docker-compose](https://docs.docker.com/compose/). These steps assume you are already family with Docker, so if you're not, please [read the docs](https://docs.docker.com/). It also assumes that you have a working Docker installation with `docker-compose` installed.
+
+### Install using docker-compose
+
+1. Clone the ass repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
+2. Run the command that corresponds to your OS:
+   - **Linux**: `./install/docker-linux.sh` (uses `#!/bin/bash`)
+   - **Windows**: `install/docker-windows.bat` (from Command Prompt)
+   - These scripts are identical using the equivalent commands in each OS.
+3. Work through the setup process when prompted.
+
+The upload token will be printed at the end of the setup script prompts. This is the token that you'll need to use to upload resources to ass. It may go by too quickly to copy it, so just scroll back up in your terminal after setup or run `cat auth.json`.
+
+You should now be able to access the ass server at `http://localhost:40115/` (ass-docker will bind to host `0.0.0.0` to allow external access). You can configure a reverse proxy (for example, [Caddy](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/)) to make it accessible from the internet with automatic SSL.
+
+#### What is this script doing?
+
+It creates directories & files required for `docker-compose` to work. It then calls `docker-compose` to build the image & run ass. On first run, ass will detect an empty config file, so it will run the setup script in a headless terminal with no possible input. Luckily, you can use `docker-exec` to start your *own* terminal in which to run the setup script (the install scripts call this for you). After setup, the container is restarted & you are prompted to open logs so you can confirm that the setup was successful. Each install script also has comments for every step, so you can see what's going on.
+
+#### What should I be aware of?
+
+- `docker-compose` exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
+   - `uploads/`
+   - `share/` (for future use)
+   - `config.json`
+   - `auth.json`
+   - `data.json`
+- Docker containers have not yet been tested with custom frontends or alternative StorageEngines like PostgreSQL. They should work fine but you may need to make your own changes.
+- **Updates have not been tested yet.** To update to a new version of ass, run these commands:
+   ```bash
+   # Pull the latest version of ass
+   git pull
+   
+   # Rebuild the container with the new changes
+   docker-compose up --force-recreate --build -d && docker image prune -f
+   ```
+- Running npm scripts, for example to create new tokens, is possible by using `docker-compose exec`:
+   ```bash
+   # Create a new token
+   docker-compose exec ass npm run new-token
+
+   # Check usage metrics
+   docker-compose exec ass npm run metrics
+</details>
 
 ### Generating new tokens
 
@@ -282,45 +330,6 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
 | `logs` | Uses the [tlog Socket plugin](https://github.com/tycrek/tlog#socket) to stream logs from the ass server to your terminal, with full colour support (Remember to set [`FORCE_COLOR`](https://nodejs.org/dist/latest-v14.x/docs/api/cli.html#cli_force_color_1_2_3) if you're using Systemd) |
 | `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
-
-## Docker
-
-You may also install ass using [docker-compose](https://docs.docker.com/compose/). These steps assume you are already family with Docker, so if you're not, please [read the docs](https://docs.docker.com/). It also assumes that you have a working Docker installation with `docker-compose` installed.
-
-### Install using docker-compose
-
-1. Clone the ass repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
-2. Run the command that corresponds to your OS:
-   - **Linux**: `./install/docker-linux.sh` (uses `#!/bin/bash`)
-   - **Windows**: `install/docker-windows.bat` (from Command Prompt)
-   - These scripts are identical using the equivalent commands in each OS.
-3. Work through the setup process when prompted.
-
-The upload token will be printed at the end of the setup script prompts. This is the token that you'll need to use to upload resources to ass. It may go by too quickly to copy it, so just scroll back up in your terminal after setup or run `cat auth.json`.
-
-You should now be able to access the ass server at `http://localhost:40115/` (ass-docker will bind to host `0.0.0.0` to allow external access). You can configure a reverse proxy (for example, [Caddy](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/)) to make it accessible from the internet with automatic SSL.
-
-#### What is this script doing?
-
-It creates directories & files required for `docker-compose` to work. It then calls `docker-compose` to build the image & run ass. On first run, ass will detect an empty config file, so it will run the setup script in a headless terminal with no possible input. Luckily, you can use `docker-exec` to start your *own* terminal in which to run the setup script (the install scripts call this for you). After setup, the container is restarted & you are prompted to open logs so you can confirm that the setup was successful. Each install script also has comments for every step, so you can see what's going on.
-
-#### What should I be aware of?
-
-- `docker-compose` exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
-   - `uploads/`
-   - `share/` (for future use)
-   - `config.json`
-   - `auth.json`
-   - `data.json`
-- Docker containers have not yet been tested with custom frontends or alternative StorageEngines like PostgreSQL. They should work fine but you may need to make your own changes.
-- **Updates have not been tested yet.** To update to a new version of ass, run these commands:
-   ```bash
-   # Pull the latest version of ass
-   git pull
-   
-   # Rebuild the container with the new changes
-   docker-compose up --force-recreate --build -d && docker image prune -f
-   ```
 
 ## Flameshot users (Linux)
 
