@@ -44,27 +44,31 @@ ass was designed with developers in mind. If you are a developer & want somethin
 
 ## Features
 
-- Token authorization via HTTP `Authorization` header
-- Upload images, videos, gifs, audio, files
-- Usage metrics
-- File deletion
-- File downloading
-- Thumbnail support
-- Mimetype blocking
-- Basic multi-user support
+#### For users
+
+- Upload images, gifs, videos, audio, & files
+- Token-based authentication
+- Download & delete resources
 - Fully customizable Discord embeds
-- Seamless inline video embeds on Discord
 - Built-in web viewer with video & audio player
-- Personal upload log via customizable Discord Webhooks
-- Configurable global upload limit (per-user coming soon!)
-- Basic macOS/Linux client support including [Flameshot] ([script for ass]) & [MagicCap]
-- Custom pluggable frontends using [Git Submodules]
-- Run locally or in a Docker container
+- Embed images, gifs, & images directly in Discord
+- Personal upload log using customizable Discord Webhooks
+- macOS/Linux support with alternative clients such as [Flameshot] ([script for ass]) & [MagicCap]
 - **Multiple URL styles**
    - [ZWS]
    - Mixed-case alphanumeric
    - Gfycat
    - Original
+
+#### For hosts & developers
+
+- Usage metrics
+- Thumbnail support
+- Mimetype blocking
+- Basic multi-user support
+- Configurable global upload limit (per-user coming soon!)
+- Custom pluggable frontends using [Git Submodules]
+- Run locally or in a Docker container
 - **Multiple file storage methods**
    - Local file system
    - Amazon S3 (including [DigitalOcean Spaces])
