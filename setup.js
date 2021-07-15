@@ -202,7 +202,7 @@ function doSetup() {
 		.then(() => {
 
 			// Make sure auth.json exists and generate the first key
-			if (!fs.existsSync(path('auth.json'))) {
+			if (!fs.existsSync(path('auth.json')) || fs.readFileSync(path('auth.json')).length < 8) {
 				let users = {};
 				users[token()] = { username: 'ass', count: 0 };
 				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
