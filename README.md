@@ -142,7 +142,41 @@ You should now be able to access the ass server at `http://localhost:40115/` (as
 
 It creates directories & files required for `docker-compose` to work. It then calls `docker-compose` to build the image & run ass. On first run, ass will detect an empty config file, so it will run the setup script in a headless terminal with no possible input. Luckily, you can use `docker-exec` to start your *own* terminal in which to run the setup script (the install scripts call this for you). After setup, the container is restarted & you are prompted to open logs so you can confirm that the setup was successful. Each install script also has comments for every step, so you can see what's going on.
 
-#### What should I be aware of?
+#### How do I run the npm scripts?
+
+Since all 3 primary data files are bound to the container with Volumes, you can run the scripts in two ways:
+
+```bash
+# Check the usage metrics
+docker-compose exec ass npm run metrics
+
+# Use docker-compose exec to run the setup script
+docker-compose exec ass npm run setup && docker-compose restart
+
+# Run npm on the host to run the setup script (also works for metrics)
+# (You will have to meet the Node.js & npm requirements on your host)
+npm run setup && docker-compose restart
+```
+
+#### How do I update?
+
+Easy! Just pull the changes & run this one-liner:
+
+```bash
+# Pull the latest version of ass
+git pull
+
+# Rebuild the container with the new changes (uncomment the 2nd part if the update requires refreshing the config)
+docker-compose up --force-recreate --build -d && docker image prune -f # docker-compose exec npm run setup && docker-compose restart
+```
+
+- `--force-recreate` will force the container to rebuild
+- `--build` will build the image from the latest changes in the directory
+- `-d` will run the container in the background
+- `docker image prune -f` will remove old images that are no longer used by any containers
+- *These descriptions were suggested by [CoPilot], feel free to revise if necessary.*
+
+#### What else should I be aware of?
 
 - `docker-compose` exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
    - `uploads/`
@@ -150,22 +184,7 @@ It creates directories & files required for `docker-compose` to work. It then ca
    - `config.json`
    - `auth.json`
    - `data.json`
-- Docker containers have not yet been tested with custom frontends or alternative StorageEngines like PostgreSQL. They should work fine but you may need to make your own changes.
-- **Updates have not been tested yet.** To update to a new version of ass, run these commands:
-   ```bash
-   # Pull the latest version of ass
-   git pull
-   
-   # Rebuild the container with the new changes
-   docker-compose up --force-recreate --build -d && docker image prune -f
-   ```
-- Running npm scripts, for example to create new tokens, is possible by using `docker-compose exec`:
-   ```bash
-   # Create a new token
-   docker-compose exec ass npm run new-token
-
-   # Check usage metrics
-   docker-compose exec ass npm run metrics
+- I have personally tested running using these commands (migrating from an existing local deployment!) with Digital Ocean Spaces (S3 object-storage), a PostgreSQL database, & a custom frontend all on the same container. It should also work for you but feel free to let me know if you have any issues.
 </details>
 
 ### Generating new tokens
