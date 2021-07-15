@@ -110,17 +110,13 @@ ass was designed with developers in mind. If you are a developer & want somethin
 3. Run `npm i` to install the required dependencies
 4. Run `npm run setup` to start the easy configuration
 5. Run `npm start` to start the server. The first time you run it you will be shown your first authorization token; save this as you will need it to configure ShareX.
-6. **(Optional)** You must also configure an SSL-enabled reverse proxy (only if you want to use HTTPS):
-   - I personally use Caddy, see [my tutorial] on setting that up
-   - You may also use Apache or Nginx as reverse proxies
 
 ## Using HTTPS
 
-For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any reverse proxy should work (such as Apache or Nginx). I also have a [tutorial on easily setting up Caddy] as a reverse proxy server.
+For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any reverse proxy should work (such as Apache or Nginx). I also have a [tutorial on easily setting up Caddy][my tutorial] as a reverse proxy server.
 
 [Caddy]: https://caddyserver.com/
-[tutorial on easily setting up Caddy]: https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
-
+[my tutorial]: https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
 
 ## Docker
 
@@ -140,7 +136,7 @@ You may also install ass using [docker-compose](https://docs.docker.com/compose/
 
 The upload token will be printed at the end of the setup script prompts. This is the token that you'll need to use to upload resources to ass. It may go by too quickly to copy it, so just scroll back up in your terminal after setup or run `cat auth.json`.
 
-You should now be able to access the ass server at `http://localhost:40115/` (ass-docker will bind to host `0.0.0.0` to allow external access). You can configure a reverse proxy (for example, [Caddy](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/)) to make it accessible from the internet with automatic SSL.
+You should now be able to access the ass server at `http://localhost:40115/` (ass-docker will bind to host `0.0.0.0` to allow external access). You can configure a reverse proxy (for example, [Caddy]; also check out [my tutorial]) to make it accessible from the internet with automatic SSL.
 
 #### What is this script doing?
 
@@ -391,6 +387,10 @@ No strict contributing rules at this time. I appreciate any Issues or Pull Reque
 
 ## Credits
 
+- [GitHub CoPilot]... seriously, this thing is *good*.
 - Special thanks to [hlsl#1359](http://be.net/zevwolf) for the awesome logo!
 - [@ToxicAven](https://github.com/ToxicAven) for the Flameshot script
 - [Gfycat] for their wordlists
+
+[CoPilot]: https://copilot.github.com/
+[GitHub CoPilot]:https://copilot.github.com/
