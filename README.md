@@ -2,64 +2,102 @@
   <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://jmoore.dev/files/ass-round-square-logo-white-with-text.png"></a></h1>
 </div>
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/tycrek/ass?color=fd842d&style=for-the-badge)
-![GitHub license](https://img.shields.io/github/license/tycrek/ass?color=FD7C21&style=for-the-badge)
-![GitHub last commit](https://img.shields.io/github/last-commit/tycrek/ass?color=FD710D&style=for-the-badge)
-![Lines of code](https://img.shields.io/tokei/lines/github/tycrek/ass?color=F26602&label=LINES&style=for-the-badge)
-![GitHub Repo stars](https://img.shields.io/github/stars/tycrek/ass?color=DE5E02&style=for-the-badge)
-[![Discord](https://img.shields.io/discord/848274994375294986?label=Support%20server&logo=Discord&logoColor=FFF&style=for-the-badge)](https://discord.gg/wGZYt5fasY)
+![GitHub package.json version]
+![GitHub license]
+![GitHub last commit]
+![Lines of code]
+![GitHub Repo stars]
+[![Discord badge]][Discord invite]
 
 **ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite.
 
+ass aims to be as **unopinionated** as possible. It allows nearly endless choice for users & hosts alike: Users can configure their upload settings directly from the ShareX interface (including embeds, webhooks, & more), while hosts are free to pick their preferred storage & data management methods.
+
+By default, ass comes with a resource viewing page, which includes metadata about the resource as well as a download button & inline viewers for images, videos, & audio. It does **not** have a user dashboard or registration system: **this is intentional!** Developers are free to [create their own frontends] using the languages & tools they are most comfortable with. Writing & using these frontends is fully documented below, in the wiki, & in the source code.
+
+#### Developers ❤
+
+ass was designed with developers in mind. If you are a developer & want something changed to better suite you, let me know & we'll see what we can do!
+
+[GitHub package.json version]: https://img.shields.io/github/package-json/v/tycrek/ass?color=fd842d&style=for-the-badge
+[GitHub license]: https://img.shields.io/github/license/tycrek/ass?color=FD7C21&style=for-the-badge
+[GitHub last commit]: https://img.shields.io/github/last-commit/tycrek/ass?color=FD710D&style=for-the-badge
+[Lines of code]: https://img.shields.io/tokei/lines/github/tycrek/ass?color=F26602&label=LINES&style=for-the-badge
+[GitHub Repo stars]: https://img.shields.io/github/stars/tycrek/ass?color=DE5E02&style=for-the-badge
+[Discord badge]: https://img.shields.io/discord/848274994375294986?label=Support%20server&logo=Discord&logoColor=FFF&style=for-the-badge
+[Discord invite]: https://discord.gg/wGZYt5fasY
+[create their own frontends]: #custom-frontends
+
 ## Code quality
 
-| [CodeQL](https://codeql.github.com/docs/) | [DeepSource](https://deepsource.io/) |
+| [CodeQL] | [DeepSource] |
 | :---------------------------------------: | :----------------------------------: |
-| [![CodeQL](https://github.com/tycrek/ass/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/tycrek/ass/actions/workflows/codeql-analysis.yml) | [![DeepSource Active Issues](https://deepsource.io/gh/tycrek/ass.svg/?label=active+issues&token=BtbWb2UNuISW8jXX4VoYtdwp)](https://deepsource.io/gh/tycrek/ass/?ref=repository-badge) [![DeepSource Resolved Issues](https://deepsource.io/gh/tycrek/ass.svg/?label=resolved+issues&token=BtbWb2UNuISW8jXX4VoYtdwp)](https://deepsource.io/gh/tycrek/ass/?ref=repository-badge) |
+| [![CodeQL badge]][CodeQL link] | [![DeepSource Active Issues]][DeepSource Repo] [![DeepSource Resolved Issues]][DeepSource Repo] |
+
+[CodeQL]: https://codeql.github.com/docs/
+[DeepSource]: https://deepsource.io/
+[CodeQL badge]: https://github.com/tycrek/ass/actions/workflows/codeql-analysis.yml/badge.svg?branch=master
+[CodeQL link]: https://github.com/tycrek/ass/actions/workflows/codeql-analysis.yml
+[DeepSource Active Issues]: https://deepsource.io/gh/tycrek/ass.svg/?label=active+issues
+[DeepSource Resolved Issues]: https://deepsource.io/gh/tycrek/ass.svg/?label=resolved+issues
+[DeepSource Repo]: https://deepsource.io/gh/tycrek/ass/?ref=repository-badge
 
 ## Features
 
-- ✔️ Token authorization via HTTP `Authorization` header
-- ✔️ Upload images, videos, gifs, audio, files
-- ✔️ Usage metrics
-- ✔️ File deletion
-- ✔️ File downloading
-- ✔️ Thumbnail support
-- ✔️ Mimetype blocking
-- ✔️ Basic multi-user support
-- ✔️ Fully customizable Discord embeds
-- ✔️ Seamless inline video embeds on Discord
-- ✔️ Built-in web viewer with video & audio player
-- ✔️ Personal upload log via customizable Discord Webhooks
-- ✔️ Configurable global upload limit (per-user coming soon!)
-- ✔️ Basic macOS/Linux client support including [Flameshot](https://flameshot.org/) ([ass-compatible Flameshot script](#flameshot-users-linux)) & [MagicCap](https://magiccap.me/)
-- ✔️ Custom pluggable frontends using [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
-- ✔️ Run locally or in a Docker container
-- ✔️ **Multiple access types**
-   - [ZWS](https://zws.im)
+- Token authorization via HTTP `Authorization` header
+- Upload images, videos, gifs, audio, files
+- Usage metrics
+- File deletion
+- File downloading
+- Thumbnail support
+- Mimetype blocking
+- Basic multi-user support
+- Fully customizable Discord embeds
+- Seamless inline video embeds on Discord
+- Built-in web viewer with video & audio player
+- Personal upload log via customizable Discord Webhooks
+- Configurable global upload limit (per-user coming soon!)
+- Basic macOS/Linux client support including [Flameshot] ([script for ass]) & [MagicCap]
+- Custom pluggable frontends using [Git Submodules]
+- Run locally or in a Docker container
+- **Multiple URL styles**
+   - [ZWS]
    - Mixed-case alphanumeric
    - Gfycat
    - Original
-- ✔️ **Multiple file storage methods**
+- **Multiple file storage methods**
    - Local file system
-   - Amazon S3 (including [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces/))
-- ✔️ **Multiple data storage methods** using [ass StorageEngines](#storageengines) (JSON by default)
+   - Amazon S3 (including [DigitalOcean Spaces])
+- **Multiple data storage methods** using [ass StorageEngines] (JSON by default)
    - **File**
-      - JSON (default, [ass-storage-engine](https://github.com/tycrek/ass-storage-engine))
+      - JSON (default, [ass-storage-engine])
       - YAML (soon!)
    - **Database**
-      - PostgreSQL ([ass-psql](https://github.com/tycrek/ass-psql))
+      - PostgreSQL ([ass-psql])
       - Mongo (soon!)
       - MySQL (soon!)
+
+[Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
+[ZWS]: https://zws.im
+[DigitalOcean Spaces]: https://www.digitalocean.com/products/spaces/
+[ass StorageEngines]: #storageengines
+[ass-storage-engine]: https://github.com/tycrek/ass-storage-engine
+[ass-psql]: https://github.com/tycrek/ass-psql
+[Flameshot]: https://flameshot.org/
+[script for ass]: #flameshot-users-linux
+[MagicCap]: https://magiccap.me/
 
 ### Access types
 
 | Type | What is it? |
 | ---- | ----------- |
-| **[ZWS](https://zws.im)** (Zero-width spaces) | The "fancy" mode. When pasted elsewhere, the URL appears to be *just* your domain name.<br>![ZWS sample](https://user-images.githubusercontent.com/29926144/113785625-bf43a480-96f4-11eb-8dd7-7f164f33ada2.png "ZWS sample") |
+| **[Zero-width spaces][ZWS]** | When pasted elsewhere, the URL appears to be *just* your domain name. Some browsers or sites may not recognize these URLs (Discord **does** support these)<br>![ZWS sample] |
 | **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
-| **Gfycat** | Gfycat-style ID's (for example: `https://example.com/unsung-discrete-grub`). Thanks to [Gfycat](https://gfycat.com) for the wordlists |
+| **Gfycat** | Gfycat-style ID's (for example: `https://example.com/unsung-discrete-grub`). Thanks to [Gfycat] for the wordlists |
 | **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
+
+[ZWS sample]: https://user-images.githubusercontent.com/29926144/113785625-bf43a480-96f4-11eb-8dd7-7f164f33ada2.png
+[Gfycat]: https://gfycat.com
 
 ## Installation
 
@@ -69,8 +107,16 @@
 4. Run `npm run setup` to start the easy configuration
 5. Run `npm start` to start the server. The first time you run it you will be shown your first authorization token; save this as you will need it to configure ShareX.
 6. **(Optional)** You must also configure an SSL-enabled reverse proxy (only if you want to use HTTPS):
-   - I personally use Caddy, see [my tutorial](https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/) on setting that up
+   - I personally use Caddy, see [my tutorial] on setting that up
    - You may also use Apache or Nginx as reverse proxies
+
+## Using HTTPS
+
+For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any reverse proxy should work (such as Apache or Nginx). I also have a [tutorial on easily setting up Caddy] as a reverse proxy server.
+
+[Caddy]: https://caddyserver.com/
+[tutorial on easily setting up Caddy]: https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
+
 
 ## Docker
 
@@ -208,7 +254,7 @@ Once you have these, add the following HTTP headers to your ShareX config:
 
 Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, & a link to delete the file. To disable webhooks, simply remove the headers from your config.
 
-## Dashboard frontends
+## Custom frontends
 
 ass is intended to provide a strong backend for developers to build their own frontends around. The easiest way to do this is with a [Git Submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). Your submodule should be a **separate** git repo. Make sure you [adjust the `FRONTEND_NAME`](https://github.com/tycrek/ass/blob/d766bd15cf8ac851058c8abf37238f1608d8c305/ass.js#L24) to match your frontend. To make updates easier, it is recommended to make a new branch. Since submodules are their own dedicated projects, you are free to build the router however you wish, as long as it exports the required items detailed below.
 
@@ -343,4 +389,4 @@ No strict contributing rules at this time. I appreciate any Issues or Pull Reque
 
 - Special thanks to [hlsl#1359](http://be.net/zevwolf) for the awesome logo!
 - [@ToxicAven](https://github.com/ToxicAven) for the Flameshot script
-- [Gfycat](https://gfycat.com) for their wordlists
+- [Gfycat] for their wordlists
