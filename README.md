@@ -17,7 +17,7 @@ By default, ass comes with a resource viewing page, which includes metadata abou
 
 #### Developers ❤
 
-ass was designed with developers in mind. If you are a developer & want something changed to better suite you, let me know & we'll see what we can do!
+ass was designed with developers in mind. If you are a developer & want something changed to better suit you, let me know & we'll see what we can do!
 
 [GitHub package.json version]: https://img.shields.io/github/package-json/v/tycrek/ass?color=fd842d&style=for-the-badge
 [GitHub license]: https://img.shields.io/github/license/tycrek/ass?color=FD7C21&style=for-the-badge
