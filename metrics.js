@@ -1,8 +1,11 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { s3enabled } = require('./config.json');
-const { formatBytes, log } = require('./utils');
+const { formatBytes } = require('./utils');
 const { bucketSize } = require('./storage');
+
+const TLog = require('@tycrek/log');
+const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
 
 module.exports = () => {
 	const data = fs.readJsonSync(path.join(__dirname, 'data.json'));
