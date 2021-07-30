@@ -35,7 +35,9 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
-    "@tycrek/ass-storage-engine": "0.2.6",
+    "@tycrek/ass-storage-engine": "0.2.7",
+    "@tycrek/express-nofavicon": "^1.0.2",
+    "@tycrek/isprod": "^2.0.2",
     "@tycrek/log": ">=0.5.x",
     "any-shell-escape": "^0.1.1",
     "aws-sdk": "^2.930.0",
@@ -51,7 +53,7 @@
     "jimp": "^0.16.1",
     "luxon": "^1.26.0",
     "marked": "^2.0.7",
-    "multer": "^2.0.0-rc.2",
+    "multer": "2.0.0-rc.2",
     "node-fetch": "^2.6.1",
     "node-vibrant": "*",
     "prompt": "^1.1.0",
