@@ -72,13 +72,13 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - **Multiple file storage methods**
    - Local file system
    - Amazon S3 (including [DigitalOcean Spaces])
-- **Multiple data storage methods** using [ass StorageEngines] (JSON by default)
+- **Multiple data storage methods** using [ass StorageEngines]
    - **File**
       - JSON (default, [ass-storage-engine])
       - YAML (soon!)
    - **Database**
       - PostgreSQL ([ass-psql])
-      - Mongo (soon!)
+      - MongoDB ([ass-mongoose][GH AMongoose])
       - MySQL (soon!)
 
 [Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
@@ -340,15 +340,21 @@ module.exports = {
 **Supported StorageEngines:**
 
 | Name | Description | Links |
-| ---- | ----------- | ----- |
+| :--: | ----------- | :---: |
 | **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map]. This is the default StorageEngine. | [GitHub][GH ASE] |
 | **PostgreSQL** | Data storage using a [PostgreSQL] database. [node-postgres] is used for communicating with the database. | [GitHub][GH APSQL] |
+| **Mongoose** | Data storage using a [MongoDB]() database. [mongoose] is used for communicating with the database. Created by [@dylancl] | [GitHub][GH AMongoose]<br>[NPM][NPM AMongoose] |
 
 [Map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
 [GH ASE]: https://github.com/tycrek/ass-storage-engine/
 [PostgreSQL]: https://www.postgresql.org/
 [node-postgres]: https://node-postgres.com/
 [GH APSQL]: https://github.com/tycrek/ass-psql/
+[MongoDB]: https://www.mongodb.com/
+[mongoose]: https://mongoosejs.com/
+[GH AMongoose]: https://github.com/dylancl/ass-mongoose
+[NPM AMongoose]: https://www.npmjs.com/package/ass-mongoose
+[@dylancl]: https://github.com/dylancl
 
 An ass StorageEngine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is plugin the connection/authentication details, then ass will handle the rest, using the resource ID as the key.
 
