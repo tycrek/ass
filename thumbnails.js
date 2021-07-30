@@ -2,7 +2,7 @@ const ffmpeg = require('ffmpeg-static');
 const Jimp = require('jimp');
 const shell = require('any-shell-escape');
 const { exec } = require('child_process');
-const { path } = require('./utils');
+const { isProd, path } = require('./utils');
 const { diskFilePath } = require('./config.json');
 
 // Thumbnail parameters
@@ -21,7 +21,7 @@ const THUMBNAIL = {
 function getCommand(src, dest) {
 	return shell([
 		ffmpeg, '-y',
-		'-v', (process.env.NODE_ENV === 'production' ? 'error' : 'debug'), // Log level
+		'-v', (isProd ? 'error' : 'debug'), // Log level
 		'-i', src,                                                         // Input file
 		'-ss', '00:00:01.000',                                             // Timestamp of frame to grab
 		'-frames:v', '1',                                                  // Number of frames to grab
