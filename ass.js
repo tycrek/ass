@@ -18,6 +18,7 @@ const { host, port, useSsl, isProxied, s3enabled } = require('./config.json');
 //#region Imports
 const fs = require('fs-extra');
 const express = require('express');
+const nofavicon = require('@tycrek/express-nofavicon');
 const helmet = require('helmet');
 const marked = require('marked');
 const uploadRouter = require('./routers/upload');
@@ -65,8 +66,8 @@ app.use(helmet.referrerPolicy());
 app.use(helmet.dnsPrefetchControl());
 useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 
-// Don't process favicon requests (custom middleware)
-app.use((req, res, next) => (req.url.includes('favicon.ico') ? res.sendStatus(CODE_NO_CONTENT) : next()));
+// Don't process favicon requests
+app.use(nofavicon);
 
 // Index can be overridden by a frontend
 app.get('/', (req, res, next) =>
