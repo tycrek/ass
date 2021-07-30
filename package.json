@@ -1,6 +1,6 @@
 {
   "name": "ass",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
@@ -35,7 +35,7 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
-    "@tycrek/ass-storage-engine": "0.2.7",
+    "@tycrek/ass-storage-engine": "^0.2.7",
     "@tycrek/express-nofavicon": "^1.0.2",
     "@tycrek/isprod": "^2.0.2",
     "@tycrek/log": ">=0.5.x",
