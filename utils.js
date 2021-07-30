@@ -104,6 +104,7 @@ GENERATORS.set(idModes.r, randomGen);
 GENERATORS.set(idModes.gfy, gfyGen);
 
 module.exports = {
+	isProd: require('@tycrek/isprod')(),
 	path,
 	getTrueHttp,
 	getTrueDomain,
