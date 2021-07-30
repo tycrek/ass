@@ -24,7 +24,7 @@ const marked = require('marked');
 const uploadRouter = require('./routers/upload');
 const resourceRouter = require('./routers/resource');
 const { path, log, getTrueHttp, getTrueDomain } = require('./utils');
-const { CODE_NO_CONTENT, CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.json');
+const { CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.json');
 const { name: ASS_NAME, version: ASS_VERSION } = require('./package.json');
 //#endregion
 
