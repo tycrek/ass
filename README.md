@@ -341,8 +341,8 @@ module.exports = {
 
 | Name | Description | Links |
 | ---- | ----------- | ----- |
-| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). This is the default StorageEngine. | [GitHub](https://github.com/tycrek/ass-storage-engine/), [npm](https://www.npmjs.com/package/@tycrek/ass-storage-engine) |
-| **PostgreSQL** | Data storage using a [PostgreSQL](https://www.postgresql.org/) database. [node-postgres](https://node-postgres.com/) is used for communicating with the database. | [GitHub](https://github.com/tycrek/ass-psql/), [npm](https://www.npmjs.com/package/@tycrek/ass-psql) |
+| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map). This is the default StorageEngine. | [GitHub](https://github.com/tycrek/ass-storage-engine/) |
+| **PostgreSQL** | Data storage using a [PostgreSQL](https://www.postgresql.org/) database. [node-postgres](https://node-postgres.com/) is used for communicating with the database. | [GitHub](https://github.com/tycrek/ass-psql/) |
 
 An ass StorageEngine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is plugin the connection/authentication details, then ass will handle the rest, using the resource ID as the key.
 
