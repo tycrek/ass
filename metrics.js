@@ -17,7 +17,7 @@ module.exports = () => {
 	let d;
 
 	data.get()
-		.then((D) => d = D.map(([, resource]) => resource))
+		.then((D) => (d = D.map(([, resource]) => resource)))
 		.then(() => {
 			console.log(d);
 			d.forEach(({ token, size }) => {
