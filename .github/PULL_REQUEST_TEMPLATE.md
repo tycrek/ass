@@ -1,17 +1,8 @@
----
-name: Pull Request
-about: Contribute to the project
-title: "Title"
-assignees: 'tycrek'
-projects: 1
-
----
-
 ## Checklist
 <!-- All boxes are required -->
 
-- [x] I have read the Contributing Guidelines (coming soon)
-- [ ] I acknowledge that any submitted code will be licensed under the [ISC License](https://github.com/tycrek/ass/blob/master/LICENSE)
+- [ ] I have read the [Contributing Guidelines]
+- [ ] I acknowledge that any submitted code will be licensed under the [ISC License]
 - [ ] I confirm that submitted code is my own work
 - [ ] I have tested the code, and confirm that it works
 
@@ -24,3 +15,8 @@ projects: 1
 
 ## Description
 <!-- Describe your PR in detail. Include links to any relevant Issues. -->
+
+
+
+[Contributing Guidelines]: https://github.com/tycrek/ass/blob/master/CONTRIBUTING.md
+[ISC License]: https://github.com/tycrek/ass/blob/master/LICENSE
