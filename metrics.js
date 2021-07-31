@@ -8,33 +8,40 @@ const TLog = require('@tycrek/log');
 const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
 
 module.exports = () => {
-	const data = fs.readJsonSync(path.join(__dirname, 'data.json'));
+	const data = require('./data');
 	const { users } = fs.readJsonSync(path.join(__dirname, 'auth.json'));
 	Object.keys(users).forEach((token) => users[token].count = 0);
 
 	let totalSize = 0;
 	let oldSize = 0;
-	Object.values(data).forEach(({ token, size }) => {
-		try {
-			totalSize += size;
-			if (token === undefined) oldSize += size; // skipcq: JS-0127
-			else {
-				if (!users[token].size) users[token].size = 0;
-				users[token].size += size;
-				users[token].count++;
-			}
-		} catch (ex) {
-			// Silently handle missing tokens from dev environment -tycrek
-		}
-	});
+	let d;
 
-	// Get AWS size
-	bucketSize()
+	data.get()
+		.then((D) => d = D.map(([, resource]) => resource))
+		.then(() => {
+			console.log(d);
+			d.forEach(({ token, size }) => {
+				try {
+					totalSize += size;
+					if (token === undefined) oldSize += size; // skipcq: JS-0127
+					else {
+						if (!users[token].size) users[token].size = 0;
+						users[token].size += size;
+						users[token].count++;
+					}
+				} catch (ex) {
+					// Silently handle missing tokens from dev environment -tycrek
+				}
+			});
+
+			// Get AWS size
+			return bucketSize();
+		})
 		.then((s3size) => {
 			log.info('---- Usage metrics ----')
 				.blank()
 				.info('Users', Object.keys(users).length)
-				.info('Files', Object.keys(data).length)
+				.info('Files', Object.keys(d).length)
 				.info('S3 size', s3enabled ? s3size : '--')
 				.blank()
 				.info('Total size', formatBytes(totalSize))
