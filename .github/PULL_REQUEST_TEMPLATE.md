@@ -1,9 +1,8 @@
 ---
-name: feature
-about: Add new features or functionality
-title: "[FEATURE] Title"
-labels: enhancement
-assignees: ''
+name: Pull Request
+about: Contribute to the project
+title: "Title"
+assignees: 'tycrek'
 projects: 1
 
 ---
