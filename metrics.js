@@ -14,7 +14,7 @@ module.exports = () => {
 
 	let totalSize = 0;
 	let oldSize = 0;
-	let d;
+	let d = [];
 
 	data.get()
 		.then((D) => (d = D.map(([, resource]) => resource)))
