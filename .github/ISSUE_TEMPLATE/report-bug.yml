@@ -1,0 +1,100 @@
+name: Report bug
+description: Report a new bug
+title: "[BUG] Title"
+labels: bug
+body:
+- type: markdown
+  value: "## Bug report"
+- type: checkboxes
+  attributes:
+    label: Is there an existing Issue for this bug?
+    description: Search for an existing issue to avoid duplicates.
+    options:
+    - label: I have searched the existing issues
+      required: true
+- type: textarea
+  attributes:
+    label: Expected behavior
+    description: What should happen?
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Actual behavior
+    description: What happens instead?
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Steps to reproduce
+    description: How can we reproduce this bug?
+    placeholder: |
+      1. Go to '...'
+      2. Click on '....'
+      3. Scroll down to '....'
+      4. See error
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Logs (optional)
+    description: If any errors are encountered, please attach the logs
+    render: text
+- type: markdown
+  value: "### Environment details"
+- type: input
+  attributes:
+    label: ass version
+    description: Which version of ass does this bug occur in?
+  validations:
+    required: true
+- type: dropdown
+  attributes:
+    label: Deployment
+    description: Manual install or Docker?
+    options: [Manual, Docker]
+  validations:
+    required: true
+- type: dropdown
+  attributes:
+    label: File storage
+    description: Where are you storing files?
+    options: [Local, S3]
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Operating system
+    description: What is the name and version of the OS?
+    placholder: i.e. Ubuntu 18.04, Windows 10
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Node version
+    description: What is the version of Node.js?
+    placeholder: i.e. v14.17.3
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: StorageEngine
+    description: How are you storing your data?
+    placeholder: i.e. JSON, PostgreSQL, etc.
+- type: checkboxes
+  attributes:
+    label: Reverse proxy
+    description: Are you using a reverse proxy?
+    options:
+    - label: I am using a reverse proxy
+- type: input
+  attributes:
+    label: Reverse proxy software
+    description: If you are using a reverse proxy, what is the name and version?
+    placeholder: i.e. nginx 1.13.1
+- type: checkboxes
+  attributes:
+    label: Cloudflare
+    description: Are you a Cloudflare user?
+    options:
+    - label: I am using Cloudflare
