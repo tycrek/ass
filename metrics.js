@@ -18,8 +18,7 @@ module.exports = () => {
 
 	data.get()
 		.then((D) => (d = D.map(([, resource]) => resource)))
-		.then(() => {
-			console.log(d);
+		.then(() =>
 			d.forEach(({ token, size }) => {
 				try {
 					totalSize += size;
@@ -32,11 +31,8 @@ module.exports = () => {
 				} catch (ex) {
 					// Silently handle missing tokens from dev environment -tycrek
 				}
-			});
-
-			// Get AWS size
-			return bucketSize();
-		})
+			}))
+		.then(() => bucketSize())
 		.then((s3size) => {
 			log.info('---- Usage metrics ----')
 				.blank()
