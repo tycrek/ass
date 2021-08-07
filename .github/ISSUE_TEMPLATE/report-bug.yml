@@ -4,8 +4,12 @@ title: "[BUG] Title"
 labels: bug
 body:
 - type: markdown
-  value: "## Bug report"
+  attributes:
+    value: |
+      ## Thank you for reporting a bug!
+      Please fill in the following information to assist us in resolving the issue.
 - type: checkboxes
+  id: existing-issue
   attributes:
     label: Is there an existing Issue for this bug?
     description: Search for an existing issue to avoid duplicates.
@@ -13,18 +17,21 @@ body:
     - label: I have searched the existing issues
       required: true
 - type: textarea
+  id: expected-behavior
   attributes:
     label: Expected behavior
     description: What should happen?
   validations:
     required: true
 - type: textarea
+  id: actual-behavior
   attributes:
     label: Actual behavior
     description: What happens instead?
   validations:
     required: true
 - type: textarea
+  id: steps-to-reproduce
   attributes:
     label: Steps to reproduce
     description: How can we reproduce this bug?
@@ -36,60 +43,75 @@ body:
   validations:
     required: false
 - type: textarea
+  id: logs
   attributes:
     label: Logs (optional)
     description: If any errors are encountered, please attach the logs
     render: text
 - type: markdown
-  value: "### Environment details"
+  attributes:
+    value: |
+      ### Environment details
 - type: input
+  id: ass-version
   attributes:
     label: ass version
     description: Which version of ass does this bug occur in?
   validations:
     required: true
 - type: dropdown
+  id: deployment
   attributes:
     label: Deployment
     description: Manual install or Docker?
-    options: [Manual, Docker]
+    options:
+    - Manual
+    - Docker
   validations:
     required: true
 - type: dropdown
+  id: file-storage
   attributes:
     label: File storage
     description: Where are you storing files?
-    options: [Local, S3]
+    options:
+    - Local
+    - S3
   validations:
     required: true
 - type: input
+  id: operating-system
   attributes:
     label: Operating system
     description: What is the name and version of the OS?
-    placholder: i.e. Ubuntu 18.04, Windows 10
   validations:
     required: true
 - type: input
+  id: node-version
   attributes:
     label: Node version
     description: What is the version of Node.js?
   validations:
     required: true
 - type: input
+  id: storageengine
   attributes:
     label: StorageEngine
     description: How are you storing your data?
 - type: checkboxes
+  id: reverse-proxy
   attributes:
     label: Reverse proxy
     description: Are you using a reverse proxy?
     options:
     - label: I am using a reverse proxy
 - type: input
+  id: reverse-proxy-software
   attributes:
     label: Reverse proxy software
     description: If you are using a reverse proxy, what is the name and version?
 - type: checkboxes
+  id: cloudflare
   attributes:
     label: Cloudflare
     description: Are you a Cloudflare user?
