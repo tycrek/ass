@@ -66,20 +66,20 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - Thumbnail support
 - Mimetype blocking
 - Basic multi-user support
-- Configurable global upload limit (per-user coming soon!)
+- Configurable global upload size limit (per-user coming soon)
 - Custom pluggable frontends using [Git Submodules]
 - Run locally or in a Docker container
 - **Multiple file storage methods**
    - Local file system
-   - Amazon S3 (including [DigitalOcean Spaces])
+   - Amazon S3, including [DigitalOcean Spaces]
 - **Multiple data storage methods** using [ass StorageEngines]
    - **File**
       - JSON (default, [ass-storage-engine])
-      - YAML (soon!)
+      - YAML (soon)
    - **Database**
       - PostgreSQL ([ass-psql])
       - MongoDB ([ass-mongoose][GH AMongoose])
-      - MySQL (soon!)
+      - MySQL (soon)
 
 [Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
 [ZWS]: https://zws.im
@@ -105,25 +105,22 @@ ass was designed with developers in mind. If you are a developer & want somethin
 
 ## Installation
 
+[Docker](#docker) is the recommended way to install ass, but you can also install it locally.
+
 1. You should have **Node.js 14 or later** & **npm 7 or later** installed. 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
 3. Run `npm i` to install the required dependencies
-4. Run `npm run setup` to start the easy configuration
-5. Run `npm start` to start the server. The first time you run it you will be shown your first authorization token; save this as you will need it to configure ShareX.
+5. Run `npm start` to start ass.
 
-## Using HTTPS
-
-For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any reverse proxy should work (such as Apache or Nginx). I also have a [tutorial on easily setting up Caddy][my tutorial] as a reverse proxy server.
-
-[Caddy]: https://caddyserver.com/
-[my tutorial]: https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
+The first time you run, the setup process will automatically be called and you will be shown your first authorization token; save this as you will need it to configure ShareX.
 
 ## Docker
 
 <details>
 <summary><em>Expand for steps to install with Docker & docker-compose</em></summary>
+<br>
 
-You may also install ass using [docker-compose]. These steps assume you are already family with Docker, so if you're not, please [read the docs]. It also assumes that you have a working Docker installation with `docker-compose` installed.
+[docker-compose] is now the recommended way to install ass. These steps assume you are already family with Docker, so if you're not, please [read the docs]. It also assumes that you have a working Docker installation with `docker-compose` installed.
 
 [docker-compose]: https://docs.docker.com/compose/
 [read the docs]: https://docs.docker.com/
@@ -150,7 +147,7 @@ It creates directories & files required for `docker-compose` to work. It then ca
 Since all 3 primary data files are bound to the container with Volumes, you can run the scripts in two ways:
 
 ```bash
-# Check the usage metrics
+# Use docker-compose exec to check the usage metrics
 docker-compose exec ass npm run metrics
 
 # Use docker-compose exec to run the setup script
@@ -190,13 +187,20 @@ docker-compose up --force-recreate --build -d && docker image prune -f # docker-
 - I have personally tested running using these commands (migrating from an existing local deployment!) with Digital Ocean Spaces (S3 object-storage), a PostgreSQL database, & a custom frontend all on the same container. It should also work for you but feel free to let me know if you have any issues.
 </details>
 
+## Using HTTPS
+
+For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any reverse proxy should work (such as Apache or Nginx). I also have a [tutorial on easily setting up Caddy][my tutorial] as a reverse proxy server.
+
+[Caddy]: https://caddyserver.com/
+[my tutorial]: https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
+
 ### Generating new tokens
 
 If you need to generate a new token at any time, run `npm run new-token <username>`. This will **automatically** load the new token so there is no need to restart ass. Username field is optional; if left blank, a random username will be created.
 
 ### Cloudflare users
 
-In your Cloudflare DNS dashboard, make sure your domain/subdomain is set to **DNS Only**.
+In your Cloudflare DNS dashboard, set your domain/subdomain to **DNS Only** if you experience issues with **Proxied**.
 
 > <img src="https://user-images.githubusercontent.com/29926144/114085791-0f467680-986f-11eb-8cdb-34a9dfae3a23.png" height="140px">
 
@@ -228,7 +232,7 @@ If you need to override a specific part of the config to be different from the g
 | Header | Purpose |
 | ------ | ------- |
 | **`X-Ass-Domain`** | Override the domain returned for the clipboard (useful for multi-domain hosts) |
-| **`X-Ass-Access`** | Override the generator used for the resource URI. Must be one of: `original`, `zws`, `gfycat`, or `random` ([see above](#access-types)) |
+| **`X-Ass-Access`** | Override the generator used for the resource URL. Must be one of: `original`, `zws`, `gfycat`, or `random` ([see above](#access-types)) |
 | **`X-Ass-Gfycat`** | Override the length of Gfycat ID's. Defaults to `2` |
 
 ### Fancy embeds
@@ -238,7 +242,7 @@ If you primarily share media on Discord, you can add these additional (optional)
 | Header | Purpose |
 | ------ | ------- |
 | **`X-Ass-OG-Title`** | Large text shown above your media |
-| **`X-Ass-OG-Description`** | Small text shown below the title but above the media (does not show up on videos yet) |
+| **`X-Ass-OG-Description`** | Small text shown below the title but above the media (does not show up on videos) |
 | **`X-Ass-OG-Author`** | Small text shown above the title |
 | **`X-Ass-OG-Author-Url`** | URL to open when the Author is clicked |
 | **`X-Ass-OG-Provider`** | Smaller text shown above the author |
@@ -369,9 +373,9 @@ module.exports = {
 [NPM AMongoose]: https://www.npmjs.com/package/ass-mongoose
 [@dylancl]: https://github.com/dylancl
 
-An ass StorageEngine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is plugin the connection/authentication details, then ass will handle the rest, using the resource ID as the key.
+An ass StorageEngine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details, and ass will handle the rest, using the resource ID as the key.
 
-The only StorageEngine ass comes with by default is **JSON**. If you find (or create!) a StorageEngine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`]. The StorageEngines own README file should also instruct how to use it. At this time, a modified `data.js` might look like this:
+The only StorageEngine ass comes with by default is **JSON**. If you find or create a StorageEngine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`]. The StorageEngines own README file should also instruct how to use it. At this time, a modified `data.js` might look like this:
 
 ```js
 /**
@@ -409,20 +413,20 @@ Because I was dumb & didn't know what to call it, totally forgetting that "stora
 
 ## npm scripts
 
-ass has a number of pre-made npm scripts for you to use. **All** of these scripts should be run using `npm run <script-name>`.
+ass has a number of pre-made npm scripts for you to use. **All** of these scripts should be run using `npm run <script-name>` (except `start`).
 
 | Script | Description |
 | ------ | ----------- |
 | **`start`** | Starts the ass server. This is the default script & is run with **`npm start`**. |
-| `setup` | Starts the easy setup process. Should be run once after installing ass, & also after any updates that introduce new configuration options. |
+| `setup` | Starts the easy setup process. Should be run after any updates that introduce new config options. |
 | `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
 | `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
-| `update` | Runs update tasks. These will update ass to the latest version by first pulling changes with `git pull`, then running `npm i` to install any new dependencies. This is the recommended way to update ass.  After updating, you will need to restart ass. |
-| `update-full` | Runs the previous update script, followed by `npm run setup` to ensure that all the latest configuration options are set. The setup script uses your **existing** config for setting defaults to make updates much quicker. If any ass Release Notes say to use `update-full` instead of `update`, then use `update-full`. |
 | `restart` | Restarts the ass server using `systemctl`. More info soon (should work fine if you have an existing `ass.service` file) |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
 | `logs` | Uses the [tlog Socket plugin] to stream logs from the ass server to your terminal, with full colour support (Remember to set [`FORCE_COLOR`] if you're using Systemd) |
 | `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
+| `docker-update` | Alias for `git pull && docker-compose up --force-recreate --build -d && docker image prune -f` |
+| `docker-resetup` | Alias for `docker-compose exec npm run setup && docker-compose restart` |
 
 [tlog Socket plugin]: https://github.com/tycrek/tlog#socket
 [`FORCE_COLOR`]: https://nodejs.org/dist/latest-v14.x/docs/api/cli.html#cli_force_color_1_2_3

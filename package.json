@@ -12,14 +12,14 @@
     "setup": "node setup.js",
     "metrics": "node metrics.js",
     "new-token": "node generators/token.js",
-    "update": "git pull && npm i",
-    "update-full": "npm run update && npm run setup",
     "restart": "systemctl restart ass.service",
     "engine-check": "node checkEngine.js",
     "prestart": "npm run engine-check",
     "presetup": "npm run engine-check",
     "logs": "node ./node_modules/@tycrek/log/socketClient.js",
-    "docker-logs": "docker-compose logs -f --tail=50 --no-log-prefix ass"
+    "docker-logs": "docker-compose logs -f --tail=50 --no-log-prefix ass",
+    "docker-update": "git pull && docker-compose up --force-recreate --build -d && docker image prune -f",
+    "docker-resetup": "docker-compose exec npm run setup && docker-compose restart"
   },
   "repository": "github:tycrek/ass",
   "keywords": [
