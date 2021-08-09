@@ -30,7 +30,6 @@ router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData)
 	const og = fileData.opengraph, ogs = [''];
 	og.title && (ogs.push(`<meta property="og:title" content="${og.title}">`)); // skipcq: JS-0093
 	og.description && (ogs.push(`<meta property="og:description" content="${og.description}">`)); // skipcq: JS-0093
-	og.author && (ogs.push(`<meta property="og:site_name" content="${og.author}">`)); // skipcq: JS-0093
 	og.color && (ogs.push(`<meta name="theme-color" content="${getResourceColor(og.color, fileData.vibrant)}">`)); // skipcq: JS-0093
 	!fileData.is.video && (ogs.push(`<meta name="twitter:card" content="summary_large_image">`)); // skipcq: JS-0093
 
