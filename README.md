@@ -123,7 +123,10 @@ For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any
 <details>
 <summary><em>Expand for steps to install with Docker & docker-compose</em></summary>
 
-You may also install ass using [docker-compose](https://docs.docker.com/compose/). These steps assume you are already family with Docker, so if you're not, please [read the docs](https://docs.docker.com/). It also assumes that you have a working Docker installation with `docker-compose` installed.
+You may also install ass using [docker-compose]. These steps assume you are already family with Docker, so if you're not, please [read the docs]. It also assumes that you have a working Docker installation with `docker-compose` installed.
+
+[docker-compose]: https://docs.docker.com/compose/
+[read the docs]: https://docs.docker.com/
 
 ### Install using docker-compose
 
@@ -254,7 +257,7 @@ You can insert certain metadata into your embeds with these placeholders:
 
 ### Webhooks
 
-You may use Discord webhooks as an easy way to keep track of your uploads. The first step is to [create a new Webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks). You only need to follow the first section, **Making a Webhook**. Once you are done that, click **Copy Webhook URL**. Next, paste your URL into a text editor. Extract these two values from the URL:
+You may use Discord webhooks as an easy way to keep track of your uploads. The first step is to [create a new Webhook]. You only need to follow the first section, **Making a Webhook**. Once you are done that, click **Copy Webhook URL**. Next, paste your URL into a text editor. Extract these two values from the URL:
 
 ```
 https://discord.com/api/webhooks/12345678910/T0kEn0fw3Bh00K
@@ -273,9 +276,11 @@ Once you have these, add the following HTTP headers to your ShareX config:
 
 Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, & a link to delete the file. To disable webhooks, simply remove the headers from your config.
 
+[create a new Webhook]: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+
 ## Custom frontends
 
-ass is intended to provide a strong backend for developers to build their own frontends around. The easiest way to do this is with a [Git Submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). Your submodule should be a **separate** git repo. Make sure you [adjust the `FRONTEND_NAME`](https://github.com/tycrek/ass/blob/d766bd15cf8ac851058c8abf37238f1608d8c305/ass.js#L24) to match your frontend. To make updates easier, it is recommended to make a new branch. Since submodules are their own dedicated projects, you are free to build the router however you wish, as long as it exports the required items detailed below.
+ass is intended to provide a strong backend for developers to build their own frontends around. The easiest way to do this is with a [Git Submodule]. Your submodule should be a **separate** git repo. Make sure you [adjust the `FRONTEND_NAME`] to match your frontend. To make updates easier, it is recommended to make a new branch. Since submodules are their own dedicated projects, you are free to build the router however you wish, as long as it exports the required items detailed below.
 
 Sample submodule entry file:
 
@@ -331,25 +336,33 @@ module.exports = {
 };
 ```
 
-**For a detailed walkthrough on developing your first frontend, [consult the wiki](https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend).**
+**For a detailed walkthrough on developing your first frontend, [consult the wiki][ctw1].**
+
+[Git Submodule]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
+[adjust the `FRONTEND_NAME`]: https://github.com/tycrek/ass/blob/d766bd15cf8ac851058c8abf37238f1608d8c305/ass.js#L24
+[ctw1]: https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend
 
 ## StorageEngines
 
-[StorageEngines](https://github.com/tycrek/ass-storage-engine) are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
+[StorageEngines] are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
+
+[StorageEngines]: https://github.com/tycrek/ass-storage-engine
 
 **Supported StorageEngines:**
 
 | Name | Description | Links |
 | :--: | ----------- | :---: |
-| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map]. This is the default StorageEngine. | [GitHub][GH ASE] |
-| **PostgreSQL** | Data storage using a [PostgreSQL] database. [node-postgres] is used for communicating with the database. | [GitHub][GH APSQL] |
-| **Mongoose** | Data storage using a [MongoDB]() database. [mongoose] is used for communicating with the database. Created by [@dylancl] | [GitHub][GH AMongoose]<br>[NPM][NPM AMongoose] |
+| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map]. This is the default StorageEngine. | [GitHub][GH ASE]<br>[NPM][NPM ASE] |
+| **PostgreSQL** | Data storage using a [PostgreSQL] database. [node-postgres] is used for communicating with the database. | [GitHub][GH APSQL]<br>[NPM][NPM APSQL] |
+| **Mongoose** | Data storage using a [MongoDB] database. [mongoose] is used for communicating with the database. Created by [@dylancl] | [GitHub][GH AMongoose]<br>[NPM][NPM AMongoose] |
 
 [Map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
 [GH ASE]: https://github.com/tycrek/ass-storage-engine/
+[NPM ASE]: https://www.npmjs.com/package/@tycrek/ass-storage-engine
 [PostgreSQL]: https://www.postgresql.org/
 [node-postgres]: https://node-postgres.com/
 [GH APSQL]: https://github.com/tycrek/ass-psql/
+[NPM APSQL]: https://www.npmjs.com/package/@tycrek/ass-psql
 [MongoDB]: https://www.mongodb.com/
 [mongoose]: https://mongoosejs.com/
 [GH AMongoose]: https://github.com/dylancl/ass-mongoose
@@ -358,7 +371,7 @@ module.exports = {
 
 An ass StorageEngine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is plugin the connection/authentication details, then ass will handle the rest, using the resource ID as the key.
 
-The only StorageEngine ass comes with by default is **JSON**. If you find (or create!) a StorageEngine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`](https://github.com/tycrek/ass/blob/master/data.js). The StorageEngines own README file should also instruct how to use it. At this time, a modified `data.js` might look like this:
+The only StorageEngine ass comes with by default is **JSON**. If you find (or create!) a StorageEngine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`]. The StorageEngines own README file should also instruct how to use it. At this time, a modified `data.js` might look like this:
 
 ```js
 /**
@@ -385,7 +398,10 @@ module.exports = data1;
 
 As long as the StorageEngine properly implements `GET`/`PUT`/`DEL`/`HAS` StorageFunctions, replacing the file/database system is just that easy.
 
-**For a detailed walkthrough on developing StorageEngines, [consult the wiki](https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine).**
+**For a detailed walkthrough on developing StorageEngines, [consult the wiki][ctw2].**
+
+[`data.js`]: https://github.com/tycrek/ass/blob/master/data.js
+[ctw2]: https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine
 
 #### But why not "DataEngine"?
 
@@ -405,23 +421,31 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `update-full` | Runs the previous update script, followed by `npm run setup` to ensure that all the latest configuration options are set. The setup script uses your **existing** config for setting defaults to make updates much quicker. If any ass Release Notes say to use `update-full` instead of `update`, then use `update-full`. |
 | `restart` | Restarts the ass server using `systemctl`. More info soon (should work fine if you have an existing `ass.service` file) |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
-| `logs` | Uses the [tlog Socket plugin](https://github.com/tycrek/tlog#socket) to stream logs from the ass server to your terminal, with full colour support (Remember to set [`FORCE_COLOR`](https://nodejs.org/dist/latest-v14.x/docs/api/cli.html#cli_force_color_1_2_3) if you're using Systemd) |
+| `logs` | Uses the [tlog Socket plugin] to stream logs from the ass server to your terminal, with full colour support (Remember to set [`FORCE_COLOR`] if you're using Systemd) |
 | `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
+
+[tlog Socket plugin]: https://github.com/tycrek/tlog#socket
+[`FORCE_COLOR`]: https://nodejs.org/dist/latest-v14.x/docs/api/cli.html#cli_force_color_1_2_3
 
 ## Flameshot users (Linux)
 
-Use [this script](https://github.com/tycrek/ass/blob/master/flameshot_example.sh) kindly provided by [@ToxicAven](https://github.com/ToxicAven). For the `KEY`, put your token.
+Use [this script]. For the `KEY`, put your token. Thanks to [@ToxicAven] for creating this!
+
+[this script]: https://github.com/tycrek/ass/blob/master/flameshot_example.sh
+[@ToxicAven]: https://github.com/ToxicAven
 
 ## Contributing
 
-No strict contributing rules at this time. I appreciate any Issues or Pull Requests.
+Please follow the [Contributing Guidelines] when submiting Issues or Pull Requests.
+
+[Contributing Guidelines]: https://github.com/tycrek/ass/blob/master/CONTRIBUTING.md
 
 ## Credits
 
 - [GitHub CoPilot]... seriously, this thing is *good*.
-- Special thanks to [hlsl#1359](http://be.net/zevwolf) for the awesome logo!
-- [@ToxicAven](https://github.com/ToxicAven) for the Flameshot script
+- Special thanks to [hlsl#1359] for the awesome logo!
 - [Gfycat] for their wordlists
 
 [CoPilot]: https://copilot.github.com/
 [GitHub CoPilot]:https://copilot.github.com/
+[hlsl#1359]: http://be.net/zevwolf
