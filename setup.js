@@ -10,6 +10,8 @@ const config = {
 	gfyIdSize: 2,
 	resourceIdType: 'random',
 	mediaStrict: false,
+	frontendName: 'ass-x',
+	indexFile: '',
 	s3enabled: false,
 };
 
@@ -139,6 +141,18 @@ function doSetup() {
 				description: 'Only allow uploads of media files (images, videos, audio)',
 				type: 'boolean',
 				default: config.mediaStrict,
+				required: false
+			},
+			frontendName: {
+				description: 'Name of your frontend (leave blank if not using frontends)',
+				type: 'string',
+				default: config.frontendName,
+				required: false
+			},
+			indexFile: {
+				description: 'Filename for your custom index, if using one (must be a JS file)',
+				type: 'string',
+				default: config.indexFile,
 				required: false
 			},
 			s3enabled: {

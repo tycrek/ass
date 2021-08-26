@@ -88,7 +88,7 @@ const logger = new TLog({
 logger
 	.env('ASS_ENV')
 	//.enable.process({ uncaughtException: false }).debug('Plugin enabled', 'Process')
-	.enable.express().debug('Plugin enabled', 'Express')
+	.enable.express({ handle500: false }).debug('Plugin enabled', 'Express')
 	.enable.socket().debug('Plugin enabled', 'Socket');
 
 const idModes = {

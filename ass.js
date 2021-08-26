@@ -13,7 +13,7 @@ if (doSetup) {
 }
 
 // Load the config
-const { host, port, useSsl, isProxied, s3enabled } = require('./config.json');
+const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -32,7 +32,7 @@ const { name: ASS_NAME, version: ASS_VERSION } = require('./package.json');
 log.blank().info(`* ${ASS_NAME} v${ASS_VERSION} *`).blank();
 
 // Set up premium frontend
-const FRONTEND_NAME = 'ass-x'; // <-- Change this to use a custom frontend
+const FRONTEND_NAME = frontendName;
 const ASS_PREMIUM = fs.existsSync(`./${FRONTEND_NAME}/package.json`) ? (require('submodule'), require(`./${FRONTEND_NAME}`)) : { enabled: false };
 
 //#region Variables, module setup
@@ -69,15 +69,15 @@ useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 // Don't process favicon requests
 app.use(nofavicon);
 
-// Index can be overridden by a frontend
-app.get('/', (req, res, next) =>
-	(ASS_PREMIUM.enabled && ASS_PREMIUM.index)
-		? ASS_PREMIUM.index(req, res, next)
-		: fs.readFile(path('README.md'))
-			.then((bytes) => bytes.toString())
-			.then(marked)
-			.then((d) => res.render('index', { data: d }))
-			.catch(next));
+// Use custom index, otherwise render README.md
+const ASS_INDEX = fs.existsSync(`./${indexFile}/`) && require(`./${indexFile}`);
+app.get('/', (req, res, next) => ASS_INDEX // skipcq: JS-0229
+	? ASS_INDEX(req, res, next)
+	: fs.readFile(path('README.md'))
+		.then((bytes) => bytes.toString())
+		.then(marked)
+		.then((d) => res.render('index', { data: d }))
+		.catch(next));
 
 // Upload router
 app.use('/', ROUTERS.upload);
@@ -86,12 +86,10 @@ app.use('/', ROUTERS.upload);
 ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router); // skipcq: JS-0093
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
-app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
+app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
-app.use((err, req, res, next) => {
-	console.error(err);
-	res.sendStatus(CODE_INTERNAL_SERVER_ERROR);
-});
+// Error handler
+app.use((err, _req, res, _next) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
 
 // Host the server
 log
@@ -99,6 +97,6 @@ log
 	.info('Files', `${data.size}`)
 	.info('StorageEngine', data.name, data.type)
 	.info('Frontend', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : 'disabled', `${ASS_PREMIUM.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`)
-	.info('Index redirect', ASS_PREMIUM.enabled && ASS_PREMIUM.index ? `enable` : 'disabled')
+	.info('Custom index', ASS_INDEX ? `enabled` : 'disabled')
 	.blank()
 	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
