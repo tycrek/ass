@@ -55,7 +55,7 @@ function doSetup() {
 	const setupSchema = {
 		properties: {
 			host: {
-				description: 'Local IP to listen on',
+				description: 'Local IP to bind to',
 				type: 'string',
 				default: config.host,
 				required: false
@@ -73,16 +73,10 @@ function doSetup() {
 				message: 'You must input a valid domain name or IP to continue'
 			},
 			maxUploadSize: {
-				description: `Max allowable uploaded filesize, in megabytes`,
+				description: `Maximum size for uploaded files, in megabytes`,
 				type: 'integer',
 				default: config.maxUploadSize,
 				require: false
-			},
-			useSsl: {
-				description: 'Use SSL (requires reverse proxy!)',
-				type: 'boolean',
-				default: config.useSsl,
-				required: false
 			},
 			isProxied: {
 				description: 'Will you be running through a reverse proxy',
@@ -90,19 +84,25 @@ function doSetup() {
 				default: config.isProxied,
 				required: false
 			},
+			useSsl: {
+				description: 'Use HTTPS (must be configured with reverse proxy)',
+				type: 'boolean',
+				default: config.useSsl,
+				required: false
+			},
 			resourceIdSize: {
-				description: 'Resource ID length (length of ID\'s for your files, recommended: 6-15. Higher = more uploads)',
+				description: 'URL length (length of ID\'s for your files, recommended: 6-15. Higher = more uploads, but longer URLs)',
 				type: 'integer',
 				default: config.resourceIdSize,
 				required: false
 			},
 			resourceIdType: {
-				description: 'Resource ID type (determines what kind of URL your uploads are visible at. Can be one of: original, zws, random, gfycat)',
+				description: 'URL type (can be one of: zws, random, gfycat, original)',
 				type: 'string',
 				default: config.resourceIdType,
 				require: false,
 				pattern: /(original|zws|random|gfycat)/gi, // skipcq: JS-0113
-				message: 'Must be one of: original, zws, random, gfycat'
+				message: 'Must be one of: zws, random, gfycat, original'
 			},
 			gfyIdSize: {
 				description: 'Adjective count for "gfycat" Resource ID type',
