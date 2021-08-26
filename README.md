@@ -282,6 +282,32 @@ Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, & a
 
 [create a new Webhook]: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
 
+## Custom index
+
+By default, ass directs the index route `/` to this README. Follow these steps to use a custom index:
+
+1. Run `npm run setup` to re-run the setup script.
+   - The defaults are set by your existing config, so you can press `Enter` to accept the defaults on most prompts.
+   - The one setting you want to change is `Filename for your custom index`. Enter a name for your index, including `.js` (custom index's must be `.js` files).
+2. Make a new file matching the name you entered.
+3. Your index file needs to export a single function taking three arguments: `(req, res, next)`. Some code samples for common use cases are provided below.
+4. Restart ass. The startup info logs should say **`Custom index:`**` enabled`.
+
+### Custom index code samples
+
+**Redirect to a custom frontend registration page**
+
+```js
+module.exports = (req, res, next) => res.redirect('/register');
+```
+
+**Send an HTML file**
+
+```js
+const path = require('path');
+module.exports = (req, res, next) => res.sendFile(path.join(__dirname, 'index.html'));
+```
+
 ## Custom frontends
 
 ass is intended to provide a strong backend for developers to build their own frontends around. The easiest way to do this is with a [Git Submodule]. Your submodule should be a **separate** git repo. Make sure you [adjust the `FRONTEND_NAME`] to match your frontend. To make updates easier, it is recommended to make a new branch. Since submodules are their own dedicated projects, you are free to build the router however you wish, as long as it exports the required items detailed below.
@@ -316,29 +342,6 @@ const data = require('../data');
 ```
 
 These values are recognized globally throughout ass, so they will stay up-to-date as users upload.
-
-#### Custom index
-
-By default, ass directs the app index to this README. To change it, just add an `index` function to your router exports:
-
-```js
-
-function index(req, res, next) {
-   // redirect user to dashboard
-   res.redirect('/dashboard/user');
-
-   // you can also use req & next as you normally
-   // would in an Express route handler
-}
-
-module.exports = {
-   router,
-   index,
-   enabled: true,
-   brand: `${name} v${version}`,
-   endpoint: '/dashboard',
-};
-```
 
 **For a detailed walkthrough on developing your first frontend, [consult the wiki][ctw1].**
 

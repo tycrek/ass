@@ -13,7 +13,7 @@ if (doSetup) {
 }
 
 // Load the config
-const { host, port, useSsl, isProxied, s3enabled, frontendName } = require('./config.json');
+const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile } = require('./config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -69,15 +69,15 @@ useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 // Don't process favicon requests
 app.use(nofavicon);
 
-// Index can be overridden by a frontend
-app.get('/', (req, res, next) =>
-	(ASS_PREMIUM.enabled && ASS_PREMIUM.index)
-		? ASS_PREMIUM.index(req, res, next)
-		: fs.readFile(path('README.md'))
-			.then((bytes) => bytes.toString())
-			.then(marked)
-			.then((d) => res.render('index', { data: d }))
-			.catch(next));
+// Use custom index, otherwise render README.md
+const ASS_INDEX = fs.existsSync(`./${indexFile}/`) ? require(`./${indexFile}`) : false;
+app.get('/', (req, res, next) => !!ASS_INDEX
+	? ASS_INDEX(req, res, next)
+	: fs.readFile(path('README.md'))
+		.then((bytes) => bytes.toString())
+		.then(marked)
+		.then((d) => res.render('index', { data: d }))
+		.catch(next));
 
 // Upload router
 app.use('/', ROUTERS.upload);
@@ -97,6 +97,6 @@ log
 	.info('Files', `${data.size}`)
 	.info('StorageEngine', data.name, data.type)
 	.info('Frontend', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : 'disabled', `${ASS_PREMIUM.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`)
-	.info('Index redirect', ASS_PREMIUM.enabled && ASS_PREMIUM.index ? `enable` : 'disabled')
+	.info('Custom index', !!ASS_INDEX ? `enabled` : 'disabled')
 	.blank()
 	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
