@@ -64,10 +64,10 @@ function doSetup() {
 	// Now that's a lot of configs!
 	try {
 		const existingConfig = require('./config.json');
-		Object.keys(existingConfig).forEach((key) => {
-			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]); // skipcq: JS-0093
-			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = existingConfig[key]); // skipcq: JS-0093
-			Object.prototype.hasOwnProperty.call(oldConfig, key) && (oldConfig[key] = existingConfig[key]); // skipcq: JS-0093
+		Object.entries(existingConfig).forEach(([key, value]) => {
+			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = value); // skipcq: JS-0093
+			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = value); // skipcq: JS-0093
+			Object.prototype.hasOwnProperty.call(oldConfig, key) && (oldConfig[key] = value); // skipcq: JS-0093
 		});
 	} catch (ex) {
 		if (ex.code !== 'MODULE_NOT_FOUND' && !ex.toString().includes('Unexpected end')) log.error(ex);
@@ -169,32 +169,32 @@ function doSetup() {
 			s3endpoint: {
 				description: 'S3 Endpoint URL to upload objects to',
 				type: 'string',
-				default: config.s3endpoint,
-				required: true
+				default: s3config.s3endpoint,
+				required: false
 			},
 			s3bucket: {
 				description: 'S3 Bucket name to upload objects to',
 				type: 'string',
-				default: config.s3bucket,
-				required: true
+				default: s3config.s3bucket,
+				required: false
 			},
 			s3usePathStyle: {
 				description: 'S3 path endpoint, otherwise uses subdomain endpoint',
 				type: 'boolean',
-				default: config.s3usePathStyle,
-				required: true
+				default: s3config.s3usePathStyle,
+				required: false
 			},
 			s3accessKey: {
 				description: 'Access key for the specified S3 API',
 				type: 'string',
-				default: config.s3accessKey,
-				required: true
+				default: s3config.s3accessKey,
+				required: false
 			},
 			s3secretKey: {
 				description: 'Secret key for the specified S3 API',
 				type: 'string',
-				default: config.s3secretKey,
-				required: true
+				default: s3config.s3secretKey,
+				required: false
 			},
 		}
 	};
