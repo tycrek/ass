@@ -115,7 +115,7 @@ function doSetup() {
 				message: 'Must be one of: zws, random, gfycat, original'
 			},
 			gfyIdSize: {
-				description: 'Adjective count for "gfycat" Resource ID type',
+				description: 'Adjective count for "gfycat" URL type',
 				type: 'integer',
 				default: config.gfyIdSize,
 				required: false
