@@ -71,7 +71,7 @@ app.use(nofavicon);
 
 // Use custom index, otherwise render README.md
 const ASS_INDEX = fs.existsSync(`./${indexFile}/`) ? require(`./${indexFile}`) : false;
-app.get('/', (req, res, next) => !!ASS_INDEX
+app.get('/', (req, res, next) => ASS_INDEX // skipcq: JS-0229
 	? ASS_INDEX(req, res, next)
 	: fs.readFile(path('README.md'))
 		.then((bytes) => bytes.toString())
@@ -89,7 +89,7 @@ ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router); // ski
 app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 // Error handler
-app.use((err, _req, res, _next) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR)));
+app.use((err, _req, res, _next) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
 
 // Host the server
 log
