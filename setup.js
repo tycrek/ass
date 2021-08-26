@@ -63,9 +63,9 @@ function doSetup() {
 	try {
 		const existingConfig = require('./config.json');
 		Object.keys(existingConfig).forEach((key) => {
-			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]);
-			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = existingConfig[key]);
-			Object.prototype.hasOwnProperty.call(oldConfig, key) && (oldConfig[key] = existingConfig[key]);
+			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]); // skipcq: JS-0093
+			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = existingConfig[key]); // skipcq: JS-0093
+			Object.prototype.hasOwnProperty.call(oldConfig, key) && (oldConfig[key] = existingConfig[key]); // skipcq: JS-0093
 		});
 	} catch (ex) {
 		if (ex.code !== 'MODULE_NOT_FOUND' && !ex.toString().includes('Unexpected end')) log.error(ex);
@@ -195,8 +195,8 @@ function doSetup() {
 		.then((r) => results = r) // skipcq: JS-0086
 
 		// Check if using S3
-		.then(() => results.s3enabled ? prompt.get(s3schema) : s3config)
-		.then((r) => Object.entries(r).forEach(([key, value]) => results[key] = value))
+		.then(() => results.s3enabled ? prompt.get(s3schema) : s3config) // skipcq: JS-0229
+		.then((r) => Object.entries(r).forEach(([key, value]) => results[key] = value)) // skipcq: JS-0086
 
 		// Verify information is correct
 		.then(() => log
