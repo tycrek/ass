@@ -70,7 +70,7 @@ useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 app.use(nofavicon);
 
 // Use custom index, otherwise render README.md
-const ASS_INDEX = fs.existsSync(`./${indexFile}/`) ? require(`./${indexFile}`) : false;
+const ASS_INDEX = fs.existsSync(`./${indexFile}/`) && require(`./${indexFile}`);
 app.get('/', (req, res, next) => ASS_INDEX // skipcq: JS-0229
 	? ASS_INDEX(req, res, next)
 	: fs.readFile(path('README.md'))
@@ -97,6 +97,6 @@ log
 	.info('Files', `${data.size}`)
 	.info('StorageEngine', data.name, data.type)
 	.info('Frontend', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : 'disabled', `${ASS_PREMIUM.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`)
-	.info('Custom index', !!ASS_INDEX ? `enabled` : 'disabled')
+	.info('Custom index', ASS_INDEX ? `enabled` : 'disabled')
 	.blank()
 	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
