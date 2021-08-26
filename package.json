@@ -19,7 +19,7 @@
     "logs": "node ./node_modules/@tycrek/log/socketClient.js",
     "docker-logs": "docker-compose logs -f --tail=50 --no-log-prefix ass",
     "docker-update": "git pull && docker-compose up --force-recreate --build -d && docker image prune -f",
-    "docker-resetup": "docker-compose exec npm run setup && docker-compose restart"
+    "docker-resetup": "docker-compose exec ass npm run setup && docker-compose restart"
   },
   "repository": "github:tycrek/ass",
   "keywords": [
