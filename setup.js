@@ -8,19 +8,46 @@ const config = {
 	isProxied: true,
 	resourceIdSize: 12,
 	gfyIdSize: 2,
-	resourceIdType: 'zws',
-	diskFilePath: 'uploads/',
-	saveWithDate: false,
-	saveAsOriginal: true,
+	resourceIdType: 'random',
 	mediaStrict: false,
 	frontendName: 'ass-x',
 	s3enabled: false,
+};
+
+// Default S3 config
+const s3config = {
 	s3endpoint: 'sfo3.digitaloceanspaces.com',
 	s3bucket: 'bucket-name',
 	s3usePathStyle: false,
 	s3accessKey: 'accessKey',
 	s3secretKey: 'secretKey',
 };
+
+// Redacted configs from previous versions
+const oldConfig = {
+	// Note for people manually editing config.json
+	__WARNING__: "The following configs are no longer used and are here for backwards compatibility. For optimal use, DO NOT edit them.",
+
+	// Removed in 0.8.4
+	diskFilePath: 'uploads/',
+	saveWithDate: true, // Some systems don't like dirs with massive amounts of files
+	saveAsOriginal: false, // Prone to conflicts, which ass doesn't handle
+};
+
+function getConfirmSchema(description) {
+	return {
+		properties: {
+			confirm: {
+				description,
+				type: 'string',
+				pattern: /^[y|n]/gim,
+				message: 'Must respond with either \'y\' or \'n\'',
+				required: true,
+				before: (value) => value.toLowerCase().startsWith('y')
+			}
+		}
+	};
+}
 
 // If directly called on the command line, run setup script
 function doSetup() {
@@ -32,10 +59,15 @@ function doSetup() {
 
 	const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
 
-	// Override default config with existing config to allow migrating configs
+	// Override default configs with existing configs to allow migrating configs
+	// Now that's a lot of configs!
 	try {
 		const existingConfig = require('./config.json');
-		Object.keys(existingConfig).forEach((key) => Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]))
+		Object.keys(existingConfig).forEach((key) => {
+			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]); // skipcq: JS-0093
+			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = existingConfig[key]); // skipcq: JS-0093
+			Object.prototype.hasOwnProperty.call(oldConfig, key) && (oldConfig[key] = existingConfig[key]); // skipcq: JS-0093
+		});
 	} catch (ex) {
 		if (ex.code !== 'MODULE_NOT_FOUND' && !ex.toString().includes('Unexpected end')) log.error(ex);
 	}
@@ -49,7 +81,7 @@ function doSetup() {
 	const setupSchema = {
 		properties: {
 			host: {
-				description: 'Local IP to listen on',
+				description: 'Local IP to bind to',
 				type: 'string',
 				default: config.host,
 				required: false
@@ -67,16 +99,10 @@ function doSetup() {
 				message: 'You must input a valid domain name or IP to continue'
 			},
 			maxUploadSize: {
-				description: `Max allowable uploaded filesize, in megabytes`,
+				description: `Maximum size for uploaded files, in megabytes`,
 				type: 'integer',
 				default: config.maxUploadSize,
 				require: false
-			},
-			useSsl: {
-				description: 'Use SSL (requires reverse proxy!)',
-				type: 'boolean',
-				default: config.useSsl,
-				required: false
 			},
 			isProxied: {
 				description: 'Will you be running through a reverse proxy',
@@ -84,42 +110,30 @@ function doSetup() {
 				default: config.isProxied,
 				required: false
 			},
+			useSsl: {
+				description: 'Use HTTPS (must be configured with reverse proxy)',
+				type: 'boolean',
+				default: config.useSsl,
+				required: false
+			},
 			resourceIdSize: {
-				description: 'Resource ID length (length of ID\'s for your files, recommended: 6-15. Higher = more uploads)',
+				description: 'URL length (length of ID\'s for your files, recommended: 6-15. Higher = more uploads, but longer URLs)',
 				type: 'integer',
 				default: config.resourceIdSize,
 				required: false
 			},
 			resourceIdType: {
-				description: 'Resource ID type (determines what kind of URL your uploads are visible at. Can be one of: original, zws, random, gfycat)',
+				description: 'URL type (can be one of: zws, random, gfycat, original)',
 				type: 'string',
 				default: config.resourceIdType,
 				require: false,
 				pattern: /(original|zws|random|gfycat)/gi, // skipcq: JS-0113
-				message: 'Must be one of: original, zws, random, gfycat'
+				message: 'Must be one of: zws, random, gfycat, original'
 			},
 			gfyIdSize: {
-				description: 'Adjective count for "gfycat" Resource ID type',
+				description: 'Adjective count for "gfycat" URL type',
 				type: 'integer',
 				default: config.gfyIdSize,
-				required: false
-			},
-			diskFilePath: {
-				description: 'Relative path to save uploads to',
-				type: 'string',
-				default: config.diskFilePath,
-				required: false
-			},
-			saveWithDate: {
-				description: 'Use date folder structure (e.x. uploads/2021-04/image.png)',
-				type: 'boolean',
-				default: config.saveWithDate,
-				required: false
-			},
-			saveAsOriginal: {
-				description: 'Save as original file name instead of random',
-				type: 'boolean',
-				default: config.saveAsOriginal,
 				required: false
 			},
 			mediaStrict: {
@@ -139,54 +153,47 @@ function doSetup() {
 				type: 'boolean',
 				default: config.s3enabled,
 				required: false
-			},
+			}
+		}
+	};
+
+	const s3schema = {
+		properties: {
 			s3endpoint: {
 				description: 'S3 Endpoint URL to upload objects to',
 				type: 'string',
 				default: config.s3endpoint,
-				required: false
+				required: true
 			},
 			s3bucket: {
 				description: 'S3 Bucket name to upload objects to',
 				type: 'string',
 				default: config.s3bucket,
-				required: false
+				required: true
 			},
 			s3usePathStyle: {
 				description: 'S3 path endpoint, otherwise uses subdomain endpoint',
 				type: 'boolean',
 				default: config.s3usePathStyle,
-				required: false
+				required: true
 			},
 			s3accessKey: {
 				description: 'Access key for the specified S3 API',
 				type: 'string',
 				default: config.s3accessKey,
-				required: false
+				required: true
 			},
 			s3secretKey: {
 				description: 'Secret key for the specified S3 API',
 				type: 'string',
 				default: config.s3secretKey,
-				required: false
+				required: true
 			},
 		}
 	};
 
 	// Schema for confirm prompt. User must enter 'y' or 'n' (case-insensitive)
-	const confirmSchema = {
-		properties: {
-			confirm: {
-				description: '\nIs the above information correct? (y/n)',
-				type: 'string',
-				pattern: /^[y|n]/gim,
-				message: 'Must respond with either \'y\' or \'n\'',
-				default: 'y',
-				required: false,
-				before: (value) => value.toLowerCase().startsWith('y')
-			}
-		}
-	};
+	const confirmSchema = getConfirmSchema('\nIs the above information correct? (y/n)');
 
 	log.blank().blank().blank().blank()
 		.info('<<< ass setup >>>').blank();
@@ -194,16 +201,22 @@ function doSetup() {
 	prompt.get(setupSchema)
 		.then((r) => results = r) // skipcq: JS-0086
 
+		// Check if using S3
+		.then(() => results.s3enabled ? prompt.get(s3schema) : s3config) // skipcq: JS-0229
+		.then((r) => Object.entries(r).forEach(([key, value]) => results[key] = value)) // skipcq: JS-0086
+
 		// Verify information is correct
 		.then(() => log
 			.blank()
-			.warn('Please verify your information', '')
-			.callback(() => Object.entries(results).forEach(([setting, value]) => log.info(`--> ${setting}`, `${value}`)))
+			.info('Please verify your information', '\n'.concat(Object.entries(results).map(([setting, value]) => `${'            '}${log.chalk.dim.gray('-->')} ${log.chalk.bold.white(`${setting}:`)} ${log.chalk.white(value)}`).join('\n')))
 			.blank())
+
+		// Apply old configs
+		.then(() => Object.entries(oldConfig).forEach(([setting, value]) => (typeof results[setting] === 'undefined') && (results[setting] = value)))
 
 		// Confirm
 		.then(() => prompt.get(confirmSchema))
-		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : process.exit(1)))
+		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : log.error('Setup aborted').callback(process.exit, 1)))
 
 		// Other setup tasks
 		.then(() => {
