@@ -13,6 +13,7 @@ const config = {
 	saveWithDate: false,
 	saveAsOriginal: true,
 	mediaStrict: false,
+	frontendName: 'ass-x',
 	s3enabled: false,
 	s3endpoint: 'sfo3.digitaloceanspaces.com',
 	s3bucket: 'bucket-name',
@@ -125,6 +126,12 @@ function doSetup() {
 				description: 'Only allow uploads of media files (images, videos, audio)',
 				type: 'boolean',
 				default: config.mediaStrict,
+				required: false
+			},
+			frontendName: {
+				description: 'Name of your frontend (leave blank if not using frontends)',
+				type: 'string',
+				default: config.frontendName,
 				required: false
 			},
 			s3enabled: {
