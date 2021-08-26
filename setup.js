@@ -33,6 +33,21 @@ const oldConfig = {
 	saveAsOriginal: false, // Prone to conflicts, which ass doesn't handle
 };
 
+function getConfirmSchema(description) {
+	return {
+		properties: {
+			confirm: {
+				description,
+				type: 'string',
+				pattern: /^[y|n]/gim,
+				message: 'Must respond with either \'y\' or \'n\'',
+				required: true,
+				before: (value) => value.toLowerCase().startsWith('y')
+			}
+		}
+	};
+}
+
 // If directly called on the command line, run setup script
 function doSetup() {
 	const path = (...paths) => require('path').join(__dirname, ...paths);
@@ -228,21 +243,6 @@ function doSetup() {
 		// Complete & exit
 		.then(() => log.blank().success('Setup complete').callback(() => process.exit(0)))
 		.catch((err) => log.blank().error(err));
-}
-
-function getConfirmSchema(description) {
-	return {
-		properties: {
-			confirm: {
-				description,
-				type: 'string',
-				pattern: /^[y|n]/gim,
-				message: 'Must respond with either \'y\' or \'n\'',
-				required: true,
-				before: (value) => value.toLowerCase().startsWith('y')
-			}
-		}
-	};
 }
 
 module.exports = {
