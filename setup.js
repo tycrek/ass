@@ -238,8 +238,7 @@ function getConfirmSchema(description) {
 				type: 'string',
 				pattern: /^[y|n]/gim,
 				message: 'Must respond with either \'y\' or \'n\'',
-				default: 'y',
-				required: false,
+				required: true,
 				before: (value) => value.toLowerCase().startsWith('y')
 			}
 		}
