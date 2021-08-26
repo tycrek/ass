@@ -8,10 +8,10 @@ const config = {
 	isProxied: true,
 	resourceIdSize: 12,
 	gfyIdSize: 2,
-	resourceIdType: 'zws',
+	resourceIdType: 'random',
 	diskFilePath: 'uploads/',
-	saveWithDate: false,
-	saveAsOriginal: true,
+	saveWithDate: true,
+	saveAsOriginal: false,
 	mediaStrict: false,
 	s3enabled: false,
 };
