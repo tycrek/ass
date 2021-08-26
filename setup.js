@@ -195,7 +195,7 @@ function doSetup() {
 
 		// Confirm
 		.then(() => prompt.get(confirmSchema))
-		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : process.exit(1)))
+		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : log.error('Setup aborted').callback(process.exit, 1)))
 
 		// Other setup tasks
 		.then(() => {
