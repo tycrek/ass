@@ -86,12 +86,10 @@ app.use('/', ROUTERS.upload);
 ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router); // skipcq: JS-0093
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
-app.use('/:resourceId', (req, _, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
+app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
-app.use((err, req, res, next) => {
-	console.error(err);
-	res.sendStatus(CODE_INTERNAL_SERVER_ERROR);
-});
+// Error handler
+app.use((err, _req, res, _next) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR)));
 
 // Host the server
 log
