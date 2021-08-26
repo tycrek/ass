@@ -9,9 +9,6 @@ const config = {
 	resourceIdSize: 12,
 	gfyIdSize: 2,
 	resourceIdType: 'random',
-	diskFilePath: 'uploads/',
-	saveWithDate: true,
-	saveAsOriginal: false,
 	mediaStrict: false,
 	s3enabled: false,
 };
@@ -25,6 +22,17 @@ const s3config = {
 	s3secretKey: 'secretKey',
 };
 
+// Redacted configs from previous versions
+const oldConfig = {
+	// Note for people manually editing config.json
+	__WARNING__: "The following configs are no longer used and are here for backwards compatibility. For optimal use, DO NOT edit them.",
+
+	// Removed in 0.8.4
+	diskFilePath: 'uploads/',
+	saveWithDate: true, // Some systems don't like dirs with massive amounts of files
+	saveAsOriginal: false, // Prone to conflicts, which ass doesn't handle
+};
+
 // If directly called on the command line, run setup script
 function doSetup() {
 	const path = (...paths) => require('path').join(__dirname, ...paths);
@@ -35,13 +43,15 @@ function doSetup() {
 
 	const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
 
-	// Override default config with existing config to allow migrating configs
+	// Override default configs with existing configs to allow migrating configs
+	// Now that's a lot of configs!
 	try {
 		const existingConfig = require('./config.json');
-		Object.keys(existingConfig).forEach((key) => // Replace default configs with existing configs
-			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]) &&
-			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = existingConfig[key])
-		);
+		Object.keys(existingConfig).forEach((key) => {
+			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]);
+			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = existingConfig[key]);
+			Object.prototype.hasOwnProperty.call(oldConfig, key) && (oldConfig[key] = existingConfig[key]);
+		});
 	} catch (ex) {
 		if (ex.code !== 'MODULE_NOT_FOUND' && !ex.toString().includes('Unexpected end')) log.error(ex);
 	}
@@ -108,24 +118,6 @@ function doSetup() {
 				description: 'Adjective count for "gfycat" Resource ID type',
 				type: 'integer',
 				default: config.gfyIdSize,
-				required: false
-			},
-			diskFilePath: {
-				description: 'Relative path to save uploads to',
-				type: 'string',
-				default: config.diskFilePath,
-				required: false
-			},
-			saveWithDate: {
-				description: 'Use date folder structure (e.x. uploads/2021-04/image.png)',
-				type: 'boolean',
-				default: config.saveWithDate,
-				required: false
-			},
-			saveAsOriginal: {
-				description: 'Save as original file name instead of random',
-				type: 'boolean',
-				default: config.saveAsOriginal,
 				required: false
 			},
 			mediaStrict: {
@@ -197,6 +189,9 @@ function doSetup() {
 			.warn('Please verify your information', '')
 			.callback(() => Object.entries(results).forEach(([setting, value]) => log.info(`--> ${setting}`, `${value}`)))
 			.blank())
+
+		// Apply old configs
+		.then(() => Object.entries(oldConfig).forEach(([setting, value]) => (results[setting] === undefined) && (results[setting] = value)))
 
 		// Confirm
 		.then(() => prompt.get(confirmSchema))
