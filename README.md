@@ -310,43 +310,12 @@ module.exports = (req, res, next) => res.sendFile(path.join(__dirname, 'index.ht
 
 ## Custom frontends
 
-ass is intended to provide a strong backend for developers to build their own frontends around. The easiest way to do this is with a [Git Submodule]. Your submodule should be a **separate** git repo. Make sure you [adjust the `FRONTEND_NAME`] to match your frontend. To make updates easier, it is recommended to make a new branch. Since submodules are their own dedicated projects, you are free to build the router however you wish, as long as it exports the required items detailed below.
-
-Sample submodule entry file:
-
-```js
-const { name, version } = require('./package.json');
-const express = require('express');
-const router = express.Router();
-
-router.all('/', (_req, res) => res.send('My awesome dashboard!'));
-
-// These exports are REQUIRED by ass, so don't forget to set them!
-module.exports = {
-	router,                       // The dashboard router itself
-	enabled: true,                // Required to activate frontend in ass; DO NOT change unless you want to disable your frontend
-	brand: `${name} v${version}`, // Printed in ass logs & reported to client. Can be changed to your liking
-	endpoint: '/dashboard'        // URL to use for your dashboard router. ass will automatically set up Express to use this value. Can be changed to your liking
-};
-```
-
-Now you should see `My awesome dashboard!` when you navigate to `http://your-ass-url/dashboard`.
-
-#### Accessing data
-
-If you want to access resource & user data within your frontend router, just add these two lines near the top of your router:
-
-```js
-const users = require('../auth');
-const data = require('../data');
-```
-
-These values are recognized globally throughout ass, so they will stay up-to-date as users upload.
+ass is intended to provide a strong backend for developers to build their own frontends around. [Git Submodules] make it easy to create custom frontends. Submodules are their own projects, which means you are free to build the router however you wish, as long as it exports the required items. A custom frontend is really just an [Express.js router].
 
 **For a detailed walkthrough on developing your first frontend, [consult the wiki][ctw1].**
 
-[Git Submodule]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
-[adjust the `FRONTEND_NAME`]: https://github.com/tycrek/ass/blob/d766bd15cf8ac851058c8abf37238f1608d8c305/ass.js#L24
+[Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
+[Express.js router]: https://expressjs.com/en/guide/routing.html#express-router
 [ctw1]: https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend
 
 ## StorageEngines
