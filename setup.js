@@ -206,7 +206,7 @@ function doSetup() {
 			.blank())
 
 		// Apply old configs
-		.then(() => Object.entries(oldConfig).forEach(([setting, value]) => (results[setting] === undefined) && (results[setting] = value)))
+		.then(() => Object.entries(oldConfig).forEach(([setting, value]) => (typeof results[setting] === 'undefined') && (results[setting] = value)))
 
 		// Confirm
 		.then(() => prompt.get(confirmSchema))
