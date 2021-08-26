@@ -167,7 +167,7 @@ Easy! Just pull the changes & run this one-liner:
 git pull
 
 # Rebuild the container with the new changes (uncomment the 2nd part if the update requires refreshing the config)
-docker-compose up --force-recreate --build -d && docker image prune -f # docker-compose exec npm run setup && docker-compose restart
+docker-compose up --force-recreate --build -d && docker image prune -f # docker-compose exec ass npm run setup && docker-compose restart
 ```
 
 - `--force-recreate` will force the container to rebuild
@@ -398,7 +398,7 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `logs` | Uses the [tlog Socket plugin] to stream logs from the ass server to your terminal, with full colour support (Remember to set [`FORCE_COLOR`] if you're using Systemd) |
 | `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
 | `docker-update` | Alias for `git pull && docker-compose up --force-recreate --build -d && docker image prune -f` |
-| `docker-resetup` | Alias for `docker-compose exec npm run setup && docker-compose restart` |
+| `docker-resetup` | Alias for `docker-compose exec ass npm run setup && docker-compose restart` |
 
 [tlog Socket plugin]: https://github.com/tycrek/tlog#socket
 [`FORCE_COLOR`]: https://nodejs.org/dist/latest-v14.x/docs/api/cli.html#cli_force_color_1_2_3
