@@ -14,6 +14,10 @@ const config = {
 	saveAsOriginal: true,
 	mediaStrict: false,
 	s3enabled: false,
+};
+
+// Default S3 config
+const s3config = {
 	s3endpoint: 'sfo3.digitaloceanspaces.com',
 	s3bucket: 'bucket-name',
 	s3usePathStyle: false,
@@ -34,7 +38,10 @@ function doSetup() {
 	// Override default config with existing config to allow migrating configs
 	try {
 		const existingConfig = require('./config.json');
-		Object.keys(existingConfig).forEach((key) => Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]))
+		Object.keys(existingConfig).forEach((key) => // Replace default configs with existing configs
+			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = existingConfig[key]) &&
+			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = existingConfig[key])
+		);
 	} catch (ex) {
 		if (ex.code !== 'MODULE_NOT_FOUND' && !ex.toString().includes('Unexpected end')) log.error(ex);
 	}
@@ -132,36 +139,41 @@ function doSetup() {
 				type: 'boolean',
 				default: config.s3enabled,
 				required: false
-			},
+			}
+		}
+	};
+
+	const s3schema = {
+		properties: {
 			s3endpoint: {
 				description: 'S3 Endpoint URL to upload objects to',
 				type: 'string',
 				default: config.s3endpoint,
-				required: false
+				required: true
 			},
 			s3bucket: {
 				description: 'S3 Bucket name to upload objects to',
 				type: 'string',
 				default: config.s3bucket,
-				required: false
+				required: true
 			},
 			s3usePathStyle: {
 				description: 'S3 path endpoint, otherwise uses subdomain endpoint',
 				type: 'boolean',
 				default: config.s3usePathStyle,
-				required: false
+				required: true
 			},
 			s3accessKey: {
 				description: 'Access key for the specified S3 API',
 				type: 'string',
 				default: config.s3accessKey,
-				required: false
+				required: true
 			},
 			s3secretKey: {
 				description: 'Secret key for the specified S3 API',
 				type: 'string',
 				default: config.s3secretKey,
-				required: false
+				required: true
 			},
 		}
 	};
@@ -186,6 +198,10 @@ function doSetup() {
 	let results = {};
 	prompt.get(setupSchema)
 		.then((r) => results = r) // skipcq: JS-0086
+
+		// Check if using S3
+		.then(() => results.s3enabled ? prompt.get(s3schema) : s3config)
+		.then((r) => Object.entries(r).forEach(([key, value]) => results[key] = value))
 
 		// Verify information is correct
 		.then(() => log
