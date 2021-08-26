@@ -179,19 +179,7 @@ function doSetup() {
 	};
 
 	// Schema for confirm prompt. User must enter 'y' or 'n' (case-insensitive)
-	const confirmSchema = {
-		properties: {
-			confirm: {
-				description: '\nIs the above information correct? (y/n)',
-				type: 'string',
-				pattern: /^[y|n]/gim,
-				message: 'Must respond with either \'y\' or \'n\'',
-				default: 'y',
-				required: false,
-				before: (value) => value.toLowerCase().startsWith('y')
-			}
-		}
-	};
+	const confirmSchema = getConfirmSchema('\nIs the above information correct? (y/n)');
 
 	log.blank().blank().blank().blank()
 		.info('<<< ass setup >>>').blank();
@@ -245,6 +233,22 @@ function doSetup() {
 		// Complete & exit
 		.then(() => log.blank().success('Setup complete').callback(() => process.exit(0)))
 		.catch((err) => log.blank().error(err));
+}
+
+function getConfirmSchema(description) {
+	return {
+		properties: {
+			confirm: {
+				description,
+				type: 'string',
+				pattern: /^[y|n]/gim,
+				message: 'Must respond with either \'y\' or \'n\'',
+				default: 'y',
+				required: false,
+				before: (value) => value.toLowerCase().startsWith('y')
+			}
+		}
+	};
 }
 
 module.exports = {
