@@ -201,8 +201,7 @@ function doSetup() {
 		// Verify information is correct
 		.then(() => log
 			.blank()
-			.warn('Please verify your information', '')
-			.callback(() => Object.entries(results).forEach(([setting, value]) => log.info(`--> ${setting}`, `${value}`)))
+			.info('Please verify your information', '\n'.concat(Object.entries(results).map(([setting, value]) => `${'            '}${log.chalk.dim.gray('-->')} ${log.chalk.bold.white(`${setting}:`)} ${log.chalk.white(value)}`).join('\n')))
 			.blank())
 
 		// Apply old configs
