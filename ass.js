@@ -31,10 +31,6 @@ const { name: ASS_NAME, version: ASS_VERSION } = require('./package.json');
 // Welcome :D
 log.blank().info(`* ${ASS_NAME} v${ASS_VERSION} *`).blank();
 
-// Set up premium frontend
-const FRONTEND_NAME = frontendName;
-const ASS_PREMIUM = fs.existsSync(`./${FRONTEND_NAME}/package.json`) ? (require('submodule'), require(`./${FRONTEND_NAME}`)) : { enabled: false };
-
 //#region Variables, module setup
 const app = express();
 const ROUTERS = {
@@ -82,8 +78,9 @@ app.get('/', (req, res, next) => ASS_INDEX // skipcq: JS-0229
 // Upload router
 app.use('/', ROUTERS.upload);
 
-// Attach frontend, if enabled
-ASS_PREMIUM.enabled && app.use(ASS_PREMIUM.endpoint, ASS_PREMIUM.router); // skipcq: JS-0093
+// Set up custom frontend
+const ASS_FRONTEND = fs.existsSync(`./${frontendName}/package.json`) ? (require('submodule'), require(`./${frontendName}`)) : { enabled: false };
+ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // skipcq: JS-0093
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
 app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
@@ -96,7 +93,7 @@ log
 	.info('Users', `${Object.keys(users).length}`)
 	.info('Files', `${data.size}`)
 	.info('StorageEngine', data.name, data.type)
-	.info('Frontend', ASS_PREMIUM.enabled ? ASS_PREMIUM.brand : 'disabled', `${ASS_PREMIUM.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_PREMIUM.endpoint}` : ''}`)
+	.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
 	.info('Custom index', ASS_INDEX ? `enabled` : 'disabled')
 	.blank()
 	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
