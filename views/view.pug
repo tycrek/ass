@@ -20,6 +20,12 @@ html
 		// oEmbed (https://oembed.com/)
 		link(href=oembedUrl title='oEmbed' rel='alternate' type='application/json+oembed')
 
+		// Direct resource redirect
+		if viewDirect
+			style.
+				* { display: none !important; }
+			meta(http-equiv='refresh' content=`0; url='${resourceAttr.src}'`)
+
 	body
 		#container
 			#content
