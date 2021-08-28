@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const escape = require('escape-html');
 const fetch = require('node-fetch');
 const { deleteS3 } = require('../storage');
-const { diskFilePath, s3enabled } = require('../config.json');
+const { diskFilePath, s3enabled, viewDirect } = require('../config.json');
 const { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } = require('../utils');
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../MagicNumbers.json');
 const data = require('../data');
@@ -47,7 +47,8 @@ router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData)
 		oembedUrl: `${getTrueHttp()}${getTrueDomain()}/${resourceId}/oembed`,
 		ogtype: fileData.is.video ? 'video.other' : fileData.is.image ? 'image' : 'website',
 		urlType: `og:${fileData.is.video ? 'video' : fileData.is.audio ? 'audio' : 'image'}`,
-		opengraph: replaceholder(ogs.join('\n'), fileData.size, fileData.timestamp, fileData.originalname)
+		opengraph: replaceholder(ogs.join('\n'), fileData.size, fileData.timestamp, fileData.originalname),
+		viewDirect
 	});
 }).catch(next));
 

@@ -10,6 +10,7 @@ const config = {
 	gfyIdSize: 2,
 	resourceIdType: 'random',
 	mediaStrict: false,
+	viewDirect: false,
 	frontendName: 'ass-x',
 	indexFile: '',
 	s3enabled: false,
@@ -141,6 +142,12 @@ function doSetup() {
 				description: 'Only allow uploads of media files (images, videos, audio)',
 				type: 'boolean',
 				default: config.mediaStrict,
+				required: false
+			},
+			viewDirect: {
+				description: 'View uploads in browser as direct resource, rather than a viewing page',
+				type: 'boolean',
+				default: config.viewDirect,
 				required: false
 			},
 			frontendName: {
