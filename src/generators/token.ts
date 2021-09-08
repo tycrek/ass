@@ -1,5 +1,5 @@
 const uuid = require('uuid').v4;
-const fs = require('fs-extra');
+import fs from 'fs-extra';
 const path = require('path');
 const randomGen = require('./random');
 const TLog = require('@tycrek/log');
@@ -20,7 +20,7 @@ if (require.main === module) {
 			// Generate the user
 			const username = process.argv[2] ? process.argv[2].replace(/[^\da-z_]/gi, '').substring(0, MAX_USERNAME) : randomGen({ length: 20 }); // skipcq: JS-0074
 			if (!auth.users) auth.users = {};
-			if (Object.values(auth.users).findIndex((user) => user.username === username) !== -1) {
+			if (Object.values(auth.users).findIndex((user: any) => user.username === username) !== -1) {
 				log.error('Username already exists', username);
 				process.exit(1);
 			}

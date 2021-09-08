@@ -41,6 +41,8 @@
     "@tycrek/express-nofavicon": "^1.0.2",
     "@tycrek/isprod": "^2.0.2",
     "@tycrek/log": ">=0.5.x",
+    "@types/fs-extra": "^9.0.12",
+    "@types/node": "^14.17.15",
     "@types/ws": "^7.4.7",
     "any-shell-escape": "^0.1.1",
     "aws-sdk": "^2.930.0",

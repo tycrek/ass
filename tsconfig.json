@@ -1,14 +1,16 @@
 {
 	"extends": "@tsconfig/node14/tsconfig.json",
 	"compilerOptions": {
-		"allowJs": true,
 		"lib": [
 			"ES2020",
 			"DOM"
-		]
+		],
+		"allowJs": true,
+		"downlevelIteration": true
 	},
 	"include": [
-		"src/**/*.js"
+		"src/**/*.js",
+		"src/**/*.ts"
 	],
 	"exclude": [
 		"ass-x"

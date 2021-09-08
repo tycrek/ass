@@ -1,10 +1,10 @@
-const fs = require('fs-extra');
+import fs from 'fs-extra';
 
 // Don't trigger circular dependency during setup
-if (!require.main.filename.includes('setup.js'))
+if (require !== undefined && !require?.main?.filename.includes('setup.js'))
     var MIN_LENGTH = require('../setup').gfyIdSize; // skipcq: JS-0239, JS-0102
 
-function getWord(list, delim = '') {
+function getWord(list: string[], delim = '') {
     return list[Math.floor(Math.random() * list.length)].concat(delim);
 }
 
@@ -20,4 +20,4 @@ function genString(count = MIN_LENGTH) {
     return gfycat.concat(getWord(animals));
 };
 
-module.exports = ({ gfyLength }) => genString(gfyLength);
+module.exports = ({ gfyLength }: { gfyLength: number }) => genString(gfyLength);
