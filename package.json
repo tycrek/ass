@@ -8,12 +8,14 @@
     "npm": ">=7.x.x"
   },
   "scripts": {
-    "start": "node src/ass.js",
-    "setup": "node src/setup.js",
-    "metrics": "node src/metrics.js",
-    "new-token": "node src/generators/token.js",
+    "dev": "npm run build && npm start",
+    "build": "ts",
+    "start": "node dist/ass.js",
+    "setup": "node dist/setup.js",
+    "metrics": "node dist/metrics.js",
+    "new-token": "node dist/generators/token.js",
     "restart": "systemctl restart ass.service",
-    "engine-check": "node src/checkEngine.js",
+    "engine-check": "node dist/checkEngine.js",
     "prestart": "npm run engine-check",
     "presetup": "npm run engine-check",
     "docker-logs": "docker-compose logs -f --tail=50 --no-log-prefix ass",
@@ -34,10 +36,12 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
+    "@tsconfig/node14": "^1.0.1",
     "@tycrek/ass-storage-engine": "^0.2.7",
     "@tycrek/express-nofavicon": "^1.0.2",
     "@tycrek/isprod": "^2.0.2",
     "@tycrek/log": ">=0.5.x",
+    "@types/ws": "^7.4.7",
     "any-shell-escape": "^0.1.1",
     "aws-sdk": "^2.930.0",
     "check-node-version": "^4.1.0",
@@ -60,6 +64,7 @@
     "sanitize-filename": "^1.6.3",
     "stream-to-array": "^2.3.0",
     "submodule": "^1.2.1",
+    "ts": "^0.2.2",
     "uuid": "^8.3.2"
   }
 }

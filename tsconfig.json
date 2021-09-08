@@ -1,0 +1,16 @@
+{
+	"extends": "@tsconfig/node14/tsconfig.json",
+	"compilerOptions": {
+		"allowJs": true,
+		"lib": [
+			"ES2020",
+			"DOM"
+		]
+	},
+	"include": [
+		"src/**/*.js"
+	],
+	"exclude": [
+		"ass-x"
+	]
+}
