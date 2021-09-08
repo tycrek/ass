@@ -8,15 +8,14 @@
     "npm": ">=7.x.x"
   },
   "scripts": {
-    "start": "node ass.js",
-    "setup": "node setup.js",
-    "metrics": "node metrics.js",
-    "new-token": "node generators/token.js",
+    "start": "node src/ass.js",
+    "setup": "node src/setup.js",
+    "metrics": "node src/metrics.js",
+    "new-token": "node src/generators/token.js",
     "restart": "systemctl restart ass.service",
-    "engine-check": "node checkEngine.js",
+    "engine-check": "node src/checkEngine.js",
     "prestart": "npm run engine-check",
     "presetup": "npm run engine-check",
-    "logs": "node ./node_modules/@tycrek/log/socketClient.js",
     "docker-logs": "docker-compose logs -f --tail=50 --no-log-prefix ass",
     "docker-update": "git pull && docker-compose up --force-recreate --build -d && docker image prune -f",
     "docker-resetup": "docker-compose exec ass npm run setup && docker-compose restart"

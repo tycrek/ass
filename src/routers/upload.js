@@ -3,9 +3,9 @@ const fs = require('fs-extra');
 const { DateTime } = require('luxon');
 const { WebhookClient, MessageEmbed } = require('discord.js');
 const { doUpload, processUploaded } = require('../storage');
-const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType } = require('../config.json');
+const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType } = require('../../config.json');
 const { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } = require('../utils');
-const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE } = require('../MagicNumbers.json');
+const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE } = require('../../MagicNumbers.json');
 const data = require('../data');
 const users = require('../auth');
 

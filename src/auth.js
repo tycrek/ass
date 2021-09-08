@@ -5,7 +5,7 @@
 const fs = require('fs-extra');
 const { log, path, arrayEquals } = require('./utils');
 
-const users = require('./auth.json').users || {};
+const users = require('../auth.json').users || {};
 
 // Monitor auth.json for changes (triggered by running 'npm run new-token')
 fs.watch(path('auth.json'), { persistent: false },

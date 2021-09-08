@@ -1,5 +1,5 @@
 const check = require("check-node-version");
-const ENGINES = require('./package.json').engines;
+const ENGINES = require('../package.json').engines;
 
 const TLog = require('@tycrek/log');
 const logger = new TLog();

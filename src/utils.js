@@ -8,11 +8,11 @@ const token = require('./generators/token');
 const zwsGen = require('./generators/zws');
 const randomGen = require('./generators/random');
 const gfyGen = require('./generators/gfycat');
-const { HTTP, HTTPS, KILOBYTES } = require('./MagicNumbers.json');
+const { HTTP, HTTPS, KILOBYTES } = require('../MagicNumbers.json');
 
 // Catch config.json not existing when running setup script
 try {
-	var { useSsl, port, domain, isProxied, diskFilePath, saveWithDate, s3bucket, s3endpoint, s3usePathStyle } = require('./config.json'); // skipcq: JS-0239, JS-0102
+	var { useSsl, port, domain, isProxied, diskFilePath, saveWithDate, s3bucket, s3endpoint, s3usePathStyle } = require('../config.json'); // skipcq: JS-0239, JS-0102
 } catch (ex) {
 	if (ex.code !== 'MODULE_NOT_FOUND') console.error(ex);
 }
@@ -74,7 +74,7 @@ function getDatedDirname() {
 }
 
 // Set up pathing & the logger
-const path = (...paths) => Path.join(process.cwd(), ...paths);
+const path = (...paths) => Path.join(process.cwd(), ...paths); // '..' was added to make it easier to run files after moving the project to src/
 const logger = new TLog({
 	level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
 	timestamp: {
@@ -85,11 +85,7 @@ const logger = new TLog({
 });
 
 // Enable the Express logger
-logger
-	.env('ASS_ENV')
-	//.enable.process({ uncaughtException: false }).debug('Plugin enabled', 'Process')
-	.enable.express({ handle500: false }).debug('Plugin enabled', 'Express')
-	.enable.socket().debug('Plugin enabled', 'Socket');
+logger.enable.express({ handle500: false }).debug('Plugin enabled', 'Express');
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)

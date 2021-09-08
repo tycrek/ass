@@ -12,7 +12,7 @@ module.exports = () => uuid().replace(/-/g, '');
 // If directly called on the command line, generate a new token
 if (require.main === module) {
 	const token = module.exports();
-	const authPath = path.join(__dirname, '..', 'auth.json');
+	const authPath = path.join(process.cwd(), 'auth.json');
 	let name = '';
 
 	fs.readJson(authPath)

@@ -2,9 +2,9 @@ const fs = require('fs-extra');
 const escape = require('escape-html');
 const fetch = require('node-fetch');
 const { deleteS3 } = require('../storage');
-const { diskFilePath, s3enabled, viewDirect } = require('../config.json');
+const { diskFilePath, s3enabled, viewDirect } = require('../../config.json');
 const { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } = require('../utils');
-const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../MagicNumbers.json');
+const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../../MagicNumbers.json');
 const data = require('../data');
 const users = require('../auth');
 

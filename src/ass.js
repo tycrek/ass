@@ -1,7 +1,7 @@
 let doSetup = null;
 try {
 	// Check if config.json exists
-	require('./config.json');
+	require('../config.json');
 } catch (err) {
 	doSetup = require('./setup').doSetup;
 }
@@ -13,7 +13,7 @@ if (doSetup) {
 }
 
 // Load the config
-const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile } = require('./config.json');
+const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile } = require('../config.json');
 
 //#region Imports
 const fs = require('fs-extra');
@@ -24,8 +24,8 @@ const marked = require('marked');
 const uploadRouter = require('./routers/upload');
 const resourceRouter = require('./routers/resource');
 const { path, log, getTrueHttp, getTrueDomain } = require('./utils');
-const { CODE_INTERNAL_SERVER_ERROR } = require('./MagicNumbers.json');
-const { name: ASS_NAME, version: ASS_VERSION } = require('./package.json');
+const { CODE_INTERNAL_SERVER_ERROR } = require('../MagicNumbers.json');
+const { name: ASS_NAME, version: ASS_VERSION } = require('../package.json');
 //#endregion
 
 // Welcome :D
@@ -66,7 +66,7 @@ useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 app.use(nofavicon);
 
 // Use custom index, otherwise render README.md
-const ASS_INDEX = indexFile !== '' && fs.existsSync(`./${indexFile}`) && require(`./${indexFile}`);
+const ASS_INDEX = indexFile !== '' && fs.existsSync(`../${indexFile}`) && require(`../${indexFile}`);
 app.get('/', (req, res, next) => ASS_INDEX // skipcq: JS-0229
 	? ASS_INDEX(req, res, next)
 	: fs.readFile(path('README.md'))
@@ -79,7 +79,7 @@ app.get('/', (req, res, next) => ASS_INDEX // skipcq: JS-0229
 app.use('/', ROUTERS.upload);
 
 // Set up custom frontend
-const ASS_FRONTEND = fs.existsSync(`./${frontendName}/package.json`) ? (require('submodule'), require(`./${frontendName}`)) : { enabled: false };
+const ASS_FRONTEND = fs.existsSync(path(`./${frontendName}/package.json`)) ? (require('submodule'), require(`../${frontendName}`)) : { enabled: false }; // todo: update with src/
 ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // skipcq: JS-0093
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route

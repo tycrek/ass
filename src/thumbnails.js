@@ -3,7 +3,7 @@ const Jimp = require('jimp');
 const shell = require('any-shell-escape');
 const { exec } = require('child_process');
 const { isProd, path } = require('./utils');
-const { diskFilePath } = require('./config.json');
+const { diskFilePath } = require('../config.json');
 
 // Thumbnail parameters
 const THUMBNAIL = {
