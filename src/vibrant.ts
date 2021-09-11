@@ -18,7 +18,7 @@ function getVibrant(file: FileData, resolve: Function, reject: Function) {
 		.quality(QUALITY)
 		.getPalette()
 		.then((palettes) => resolve(palettes[Object.keys(palettes).sort((a, b) => palettes[b]!.population - palettes[a]!.population)[0]]!.hex))
-		.catch(() => reject);
+		.catch((err) => reject(err));
 }
 
 /**
@@ -26,4 +26,4 @@ function getVibrant(file: FileData, resolve: Function, reject: Function) {
  * @param {*} file The file to get a colour from
  * @returns The Vibrant colour as a Hex value (or random Hex value for videos)
  */
-module.exports = (file: FileData) => new Promise((resolve, reject) => !file.is.image ? resolve(randomHexColour()) : getVibrant(file, resolve, reject)); // skipcq: JS-0229
+export default (file: FileData) => new Promise((resolve, reject) => !file.is.image ? resolve(randomHexColour()) : getVibrant(file, resolve, reject)); // skipcq: JS-0229

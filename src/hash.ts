@@ -9,7 +9,7 @@ import { log } from './utils';
  * @param {*} file The file to hash
  * @returns The SHA1 hash
  */
-module.exports = (file: FileData) =>
+export default (file: FileData) =>
 	new Promise((resolve, reject) =>
 		toArray((fs.createReadStream(file.path)))
 			.then((parts: any[]) => Buffer.concat(parts.map((part: any) => (Buffer.isBuffer(part) ? part : Buffer.from(part)))))
