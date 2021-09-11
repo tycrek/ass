@@ -1,5 +1,6 @@
-const Vibrant = require('node-vibrant');
-const { randomHexColour } = require('./utils');
+import { FileData } from './definitions';
+import Vibrant from 'node-vibrant';
+import { randomHexColour } from './utils';
 
 // Vibrant parameters
 const COLOR_COUNT = 256;
@@ -11,13 +12,13 @@ const QUALITY = 3;
  * @param {*} resolve Runs if Promise was successful
  * @param {*} reject Runs if Promise failed
  */
-function getVibrant(file, resolve, reject) {
+function getVibrant(file: FileData, resolve: Function, reject: Function) {
 	Vibrant.from(file.path)
 		.maxColorCount(COLOR_COUNT)
 		.quality(QUALITY)
 		.getPalette()
-		.then((palettes) => resolve(palettes[Object.keys(palettes).sort((a, b) => palettes[b].population - palettes[a].population)[0]].hex))
-		.catch(reject);
+		.then((palettes) => resolve(palettes[Object.keys(palettes).sort((a, b) => palettes[b]!.population - palettes[a]!.population)[0]]!.hex))
+		.catch(() => reject);
 }
 
 /**
@@ -25,4 +26,4 @@ function getVibrant(file, resolve, reject) {
  * @param {*} file The file to get a colour from
  * @returns The Vibrant colour as a Hex value (or random Hex value for videos)
  */
-module.exports = (file) => new Promise((resolve, reject) => !file.is.image ? resolve(randomHexColour()) : getVibrant(file, resolve, reject)); // skipcq: JS-0229
+module.exports = (file: FileData) => new Promise((resolve, reject) => !file.is.image ? resolve(randomHexColour()) : getVibrant(file, resolve, reject)); // skipcq: JS-0229
