@@ -92,7 +92,7 @@ app.use((err, _req, res, _next) => log.error(err).err(err).callback(() => res.se
 log
 	.info('Users', `${Object.keys(users).length}`)
 	.info('Files', `${data.size}`)
-	.info('StorageEngine', data.name, data.type)
+	.info('Data engine', data.name, data.type)
 	.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
 	.info('Custom index', ASS_INDEX ? `enabled` : 'disabled')
 	.blank()
