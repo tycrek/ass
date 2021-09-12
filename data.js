@@ -2,6 +2,6 @@
  * Used for global data management
  */
 
-const { JsonStorageEngine } = require('@tycrek/papito');
-const data = new JsonStorageEngine();
+const { JsonDataEngine } = require('@tycrek/papito');
+const data = new JsonDataEngine();
 module.exports = data;
