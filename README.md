@@ -72,9 +72,9 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - **Multiple file storage methods**
    - Local file system
    - Amazon S3, including [DigitalOcean Spaces]
-- **Multiple data storage methods** using [ass StorageEngines]
+- **Multiple data storage methods** using [data engines]
    - **File**
-      - JSON (default, [ass-storage-engine])
+      - JSON (default, [papito])
       - YAML (soon)
    - **Database**
       - PostgreSQL ([ass-psql])
@@ -84,8 +84,8 @@ ass was designed with developers in mind. If you are a developer & want somethin
 [Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
 [ZWS]: https://zws.im
 [DigitalOcean Spaces]: https://www.digitalocean.com/products/spaces/
-[ass StorageEngines]: #storageengines
-[ass-storage-engine]: https://github.com/tycrek/ass-storage-engine
+[data engines]: #data-engines
+[papito]: https://github.com/tycrek/papito
 [ass-psql]: https://github.com/tycrek/ass-psql
 [Flameshot]: https://flameshot.org/
 [script for ass]: #flameshot-users-linux
@@ -318,23 +318,23 @@ ass is intended to provide a strong backend for developers to build their own fr
 [Express.js router]: https://expressjs.com/en/guide/routing.html#express-router
 [ctw1]: https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend
 
-## StorageEngines
+## Data Engines
 
-[StorageEngines] are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
+[Papito data engines] are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
 
-[StorageEngines]: https://github.com/tycrek/ass-storage-engine
+[Papito data engines]: https://github.com/tycrek/papito
 
-**Supported StorageEngines:**
+**Supported data engines:**
 
 | Name | Description | Links |
 | :--: | ----------- | :---: |
-| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map]. This is the default StorageEngine. | [GitHub][GH ASE]<br>[NPM][NPM ASE] |
+| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map]. This is the default engine. | [GitHub][GH ASE]<br>[NPM][NPM ASE] |
 | **PostgreSQL** | Data storage using a [PostgreSQL] database. [node-postgres] is used for communicating with the database. | [GitHub][GH APSQL]<br>[NPM][NPM APSQL] |
 | **Mongoose** | Data storage using a [MongoDB] database. [mongoose] is used for communicating with the database. Created by [@dylancl] | [GitHub][GH AMongoose]<br>[NPM][NPM AMongoose] |
 
 [Map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
-[GH ASE]: https://github.com/tycrek/ass-storage-engine/
-[NPM ASE]: https://www.npmjs.com/package/@tycrek/ass-storage-engine
+[GH ASE]: https://github.com/tycrek/papito/
+[NPM ASE]: https://www.npmjs.com/package/@tycrek/papito
 [PostgreSQL]: https://www.postgresql.org/
 [node-postgres]: https://node-postgres.com/
 [GH APSQL]: https://github.com/tycrek/ass-psql/
@@ -345,17 +345,17 @@ ass is intended to provide a strong backend for developers to build their own fr
 [NPM AMongoose]: https://www.npmjs.com/package/ass-mongoose
 [@dylancl]: https://github.com/dylancl
 
-An ass StorageEngine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details, and ass will handle the rest, using the resource ID as the key.
+A Papito data engine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details, and ass will handle the rest, using the resource ID as the key.
 
-The only StorageEngine ass comes with by default is **JSON**. If you find or create a StorageEngine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`]. The StorageEngines own README file should also instruct how to use it. At this time, a modified `data.js` might look like this:
+The only engine ass comes with by default is **JSON**. If you find or create an engine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`]. The engines own README file should also instruct how to use it. At this time, a modified `data.js` might look like this:
 
 ```js
 /**
  * Used for global data management
  */
 
-//const { JsonStorageEngine } = require('@tycrek/ass-storage-engine');
-const { CustomStorageEngine } = require('my-custom-ass-storage-engine');
+//const { JsonStorageEngine } = require('@tycrek/papito');
+const { CustomStorageEngine } = require('my-custom-papito');
 
 //const data = new JsonStorageEngine();
 
@@ -372,16 +372,12 @@ module.exports = data1;
 
 ```
 
-As long as the StorageEngine properly implements `GET`/`PUT`/`DEL`/`HAS` StorageFunctions, replacing the file/database system is just that easy.
+As long as the engine properly implements `GET`/`PUT`/`DEL`/`HAS` StorageFunctions, replacing the file/database system is just that easy.
 
-**For a detailed walkthrough on developing StorageEngines, [consult the wiki][ctw2].**
+**For a detailed walkthrough on developing engines, [consult the wiki][ctw2].**
 
 [`data.js`]: https://github.com/tycrek/ass/blob/master/data.js
 [ctw2]: https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine
-
-#### But why not "DataEngine"?
-
-Because I was dumb & didn't know what to call it, totally forgetting that "storage engine" would also imply a way to store *files*, not just *data*.
 
 ## npm scripts
 
