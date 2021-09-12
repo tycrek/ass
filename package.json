@@ -38,7 +38,7 @@
     "@tycrek/express-nofavicon": "^1.0.2",
     "@tycrek/isprod": "^2.0.2",
     "@tycrek/log": ">=0.5.x",
-    "@tycrek/papito": "^0.3.0",
+    "@tycrek/papito": "^0.3.1",
     "any-shell-escape": "^0.1.1",
     "aws-sdk": "^2.930.0",
     "check-node-version": "^4.1.0",
