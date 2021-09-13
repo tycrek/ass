@@ -72,6 +72,7 @@
     "@types/ffmpeg-static": "^3.0.0",
     "@types/fs-extra": "^9.0.12",
     "@types/luxon": "^2.0.3",
+    "@types/marked": "^3.0.0",
     "@types/node": "^16.9.0",
     "@types/node-fetch": "^2.5.12",
     "@types/stream-to-array": "^2.3.0",

@@ -262,7 +262,7 @@ function doSetup() {
 
 		// Complete & exit
 		.then(() => log.blank().success('Setup complete').callback(() => process.exit(0)))
-		.catch((err) => log.blank().error(err));
+		.catch((err) => log.blank().error(err).callback(() => process.exit(1)));
 }
 
 module.exports = {

@@ -124,4 +124,4 @@ router.get('/delete/:deleteId', (req: AssRequest, res: AssResponse, next) => {
 		.catch(next);
 });
 
-module.exports = router;
+export default router;

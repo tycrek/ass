@@ -1,3 +1,5 @@
+import { AssRequest, AssResponse, ErrWrap } from './definitions';
+
 let doSetup = null;
 try {
 	// Check if config.json exists
@@ -7,23 +9,20 @@ try {
 }
 
 // Run first time setup if using Docker (pseudo-process, setup will be run with docker exec)
-if (doSetup) {
-	doSetup();
-	return;
-}
+if (doSetup) doSetup();
 
 // Load the config
 const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile } = require('../config.json');
 
 //#region Imports
-const fs = require('fs-extra');
-const express = require('express');
+import fs from 'fs-extra';
+import express from 'express';
 const nofavicon = require('@tycrek/express-nofavicon');
-const helmet = require('helmet');
-const marked = require('marked');
-const uploadRouter = require('./routers/upload');
-const resourceRouter = require('./routers/resource');
-const { path, log, getTrueHttp, getTrueDomain } = require('./utils');
+import helmet from 'helmet';
+import marked from 'marked';
+import uploadRouter from './routers/upload';
+import resourceRouter from './routers/resource';
+import { path, log, getTrueHttp, getTrueDomain } from './utils';
 const { CODE_INTERNAL_SERVER_ERROR } = require('../MagicNumbers.json');
 const { name: ASS_NAME, version: ASS_VERSION } = require('../package.json');
 //#endregion
@@ -71,7 +70,7 @@ app.get('/', (req, res, next) => ASS_INDEX // skipcq: JS-0229
 	? ASS_INDEX(req, res, next)
 	: fs.readFile(path('README.md'))
 		.then((bytes) => bytes.toString())
-		.then(marked)
+		.then((data) => marked(data))
 		.then((d) => res.render('index', { data: d }))
 		.catch(next));
 
@@ -83,10 +82,10 @@ const ASS_FRONTEND = fs.existsSync(path(`./${frontendName}/package.json`)) ? (re
 ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // skipcq: JS-0093
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
-app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
+app.use('/:resourceId', (req: AssRequest, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 // Error handler
-app.use((err, _req, res, _next) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
+app.use((err: ErrWrap, _req: AssRequest, res: AssResponse, _next: Function) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
 
 // Host the server
 log

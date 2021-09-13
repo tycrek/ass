@@ -124,4 +124,4 @@ router.post('/', (req: AssRequest, res: AssResponse, next: Function) => {
 	}).catch(next);
 });
 
-module.exports = router;
+export default router;
