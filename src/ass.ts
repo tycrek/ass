@@ -9,7 +9,11 @@ try {
 }
 
 // Run first time setup if using Docker (pseudo-process, setup will be run with docker exec)
-if (doSetup) doSetup();
+if (doSetup) {
+	doSetup();
+	// @ts-ignore
+	return;
+}
 
 // Load the config
 const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile } = require('../config.json');
