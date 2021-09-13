@@ -20,4 +20,4 @@ function genString(count = MIN_LENGTH) {
     return gfycat.concat(getWord(animals));
 };
 
-module.exports = ({ gfyLength }: { gfyLength: number }) => genString(gfyLength);
+export default ({ gfyLength }: { gfyLength: number }) => genString(gfyLength);

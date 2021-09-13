@@ -4,9 +4,9 @@
 const fs = require('fs-extra');
 const aws = require('aws-sdk');
 const multer = require('multer');
-const Thumbnail = require('./thumbnails');
-const Vibrant = require('./vibrant');
-const Hash = require('./hash');
+const Thumbnail = require('./thumbnails').default;
+const Vibrant = require('./vibrant').default;
+const Hash = require('./hash').default;
 const { getDatedDirname, sanitize, generateId, formatBytes, log } = require('./utils');
 const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, saveAsOriginal, maxUploadSize, mediaStrict } = require('../config.json');
 const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('../MagicNumbers.json');

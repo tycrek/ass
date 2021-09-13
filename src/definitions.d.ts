@@ -24,6 +24,9 @@ export interface FileData {
 	timestamp: number
 	token: string
 	opengraph: OpenGraphData
+
+	// I found this in utils and idk where it comes from
+	destination: string
 }
 
 export interface IsPossible {

@@ -7,7 +7,7 @@ const log = new TLog();
 
 const MAX_USERNAME = 20;
 
-module.exports = () => uuid().replace(/-/g, '');
+export default () => uuid().replace(/-/g, '');
 
 // If directly called on the command line, generate a new token
 if (require.main === module) {
