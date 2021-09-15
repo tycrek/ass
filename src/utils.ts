@@ -79,6 +79,13 @@ export function arrayEquals(arr1: any[], arr2: any[]) {
 	return arr1.length === arr2.length && arr1.slice().sort().every((value: string, index: number) => value === arr2.slice().sort()[index])
 };
 
+export function verify(req: AssRequest, users: JSON) {
+	return req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization);
+}
+
+export function generateId(mode: string, length: number, gfyLength: number, originalName: string) {
+	return (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName);
+}
 
 // Set up pathing
 export const path = (...paths: string[]) => Path.join(process.cwd(), ...paths); // '..' was added to make it easier to run files after moving the project to src/
@@ -109,7 +116,7 @@ module.exports = {
 	getDatedDirname,
 	randomHexColour,
 	sanitize,
-	verify: (req: AssRequest, users: JSON) => req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization),
+	verify,
 	renameFile: (req: AssRequest, newName: string) => new Promise((resolve: Function, reject) => {
 		try {
 			const paths = [req.file!.destination, newName];
@@ -121,7 +128,7 @@ module.exports = {
 		}
 	}),
 	generateToken: () => token(),
-	generateId: (mode: string, length: number, gfyLength: number, originalName: string) => (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName),
+	generateId,
 	arrayEquals,
 	downloadTempS3: (file: FileData) => new Promise((resolve: Function, reject) =>
 		fetch(getS3url(file.randomId, file.ext))

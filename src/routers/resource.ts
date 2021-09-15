@@ -5,7 +5,7 @@ import escape from 'escape-html';
 import fetch, { Response } from 'node-fetch';
 const { deleteS3 } = require('../storage');
 const { diskFilePath, s3enabled, viewDirect } = require('../../config.json');
-const { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } = require('../utils');
+import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../../MagicNumbers.json');
 const data = require('../data');
 const users = require('../auth');
@@ -26,12 +26,14 @@ router.use((req: AssRequest, res: AssResponse, next) => {
 
 // View file
 router.get('/', (req: AssRequest, res: AssResponse, next) => data.get(req.ass?.resourceId).then((fileData: FileData) => {
-	const resourceId = req.ass?.resourceId;
+	const resourceId = req.ass!.resourceId;
 
 	// Build OpenGraph meta tags
 	const og = fileData.opengraph, ogs = [''];
 	og.title && (ogs.push(`<meta property="og:title" content="${og.title}">`)); // skipcq: JS-0093
 	og.description && (ogs.push(`<meta property="og:description" content="${og.description}">`)); // skipcq: JS-0093
+	// todo: figure out how to not ignore this
+	// @ts-ignore
 	og.color && (ogs.push(`<meta name="theme-color" content="${getResourceColor(og.color, fileData.vibrant)}">`)); // skipcq: JS-0093
 	!fileData.is.video && (ogs.push(`<meta name="twitter:card" content="summary_large_image">`)); // skipcq: JS-0093
 
@@ -43,6 +45,8 @@ router.get('/', (req: AssRequest, res: AssResponse, next) => data.get(req.ass?.r
 		uploader: users[fileData.token].username,
 		timestamp: formatTimestamp(fileData.timestamp),
 		size: formatBytes(fileData.size),
+		// todo: figure out how to not ignore this
+		// @ts-ignore
 		color: getResourceColor(fileData.opengraph.color || null, fileData.vibrant),
 		resourceAttr: { src: getDirectUrl(resourceId) },
 		discordUrl: `${getDirectUrl(resourceId)}${fileData.ext}`,
@@ -93,7 +97,11 @@ router.get('/oembed', (req: AssRequest, res: AssResponse, next) =>
 				type: fileData.is.video ? 'video' : fileData.is.image ? 'photo' : 'link',
 				author_url: fileData.opengraph.authorUrl,
 				provider_url: fileData.opengraph.providerUrl,
+				// todo: figure out how to not ignore this
+				// @ts-ignore
 				author_name: replaceholder(fileData.opengraph.author || '', fileData.size, fileData.timestamp, fileData.originalname),
+				// todo: figure out how to not ignore this
+				// @ts-ignore
 				provider_name: replaceholder(fileData.opengraph.provider || '', fileData.size, fileData.timestamp, fileData.originalname)
 			}))
 		.catch(next));

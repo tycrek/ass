@@ -6,7 +6,7 @@ const { DateTime } = require('luxon');
 const { WebhookClient, MessageEmbed } = require('discord.js');
 const { doUpload, processUploaded } = require('../storage');
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType } = require('../../config.json');
-const { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } = require('../utils');
+import { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE } = require('../../MagicNumbers.json');
 const data = require('../data');
 const users = require('../auth');
@@ -106,7 +106,7 @@ router.post('/', (req: AssRequest, res: AssResponse, next: Function) => {
 
 				// Also update the users upload count
 				if (!users[req.token ?? '']) {
-					const generateUsername = () => generateId('random', 20, null); // skipcq: JS-0074
+					const generateUsername = () => generateId('random', 20, 0, req.file!.size.toString()); // skipcq: JS-0074
 					let username: string = generateUsername();
 
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
