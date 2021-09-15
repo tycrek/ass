@@ -347,34 +347,7 @@ ass is intended to provide a strong backend for developers to build their own fr
 
 A Papito data engine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details, and ass will handle the rest, using the resource ID as the key.
 
-The only engine ass comes with by default is **JSON**. If you find or create an engine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`]. The engines own README file should also instruct how to use it. At this time, a modified `data.js` might look like this:
-
-```js
-/**
- * Used for global data management
- */
-
-//const { JsonStorageEngine } = require('@tycrek/papito');
-const { CustomStorageEngine } = require('my-custom-papito');
-
-//const data = new JsonStorageEngine();
-
-// StorageEngines may take no parameters...
-const data1 = new CustomStorageEngine();
-
-// multiple parameters...
-const data2 = new CustomStorageEngine('Parameters!!', 420);
-
-// or object-based parameters, depending on what the StorageEngine dev decides on.
-const data3 = new CustomStorageEngine({ key1: 'value1', key2: { key3: 44 } });
-
-module.exports = data1;
-
-```
-
-As long as the engine properly implements `GET`/`PUT`/`DEL`/`HAS` StorageFunctions, replacing the file/database system is just that easy.
-
-**For a detailed walkthrough on developing engines, [consult the wiki][ctw2].**
+**~~For a detailed walkthrough on developing engines, [consult the wiki][ctw2].~~ Outdated!**
 
 [`data.js`]: https://github.com/tycrek/ass/blob/master/data.js
 [ctw2]: https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine
