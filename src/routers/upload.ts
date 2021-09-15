@@ -1,15 +1,15 @@
 import { FileData, AssRequest, AssResponse, ErrWrap, User } from "../definitions";
 
-const fs = require('fs-extra');
+import fs from 'fs-extra';
 //const rateLimit = require('express-rate-limit');
-const { DateTime } = require('luxon');
+import { DateTime } from 'luxon';
 const { WebhookClient, MessageEmbed } = require('discord.js');
-const { doUpload, processUploaded } = require('../storage');
+import { doUpload, processUploaded } from '../storage';
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType } = require('../../config.json');
 import { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE } = require('../../MagicNumbers.json');
-const data = require('../data');
-const users = require('../auth');
+import { data } from '../data';
+import { users } from '../auth';
 
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 import express from 'express';

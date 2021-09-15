@@ -42,8 +42,8 @@ const ROUTERS = {
 };
 
 // Read users and data
-const users = require('./auth');
-const data = require('./data');
+import { users } from './auth';
+import { data } from './data';
 //#endregion
 
 // Enable/disable Express features

@@ -1,7 +1,8 @@
 import { FileData } from "./definitions";
 import ffmpeg from 'ffmpeg-static';
 import Jimp from 'jimp';
-const shell = require('any-shell-escape');
+// @ts-ignore
+import shell from 'any-shell-escape';
 import { exec } from 'child_process';
 import { isProd, path } from './utils';
 const { diskFilePath } = require('../config.json');

@@ -1,2 +1,2 @@
 import { randomBytes } from 'crypto';
-module.exports = (length: number, charset: string[]): string => [...randomBytes(length)].map((byte) => charset[Number(byte) % charset.length]).join('').slice(1).concat(charset[0]);
+export default (length: number, charset: string[]): string => [...randomBytes(length)].map((byte) => charset[Number(byte) % charset.length]).join('').slice(1).concat(charset[0]);

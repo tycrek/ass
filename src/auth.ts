@@ -5,7 +5,7 @@
 import fs from 'fs-extra';
 import { log, path, arrayEquals } from './utils';
 
-const users = require('../auth.json').users || {};
+export const users = require('../auth.json').users || {};
 
 // Monitor auth.json for changes (triggered by running 'npm run new-token')
 fs.watch(path('auth.json'), { persistent: false },
@@ -18,5 +18,3 @@ fs.watch(path('auth.json'), { persistent: false },
 			}
 		})
 		.catch(log.c.error));
-
-module.exports = users;

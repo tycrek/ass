@@ -1,7 +1,7 @@
-const uuid = require('uuid').v4;
+import { v4 as uuid } from 'uuid';
 import fs from 'fs-extra';
-const path = require('path');
-const randomGen = require('./random');
+import path from 'path';
+import randomGen from './random';
 const TLog = require('@tycrek/log');
 const log = new TLog();
 

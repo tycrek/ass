@@ -3,12 +3,12 @@ import { FileData, IsPossible, AssRequest, AssResponse } from '../definitions';
 import fs from 'fs-extra';
 import escape from 'escape-html';
 import fetch, { Response } from 'node-fetch';
-const { deleteS3 } = require('../storage');
+import { deleteS3 } from '../storage';
 const { diskFilePath, s3enabled, viewDirect } = require('../../config.json');
 import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../../MagicNumbers.json');
-const data = require('../data');
-const users = require('../auth');
+import { data } from '../data';
+import { users } from '../auth';
 
 import express from 'express';
 const router = express.Router();
