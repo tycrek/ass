@@ -9,6 +9,7 @@ const config = {
 	resourceIdSize: 12,
 	gfyIdSize: 2,
 	resourceIdType: 'random',
+	spaceReplace: '_',
 	mediaStrict: false,
 	viewDirect: false,
 	frontendName: 'ass-x',
@@ -131,6 +132,14 @@ function doSetup() {
 				require: false,
 				pattern: /(original|zws|random|gfycat)/gi, // skipcq: JS-0113
 				message: 'Must be one of: zws, random, gfycat, original'
+			},
+			spaceReplace: {
+				description: 'Character to replace spaces in filenames with (must be a hyphen -, underscore _, or use ! to remove spaces)',
+				type: 'string',
+				default: config.spaceReplace,
+				required: false,
+				pattern: /^[-_!]$/gim,
+				message: 'Must be a - , _ , or !'
 			},
 			gfyIdSize: {
 				description: 'Adjective count for "gfycat" URL type',
