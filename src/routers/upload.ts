@@ -64,7 +64,7 @@ router.post('/', (req: AssRequest, res: AssResponse, next: Function) => {
 	};
 
 	// Fix spaces in originalname
-	req.file.originalname = req.file.originalname.replace(/\s/g, spaceReplace === '!' ? '' : spaceReplace);
+	req.file!.originalname = req.file!.originalname.replace(/\s/g, spaceReplace === '!' ? '' : spaceReplace);
 
 	// Save the file information
 	const resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file!.originalname);
