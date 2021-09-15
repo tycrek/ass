@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const { DateTime } = require('luxon');
 const { WebhookClient, MessageEmbed } = require('discord.js');
 const { doUpload, processUploaded } = require('../storage');
-const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType } = require('../config.json');
+const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace } = require('../config.json');
 const { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } = require('../utils');
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE } = require('../MagicNumbers.json');
 const data = require('../data');
@@ -60,6 +60,9 @@ router.post('/', (req, res, next) => {
 		providerUrl: req.headers['x-ass-og-provider-url'],
 		color: req.headers['x-ass-og-color']
 	};
+
+	// Fix spaces in originalname
+	req.file.originalname = req.file.originalname.replace(/\s/g, spaceReplace === '!' ? '' : spaceReplace);
 
 	// Save the file information
 	const resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
