@@ -12,6 +12,7 @@ const config = {
 	spaceReplace: '_',
 	mediaStrict: false,
 	viewDirect: false,
+	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
 	indexFile: '',
 	s3enabled: false,
@@ -157,6 +158,12 @@ function doSetup() {
 				description: 'View uploads in browser as direct resource, rather than a viewing page',
 				type: 'boolean',
 				default: config.viewDirect,
+				required: false
+			},
+			dataEngine: {
+				description: 'Data engine to use (must match an NPM package name. If unsure, leave blank)',
+				type: 'string',
+				default: config.dataEngine,
 				required: false
 			},
 			frontendName: {
