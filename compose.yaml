@@ -31,4 +31,4 @@ services:
       - NODE_ENV=production # for production
       - ASS_ENV=docker # docker, local, production (not widely used yet)
       - LOG_LEVEL=debug # debug, info, warn, error
-      - FORCE_COLOR=3 # force colour output
+      - FORCE_COLOR=3 # force color output
