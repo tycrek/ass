@@ -19,11 +19,11 @@ RUN npm i -g npm@>=7
 RUN npm i
 
 # Ensure these directories & files exist for compose volumes
-RUN mkdir -p /opt/ass/uploads/thumbnails/
-RUN mkdir -p /opt/ass/share/
-RUN touch /opt/ass/config.json
-RUN touch /opt/ass/auth.json
-RUN touch /opt/ass/data.json
+RUN mkdir -p /opt/ass/uploads/thumbnails/ && \
+    mkdir -p /opt/ass/share/ && \
+    touch /opt/ass/config.json && \
+    touch /opt/ass/auth.json && \
+    touch /opt/ass/data.json
 
 # Start ass
 CMD npm start
