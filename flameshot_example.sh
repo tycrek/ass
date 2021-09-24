@@ -2,7 +2,7 @@
 IMAGEPATH="$HOME/Pictures/" # Where to store screenshots before they're deleted
 IMAGENAME="ass" # Not really important, tells Flameshot what file to send and delete
 KEY="" # Your ass upload token
-DOMAIN="" # Your upload domain
+DOMAIN="" # Your upload domain (http(s))
 
 flameshot config -f "$IMAGENAME" # Make sure that Flameshot names the file correctly
 flameshot gui -r -p "$IMAGEPATH" # Prompt the screenshot GUI
@@ -14,6 +14,6 @@ URL=$(curl -X POST \
   -H "User-Agent: ShareX/13.4.0" \
   -H "Authorization: $KEY" \
   -F "file=@$IMAGEPATH$IMAGENAME.png" "https://$DOMAIN/" | grep -Po '(?<="resource":")[^"]+')
-echo "$URL" | xclip -sel clip
+printf "$URL" | xclip -sel clip
 
 rm "$IMAGEPATH$IMAGENAME.png" # Delete the image locally
