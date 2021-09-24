@@ -15,6 +15,6 @@ URL=$(curl -X POST \
   -H "Authorization: $KEY" \
   -F "file=@$IMAGEPATH$IMAGENAME.png" "https://$DOMAIN/" | grep -Po '(?<="resource":")[^"]+')
 # printf instead of echo as echo appends a newline
-printf "$URL" | xclip -sel clip
+printf "%s" "$URL" | xclip -sel clip
 
 rm "$IMAGEPATH$IMAGENAME.png" # Delete the image locally
