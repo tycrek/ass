@@ -167,7 +167,7 @@ Easy! Just pull the changes & run this one-liner:
 git pull
 
 # Rebuild the container with the new changes (uncomment the 2nd part if the update requires refreshing the config)
-docker-compose up --force-recreate --build -d && docker image prune -f # docker-compose exec ass npm run setup && docker-compose restart
+docker-compose up --force-recreate --build -d && docker image prune -f # && docker-compose exec ass npm run setup && docker-compose restart
 ```
 
 - `--force-recreate` will force the container to rebuild
