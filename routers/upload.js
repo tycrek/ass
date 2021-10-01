@@ -70,12 +70,21 @@ router.post('/', (req, res, next) => {
 	// Function to call to generate a fresh ID. Used for multiple attempts in case an ID is already taken
 	const gen = () => generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
 
+	// Keeps track of the number of attempts in case all ID's are taken
+	const attempts = {
+		count: 0,
+		max: 50
+	};
+
 	// Called by a promise, this will recursively resolve itself until a unique ID is found
-	// TODO: Add max attempts in case all available ID's are taken
 	function genCheckId(resolve, reject) {
 		const uniqueId = gen();
+		attempts.count++;
 		data.has(uniqueId)
-			.then((exists) => (log.debug('ID check', exists ? 'Taken' : 'Available'), exists ? genCheckId(resolve, reject) : resolve(uniqueId))) // skipcq: JS-0090
+			.then((exists) => {
+				log.debug('ID check', exists ? 'Taken' : 'Available');
+				return attempts.count - 1 >= attempts.max ? reject(new Error('No ID\'s remaining')) : exists ? genCheckId(resolve, reject) : resolve(uniqueId);
+			})
 			.catch(reject);
 	}
 
