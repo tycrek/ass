@@ -1,6 +1,6 @@
 {
   "name": "ass",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
@@ -43,7 +43,7 @@
     "aws-sdk": "^2.930.0",
     "check-node-version": "^4.1.0",
     "crypto-random-string": "3.3.1",
-    "discord.js": "^12.5.3",
+    "discord-webhook-node": "^1.1.8",
     "escape-html": "^1.0.3",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.6",

@@ -167,7 +167,7 @@ Easy! Just pull the changes & run this one-liner:
 git pull
 
 # Rebuild the container with the new changes (uncomment the 2nd part if the update requires refreshing the config)
-docker-compose up --force-recreate --build -d && docker image prune -f # docker-compose exec ass npm run setup && docker-compose restart
+docker-compose up --force-recreate --build -d && docker image prune -f # && docker-compose exec ass npm run setup && docker-compose restart
 ```
 
 - `--force-recreate` will force the container to rebuild
@@ -261,20 +261,11 @@ You can insert certain metadata into your embeds with these placeholders:
 
 ### Webhooks
 
-You may use Discord webhooks as an easy way to keep track of your uploads. The first step is to [create a new Webhook]. You only need to follow the first section, **Making a Webhook**. Once you are done that, click **Copy Webhook URL**. Next, paste your URL into a text editor. Extract these two values from the URL:
-
-```
-https://discord.com/api/webhooks/12345678910/T0kEn0fw3Bh00K
-                                 ^^^^^^^^^^  ^^^^^^^^^^^^ 
-                                 Webhook ID  Webhook Token
-```
-
-Once you have these, add the following HTTP headers to your ShareX config:
+You may use Discord webhooks as an easy way to keep track of your uploads. The first step is to [create a new Webhook]. You only need to follow the first section, **Making a Webhook**. Once you are done that, click **Copy Webhook URL**. Finally, add these headers to your custom uploader:
 
 | Header | Purpose |
 | ------ | ------- |
-| **`X-Ass-Webhook-Client`** | The **Webhook ID** |
-| **`X-Ass-Webhook-Token`** | The **Webhook Token** |
+| **`X-Ass-Webhook-Url`** | The **Webhook URL** you copied |
 | **`X-Ass-Webhook-Username`** | (Optional) the "username" of the Webhook; can be set to whatever you want |
 | **`X-Ass-Webhook-Avatar`** | (Optional) URL to an image to use as the Webhook avatar. Use the **full** URL including `https://` |
 
