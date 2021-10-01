@@ -64,62 +64,80 @@ router.post('/', (req, res, next) => {
 	// Fix spaces in originalname
 	req.file.originalname = req.file.originalname.replace(/\s/g, spaceReplace === '!' ? '' : spaceReplace);
 
-	// Save the file information
-	const resourceId = generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
-	log.debug('Saving data', data.name);
-	data.put(resourceId.split('.')[0], req.file).then(() => {
-		// Log the upload
-		const logInfo = `${req.file.originalname} (${req.file.mimetype}, ${formatBytes(req.file.size)})`;
-		log.success('File uploaded', logInfo, `uploaded by ${users[req.token] ? users[req.token].username : '<token-only>'}`);
+	// Generate a unique resource ID
+	let resourceId;
 
-		// Build the URLs
-		const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
-		const thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
-		const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
+	// Function to call to generate a fresh ID. Used for multiple attempts in case an ID is already taken
+	const gen = () => generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
 
-		// Send the response
-		res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
-			.on('finish', () => {
-				log.debug('Upload response sent');
+	// Called by a promise, this will recursively resolve itself until a unique ID is found
+	// TODO: Add max attempts in case all available ID's are taken
+	function genCheckId(resolve, reject) {
+		let uniqueId = gen();
+		data.has(uniqueId)
+			.then((exists) => (log.debug('ID check', exists ? 'Taken' : 'Available'), exists ? genCheckId(resolve, reject) : resolve(uniqueId)))
+			.catch(reject);
+	}
 
-				// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
-				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
+	new Promise((resolve, reject) => genCheckId(resolve, reject))
+		.then((uniqueId) => {
+			resourceId = uniqueId;
+			log.debug('Saving data', data.name);
+		})
+		.then(() => data.put(resourceId.split('.')[0], req.file))
+		.then(() => {
+			// Log the upload
+			const logInfo = `${req.file.originalname} (${req.file.mimetype}, ${formatBytes(req.file.size)})`;
+			log.success('File uploaded', logInfo, `uploaded by ${users[req.token] ? users[req.token].username : '<token-only>'}`);
 
-					// Build the webhook
-					const hook = new Webhook(req.headers['x-ass-webhook-url']);
-					hook.setUsername(req.headers['x-ass-webhook-username'] || 'ass');
-					hook.setAvatar(req.headers['x-ass-webhook-avatar'] || ASS_LOGO);
+			// Build the URLs
+			const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
+			const thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
+			const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
 
-					// Build the embed
-					const embed = new MessageBuilder()
-						.setTitle(logInfo)
-						.setURL(resourceUrl)
-						.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
-						.setThumbnail(thumbnailUrl)
-						.setColor(req.file.vibrant)
-						.setTimestamp();
+			// Send the response
+			res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
+				.on('finish', () => {
+					log.debug('Upload response sent');
 
-					// Send the embed to the webhook, then delete the client after to free resources
-					log.debug('Sending embed to webhook');
-					hook.send(embed)
-						.then(() => log.debug('Webhook sent'))
-						.catch((err) => log.error('Webhook error').err(err));
-				}
+					// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
+					if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
 
-				// Also update the users upload count
-				if (!users[req.token]) {
-					const generateUsername = () => generateId('random', 20, null); // skipcq: JS-0074
-					let username = generateUsername();
-					while (Object.values(users).findIndex((user) => user.username === username) !== -1)  // skipcq: JS-0073
-						username = generateUsername();
-					users[req.token] = { username, count: 0 };
-				}
-				users[req.token].count += 1;
-				fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
+						// Build the webhook
+						const hook = new Webhook(req.headers['x-ass-webhook-url']);
+						hook.setUsername(req.headers['x-ass-webhook-username'] || 'ass');
+						hook.setAvatar(req.headers['x-ass-webhook-avatar'] || ASS_LOGO);
 
-				log.debug('Upload request flow completed', '');
-			});
-	}).catch(next);
+						// Build the embed
+						const embed = new MessageBuilder()
+							.setTitle(logInfo)
+							.setURL(resourceUrl)
+							.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
+							.setThumbnail(thumbnailUrl)
+							.setColor(req.file.vibrant)
+							.setTimestamp();
+
+						// Send the embed to the webhook, then delete the client after to free resources
+						log.debug('Sending embed to webhook');
+						hook.send(embed)
+							.then(() => log.debug('Webhook sent'))
+							.catch((err) => log.error('Webhook error').err(err));
+					}
+
+					// Also update the users upload count
+					if (!users[req.token]) {
+						const generateUsername = () => generateId('random', 20, null); // skipcq: JS-0074
+						let username = generateUsername();
+						while (Object.values(users).findIndex((user) => user.username === username) !== -1)  // skipcq: JS-0073
+							username = generateUsername();
+						users[req.token] = { username, count: 0 };
+					}
+					users[req.token].count += 1;
+					fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
+
+					log.debug('Upload request flow completed', '');
+				});
+		}).catch(next);
 });
 
 module.exports = router;
