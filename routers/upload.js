@@ -110,7 +110,7 @@ router.post('/', (req, res, next) => {
 					log.debug('Upload response sent');
 
 					// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
-					if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
+					if (req.headers['x-ass-webhook-url']) {
 
 						// Build the webhook
 						const hook = new Webhook(req.headers['x-ass-webhook-url']);
