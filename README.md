@@ -261,20 +261,11 @@ You can insert certain metadata into your embeds with these placeholders:
 
 ### Webhooks
 
-You may use Discord webhooks as an easy way to keep track of your uploads. The first step is to [create a new Webhook]. You only need to follow the first section, **Making a Webhook**. Once you are done that, click **Copy Webhook URL**. Next, paste your URL into a text editor. Extract these two values from the URL:
-
-```
-https://discord.com/api/webhooks/12345678910/T0kEn0fw3Bh00K
-                                 ^^^^^^^^^^  ^^^^^^^^^^^^ 
-                                 Webhook ID  Webhook Token
-```
-
-Once you have these, add the following HTTP headers to your ShareX config:
+You may use Discord webhooks as an easy way to keep track of your uploads. The first step is to [create a new Webhook]. You only need to follow the first section, **Making a Webhook**. Once you are done that, click **Copy Webhook URL**. Finally, add these headers to your custom uploader:
 
 | Header | Purpose |
 | ------ | ------- |
-| **`X-Ass-Webhook-Client`** | The **Webhook ID** |
-| **`X-Ass-Webhook-Token`** | The **Webhook Token** |
+| **`X-Ass-Webhook-Url`** | The **Webhook URL** you copied |
 | **`X-Ass-Webhook-Username`** | (Optional) the "username" of the Webhook; can be set to whatever you want |
 | **`X-Ass-Webhook-Avatar`** | (Optional) URL to an image to use as the Webhook avatar. Use the **full** URL including `https://` |
 
@@ -347,34 +338,7 @@ ass is intended to provide a strong backend for developers to build their own fr
 
 A Papito data engine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details, and ass will handle the rest, using the resource ID as the key.
 
-The only engine ass comes with by default is **JSON**. If you find or create an engine you like, you can use it by installing it with `npm i <package-name>` then changing the contents of [`data.js`]. The engines own README file should also instruct how to use it. At this time, a modified `data.js` might look like this:
-
-```js
-/**
- * Used for global data management
- */
-
-//const { JsonStorageEngine } = require('@tycrek/papito');
-const { CustomStorageEngine } = require('my-custom-papito');
-
-//const data = new JsonStorageEngine();
-
-// StorageEngines may take no parameters...
-const data1 = new CustomStorageEngine();
-
-// multiple parameters...
-const data2 = new CustomStorageEngine('Parameters!!', 420);
-
-// or object-based parameters, depending on what the StorageEngine dev decides on.
-const data3 = new CustomStorageEngine({ key1: 'value1', key2: { key3: 44 } });
-
-module.exports = data1;
-
-```
-
-As long as the engine properly implements `GET`/`PUT`/`DEL`/`HAS` StorageFunctions, replacing the file/database system is just that easy.
-
-**For a detailed walkthrough on developing engines, [consult the wiki][ctw2].**
+**~~For a detailed walkthrough on developing engines, [consult the wiki][ctw2].~~ Outdated!**
 
 [`data.js`]: https://github.com/tycrek/ass/blob/master/data.js
 [ctw2]: https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine
