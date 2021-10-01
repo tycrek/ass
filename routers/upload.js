@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 //const rateLimit = require('express-rate-limit');
 const { DateTime } = require('luxon');
-const { WebhookClient, MessageEmbed } = require('discord.js');
+const { Webhook, MessageBuilder } = require('discord-webhook-node');
 const { doUpload, processUploaded } = require('../storage');
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace } = require('../config.json');
 const { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } = require('../utils');
@@ -84,25 +84,26 @@ router.post('/', (req, res, next) => {
 
 				// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
 				if (req.headers['x-ass-webhook-client'] && req.headers['x-ass-webhook-token']) {
-					const client = req.headers['x-ass-webhook-client']
 
-					// Build the webhook client & embed
-					const whc = new WebhookClient(client, req.headers['x-ass-webhook-token']);
-					const embed = new MessageEmbed()
+					// Build the webhook
+					const hook = new Webhook(req.headers['x-ass-webhook-url']);
+					hook.setUsername(req.headers['x-ass-webhook-username'] || 'ass');
+					hook.setAvatar(req.headers['x-ass-webhook-avatar'] || ASS_LOGO);
+
+					// Build the embed
+					const embed = new MessageBuilder()
 						.setTitle(logInfo)
 						.setURL(resourceUrl)
 						.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
 						.setThumbnail(thumbnailUrl)
 						.setColor(req.file.vibrant)
-						.setTimestamp(req.file.timestamp);
+						.setTimestamp();
 
 					// Send the embed to the webhook, then delete the client after to free resources
-					log.debug('Sending webhook to client', client);
-					whc.send(null, {
-						username: req.headers['x-ass-webhook-username'] || 'ass',
-						avatarURL: req.headers['x-ass-webhook-avatar'] || ASS_LOGO,
-						embeds: [embed]
-					}).then(() => log.debug('Webhook sent').callback(() => whc.destroy()));
+					log.debug('Sending embed to webhook');
+					hook.send(embed)
+						.then(() => log.debug('Webhook sent'))
+						.catch((err) => log.error('Webhook error').err(err));
 				}
 
 				// Also update the users upload count
