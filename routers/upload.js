@@ -65,7 +65,7 @@ router.post('/', (req, res, next) => {
 	req.file.originalname = req.file.originalname.replace(/\s/g, spaceReplace === '!' ? '' : spaceReplace);
 
 	// Generate a unique resource ID
-	let resourceId;
+	let resourceId = '';
 
 	// Function to call to generate a fresh ID. Used for multiple attempts in case an ID is already taken
 	const gen = () => generateId(generator, resourceIdSize, req.headers['x-ass-gfycat'] || gfyIdSize, req.file.originalname);
@@ -73,9 +73,9 @@ router.post('/', (req, res, next) => {
 	// Called by a promise, this will recursively resolve itself until a unique ID is found
 	// TODO: Add max attempts in case all available ID's are taken
 	function genCheckId(resolve, reject) {
-		let uniqueId = gen();
+		const uniqueId = gen();
 		data.has(uniqueId)
-			.then((exists) => (log.debug('ID check', exists ? 'Taken' : 'Available'), exists ? genCheckId(resolve, reject) : resolve(uniqueId)))
+			.then((exists) => (log.debug('ID check', exists ? 'Taken' : 'Available'), exists ? genCheckId(resolve, reject) : resolve(uniqueId))) // skipcq: JS-0090
 			.catch(reject);
 	}
 
