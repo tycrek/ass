@@ -2,7 +2,7 @@
 IMAGEPATH="$HOME/Pictures/" # Where to store screenshots before they're deleted
 IMAGENAME="ass" # Not really important, tells Flameshot what file to send and delete
 KEY="" # Your ass upload token
-DOMAIN="" # Your upload domain (without http(s))
+DOMAIN="" # Your upload domain (without http:// or https://)
 
 flameshot config -f "$IMAGENAME" # Make sure that Flameshot names the file correctly
 flameshot gui -r -p "$IMAGEPATH" # Prompt the screenshot GUI
