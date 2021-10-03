@@ -12,6 +12,8 @@ if (doSetup) {
 	return;
 }
 
+// this should NOT be merged but is only for testing the bot
+
 // Load the config
 const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile } = require('./config.json');
 
