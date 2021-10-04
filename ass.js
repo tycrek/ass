@@ -66,7 +66,7 @@ useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 app.use(nofavicon);
 
 // Use custom index, otherwise render README.md
-const ASS_INDEX = indexFile !== '' && fs.existsSync(`./${indexFile}`) && require(`./${indexFile}`);
+const ASS_INDEX = indexFile !== '' && fs.existsSync(path('share', indexFile)) && require(`./share/${indexFile}`);
 const ASS_INDEX_ENABLED = typeof ASS_INDEX === typeof Function;
 app.get('/', (req, res, next) => ASS_INDEX_ENABLED // skipcq: JS-0229
 	? ASS_INDEX(req, res, next)

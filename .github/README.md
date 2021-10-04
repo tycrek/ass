@@ -194,11 +194,11 @@ For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any
 [Caddy]: https://caddyserver.com/
 [my tutorial]: https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
 
-### Generating new tokens
+## Generating new tokens
 
 If you need to generate a new token at any time, run `npm run new-token <username>`. This will **automatically** load the new token so there is no need to restart ass. Username field is optional; if left blank, a random username will be created.
 
-### Cloudflare users
+## Cloudflare users
 
 In your Cloudflare DNS dashboard, set your domain/subdomain to **DNS Only** if you experience issues with **Proxied**.
 
@@ -280,7 +280,7 @@ By default, ass directs the index route `/` to this README. Follow these steps t
 1. Run `npm run setup` to re-run the setup script.
    - The defaults are set by your existing config, so you can press `Enter` to accept the defaults on most prompts.
    - The one setting you want to change is `Filename for your custom index`. Enter a name for your index, including `.js` (custom index's must be `.js` files).
-2. Make a new file matching the name you entered.
+2. Make a new file in the `share/` directory matching the name you entered (this directory can be found in the `ass/` directory. It is created automatically after setup is run).
 3. Your index file needs to export a single function taking three arguments: `(req, res, next)`. Some code samples for common use cases are provided below.
 4. Restart ass. The startup info logs should say **`Custom index:`**` enabled`.
 
