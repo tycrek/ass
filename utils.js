@@ -45,8 +45,8 @@ function getResourceColor(colorValue, vibrantValue) {
 	return colorValue === '&random' ? randomHexColour() : colorValue === '&vibrant' ? vibrantValue : colorValue;
 }
 
-function formatTimestamp(timestamp) {
-	return DateTime.fromMillis(timestamp).toLocaleString(DateTime.DATETIME_MED);
+function formatTimestamp(timestamp, timeoffset) {
+	return DateTime.fromMillis(timestamp).setZone(timeoffset).toLocaleString(DateTime.DATETIME_MED);
 }
 
 function formatBytes(bytes, decimals = 2) { // skipcq: JS-0074
@@ -56,11 +56,11 @@ function formatBytes(bytes, decimals = 2) { // skipcq: JS-0074
 	return parseFloat((bytes / Math.pow(KILOBYTES, i)).toFixed(decimals < 0 ? 0 : decimals)).toString().concat(` ${sizes[i]}`);
 }
 
-function replaceholder(data, size, timestamp, originalname) {
+function replaceholder(data, size, timestamp, timeoffset, originalname) {
 	return data
 		.replace(/&size/g, formatBytes(size))
 		.replace(/&filename/g, originalname)
-		.replace(/&timestamp/g, formatTimestamp(timestamp));
+		.replace(/&timestamp/g, formatTimestamp(timestamp, timeoffset));
 }
 
 function getDatedDirname() {

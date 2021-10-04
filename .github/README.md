@@ -234,6 +234,7 @@ If you need to override a specific part of the config to be different from the g
 | **`X-Ass-Domain`** | Override the domain returned for the clipboard (useful for multi-domain hosts) |
 | **`X-Ass-Access`** | Override the generator used for the resource URL. Must be one of: `original`, `zws`, `gfycat`, or `random` ([see above](#access-types)) |
 | **`X-Ass-Gfycat`** | Override the length of Gfycat ID's. Defaults to `2` |
+| **`X-Ass-Timeoffset`** | Override the timestamp offset. Defaults to `UTC+0` |
 
 ### Fancy embeds
 

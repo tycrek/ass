@@ -39,7 +39,7 @@ router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData)
 		title: escape(fileData.originalname),
 		mimetype: fileData.mimetype,
 		uploader: users[fileData.token].username,
-		timestamp: formatTimestamp(fileData.timestamp),
+		timestamp: formatTimestamp(fileData.timestamp, fileData.timeoffset),
 		size: formatBytes(fileData.size),
 		color: getResourceColor(fileData.opengraph.color || null, fileData.vibrant),
 		resourceAttr: { src: getDirectUrl(resourceId) },
@@ -47,7 +47,7 @@ router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData)
 		oembedUrl: `${getTrueHttp()}${getTrueDomain()}/${resourceId}/oembed`,
 		ogtype: fileData.is.video ? 'video.other' : fileData.is.image ? 'image' : 'website',
 		urlType: `og:${fileData.is.video ? 'video' : fileData.is.audio ? 'audio' : 'image'}`,
-		opengraph: replaceholder(ogs.join('\n'), fileData.size, fileData.timestamp, fileData.originalname),
+		opengraph: replaceholder(ogs.join('\n'), fileData.size, fileData.timestamp, fileData.timeoffset, fileData.originalname),
 		viewDirect
 	});
 }).catch(next));
@@ -85,14 +85,14 @@ router.get('/thumbnail', (req, res, next) =>
 // https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
 router.get('/oembed', (req, res, next) =>
 	data.get(req.ass.resourceId)
-		.then(({ opengraph, is, size, timestamp, originalname }) =>
+		.then(({ opengraph, is, size, timestamp, timeoffset, originalname }) => 
 			res.type('json').send({
 				version: '1.0',
 				type: is.video ? 'video' : is.image ? 'photo' : 'link',
 				author_url: opengraph.authorUrl,
 				provider_url: opengraph.providerUrl,
-				author_name: replaceholder(opengraph.author || '', size, timestamp, originalname),
-				provider_name: replaceholder(opengraph.provider || '', size, timestamp, originalname)
+				author_name: replaceholder(opengraph.author || '', size, timestamp, timeoffset, originalname),
+				provider_name: replaceholder(opengraph.provider || '', size, timestamp, timeoffset, originalname)
 			}))
 		.catch(next));
 
