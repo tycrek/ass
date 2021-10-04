@@ -10,5 +10,7 @@
   "Body": "MultipartFormData",
   "FileFormName": "file",
   "URL": "$json:.resource$",
-  "DeletionURL": "$json:.delete$"
+  "ThumbnailURL": "$json:.thumbnail$",
+  "DeletionURL": "$json:.delete$",
+  "ErrorMessage": "$response$"
 }
