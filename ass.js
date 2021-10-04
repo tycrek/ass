@@ -70,7 +70,7 @@ const ASS_INDEX = indexFile !== '' && fs.existsSync(`./${indexFile}`) && require
 const ASS_INDEX_ENABLED = typeof ASS_INDEX === typeof Function;
 app.get('/', (req, res, next) => ASS_INDEX_ENABLED // skipcq: JS-0229
 	? ASS_INDEX(req, res, next)
-	: fs.readFile(path('README.md'))
+	: fs.readFile(path('.github', 'README.md'))
 		.then((bytes) => bytes.toString())
 		.then(marked)
 		.then((d) => res.render('index', { data: d }))
