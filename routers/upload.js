@@ -47,6 +47,9 @@ router.post('/', (req, res, next) => {
 	// Get the uploaded time in milliseconds
 	req.file.timestamp = DateTime.now().toMillis();
 
+	// Save the timezone offset
+	req.file.timeoffset = req.headers['x-ass-timeoffset'] || 'UTC+0';
+
 	// Keep track of the token that uploaded the resource
 	req.file.token = req.token;
 
