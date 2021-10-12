@@ -15,7 +15,6 @@ const express = require('express');
 const router = express.Router();
 
 // Set up express-busboy
-// todo: re-do file size restrictions & mimetypes
 bb.extend(router, {
 	upload: true,
 	restrictMultiple: true,
@@ -38,8 +37,8 @@ router.post('/', (req, res, next) => {
 // Upload file
 router.post('/', processUploaded);
 
-// todo: remove this (old Multer file size error handling)
-router.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? log.warn('Upload blocked', 'File too large').callback(() => res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`)) : next(err)); // skipcq: JS-0229
+// Max upload size error handling
+router.use('/', (err, _req, res, next) => err.message === 'LIMIT_FILE_SIZE' ? log.warn('Upload blocked', 'File too large').callback(() => res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`)) : next(err)); // skipcq: JS-0229
 
 // Process uploaded file
 router.post('/', (req, res, next) => {

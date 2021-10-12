@@ -7,7 +7,7 @@ const Thumbnail = require('./thumbnails');
 const Vibrant = require('./vibrant');
 const Hash = require('./hash');
 const { getDatedDirname, generateId, log } = require('./utils');
-const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, saveAsOriginal, mediaStrict } = require('./config.json');
+const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, saveAsOriginal, mediaStrict, maxUploadSize } = require('./config.json');
 const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('./MagicNumbers.json');
 
 const ID_GEN_LENGTH = 32;
@@ -47,7 +47,7 @@ function processUploaded(req, res, next) {
 	req.file.is[isType] = true;
 
 	// Block the resource if the mimetype is not an image or video
-	if (mediaStrict && !ALLOWED_MIMETYPES.test(req.file.mimetype)) {
+	if (mediaStrict && !ALLOWED_MIMETYPES.test(req.file.mimetype))
 		return log
 			.warn('Upload blocked', req.file.originalname, req.file.mimetype)
 			.warn('Strict media mode', 'only images, videos, & audio are file permitted')
@@ -59,7 +59,6 @@ function processUploaded(req, res, next) {
 					.catch((err) => log
 						.error('Temp file could not be deleted', err)
 						.callback(next, err)));
-	}
 
 	// Remove unwanted fields
 	delete req.file.uuid;
@@ -79,6 +78,10 @@ function processUploaded(req, res, next) {
 			req.file.size = stat.size // skipcq: JS-0090
 		))
 
+		// Check if file size is too big
+		.then(() => { if (req.file.size / Math.pow(1024, 2) > maxUploadSize) throw new Error('LIMIT_FILE_SIZE'); })
+
+		// Save file
 		.then(() => log.debug('Saving file', req.file.originalname, s3enabled ? 'in S3' : 'on disk'))
 		.then(() =>
 			// skipcq: JS-0229
@@ -100,12 +103,12 @@ function processUploaded(req, res, next) {
 					.catch(reject)
 			))
 		.then(() => log.debug('File saved', req.file.originalname, s3enabled ? 'in S3' : 'on disk'))
-		.then(() => fs.remove(req.file.path))
-		.then(() => log.debug('Temp file', 'deleted'))
 		.then(() => !s3enabled && (req.file.path = getLocalFilename(req))) // skipcq: JS-0090
-		.then(() => delete req.file.stream)
 		.then(() => next())
-		.catch(next);
+		.catch(next)
+		.finally(() => fs.remove(req.file.path))
+		.then(() => log.debug('Temp file', 'deleted'))
+		.catch((err) => log.err(err));
 }
 
 function deleteS3(file) {
