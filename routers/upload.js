@@ -1,8 +1,9 @@
 const fs = require('fs-extra');
+const bb = require('express-busboy');
 //const rateLimit = require('express-rate-limit');
 const { DateTime } = require('luxon');
 const { Webhook, MessageBuilder } = require('discord-webhook-node');
-const { doUpload, processUploaded } = require('../storage');
+const { processUploaded } = require('../storage');
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace } = require('../config.json');
 const { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } = require('../utils');
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE } = require('../MagicNumbers.json');
@@ -12,6 +13,14 @@ const users = require('../auth');
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 const express = require('express');
 const router = express.Router();
+
+// Set up express-busboy
+// todo: re-do file size restrictions & mimetypes
+bb.extend(router, {
+	upload: true,
+	restrictMultiple: true,
+	allowedPath: (url) => url === '/',
+});
 
 // Rate limit middleware
 /* router.use('/', rateLimit({
@@ -27,12 +36,9 @@ router.post('/', (req, res, next) => {
 });
 
 // Upload file
-//router.post('/', doUpload, processUploaded, ({ next }) => next());
-router.post('/', (req, res, next) => doUpload(req, res, (err) => {
-	log.express().Header(req, 'Content-Type');
-	(err) ? log.error(`Multer encountered an ${!(err.toString().includes('MulterError')) ? 'unknown ' : ''}error`, err).callback(next, err) : log.debug('Multer', 'File saved in temp dir').callback(next);
-}), processUploaded, ({ next }) => next());
+router.post('/', processUploaded);
 
+// todo: remove this (old Multer file size error handling)
 router.use('/', (err, _req, res, next) => err.code && err.code === 'LIMIT_FILE_SIZE' ? log.warn('Upload blocked', 'File too large').callback(() => res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`)) : next(err)); // skipcq: JS-0229
 
 // Process uploaded file

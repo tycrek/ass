@@ -76,12 +76,12 @@ app.get('/', (req, res, next) => ASS_INDEX_ENABLED // skipcq: JS-0229
 		.then((d) => res.render('index', { data: d }))
 		.catch(next));
 
-// Upload router
-app.use('/', ROUTERS.upload);
-
 // Set up custom frontend
 const ASS_FRONTEND = fs.existsSync(`./${frontendName}/package.json`) ? (require('submodule'), require(`./${frontendName}`)) : { enabled: false };
 ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // skipcq: JS-0093
+
+// Upload router (has to come after custom frontends as express-busboy interferes with all POST calls)
+app.use('/', ROUTERS.upload);
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
 app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
