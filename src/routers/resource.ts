@@ -43,7 +43,7 @@ router.get('/', (req: AssRequest, res: AssResponse, next) => data.get(req.ass?.r
 		title: escape(fileData.originalname),
 		mimetype: fileData.mimetype,
 		uploader: users[fileData.token].username,
-		timestamp: formatTimestamp(fileData.timestamp),
+		timestamp: formatTimestamp(fileData.timestamp, fileData.timeoffset),
 		size: formatBytes(fileData.size),
 		// todo: figure out how to not ignore this
 		// @ts-ignore
@@ -53,7 +53,7 @@ router.get('/', (req: AssRequest, res: AssResponse, next) => data.get(req.ass?.r
 		oembedUrl: `${getTrueHttp()}${getTrueDomain()}/${resourceId}/oembed`,
 		ogtype: fileData.is.video ? 'video.other' : fileData.is.image ? 'image' : 'website',
 		urlType: `og:${fileData.is.video ? 'video' : fileData.is.audio ? 'audio' : 'image'}`,
-		opengraph: replaceholder(ogs.join('\n'), fileData.size, fileData.timestamp, fileData.originalname),
+		opengraph: replaceholder(ogs.join('\n'), fileData.size, fileData.timestamp, fileData.timeoffset, fileData.originalname),
 		viewDirect
 	});
 }).catch(next));
@@ -99,10 +99,10 @@ router.get('/oembed', (req: AssRequest, res: AssResponse, next) =>
 				provider_url: fileData.opengraph.providerUrl,
 				// todo: figure out how to not ignore this
 				// @ts-ignore
-				author_name: replaceholder(fileData.opengraph.author || '', fileData.size, fileData.timestamp, fileData.originalname),
+				author_name: replaceholder(fileData.opengraph.author || '', fileData.size, fileData.timestamp, fileData.timeoffset, fileData.originalname),
 				// todo: figure out how to not ignore this
 				// @ts-ignore
-				provider_name: replaceholder(fileData.opengraph.provider || '', fileData.size, fileData.timestamp, fileData.originalname)
+				provider_name: replaceholder(fileData.opengraph.provider || '', fileData.size, fileData.timestamp, fileData.timeoffset, fileData.originalname)
 			}))
 		.catch(next));
 
