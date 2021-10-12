@@ -1,10 +1,11 @@
 import { FileData, AssRequest, AssResponse, ErrWrap, User } from "../definitions";
 
 import fs from 'fs-extra';
+const bb = require('express-busboy');
 //const rateLimit = require('express-rate-limit');
 import { DateTime } from 'luxon';
 import { Webhook, MessageBuilder } from 'discord-webhook-node';
-import { doUpload, processUploaded } from '../storage';
+import { processUploaded } from '../storage';
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace } = require('../../config.json');
 import { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE } = require('../../MagicNumbers.json');
@@ -14,6 +15,13 @@ import { users } from '../auth';
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 import express from 'express';
 const router = express.Router();
+
+// Set up express-busboy
+bb.extend(router, {
+	upload: true,
+	restrictMultiple: true,
+	allowedPath: (url: string) => url === '/',
+});
 
 // Rate limit middleware
 /* router.use('/', rateLimit({
@@ -29,13 +37,10 @@ router.post('/', (req: AssRequest, res: AssResponse, next: Function) => {
 });
 
 // Upload file
-//router.post('/', doUpload, processUploaded, ({ next }) => next());
-router.post('/', (req: AssRequest, res: AssResponse, next: Function) => doUpload(req, res, (err: Error) => {
-	log.express().Header(req, 'Content-Type');
-	(err) ? log.error(`Multer encountered an ${!(err.toString().includes('MulterError')) ? 'unknown ' : ''}error`, err).callback(next, err) : log.debug('Multer', 'File saved in temp dir').callback(next);
-}), processUploaded, ({ next }: { next: Function }) => next());
+router.post('/', processUploaded);
 
-router.use('/', (err: ErrWrap, _req: AssRequest, res: AssResponse, next: Function) => err.code && err.code === 'LIMIT_FILE_SIZE' ? log.warn('Upload blocked', 'File too large').callback(() => res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`)) : next(err)); // skipcq: JS-0229
+// Max upload size error handling
+router.use('/', (err: ErrWrap, _req: AssRequest, res: AssResponse, next: Function) => err.message === 'LIMIT_FILE_SIZE' ? log.warn('Upload blocked', 'File too large').callback(() => res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`)) : next(err)); // skipcq: JS-0229
 
 // Process uploaded file
 router.post('/', (req: AssRequest, res: AssResponse, next: Function) => {
