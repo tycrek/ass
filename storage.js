@@ -23,7 +23,7 @@ function getLocalFilename(req) {
 	return `${getDatedDirname()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
 }
 
-function processUploaded(req, res, next) {
+function processUploaded(req, res, next) { // skipcq: JS-0045
 	// Fix file object
 	req.file = req.files.file;
 
