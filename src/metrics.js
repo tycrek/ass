@@ -8,7 +8,7 @@ const TLog = require('@tycrek/log');
 const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
 
 module.exports = () => {
-	const data = require('./data');
+	const data = require('./data').data;
 	const { users } = fs.readJsonSync(path.join(process.cwd(), 'auth.json'));
 	Object.keys(users).forEach((token) => users[token].count = 0);
 
