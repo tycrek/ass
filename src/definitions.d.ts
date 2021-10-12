@@ -22,6 +22,7 @@ export interface FileData {
 	sha1: string
 	domain: string
 	timestamp: number
+	timeoffset: string
 	token: string
 	opengraph: OpenGraphData
 

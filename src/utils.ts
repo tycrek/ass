@@ -47,7 +47,7 @@ export function getResourceColor(colorValue: string, vibrantValue: string) {
 	return colorValue === '&random' ? randomHexColour() : colorValue === '&vibrant' ? vibrantValue : colorValue;
 }
 
-export function formatTimestamp(timestamp: number, timeoffset) {
+export function formatTimestamp(timestamp: number, timeoffset: string) {
 	return DateTime.fromMillis(timestamp).setZone(timeoffset).toLocaleString(DateTime.DATETIME_MED);
 }
 
@@ -58,7 +58,7 @@ export function formatBytes(bytes: number, decimals = 2) { // skipcq: JS-0074
 	return parseFloat((bytes / Math.pow(KILOBYTES, i)).toFixed(decimals < 0 ? 0 : decimals)).toString().concat(` ${sizes[i]}`);
 }
 
-export function replaceholder(data: string, size: number, timestamp: number, timeoffset, originalname: string) {
+export function replaceholder(data: string, size: number, timestamp: number, timeoffset: string, originalname: string) {
 	return data
 		.replace(/&size/g, formatBytes(size))
 		.replace(/&filename/g, originalname)
