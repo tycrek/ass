@@ -1,4 +1,4 @@
-# ass Docker compose.yaml v0.1.0
+# ass Docker compose.yaml v0.1.1
 # authors:
 #  - tycrek <t@tycrek.com> (https://tycrek.com/)
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
@@ -11,7 +11,6 @@ services:
     restart: unless-stopped
     ports:
       - "40115:40115"
-      - "45375:45375"
     volumes:
       - ./uploads:/opt/ass/uploads
       - ./share:/opt/ass/share
