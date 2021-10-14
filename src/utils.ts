@@ -78,7 +78,7 @@ export function generateId(mode: string, length: number, gfyLength: number, orig
 }
 
 // Set up pathing
-export const path = (...paths: string[]) => Path.join(process.cwd(), ...paths); // '..' was added to make it easier to run files after moving the project to src/
+export const path = (...paths: string[]) => Path.join(process.cwd(), ...paths);
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
