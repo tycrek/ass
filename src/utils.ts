@@ -13,7 +13,7 @@ const { HTTP, HTTPS, KILOBYTES } = require('../MagicNumbers.json');
 
 // Catch config.json not existing when running setup script
 try {
-	var { useSsl, port, domain, isProxied, diskFilePath, saveWithDate, s3bucket, s3endpoint, s3usePathStyle } = require('../config.json'); // skipcq: JS-0239, JS-0102
+	var { useSsl, port, domain, isProxied, diskFilePath, s3bucket, s3endpoint, s3usePathStyle } = require('../config.json'); // skipcq: JS-0239, JS-0102
 } catch (ex) {
 	// @ts-ignore
 	if (ex.code !== 'MODULE_NOT_FOUND') console.error(ex);
@@ -65,16 +65,6 @@ export function replaceholder(data: string, size: number, timestamp: number, tim
 		.replace(/&timestamp/g, formatTimestamp(timestamp, timeoffset));
 }
 
-export function getDatedDirname() {
-	if (!saveWithDate) return diskFilePath;
-
-	// Get current month and year
-	const [month, , year] = new Date().toLocaleDateString('en-US').split('/');
-
-	// Add 0 before single digit months (6 turns into 06)
-	return `${diskFilePath}${diskFilePath.endsWith('/') ? '' : '/'}${year}-${`0${month}`.slice(-2)}`; // skipcq: JS-0074
-}
-
 export function arrayEquals(arr1: any[], arr2: any[]) {
 	return arr1.length === arr2.length && arr1.slice().sort().every((value: string, index: number) => value === arr2.slice().sort()[index])
 };
@@ -113,7 +103,6 @@ module.exports = {
 	formatTimestamp,
 	formatBytes,
 	replaceholder,
-	getDatedDirname,
 	randomHexColour,
 	sanitize,
 	verify,

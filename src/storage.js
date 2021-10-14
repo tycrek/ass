@@ -6,8 +6,8 @@ const aws = require('aws-sdk');
 const Thumbnail = require('./thumbnails').default;
 const Vibrant = require('./vibrant').default;
 const Hash = require('./hash').default;
-const { getDatedDirname, generateId, log } = require('./utils');
-const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, saveAsOriginal, mediaStrict, maxUploadSize } = require('../config.json');
+const { generateId, log } = require('./utils');
+const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize } = require('../config.json');
 const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('../MagicNumbers.json');
 
 const ID_GEN_LENGTH = 32;
@@ -18,6 +18,16 @@ const s3 = new aws.S3({
 	endpoint: new aws.Endpoint(s3endpoint),
 	credentials: new aws.Credentials({ accessKeyId: s3accessKey, secretAccessKey: s3secretKey })
 });
+
+function getDatedDirname() {
+	if (!saveWithDate) return diskFilePath;
+
+	// Get current month and year
+	const [month, , year] = new Date().toLocaleDateString('en-US').split('/');
+
+	// Add 0 before single digit months (6 turns into 06)
+	return `${diskFilePath}${diskFilePath.endsWith('/') ? '' : '/'}${year}-${`0${month}`.slice(-2)}`; // skipcq: JS-0074
+}
 
 function getLocalFilename(req) {
 	return `${getDatedDirname()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
