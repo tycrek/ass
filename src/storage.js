@@ -3,12 +3,12 @@
 
 const fs = require('fs-extra');
 const aws = require('aws-sdk');
-const Thumbnail = require('./thumbnails');
-const Vibrant = require('./vibrant');
-const Hash = require('./hash');
+const Thumbnail = require('./thumbnails').default;
+const Vibrant = require('./vibrant').default;
+const Hash = require('./hash').default;
 const { getDatedDirname, generateId, log } = require('./utils');
-const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, saveAsOriginal, mediaStrict, maxUploadSize } = require('./config.json');
-const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('./MagicNumbers.json');
+const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, saveAsOriginal, mediaStrict, maxUploadSize } = require('../config.json');
+const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('../MagicNumbers.json');
 
 const ID_GEN_LENGTH = 32;
 const ALLOWED_MIMETYPES = /(image)|(video)|(audio)\//;

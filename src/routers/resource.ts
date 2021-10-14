@@ -1,35 +1,39 @@
-const fs = require('fs-extra');
-const escape = require('escape-html');
-const fetch = require('node-fetch');
-const { deleteS3 } = require('../storage');
-const { diskFilePath, s3enabled, viewDirect } = require('../config.json');
-const { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } = require('../utils');
-const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../MagicNumbers.json');
-const data = require('../data');
-const users = require('../auth');
+import { FileData, IsPossible, AssRequest, AssResponse } from '../definitions';
 
-const express = require('express');
+import fs from 'fs-extra';
+import escape from 'escape-html';
+import fetch, { Response } from 'node-fetch';
+import { deleteS3 } from '../storage';
+const { diskFilePath, s3enabled, viewDirect } = require('../../config.json');
+import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
+const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../../MagicNumbers.json');
+import { data } from '../data';
+import { users } from '../auth';
+
+import express from 'express';
 const router = express.Router();
 
 // Middleware for parsing the resource ID and handling 404
-router.use((req, res, next) => {
+router.use((req: AssRequest, res: AssResponse, next) => {
 	// Parse the resource ID
 	req.ass = { resourceId: escape(req.resourceId || '').split('.')[0] };
 
 	// If the ID is invalid, return 404. Otherwise, continue normally
 	data.has(req.ass.resourceId)
-		.then((has) => has ? next() : res.sendStatus(CODE_NOT_FOUND)) // skipcq: JS-0229
+		.then((has: boolean) => has ? next() : res.sendStatus(CODE_NOT_FOUND)) // skipcq: JS-0229
 		.catch(next);
 });
 
 // View file
-router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData) => {
-	const { resourceId } = req.ass;
+router.get('/', (req: AssRequest, res: AssResponse, next) => data.get(req.ass?.resourceId).then((fileData: FileData) => {
+	const resourceId = req.ass!.resourceId;
 
 	// Build OpenGraph meta tags
 	const og = fileData.opengraph, ogs = [''];
 	og.title && (ogs.push(`<meta property="og:title" content="${og.title}">`)); // skipcq: JS-0093
 	og.description && (ogs.push(`<meta property="og:description" content="${og.description}">`)); // skipcq: JS-0093
+	// todo: figure out how to not ignore this
+	// @ts-ignore
 	og.color && (ogs.push(`<meta name="theme-color" content="${getResourceColor(og.color, fileData.vibrant)}">`)); // skipcq: JS-0093
 	!fileData.is.video && (ogs.push(`<meta name="twitter:card" content="summary_large_image">`)); // skipcq: JS-0093
 
@@ -41,6 +45,8 @@ router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData)
 		uploader: users[fileData.token].username,
 		timestamp: formatTimestamp(fileData.timestamp, fileData.timeoffset),
 		size: formatBytes(fileData.size),
+		// todo: figure out how to not ignore this
+		// @ts-ignore
 		color: getResourceColor(fileData.opengraph.color || null, fileData.vibrant),
 		resourceAttr: { src: getDirectUrl(resourceId) },
 		discordUrl: `${getDirectUrl(resourceId)}${fileData.ext}`,
@@ -53,19 +59,19 @@ router.get('/', (req, res, next) => data.get(req.ass.resourceId).then((fileData)
 }).catch(next));
 
 // Direct resource
-router.get('/direct*', (req, res, next) => data.get(req.ass.resourceId).then((fileData) => {
+router.get('/direct*', (req: AssRequest, res: AssResponse, next) => data.get(req.ass?.resourceId).then((fileData: FileData) => {
 	// Send file as an attachement for downloads
 	if (req.query.download)
 		res.header('Content-Disposition', `attachment; filename="${fileData.originalname}"`);
 
 	// Return the file differently depending on what storage option was used
 	const uploaders = {
-		s3: () => fetch(getS3url(fileData.randomId, fileData.ext)).then((file) => {
+		s3: () => fetch(getS3url(fileData.randomId, fileData.ext)).then((file: Response) => {
 			file.headers.forEach((value, header) => res.setHeader(header, value));
-			file.body.pipe(res);
+			file.body?.pipe(res);
 		}),
 		local: () => {
-			res.header('Accept-Ranges', 'bytes').header('Content-Length', fileData.size).type(fileData.mimetype);
+			res.header('Accept-Ranges', 'bytes').header('Content-Length', `${fileData.size}`).type(fileData.mimetype);
 			fs.createReadStream(fileData.path).pipe(res);
 		}
 	};
@@ -74,33 +80,37 @@ router.get('/direct*', (req, res, next) => data.get(req.ass.resourceId).then((fi
 }).catch(next));
 
 // Thumbnail response
-router.get('/thumbnail', (req, res, next) =>
-	data.get(req.ass.resourceId)
-		.then(({ is, thumbnail }) => fs.readFile((!is || (is.image || is.video)) ? path(diskFilePath, 'thumbnails/', thumbnail) : is.audio ? 'views/ass-audio-icon.png' : 'views/ass-file-icon.png'))
-		.then((fileData) => res.type('jpg').send(fileData))
+router.get('/thumbnail', (req: AssRequest, res: AssResponse, next) =>
+	data.get(req.ass?.resourceId)
+		.then(({ is, thumbnail }: { is: IsPossible, thumbnail: string }) => fs.readFile((!is || (is.image || is.video)) ? path(diskFilePath, 'thumbnails/', thumbnail) : is.audio ? 'views/ass-audio-icon.png' : 'views/ass-file-icon.png'))
+		.then((fileData: Buffer) => res.type('jpg').send(fileData))
 		.catch(next));
 
 // oEmbed response for clickable authors/providers
 // https://oembed.com/
 // https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
-router.get('/oembed', (req, res, next) =>
-	data.get(req.ass.resourceId)
-		.then(({ opengraph, is, size, timestamp, timeoffset, originalname }) => 
+router.get('/oembed', (req: AssRequest, res: AssResponse, next) =>
+	data.get(req.ass?.resourceId)
+		.then((fileData: FileData) =>
 			res.type('json').send({
 				version: '1.0',
-				type: is.video ? 'video' : is.image ? 'photo' : 'link',
-				author_url: opengraph.authorUrl,
-				provider_url: opengraph.providerUrl,
-				author_name: replaceholder(opengraph.author || '', size, timestamp, timeoffset, originalname),
-				provider_name: replaceholder(opengraph.provider || '', size, timestamp, timeoffset, originalname)
+				type: fileData.is.video ? 'video' : fileData.is.image ? 'photo' : 'link',
+				author_url: fileData.opengraph.authorUrl,
+				provider_url: fileData.opengraph.providerUrl,
+				// todo: figure out how to not ignore this
+				// @ts-ignore
+				author_name: replaceholder(fileData.opengraph.author || '', fileData.size, fileData.timestamp, fileData.timeoffset, fileData.originalname),
+				// todo: figure out how to not ignore this
+				// @ts-ignore
+				provider_name: replaceholder(fileData.opengraph.provider || '', fileData.size, fileData.timestamp, fileData.timeoffset, fileData.originalname)
 			}))
 		.catch(next));
 
 // Delete file
-router.get('/delete/:deleteId', (req, res, next) => {
-	let oldName, oldType; // skipcq: JS-0119
-	data.get(req.ass.resourceId)
-		.then((fileData) => {
+router.get('/delete/:deleteId', (req: AssRequest, res: AssResponse, next) => {
+	let oldName: string, oldType: string; // skipcq: JS-0119
+	data.get(req.ass?.resourceId)
+		.then((fileData: FileData) => {
 			// Extract info for logs
 			oldName = fileData.originalname;
 			oldType = fileData.mimetype;
@@ -117,9 +127,9 @@ router.get('/delete/:deleteId', (req, res, next) => {
 				(!fileData.is || (fileData.is.image || fileData.is.video)) && fs.existsSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))
 					? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)) : () => Promise.resolve()]);
 		})
-		.then(() => data.del(req.ass.resourceId))
+		.then(() => data.del(req.ass?.resourceId))
 		.then(() => (log.success('Deleted', oldName, oldType), res.type('text').send('File has been deleted!'))) // skipcq: JS-0090
 		.catch(next);
 });
 
-module.exports = router;
+export default router;

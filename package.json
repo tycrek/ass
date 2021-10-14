@@ -1,6 +1,6 @@
 {
   "name": "ass",
-  "version": "0.8.7",
+  "version": "0.9.0",
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
@@ -8,17 +8,19 @@
     "npm": ">=7.x.x"
   },
   "scripts": {
-    "start": "node ass.js",
-    "setup": "node setup.js",
-    "metrics": "node metrics.js",
-    "new-token": "node generators/token.js",
-    "restart": "systemctl restart ass.service",
-    "engine-check": "node checkEngine.js",
+    "dev": "npm run build && npm start",
+    "build": "ts",
+    "start": "node dist/ass.js",
+    "setup": "node dist/setup.js",
+    "metrics": "node dist/metrics.js",
+    "new-token": "node dist/generators/token.js",
+    "engine-check": "node dist/checkEngine.js",
     "prestart": "npm run engine-check",
     "presetup": "npm run engine-check",
-    "logs": "node ./node_modules/@tycrek/log/socketClient.js",
     "docker-logs": "docker-compose logs -f --tail=50 --no-log-prefix ass",
-    "docker-update": "git pull && docker-compose up --force-recreate --build -d && docker image prune -f",
+    "docker-update": "git pull && npm run docker-uplite",
+    "docker-uplite": "docker-compose up --force-recreate --build -d && docker image prune -f",
+    "docker-upfull": "npm run docker-update && npm run docker-resetup",
     "docker-resetup": "docker-compose exec ass npm run setup && docker-compose restart"
   },
   "repository": "github:tycrek/ass",
@@ -35,6 +37,7 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
+    "@tsconfig/node14": "^1.0.1",
     "@tycrek/express-nofavicon": "^1.0.3",
     "@tycrek/isprod": "^2.0.2",
     "@tycrek/log": "^0.5.9",
@@ -54,13 +57,28 @@
     "jimp": "^0.16.1",
     "luxon": "^1.26.0",
     "marked": "^2.0.7",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.2",
     "node-vibrant": "*",
     "prompt": "^1.1.0",
     "pug": "^3.0.2",
     "sanitize-filename": "^1.6.3",
     "stream-to-array": "^2.3.0",
     "submodule": "^1.2.1",
+    "ts": "^0.2.2",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/escape-html": "^1.0.1",
+    "@types/express": "^4.17.13",
+    "@types/express-busboy": "^8.0.0",
+    "@types/ffmpeg-static": "^3.0.0",
+    "@types/fs-extra": "^9.0.12",
+    "@types/luxon": "^2.0.3",
+    "@types/marked": "^3.0.0",
+    "@types/node": "^16.9.0",
+    "@types/node-fetch": "^2.5.12",
+    "@types/stream-to-array": "^2.3.0",
+    "@types/uuid": "^8.3.1",
+    "@types/ws": "^7.4.7"
   }
 }

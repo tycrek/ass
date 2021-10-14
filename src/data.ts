@@ -6,7 +6,7 @@
 const { JsonDataEngine } = require('@tycrek/papito');
 
 // Actual data engine
-const { dataEngine } = require('./config.json');
+const { dataEngine } = require('../config.json');
 const { _ENGINE_ } = require(dataEngine);
 
-module.exports = _ENGINE_(new JsonDataEngine());
+export const data = _ENGINE_(new JsonDataEngine());

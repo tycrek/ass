@@ -351,14 +351,16 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | Script | Description |
 | ------ | ----------- |
 | **`start`** | Starts the ass server. This is the default script & is run with **`npm start`**. |
+| `build` | Compiles the TypeScript files into JavaScript. |
+| `dev` | Chains the `build` and `compile` scripts together. |
 | `setup` | Starts the easy setup process. Should be run after any updates that introduce new config options. |
 | `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
 | `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
-| `restart` | Restarts the ass server using `systemctl`. More info soon (should work fine if you have an existing `ass.service` file) |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
-| `logs` | Uses the [tlog Socket plugin] to stream logs from the ass server to your terminal, with full colour support (Remember to set [`FORCE_COLOR`] if you're using Systemd) |
 | `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
-| `docker-update` | Alias for `git pull && docker-compose up --force-recreate --build -d && docker image prune -f` |
+| `docker-update` | Calls `git pull` then runs the `docker-uplite` script. |
+| `docker-uplite` | Alias for `docker-compose up --force-recreate --build -d && docker image prune -f` |
+| `docker-upfull` | Alias for `npm run docker-update && npm run docker-resetup` |
 | `docker-resetup` | Alias for `docker-compose exec ass npm run setup && docker-compose restart` |
 
 [tlog Socket plugin]: https://github.com/tycrek/tlog#socket

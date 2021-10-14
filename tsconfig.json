@@ -1,0 +1,19 @@
+{
+	"extends": "@tsconfig/node14/tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./dist",
+		"lib": [
+			"ES2020",
+			"DOM"
+		],
+		"allowJs": true,
+		"downlevelIteration": true
+	},
+	"include": [
+		"src/**/*.js",
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"ass-x"
+	]
+}

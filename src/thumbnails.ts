@@ -1,9 +1,11 @@
-const ffmpeg = require('ffmpeg-static');
-const Jimp = require('jimp');
-const shell = require('any-shell-escape');
-const { exec } = require('child_process');
-const { isProd, path } = require('./utils');
-const { diskFilePath } = require('./config.json');
+import { FileData } from "./definitions";
+import ffmpeg from 'ffmpeg-static';
+import Jimp from 'jimp';
+// @ts-ignore
+import shell from 'any-shell-escape';
+import { exec } from 'child_process';
+import { isProd, path } from './utils';
+const { diskFilePath } = require('../config.json');
 
 // Thumbnail parameters
 const THUMBNAIL = {
@@ -18,7 +20,7 @@ const THUMBNAIL = {
  * @param {String} dest Path of the output file
  * @returns {String} The command to execute
  */
-function getCommand(src, dest) {
+function getCommand(src: String, dest: String) {
 	return shell([
 		ffmpeg, '-y',
 		'-v', (isProd ? 'error' : 'debug'), // Log level
@@ -35,7 +37,7 @@ function getCommand(src, dest) {
  * @param {String} oldName The original filename
  * @returns {String} The filename for the thumbnail
  */
-function getNewName(oldName) {
+function getNewName(oldName: String) {
 	return oldName.concat('.thumbnail.jpg');
 }
 
@@ -44,7 +46,7 @@ function getNewName(oldName) {
  * @param {String} oldName The original filename
  * @returns {String} The path to the thumbnail
  */
-function getNewNamePath(oldName) {
+function getNewNamePath(oldName: String) {
 	return path(diskFilePath, 'thumbnails/', getNewName(oldName));
 }
 
@@ -52,10 +54,11 @@ function getNewNamePath(oldName) {
  * Extracts an image from a video file to use as a thumbnail, using ffmpeg
  * @param {*} file The video file to pull a frame from
  */
-function getVideoThumbnail(file) {
-	return new Promise((resolve, reject) => exec(
+function getVideoThumbnail(file: FileData) {
+	return new Promise((resolve: Function, reject: Function) => exec(
 		getCommand(file.path, getNewNamePath(file.randomId)),
-		(err) => (err ? reject(err) : resolve())
+		// @ts-ignore
+		(err: Error) => (err ? reject(err) : resolve())
 	));
 }
 
@@ -63,7 +66,7 @@ function getVideoThumbnail(file) {
  * Generates a thumbnail for the provided image
  * @param {*} file The file to generate a thumbnail for
  */
-function getImageThumbnail(file) {
+function getImageThumbnail(file: FileData) {
 	return new Promise((resolve, reject) =>
 		Jimp.read(file.path)
 			.then((image) => image
@@ -79,7 +82,7 @@ function getImageThumbnail(file) {
  * @param {*} file The file to generate a thumbnail for
  * @returns The thumbnail filename (NOT the path)
  */
-module.exports = (file) =>
+export default (file: FileData) =>
 	new Promise((resolve, reject) =>
 		(file.is.video ? getVideoThumbnail : file.is.image ? getImageThumbnail : () => Promise.resolve())(file)
 			.then(() => resolve((file.is.video || file.is.image) ? getNewName(file.randomId) : file.is.audio ? 'views/ass-audio-icon.png' : 'views/ass-file-icon.png'))

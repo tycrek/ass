@@ -1,18 +1,19 @@
-const uuid = require('uuid').v4;
-const fs = require('fs-extra');
-const path = require('path');
-const randomGen = require('./random');
+import { v4 as uuid } from 'uuid';
+import fs from 'fs-extra';
+import path from 'path';
+import randomGen from './random';
 const TLog = require('@tycrek/log');
 const log = new TLog();
 
 const MAX_USERNAME = 20;
 
+export default () => uuid().replace(/-/g, '');
 module.exports = () => uuid().replace(/-/g, '');
 
 // If directly called on the command line, generate a new token
 if (require.main === module) {
 	const token = module.exports();
-	const authPath = path.join(__dirname, '..', 'auth.json');
+	const authPath = path.join(process.cwd(), 'auth.json');
 	let name = '';
 
 	fs.readJson(authPath)
@@ -20,7 +21,7 @@ if (require.main === module) {
 			// Generate the user
 			const username = process.argv[2] ? process.argv[2].replace(/[^\da-z_]/gi, '').substring(0, MAX_USERNAME) : randomGen({ length: 20 }); // skipcq: JS-0074
 			if (!auth.users) auth.users = {};
-			if (Object.values(auth.users).findIndex((user) => user.username === username) !== -1) {
+			if (Object.values(auth.users).findIndex((user: any) => user.username === username) !== -1) {
 				log.error('Username already exists', username);
 				process.exit(1);
 			}

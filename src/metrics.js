@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { s3enabled } = require('./config.json');
+const { s3enabled } = require('../config.json');
 const { formatBytes } = require('./utils');
 const { bucketSize } = require('./storage');
 
@@ -8,8 +8,8 @@ const TLog = require('@tycrek/log');
 const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
 
 module.exports = () => {
-	const data = require('./data');
-	const { users } = fs.readJsonSync(path.join(__dirname, 'auth.json'));
+	const data = require('./data').data;
+	const { users } = fs.readJsonSync(path.join(process.cwd(), 'auth.json'));
 	Object.keys(users).forEach((token) => users[token].count = 0);
 
 	let totalSize = 0;
