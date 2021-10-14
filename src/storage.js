@@ -113,12 +113,16 @@ function processUploaded(req, res, next) { // skipcq: JS-0045
 					.catch(reject)
 			))
 		.then(() => log.debug('File saved', req.file.originalname, s3enabled ? 'in S3' : 'on disk'))
+		.catch(next)
+
+		// Delete the file
+		.then(() => fs.remove(req.file.path))
+		.then(() => log.debug('Temp file', 'deleted'))
+
+		// Fix the file path
 		.then(() => !s3enabled && (req.file.path = getLocalFilename(req))) // skipcq: JS-0090
 		.then(() => next())
-		.catch(next)
-		.finally(() => fs.remove(req.file.path))
-		.then(() => log.debug('Temp file', 'deleted'))
-		.catch((err) => log.err(err));
+		.catch(next);
 }
 
 function deleteS3(file) {
