@@ -121,7 +121,7 @@ module.exports = {
 	arrayEquals,
 	downloadTempS3: (file: FileData) => new Promise((resolve: Function, reject) =>
 		fetch(getS3url(file.randomId, file.ext))
-			.then((f2) => f2.body.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))
+			.then((f2) => f2.body!.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))
 			.catch(reject)),
 }
 
