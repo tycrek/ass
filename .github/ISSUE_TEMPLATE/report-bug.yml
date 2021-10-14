@@ -96,8 +96,8 @@ body:
 - type: input
   id: storageengine
   attributes:
-    label: StorageEngine
-    description: How are you storing your data?
+    label: Storage method
+    description: How are you storing your data? (Papito is the default)
 - type: checkboxes
   id: reverse-proxy
   attributes:
