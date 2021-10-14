@@ -6,7 +6,15 @@ export interface User {
 }
 
 export interface FileData {
-	// Data from Multer file object
+	// Data from request file object
+	uuid?: string
+	field?: string
+	file?: string
+	filename?: string
+	truncated?: boolean
+	done?: boolean
+
+	// Old Multer data being carried over to non-Multer files
 	path: string
 	size: number
 	mimetype: string
@@ -52,6 +60,7 @@ export interface AssRequest extends Request {
 	ass?: { resourceId: string }
 	token?: string
 	file?: FileData
+	files?: { [key: string]: any }
 }
 
 export interface AssResponse extends Response {
