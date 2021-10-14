@@ -70,6 +70,7 @@
   "devDependencies": {
     "@types/escape-html": "^1.0.1",
     "@types/express": "^4.17.13",
+    "@types/express-busboy": "^8.0.0",
     "@types/ffmpeg-static": "^3.0.0",
     "@types/fs-extra": "^9.0.12",
     "@types/luxon": "^2.0.3",

@@ -1,7 +1,7 @@
 import { FileData, AssRequest, AssResponse, ErrWrap, User } from "../definitions";
 
 import fs from 'fs-extra';
-const bb = require('express-busboy');
+import bb from 'express-busboy';
 //const rateLimit = require('express-rate-limit');
 import { DateTime } from 'luxon';
 import { Webhook, MessageBuilder } from 'discord-webhook-node';
@@ -17,6 +17,7 @@ import express from 'express';
 const router = express.Router();
 
 // Set up express-busboy
+// @ts-ignore
 bb.extend(router, {
 	upload: true,
 	restrictMultiple: true,
