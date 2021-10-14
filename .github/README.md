@@ -105,27 +105,22 @@ ass was designed with developers in mind. If you are a developer & want somethin
 
 ## Installation
 
-[Docker](#docker) is the recommended way to install ass, but you can also install it locally.
+ass supports two installation methods: Docker (recommended) & local (manual).
 
-1. You should have **Node.js 14** & **npm 7 or later** installed. 
-2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
-3. Run `npm i` to install the required dependencies
-5. Run `npm start` to start ass.
-
-The first time you run, the setup process will automatically be called and you will be shown your first authorization token; save this as you will need it to configure ShareX.
-
-## Docker
+### Docker
 
 <details>
-<summary><em>Expand for steps to install with Docker & docker-compose</em></summary>
+<summary><em>Expand for Docker/Docker Compose installation steps</em></summary>
 <br>
 
-[docker-compose] is now the recommended way to install ass. These steps assume you are already family with Docker, so if you're not, please [read the docs]. It also assumes that you have a working Docker installation with `docker-compose` installed.
+[docker-compose] is the recommended way to install ass. These steps assume you are already family with Docker, so if you're not, please [read the docs]. It also assumes that you have a working Docker installation with `docker-compose` installed.
+
+**If your local installation of Docker Compose complains about a missing `docker-compose` file, this is your problem, not mine.** Update Compose to the latest version to remove that warning. I wrote the Compose file using the [latest Compose specification](https://github.com/compose-spec/compose-spec/blob/master/spec.md), so any issues will be caused by an outdated version of Compose.
 
 [docker-compose]: https://docs.docker.com/compose/
 [read the docs]: https://docs.docker.com/
 
-### Install using docker-compose
+#### Install using docker-compose
 
 1. Clone the ass repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
 2. Run the command that corresponds to your OS:
@@ -185,6 +180,24 @@ docker-compose up --force-recreate --build -d && docker image prune -f # && dock
    - `auth.json`
    - `data.json`
 - I have personally tested running using these commands (migrating from an existing local deployment!) with Digital Ocean Spaces (S3 object-storage), a PostgreSQL database, & a custom frontend all on the same container. It should also work for you but feel free to let me know if you have any issues.
+
+</details>
+
+### Local
+
+<details>
+<summary><em>Expand for local installation steps</em></summary>
+<br>
+
+1. You should have **Node.js 14** & **npm 7 or later** installed. 
+2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
+3. Run `npm i -g typescript` to install TypeScript globally
+4. Run `npm i --save-dev` to install the required dependencies (`--save-dev` is **required** for compilation)
+5. Run `npm run build` to compile the TypeScript files
+5. Run `npm start` to start ass.
+
+The first time you run ass, the setup process will automatically be called and you will be shown your first authorization token; save this as you will need it to configure ShareX.
+
 </details>
 
 ## Using HTTPS
