@@ -5,7 +5,7 @@
   "main": "ass.js",
   "engines": {
     "node": ">=14.7.x <16",
-    "npm": ">=7.x.x"
+    "npm": ">=8.1.x"
   },
   "scripts": {
     "dev": "npm run build && npm start",
@@ -64,7 +64,6 @@
     "sanitize-filename": "^1.6.3",
     "stream-to-array": "^2.3.0",
     "submodule": "^1.2.1",
-    "ts": "^0.2.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
