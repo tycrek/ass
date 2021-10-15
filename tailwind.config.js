@@ -1,3 +1,5 @@
+const primary = '#FD842D';
+const primaryDim = '#B64D02';
 module.exports = {
 	mode: 'jit',
 	separator: '_',
@@ -15,19 +17,20 @@ module.exports = {
 				main: ['"Josefin Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif']
 			},
 			backgroundColor: {
+				'primary': primary,
 				'body': '#212121',
 			},
 			colors: {
 				'content-bg': '#151515',
-				'primary': '#FD842D',
-				'primary-dim': '#B64D02',
+				'primary': primary,
+				'primary-dim': primaryDim,
 				'primary-dark': '#793301',
 				'link-hover': '#FD710D',
 				'link-active': '#DE5E02',
 				'text-primary': '#BDBDBD',
 			},
 			borderColor: {
-				'primary-dim': '#B64D02'
+				'primary-dim': primaryDim
 			},
 			maxHeight: {
 				'half-port': '50vh'
