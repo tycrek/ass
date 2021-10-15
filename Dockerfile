@@ -12,9 +12,9 @@ WORKDIR /opt/ass/
 # Copy directory files (config.json, source files etc.)
 COPY . ./
 
-# Update npm to at least v7.x.x,
+# Update npm to at least npm 8,
 # then install dependencies
-RUN npm i -g npm@7 typescript && \
+RUN npm i -g npm@8 typescript && \
     npm i --save-dev && \
     npm run build
 

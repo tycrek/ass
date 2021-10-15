@@ -189,7 +189,7 @@ docker-compose up --force-recreate --build -d && docker image prune -f # && dock
 <summary><em>Expand for local installation steps</em></summary>
 <br>
 
-1. You should have **Node.js 14** & **npm 7 or later** installed. 
+1. You should have **Node.js 14.17** & **npm 8 or later** installed. 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
 3. Run `npm i -g typescript` to install TypeScript globally
 4. Run `npm i --save-dev` to install the required dependencies (`--save-dev` is **required** for compilation)
