@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "npm run build && npm start",
-    "build": "ts",
+    "build": "tsc",
     "start": "node dist/ass.js",
     "setup": "node dist/setup.js",
     "metrics": "node dist/metrics.js",
