@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "npm run build && npm start",
-    "build": "ts",
+    "build": "tsc",
     "start": "node dist/ass.js",
     "setup": "node dist/setup.js",
     "metrics": "node dist/metrics.js",
@@ -64,6 +64,7 @@
     "sanitize-filename": "^1.6.3",
     "stream-to-array": "^2.3.0",
     "submodule": "^1.2.1",
+    "typescript": "^4.4.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
