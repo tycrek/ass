@@ -80,7 +80,7 @@ app.get('/', (req, res, next) => ASS_INDEX_ENABLED // skipcq: JS-0229
 		.catch(next));
 
 // Set up custom frontend
-const ASS_FRONTEND = fs.existsSync(path(`./${frontendName}/package.json`)) ? (require('submodule'), require(`../${frontendName}`)) : { enabled: false }; // todo: update with src/
+const ASS_FRONTEND = fs.existsSync(path(`./${frontendName}/package.json`)) ? (require('submodule'), require(`../${frontendName}`)) : { enabled: false };
 ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // skipcq: JS-0093
 
 // Upload router (has to come after custom frontends as express-busboy interferes with all POST calls)

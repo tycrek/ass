@@ -78,7 +78,7 @@ export function generateId(mode: string, length: number, gfyLength: number, orig
 }
 
 // Set up pathing
-export const path = (...paths: string[]) => Path.join(process.cwd(), ...paths); // '..' was added to make it easier to run files after moving the project to src/
+export const path = (...paths: string[]) => Path.join(process.cwd(), ...paths);
 
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
@@ -121,7 +121,7 @@ module.exports = {
 	arrayEquals,
 	downloadTempS3: (file: FileData) => new Promise((resolve: Function, reject) =>
 		fetch(getS3url(file.randomId, file.ext))
-			.then((f2) => f2.body.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))
+			.then((f2) => f2.body!.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))
 			.catch(reject)),
 }
 
