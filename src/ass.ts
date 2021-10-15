@@ -22,6 +22,8 @@ const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile } = re
 import fs from 'fs-extra';
 import express from 'express';
 const nofavicon = require('@tycrek/express-nofavicon');
+const epcss = require('@tycrek/express-postcss');
+import tailwindcss from 'tailwindcss';
 import helmet from 'helmet';
 import marked from 'marked';
 import uploadRouter from './routers/upload';
@@ -85,6 +87,18 @@ ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // 
 
 // Upload router (has to come after custom frontends as express-busboy interferes with all POST calls)
 app.use('/', ROUTERS.upload);
+
+// CSS
+app.use('/css', epcss({
+	cssPath: path('tailwind.css'),
+	plugins: [
+		tailwindcss,
+		require('autoprefixer')(),
+		require('cssnano')(),
+		require('postcss-font-magician')(),
+	],
+	warn: (warning: Error) => log.warn('PostCSS', warning.toString())
+}));
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
 app.use('/:resourceId', (req: AssRequest, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
