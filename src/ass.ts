@@ -30,7 +30,7 @@ import uploadRouter from './routers/upload';
 import resourceRouter from './routers/resource';
 import { path, log, getTrueHttp, getTrueDomain } from './utils';
 const { CODE_INTERNAL_SERVER_ERROR } = require('../MagicNumbers.json');
-const { name: ASS_NAME, version: ASS_VERSION } = require('../package.json');
+const { name: ASS_NAME, version: ASS_VERSION, homepage } = require('../package.json');
 //#endregion
 
 // Welcome :D
@@ -75,11 +75,7 @@ const ASS_INDEX = indexFile !== '' && fs.existsSync(path('share', indexFile)) &&
 const ASS_INDEX_ENABLED = typeof ASS_INDEX === typeof Function;
 app.get('/', (req, res, next) => ASS_INDEX_ENABLED // skipcq: JS-0229
 	? ASS_INDEX(req, res, next)
-	: fs.readFile(path('.github', 'README.md'))
-		.then((bytes) => bytes.toString())
-		.then((data) => marked(data))
-		.then((d) => res.render('index', { data: d }))
-		.catch(next));
+	: res.redirect(homepage));
 
 // Set up custom frontend
 const ASS_FRONTEND = fs.existsSync(path(`./${frontendName}/package.json`)) ? (require('submodule'), require(`../${frontendName}`)) : { enabled: false };
