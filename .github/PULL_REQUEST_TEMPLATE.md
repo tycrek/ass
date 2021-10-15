@@ -11,7 +11,7 @@
 
 - Operating System:
 - Node version:
-- NPM version:
+- npm version:
 
 ## Description
 <!-- Describe your PR in detail. Include links to any relevant Issues. -->

@@ -333,21 +333,21 @@ ass is intended to provide a strong backend for developers to build their own fr
 
 | Name | Description | Links |
 | :--: | ----------- | :---: |
-| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map]. This is the default engine. | [GitHub][GH ASE]<br>[NPM][NPM ASE] |
-| **PostgreSQL** | Data storage using a [PostgreSQL] database. [node-postgres] is used for communicating with the database. | [GitHub][GH APSQL]<br>[NPM][NPM APSQL] |
-| **Mongoose** | Data storage using a [MongoDB] database. [mongoose] is used for communicating with the database. Created by [@dylancl] | [GitHub][GH AMongoose]<br>[NPM][NPM AMongoose] |
+| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map]. This is the default engine. | [GitHub][GH ASE]<br>[npm][npm ASE] |
+| **PostgreSQL** | Data storage using a [PostgreSQL] database. [node-postgres] is used for communicating with the database. | [GitHub][GH APSQL]<br>[npm][npm APSQL] |
+| **Mongoose** | Data storage using a [MongoDB] database. [mongoose] is used for communicating with the database. Created by [@dylancl] | [GitHub][GH AMongoose]<br>[npm][npm AMongoose] |
 
 [Map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
 [GH ASE]: https://github.com/tycrek/papito/
-[NPM ASE]: https://www.npmjs.com/package/@tycrek/papito
+[npm ASE]: https://www.npmjs.com/package/@tycrek/papito
 [PostgreSQL]: https://www.postgresql.org/
 [node-postgres]: https://node-postgres.com/
 [GH APSQL]: https://github.com/tycrek/ass-psql/
-[NPM APSQL]: https://www.npmjs.com/package/@tycrek/ass-psql
+[npm APSQL]: https://www.npmjs.com/package/@tycrek/ass-psql
 [MongoDB]: https://www.mongodb.com/
 [mongoose]: https://mongoosejs.com/
 [GH AMongoose]: https://github.com/dylancl/ass-mongoose
-[NPM AMongoose]: https://www.npmjs.com/package/ass-mongoose
+[npm AMongoose]: https://www.npmjs.com/package/ass-mongoose
 [@dylancl]: https://github.com/dylancl
 
 A Papito data engine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details, and ass will handle the rest, using the resource ID as the key.

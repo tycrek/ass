@@ -161,7 +161,7 @@ function doSetup() {
 				required: false
 			},
 			dataEngine: {
-				description: 'Data engine to use (must match an NPM package name. If unsure, leave blank)',
+				description: 'Data engine to use (must match an npm package name. If unsure, leave blank)',
 				type: 'string',
 				default: config.dataEngine,
 				required: false
