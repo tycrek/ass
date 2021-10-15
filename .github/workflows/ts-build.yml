@@ -1,0 +1,45 @@
+name: TypeScript Build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ARCHIVE_NAME: ass-build-${{ github.run_id }}-${{ github.run_number }}
+    steps:
+      # Checkout repo
+      - uses: actions/checkout@v2
+
+      # Set up Node 14
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.4.1
+        with:
+          node-version: 14.17.5
+
+      # Install npm 8 & TypeScript
+      - name: Install global packages
+        run: npm i -g npm@8 typescript
+
+      # Install ass dependencies (including types)
+      - name: Install dependencies
+        run: npm i --save-dev
+
+      # Compile the TypeScript files
+      - name: Run build script
+        run: npm run build
+
+      # Archive the built files
+      - name: Generate archive
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r ${{ env.ARCHIVE_NAME }} ./
+        
+      # Upload archive as an artifact
+      - name: Upload archive
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: ${{ env.ARCHIVE_NAME }}
+          path: ${{ env.ARCHIVE_NAME }}.zip
+          if-no-files-found: error
