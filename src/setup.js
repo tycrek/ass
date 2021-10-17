@@ -15,6 +15,7 @@ const config = {
 	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
 	indexFile: '',
+	useSia: false,
 	s3enabled: false,
 };
 
@@ -176,6 +177,12 @@ function doSetup() {
 				description: 'Filename for your custom index, if using one (must be a JS file)',
 				type: 'string',
 				default: config.indexFile,
+				required: false
+			},
+			useSia: {
+				description: 'Use Sia Skynet for decentralized file storage?',
+				type: 'boolean',
+				default: config.useSia,
 				required: false
 			},
 			s3enabled: {
