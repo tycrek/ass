@@ -4,7 +4,8 @@ import fs from 'fs-extra';
 import escape from 'escape-html';
 import fetch, { Response } from 'node-fetch';
 import { deleteS3 } from '../storage';
-const { diskFilePath, s3enabled, viewDirect } = require('../../config.json');
+import { SkynetDelete, SkynetDownload } from '../skynet';
+const { diskFilePath, s3enabled, viewDirect, useSia } = require('../../config.json');
 import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../../MagicNumbers.json');
 import { data } from '../data';
@@ -70,13 +71,16 @@ router.get('/direct*', (req: AssRequest, res: AssResponse, next) => data.get(req
 			file.headers.forEach((value, header) => res.setHeader(header, value));
 			file.body?.pipe(res);
 		}),
+		sia: () => SkynetDownload(fileData)
+			.then((stream) => stream.pipe(res))
+			.then(() => SkynetDelete(fileData)),
 		local: () => {
 			res.header('Accept-Ranges', 'bytes').header('Content-Length', `${fileData.size}`).type(fileData.mimetype);
 			fs.createReadStream(fileData.path).pipe(res);
 		}
 	};
 
-	uploaders[s3enabled ? 's3' : 'local']();
+	return uploaders[s3enabled ? 's3' : useSia ? 'sia' : 'local']();
 }).catch(next));
 
 // Thumbnail response
@@ -123,7 +127,7 @@ router.get('/delete/:deleteId', (req: AssRequest, res: AssResponse, next) => {
 
 			// Save the file information
 			return Promise.all([
-				s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)),
+				s3enabled ? deleteS3(fileData) : !useSia ? fs.rmSync(path(fileData.path)) : () => Promise.resolve(),
 				(!fileData.is || (fileData.is.image || fileData.is.video)) && fs.existsSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))
 					? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)) : () => Promise.resolve()]);
 		})

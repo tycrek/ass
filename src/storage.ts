@@ -8,7 +8,7 @@ import Thumbnail from './thumbnails';
 import Vibrant from './vibrant';
 import Hash from './hash';
 import { generateId, log } from './utils';
-const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize } = require('../config.json');
+import { SkynetUpload } from './skynet';
 const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize, useSia } = require('../config.json');
 const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('../MagicNumbers.json');
 
@@ -98,22 +98,27 @@ export function processUploaded(req: AssRequest, res: AssResponse, next: Functio
 		.then(() => log.debug('Saving file', req.file!.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
 		.then(() =>
 			// skipcq: JS-0229
-			new Promise((resolve, reject) => s3enabled
+			new Promise((resolve, reject) => {
 
 				// Upload to Amazon S3
-				? s3.putObject({
+				if (s3enabled) return s3.putObject({
 					Bucket: s3bucket,
 					Key: req.file!.randomId.concat(req.file!.ext),
 					ACL: 'public-read',
 					ContentType: req.file!.mimetype,
 					Body: fs.createReadStream(req.file!.path)
-				}).promise().then(resolve).catch(reject)
+				}).promise().then(resolve).catch(reject);
+
+				// Use Sia Skynet
+				else if (useSia) return SkynetUpload(req.file!.path)
+					.then((skylink) => req.file!.randomId = skylink)
+					.then(resolve).catch(reject);
 
 				// Save to local storage
-				: fs.ensureDir(getDatedDirname())
+				else return fs.ensureDir(getDatedDirname())
 					.then(() => fs.copy(req.file!.path, getLocalFilename(req), { preserveTimestamps: true }))
-					.then(resolve)
-					.catch(reject)
+					.then(resolve).catch(reject);
+			}))
 		.then(() => log.debug('File saved', req.file!.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
 		.catch((err) => next(err))
 
