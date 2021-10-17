@@ -16,7 +16,7 @@ if (doSetup) {
 }
 
 // Load the config
-const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile } = require('../config.json');
+const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSia } = require('../config.json');
 
 //#region Imports
 import fs from 'fs-extra';
@@ -100,4 +100,4 @@ log
 	.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
 	.info('Custom index', ASS_INDEX_ENABLED ? `enabled` : 'disabled')
 	.blank()
-	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
+	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'}`));

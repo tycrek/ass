@@ -37,6 +37,7 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
+    "@skynetlabs/skynet-nodejs": "^2.3.0",
     "@tsconfig/node14": "^1.0.1",
     "@tycrek/express-nofavicon": "^1.0.3",
     "@tycrek/isprod": "^2.0.2",
