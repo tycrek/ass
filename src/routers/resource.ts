@@ -80,7 +80,7 @@ router.get('/direct*', (req: AssRequest, res: AssResponse, next) => data.get(req
 		}
 	};
 
-	return uploaders[s3enabled ? 's3' : useSia ? 'sia' : 'local']();
+	return uploaders[fileData.randomId.startsWith('sia://') ? 'sia' : s3enabled ? 's3' : 'local']();
 }).catch(next));
 
 // Thumbnail response
