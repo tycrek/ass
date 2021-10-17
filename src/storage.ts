@@ -9,6 +9,7 @@ import Vibrant from './vibrant';
 import Hash from './hash';
 import { generateId, log } from './utils';
 const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize } = require('../config.json');
+const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize, useSia } = require('../config.json');
 const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('../MagicNumbers.json');
 
 const ID_GEN_LENGTH = 32;
@@ -94,7 +95,7 @@ export function processUploaded(req: AssRequest, res: AssResponse, next: Functio
 		.then(() => { if (req.file!.size / Math.pow(1024, 2) > maxUploadSize) throw new Error('LIMIT_FILE_SIZE'); })
 
 		// Save file
-		.then(() => log.debug('Saving file', req.file!.originalname, s3enabled ? 'in S3' : 'on disk'))
+		.then(() => log.debug('Saving file', req.file!.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
 		.then(() =>
 			// skipcq: JS-0229
 			new Promise((resolve, reject) => s3enabled
@@ -113,8 +114,7 @@ export function processUploaded(req: AssRequest, res: AssResponse, next: Functio
 					.then(() => fs.copy(req.file!.path, getLocalFilename(req), { preserveTimestamps: true }))
 					.then(resolve)
 					.catch(reject)
-			))
-		.then(() => log.debug('File saved', req.file!.originalname, s3enabled ? 'in S3' : 'on disk'))
+		.then(() => log.debug('File saved', req.file!.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
 		.catch((err) => next(err))
 
 		// Delete the file
