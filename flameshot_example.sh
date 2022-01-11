@@ -7,14 +7,19 @@ DOMAIN="" # Your upload domain (without http:// or https://)
 flameshot config -f "$IMAGENAME" # Make sure that Flameshot names the file correctly
 flameshot gui -r -p "$IMAGEPATH" # Prompt the screenshot GUI
 
-# Upload the image and copy the response URL
-URL=$(curl -X POST \
-  -H "Content-Type: multipart/form-data" \
-  -H "Accept: application/json" \
-  -H "User-Agent: ShareX/13.4.0" \
-  -H "Authorization: $KEY" \
-  -F "file=@$IMAGEPATH$IMAGENAME.png" "https://$DOMAIN/" | grep -Po '(?<="resource":")[^"]+')
-# printf instead of echo as echo appends a newline
-printf "%s" "$URL" | xclip -sel clip
+FILE=$FILE/$IMAGENAME # Fİle path and file name combined
 
-rm "$IMAGEPATH$IMAGENAME.png" # Delete the image locally
+if test -f "$FILE/$IMAGENAME"; then # Check if file exists to handle Curl and rm errors
+
+# Upload the image and copy the response URL
+    URL=$(curl -X POST \
+      -H "Content-Type: multipart/form-data" \
+      -H "Accept: application/json" \
+      -H "User-Agent: ShareX/13.4.0" \
+      -H "Authorization: $KEY" \
+      -F "file=@$IMAGEPATH$IMAGENAME.png" "https://$DOMAIN/" | grep -Po '(?<="resource":")[^"]+')
+    rm $FILE
+fi
+# Echo instead of printf as echo is marginally faster than printf
+echo -n "$URL" | xclip -sel clip
+
