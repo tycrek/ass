@@ -21,5 +21,5 @@ if test -f "$FILE/$IMAGENAME"; then # Check if file exists to handle Curl and rm
     rm $FILE
 fi
 # Echo instead of printf as echo is marginally faster than printf
-echo -n "$URL" | xclip -sel clip
+echo -e "$URL" | xclip -sel clip
 
