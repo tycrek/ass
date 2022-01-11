@@ -12,13 +12,13 @@ FILE="$IMAGEPATH$IMAGENAME.png" # File path and file name combined
 # Check if file exists to handle Curl and rm errors
 if test -f "$FILE"; then
   # Then upload the image and copy the response URL
-  URL=$(curl -X POST \
+  URL=$(curl -s -o /dev/null -X POST \
     -H "Content-Type: multipart/form-data" \
     -H "Accept: application/json" \
     -H "User-Agent: ShareX/13.4.0" \
     -H "Authorization: $KEY" \
     -F "file=@$FILE" "https://$DOMAIN/" | grep -Po '(?<="resource":")[^"]+')
 
-  printf "%s" "$URL" | xclip -sel clip # Uses echo instead of printf as echo is marginally faster than printf
+  printf "%s" "$URL" | xclip -sel clip
   rm "$FILE"
 fi 
