@@ -19,6 +19,6 @@ if test -f "$FILE"; then
     -H "Authorization: $KEY" \
     -F "file=@$FILE" "https://$DOMAIN/" | grep -Po '(?<="resource":")[^"]+')
 
-  echo -n "$URL" | xclip -sel clip # Uses echo instead of printf as echo is marginally faster than printf
+  printf "%s" "$URL" | xclip -sel clip # Uses echo instead of printf as echo is marginally faster than printf
   rm "$FILE"
 fi 
