@@ -18,7 +18,7 @@ if test -f "$FILE/$IMAGENAME"; then # Check if file exists to handle Curl and rm
       -H "User-Agent: ShareX/13.4.0" \
       -H "Authorization: $KEY" \
       -F "file=@$IMAGEPATH$IMAGENAME.png" "https://$DOMAIN/" | grep -Po '(?<="resource":")[^"]+')
-    rm $FILE
+    rm "$FILE"
 fi
 # Echo instead of printf as echo is marginally faster than printf
 echo -e "$URL" | xclip -sel clip
