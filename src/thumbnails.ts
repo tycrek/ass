@@ -84,6 +84,6 @@ function getImageThumbnail(file: FileData) {
  */
 export default (file: FileData): Promise<string> =>
 	new Promise((resolve, reject) =>
-		(file.is.video ? getVideoThumbnail : file.is.image ? getImageThumbnail : () => Promise.resolve())(file)
+		(file.is.video ? getVideoThumbnail : (file.is.image && !file.mimetype.includes('webp')) ? getImageThumbnail : () => Promise.resolve())(file)
 			.then(() => resolve((file.is.video || file.is.image) ? getNewName(file.randomId) : file.is.audio ? 'views/ass-audio-icon.png' : 'views/ass-file-icon.png'))
 			.catch(reject));
