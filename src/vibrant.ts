@@ -26,4 +26,4 @@ function getVibrant(file: FileData, resolve: Function, reject: Function) {
  * @param {*} file The file to get a colour from
  * @returns The Vibrant colour as a Hex value (or random Hex value for videos)
  */
-export default (file: FileData): Promise<string> => new Promise((resolve, reject) => !file.is.image ? resolve(randomHexColour()) : getVibrant(file, resolve, reject)); // skipcq: JS-0229
+export default (file: FileData): Promise<string> => new Promise((resolve, reject) => (!file.is.image || file.mimetype.includes('webp')) ? resolve(randomHexColour()) : getVibrant(file, resolve, reject)); // skipcq: JS-0229
