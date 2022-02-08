@@ -74,10 +74,12 @@ router.get('/direct*', (req: AssRequest, res: AssResponse, next) => data.get(req
 		sia: () => SkynetDownload(fileData)
 			.then((stream) => stream.pipe(res))
 			.then(() => SkynetDelete(fileData)),
-		local: () => {
-			res.header('Accept-Ranges', 'bytes').header('Content-Length', `${fileData.size}`).type(fileData.mimetype);
-			fs.createReadStream(fileData.path).pipe(res);
-		}
+		local: () => fs.pathExists(path(fileData.path))
+			.then((exists) => {
+				if (!exists) throw new Error('File does not exist');
+				res.header('Accept-Ranges', 'bytes').header('Content-Length', `${fileData.size}`).type(fileData.mimetype);
+				fs.createReadStream(fileData.path).pipe(res);
+			})
 	};
 
 	return uploaders[fileData.randomId.startsWith('sia://') ? 'sia' : s3enabled ? 's3' : 'local']();
