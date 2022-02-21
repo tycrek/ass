@@ -51,7 +51,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - Download & delete resources
 - Fully customizable Discord embeds
 - Built-in web viewer with video & audio player
-- Embed images, gifs, & images directly in Discord
+- Embed images, gifs, & videos directly in Discord
 - Personal upload log using customizable Discord Webhooks
 - macOS/Linux support with alternative clients such as [Flameshot] ([script for ass]) & [MagicCap]
 - **Multiple URL styles**
