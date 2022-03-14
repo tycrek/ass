@@ -12,11 +12,11 @@ jobs:
       # Checkout repo
       - uses: actions/checkout@v2
 
-      # Set up Node 14
+      # Set up Node 16
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.4.1
         with:
-          node-version: 14.17.5
+          node-version: 16.14.0
 
       # Install npm 8 & TypeScript
       - name: Install global packages

@@ -51,7 +51,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - Download & delete resources
 - Fully customizable Discord embeds
 - Built-in web viewer with video & audio player
-- Embed images, gifs, & images directly in Discord
+- Embed images, gifs, & videos directly in Discord
 - Personal upload log using customizable Discord Webhooks
 - macOS/Linux support with alternative clients such as [Flameshot] ([script for ass]) & [MagicCap]
 - **Multiple URL styles**
@@ -192,7 +192,7 @@ docker-compose up --force-recreate --build -d && docker image prune -f # && dock
 <summary><em>Expand for local installation steps</em></summary>
 <br>
 
-1. You should have **Node.js 14.17** & **npm 8 or later** installed. 
+1. You should have **Node.js 16** & **npm 8 or later** installed. 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
 3. Run `npm i -g typescript` to install TypeScript globally
 4. Run `npm i --save-dev` to install the required dependencies (`--save-dev` is **required** for compilation)
@@ -403,7 +403,7 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `docker-resetup` | Alias for `docker-compose exec ass npm run setup && docker-compose restart` |
 
 [tlog Socket plugin]: https://github.com/tycrek/tlog#socket
-[`FORCE_COLOR`]: https://nodejs.org/dist/latest-v14.x/docs/api/cli.html#cli_force_color_1_2_3
+[`FORCE_COLOR`]: https://nodejs.org/dist/latest-v16.x/docs/api/cli.html#cli_force_color_1_2_3
 
 ## Flameshot users (Linux)
 

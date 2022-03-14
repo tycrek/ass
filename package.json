@@ -4,8 +4,8 @@
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
-    "node": ">=14.7.x <16",
-    "npm": ">=8.1.x"
+    "node": ">=16.14.x",
+    "npm": ">=8.3.x"
   },
   "scripts": {
     "dev": "npm run build && npm start",
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@skynetlabs/skynet-nodejs": "^2.3.0",
-    "@tsconfig/node14": "^1.0.1",
+    "@tsconfig/node16": "^1.0.1",
     "@tycrek/express-nofavicon": "^1.0.3",
     "@tycrek/express-postcss": "^0.1.0",
     "@tycrek/isprod": "^2.0.2",
@@ -61,7 +61,7 @@
     "jimp": "^0.16.1",
     "luxon": "^2.0.2",
     "marked": "^3.0.7",
-    "node-fetch": "^2.6.5",
+    "node-fetch": "^2.6.7",
     "node-vibrant": "^3.1.6",
     "postcss-font-magician": "^3.0.0",
     "prompt": "^1.2.0",
