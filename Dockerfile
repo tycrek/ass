@@ -3,8 +3,8 @@
 #  - tycrek <t@tycrek.com> (https://tycrek.com/)
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
 
-# Node 14 image
-FROM node:14.17.5
+# Node 16 image
+FROM node:16.14.0
 
 # Set working directory
 WORKDIR /opt/ass/
