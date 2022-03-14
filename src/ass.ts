@@ -21,8 +21,8 @@ const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSi
 //#region Imports
 import fs from 'fs-extra';
 import express, { Request, Response, NextFunction } from 'express';
-const nofavicon = require('@tycrek/express-nofavicon');
-const epcss = require('@tycrek/express-postcss');
+import nofavicon from '@tycrek/express-nofavicon';
+import epcss from '@tycrek/express-postcss';
 import tailwindcss from 'tailwindcss';
 import helmet from 'helmet';
 import uploadRouter from './routers/upload';
