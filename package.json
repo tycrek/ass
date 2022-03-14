@@ -57,7 +57,7 @@
     "helmet": "^4.6.0",
     "jimp": "^0.16.1",
     "luxon": "^2.0.2",
-    "marked": "^3.0.7",
+    "marked": "^4.0.10",
     "node-fetch": "^2.6.7",
     "node-vibrant": "^3.1.6",
     "prompt": "^1.2.0",
