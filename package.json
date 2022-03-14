@@ -58,7 +58,7 @@
     "jimp": "^0.16.1",
     "luxon": "^2.0.2",
     "marked": "^3.0.7",
-    "node-fetch": "^2.6.5",
+    "node-fetch": "^2.6.7",
     "node-vibrant": "^3.1.6",
     "prompt": "^1.2.0",
     "pug": "^3.0.2",
