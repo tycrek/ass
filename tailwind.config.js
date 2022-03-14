@@ -1,16 +1,12 @@
 const primary = '#FD842D';
 const primaryDim = '#B64D02';
 module.exports = {
-	mode: 'jit',
 	separator: '_',
 	darkMode: 'class',
 	plugins: [
 		//require('tailwindcss-textshadow')
 	],
-	purge: {
-		enabled: false,
-		content: ['./views/**/*.pug']
-	},
+	content: ['./views/**/*.pug'],
 	theme: {
 		extend: {
 			fontFamily: {
