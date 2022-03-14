@@ -25,7 +25,7 @@ html
 		.w-full.h-full.flex.justify-center.items-center.text-center
 			.bg-content-bg.rounded-24
 				h4.mt-6.mb-4.text-3xl.font-main!=title
-				figure.block.mx-10.my-4
+				figure.block.mx-10.my-4.flex.flex-col.align-items-center
 					if fileIs.video
 						video.res-media(controls loop muted playsinline preload='metadata')&attributes(resourceAttr)
 					else if fileIs.image
