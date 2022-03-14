@@ -22,13 +22,15 @@ const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSi
 import fs from 'fs-extra';
 import express from 'express';
 const nofavicon = require('@tycrek/express-nofavicon');
+const epcss = require('@tycrek/express-postcss');
+import tailwindcss from 'tailwindcss';
 import helmet from 'helmet';
 import marked from 'marked';
 import uploadRouter from './routers/upload';
 import resourceRouter from './routers/resource';
 import { path, log, getTrueHttp, getTrueDomain } from './utils';
 const { CODE_INTERNAL_SERVER_ERROR } = require('../MagicNumbers.json');
-const { name: ASS_NAME, version: ASS_VERSION } = require('../package.json');
+const { name: ASS_NAME, version: ASS_VERSION, homepage } = require('../package.json');
 //#endregion
 
 // Welcome :D
@@ -73,11 +75,7 @@ const ASS_INDEX = indexFile !== '' && fs.existsSync(path('share', indexFile)) &&
 const ASS_INDEX_ENABLED = typeof ASS_INDEX === typeof Function;
 app.get('/', (req, res, next) => ASS_INDEX_ENABLED // skipcq: JS-0229
 	? ASS_INDEX(req, res, next)
-	: fs.readFile(path('.github', 'README.md'))
-		.then((bytes) => bytes.toString())
-		.then((data) => marked(data))
-		.then((d) => res.render('index', { data: d }))
-		.catch(next));
+	: res.redirect(homepage));
 
 // Set up custom frontend
 const ASS_FRONTEND = fs.existsSync(path(`./${frontendName}/package.json`)) ? (require('submodule'), require(`../${frontendName}`)) : { enabled: false };
@@ -85,6 +83,18 @@ ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // 
 
 // Upload router (has to come after custom frontends as express-busboy interferes with all POST calls)
 app.use('/', ROUTERS.upload);
+
+// CSS
+app.use('/css', epcss({
+	cssPath: path('tailwind.css'),
+	plugins: [
+		tailwindcss,
+		require('autoprefixer')(),
+		require('cssnano')(),
+		require('postcss-font-magician')(),
+	],
+	warn: (warning: Error) => log.warn('PostCSS', warning.toString())
+}));
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
 app.use('/:resourceId', (req: AssRequest, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
