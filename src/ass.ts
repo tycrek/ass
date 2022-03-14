@@ -25,7 +25,6 @@ const nofavicon = require('@tycrek/express-nofavicon');
 const epcss = require('@tycrek/express-postcss');
 import tailwindcss from 'tailwindcss';
 import helmet from 'helmet';
-import marked from 'marked';
 import uploadRouter from './routers/upload';
 import resourceRouter from './routers/resource';
 import { path, log, getTrueHttp, getTrueDomain } from './utils';

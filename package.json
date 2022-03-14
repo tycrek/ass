@@ -60,7 +60,6 @@
     "helmet": "^4.6.0",
     "jimp": "^0.16.1",
     "luxon": "^2.0.2",
-    "marked": "^3.0.7",
     "node-fetch": "^2.6.7",
     "node-vibrant": "^3.1.6",
     "postcss-font-magician": "^3.0.0",
