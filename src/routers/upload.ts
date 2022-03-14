@@ -1,4 +1,4 @@
-import { FileData, AssRequest, AssResponse, ErrWrap, User } from "../definitions";
+import { ErrWrap, User } from "../definitions";
 
 import fs from 'fs-extra';
 import bb from 'express-busboy';
@@ -13,7 +13,7 @@ import { data } from '../data';
 import { users } from '../auth';
 
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
-import express from 'express';
+import express, { Request, Response } from 'express';
 const router = express.Router();
 
 // Set up express-busboy
@@ -31,7 +31,7 @@ bb.extend(router, {
 })); */
 
 // Block unauthorized requests and attempt token sanitization
-router.post('/', (req: AssRequest, res: AssResponse, next: Function) => {
+router.post('/', (req: Request, res: Response, next: Function) => {
 	req.headers.authorization = req.headers.authorization || '';
 	req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
 	!verify(req, users) ? log.warn('Upload blocked', 'Unauthorized').callback(() => res.sendStatus(CODE_UNAUTHORIZED)) : next(); // skipcq: JS-0093
@@ -41,10 +41,10 @@ router.post('/', (req: AssRequest, res: AssResponse, next: Function) => {
 router.post('/', processUploaded);
 
 // Max upload size error handling
-router.use('/', (err: ErrWrap, _req: AssRequest, res: AssResponse, next: Function) => err.message === 'LIMIT_FILE_SIZE' ? log.warn('Upload blocked', 'File too large').callback(() => res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`)) : next(err)); // skipcq: JS-0229
+router.use('/', (err: ErrWrap, _req: Request, res: Response, next: Function) => err.message === 'LIMIT_FILE_SIZE' ? log.warn('Upload blocked', 'File too large').callback(() => res.status(CODE_PAYLOAD_TOO_LARGE).send(`Max upload size: ${maxUploadSize}MB`)) : next(err)); // skipcq: JS-0229
 
 // Process uploaded file
-router.post('/', (req: AssRequest, res: AssResponse, next: Function) => {
+router.post('/', (req: Request, res: Response, next: Function) => {
 	// Load overrides
 	const trueDomain = getTrueDomain(req.headers['x-ass-domain']);
 	const generator = req.headers['x-ass-access'] || resourceIdType;

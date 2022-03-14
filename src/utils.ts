@@ -1,4 +1,4 @@
-import { AssRequest, FileData } from './definitions';
+import { FileData } from './definitions';
 import fs from 'fs-extra';
 import Path from 'path';
 import fetch from 'node-fetch';
@@ -9,6 +9,7 @@ import zwsGen from './generators/zws';
 import randomGen from './generators/random';
 import gfyGen from './generators/gfycat';
 import logger from './logger';
+import { Request } from 'express';
 const { HTTP, HTTPS, KILOBYTES } = require('../MagicNumbers.json');
 
 // Catch config.json not existing when running setup script
@@ -69,7 +70,7 @@ export function arrayEquals(arr1: any[], arr2: any[]) {
 	return arr1.length === arr2.length && arr1.slice().sort().every((value: string, index: number) => value === arr2.slice().sort()[index])
 };
 
-export function verify(req: AssRequest, users: JSON) {
+export function verify(req: Request, users: JSON) {
 	return req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization);
 }
 
@@ -106,7 +107,7 @@ module.exports = {
 	randomHexColour,
 	sanitize,
 	verify,
-	renameFile: (req: AssRequest, newName: string) => new Promise((resolve: Function, reject) => {
+	renameFile: (req: Request, newName: string) => new Promise((resolve: Function, reject) => {
 		try {
 			const paths = [req.file!.destination, newName];
 			fs.rename(path(req.file!.path), path(...paths));

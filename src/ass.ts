@@ -1,4 +1,4 @@
-import { AssRequest, AssResponse, ErrWrap } from './definitions';
+import { ErrWrap } from './definitions';
 
 let doSetup = null;
 try {
@@ -20,7 +20,7 @@ const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSi
 
 //#region Imports
 import fs from 'fs-extra';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 const nofavicon = require('@tycrek/express-nofavicon');
 const epcss = require('@tycrek/express-postcss');
 import tailwindcss from 'tailwindcss';
@@ -96,10 +96,10 @@ app.use('/css', epcss({
 }));
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
-app.use('/:resourceId', (req: AssRequest, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
+app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 // Error handler
-app.use((err: ErrWrap, _req: AssRequest, res: AssResponse, _next: Function) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
+app.use((err: ErrWrap, _req: Request, res: Response, _next: NextFunction) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
 
 // Host the server
 log
