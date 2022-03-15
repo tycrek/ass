@@ -2,11 +2,17 @@
  * Used for global data management
  */
 
-// Old data
-const { JsonDataEngine } = require('@tycrek/papito');
+import fs from 'fs-extra';
+import { Config } from 'ass-json';
+import { JsonDataEngine } from '@tycrek/papito'
+
+let theData: any;
 
 // Actual data engine
-const { dataEngine } = require('../config.json');
-const { _ENGINE_ } = require(dataEngine);
+const { dataEngine }: Config = fs.readJsonSync('config.json');
+import(dataEngine)
+	.then(({ _ENGINE_ }) => theData = _ENGINE_(new JsonDataEngine()))
+	.catch(err => console.error(err));
 
-export const data = _ENGINE_(new JsonDataEngine());
+// Export a self-calling const function returning the data
+export const data = ((): any => theData);

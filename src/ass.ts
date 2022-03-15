@@ -1,22 +1,5 @@
 import { ErrWrap } from './types/definitions';
 import { Config, MagicNumbers, Package } from 'ass-json';
-let doSetup = null;
-try {
-	// Check if config.json exists
-	require('../config.json');
-} catch (err) {
-	doSetup = require('./setup').doSetup;
-}
-
-// Run first time setup if using Docker (pseudo-process, setup will be run with docker exec)
-if (doSetup) {
-	doSetup();
-	// @ts-ignore
-	return;
-}
-
-// Load the config
-const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSia } = require('../config.json');
 
 //#region Imports
 import fs from 'fs-extra';
@@ -28,6 +11,17 @@ import helmet from 'helmet';
 
 import { path, log, getTrueHttp, getTrueDomain } from './utils';
 //#endregion
+
+//#region Setup - Run first time setup if using Docker (pseudo-process, setup will be run with docker exec)
+import { doSetup } from './setup';
+const configPath = path('config.json');
+if (!fs.existsSync(configPath)) {
+	doSetup();
+	// @ts-ignore
+	return;
+}
+//#endregion
+
 // Load the JSON
 const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSia }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_INTERNAL_SERVER_ERROR }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));

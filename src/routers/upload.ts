@@ -92,7 +92,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 	function genCheckId(resolve: Function, reject: Function) {
 		const uniqueId = gen();
 		attempts.count++;
-		data.has(uniqueId)
+		data().has(uniqueId)
 			.then((exists: boolean) => {
 				log.debug('ID check', exists ? 'Taken' : 'Available');
 				return attempts.count - 1 >= attempts.max ? reject(new Error('No ID\'s remaining')) : exists ? genCheckId(resolve, reject) : resolve(uniqueId);
@@ -106,7 +106,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 			resourceId = uniqueId;
 			log.debug('Saving data', data.name);
 		})
-		.then(() => data.put(resourceId.split('.')[0], req.file))
+		.then(() => data().put(resourceId.split('.')[0], req.file))
 		.then(() => {
 			// Log the upload
 			const logInfo = `${req.file!.originalname} (${req.file!.mimetype}, ${formatBytes(req.file!.size)})`;

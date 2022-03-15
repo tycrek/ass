@@ -22,13 +22,13 @@ router.use((req: Request, res: Response, next) => {
 	req.ass = { resourceId: escape(req.resourceId || '').split('.')[0] };
 
 	// If the ID is invalid, return 404. Otherwise, continue normally
-	data.has(req.ass.resourceId)
+	data().has(req.ass.resourceId)
 		.then((has: boolean) => has ? next() : res.sendStatus(CODE_NOT_FOUND)) // skipcq: JS-0229
 		.catch(next);
 });
 
 // View file
-router.get('/', (req: Request, res: Response, next) => data.get(req.ass?.resourceId).then((fileData: FileData) => {
+router.get('/', (req: Request, res: Response, next) => data().get(req.ass?.resourceId).then((fileData: FileData) => {
 	const resourceId = req.ass!.resourceId;
 
 	// Build OpenGraph meta tags
@@ -62,7 +62,7 @@ router.get('/', (req: Request, res: Response, next) => data.get(req.ass?.resourc
 }).catch(next));
 
 // Direct resource
-router.get('/direct*', (req: Request, res: Response, next) => data.get(req.ass?.resourceId).then((fileData: FileData) => {
+router.get('/direct*', (req: Request, res: Response, next) => data().get(req.ass?.resourceId).then((fileData: FileData) => {
 	// Send file as an attachement for downloads
 	if (req.query.download)
 		res.header('Content-Disposition', `attachment; filename="${fileData.originalname}"`);
@@ -89,7 +89,7 @@ router.get('/direct*', (req: Request, res: Response, next) => data.get(req.ass?.
 
 // Thumbnail response
 router.get('/thumbnail', (req: Request, res: Response, next) =>
-	data.get(req.ass?.resourceId)
+	data().get(req.ass?.resourceId)
 		.then(({ is, thumbnail }: { is: IsPossible, thumbnail: string }) => fs.readFile((!is || (is.image || is.video)) ? path(diskFilePath, 'thumbnails/', thumbnail) : is.audio ? 'views/ass-audio-icon.png' : 'views/ass-file-icon.png'))
 		.then((fileData: Buffer) => res.type('jpg').send(fileData))
 		.catch(next));
@@ -98,7 +98,7 @@ router.get('/thumbnail', (req: Request, res: Response, next) =>
 // https://oembed.com/
 // https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
 router.get('/oembed', (req: Request, res: Response, next) =>
-	data.get(req.ass?.resourceId)
+	data().get(req.ass?.resourceId)
 		.then((fileData: FileData) =>
 			res.type('json').send({
 				version: '1.0',
@@ -117,7 +117,7 @@ router.get('/oembed', (req: Request, res: Response, next) =>
 // Delete file
 router.get('/delete/:deleteId', (req: Request, res: Response, next) => {
 	let oldName: string, oldType: string; // skipcq: JS-0119
-	data.get(req.ass?.resourceId)
+	data().get(req.ass?.resourceId)
 		.then((fileData: FileData) => {
 			// Extract info for logs
 			oldName = fileData.originalname;
@@ -135,7 +135,7 @@ router.get('/delete/:deleteId', (req: Request, res: Response, next) => {
 				(!fileData.is || (fileData.is.image || fileData.is.video)) && fs.existsSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))
 					? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)) : () => Promise.resolve()]);
 		})
-		.then(() => data.del(req.ass?.resourceId))
+		.then(() => data().del(req.ass?.resourceId))
 		.then(() => (log.success('Deleted', oldName, oldType), res.type('text').send('File has been deleted!'))) // skipcq: JS-0090
 		.catch(next);
 });
