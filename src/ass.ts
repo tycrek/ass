@@ -3,7 +3,7 @@ import { Config, MagicNumbers, Package } from 'ass-json';
 
 //#region Imports
 import fs from 'fs-extra';
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import nofavicon from '@tycrek/express-nofavicon';
 import epcss from '@tycrek/express-postcss';
 import tailwindcss from 'tailwindcss';
@@ -99,7 +99,7 @@ app.use('/css', epcss({
 app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 // Error handler
-app.use((err: ErrWrap, _req: Request, res: Response, _next: NextFunction) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
+app.use((err: ErrWrap, _req: Request, res: Response) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
 
 (function start() {
 	if (data() == null) setTimeout(start, 100);
