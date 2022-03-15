@@ -34,7 +34,7 @@ function getDatedDirname() {
 }
 
 function getLocalFilename(req: Request) {
-	return `${getDatedDirname()}/${saveAsOriginal ? req.file!.originalname : req.file.sha1}`;
+	return `${getDatedDirname()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
 }
 
 export function processUploaded(req: Request, res: Response, next: Function) { // skipcq: JS-0045
@@ -42,9 +42,9 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 	req.file = req.files.file;
 
 	// Other fixes
-	req.file!.ext = '.'.concat((req.file.filename ?? '').split('.').pop() ?? '');
-	req.file!.originalname = req.file.filename ?? '';
-	req.file!.path = req.file.file ?? '';
+	req.file.ext = '.'.concat((req.file.filename ?? '').split('.').pop() ?? '');
+	req.file.originalname = req.file.filename ?? '';
+	req.file.path = req.file.file ?? '';
 	req.file.randomId = generateId('random', ID_GEN_LENGTH, 0, '');
 	req.file.deleteId = generateId('random', ID_GEN_LENGTH, 0, '');
 
@@ -57,13 +57,13 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 	};
 
 	// Specify correct type
-	const isType = req.file!.mimetype.includes('image') ? 'image' : req.file!.mimetype.includes('video') ? 'video' : req.file.mimetype.includes('audio') ? 'audio' : 'other';
+	const isType = req.file!.mimetype.includes('image') ? 'image' : req.file.mimetype.includes('video') ? 'video' : req.file.mimetype.includes('audio') ? 'audio' : 'other';
 	req.file.is[isType] = true;
 
 	// Block the resource if the mimetype is not an image or video
 	if (mediaStrict && !ALLOWED_MIMETYPES.test(req.file.mimetype))
 		return log
-			.warn('Upload blocked', req.file!.originalname, req.file.mimetype)
+			.warn('Upload blocked', req.file.originalname, req.file.mimetype)
 			.warn('Strict media mode', 'only images, videos, & audio are file permitted')
 			.callback(() =>
 				fs.remove(req.file.path)
@@ -105,7 +105,7 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 				// Upload to Amazon S3
 				if (s3enabled) return s3.putObject({
 					Bucket: s3bucket,
-					Key: req.file!.randomId.concat(req.file.ext),
+					Key: req.file.randomId.concat(req.file.ext),
 					ACL: 'public-read',
 					ContentType: req.file.mimetype,
 					Body: fs.createReadStream(req.file.path)
