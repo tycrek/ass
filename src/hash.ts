@@ -1,4 +1,4 @@
-import { FileData } from './definitions';
+import { FileData } from './types/definitions';
 import fs from 'fs-extra';
 import crypto from 'crypto';
 import toArray from 'stream-to-array';

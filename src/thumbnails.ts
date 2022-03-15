@@ -1,11 +1,13 @@
-import { FileData } from "./definitions";
+import { FileData } from './types/definitions';
+import { Config } from 'ass-json';
+import fs from 'fs-extra';
 import ffmpeg from 'ffmpeg-static';
 import Jimp from 'jimp';
 // @ts-ignore
 import shell from 'any-shell-escape';
 import { exec } from 'child_process';
 import { isProd, path } from './utils';
-const { diskFilePath } = require('../config.json');
+const { diskFilePath }: Config = fs.readJsonSync(path('config.json'));
 
 // Thumbnail parameters
 const THUMBNAIL = {

@@ -1,4 +1,5 @@
-import { FileData, IsPossible } from '../definitions';
+import { FileData, IsPossible } from '../types/definitions';
+import { Config, MagicNumbers } from 'ass-json';
 
 import fs from 'fs-extra';
 import escape from 'escape-html';
@@ -6,9 +7,9 @@ import fetch, { Response as FetchResponse } from 'node-fetch';
 import { Request, Response } from 'express';
 import { deleteS3 } from '../storage';
 import { SkynetDelete, SkynetDownload } from '../skynet';
-const { diskFilePath, s3enabled, viewDirect, useSia } = require('../../config.json');
 import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
-const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../../MagicNumbers.json');
+const { diskFilePath, s3enabled, viewDirect, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 import { data } from '../data';
 import { users } from '../auth';
 

@@ -1,4 +1,4 @@
-import { FileData } from './definitions';
+import { FileData } from './types/definitions';
 import Vibrant from 'node-vibrant';
 import { randomHexColour } from './utils';
 

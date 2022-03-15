@@ -1,17 +1,18 @@
 // https://docs.digitalocean.com/products/spaces/resources/s3-sdk-examples/
 // https://www.digitalocean.com/community/tutorials/how-to-upload-a-file-to-object-storage-with-node-js
-import { FileData } from './definitions';
+import { FileData } from './types/definitions';
+import { Config, MagicNumbers } from 'ass-json'
 
 import fs, { Stats } from 'fs-extra';
 import aws from 'aws-sdk';
 import Thumbnail from './thumbnails';
 import Vibrant from './vibrant';
 import Hash from './hash';
-import { generateId, log } from './utils';
+import { path, generateId, log } from './utils';
 import { SkynetUpload } from './skynet';
 import { Request, Response } from 'express';
-const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize, useSia } = require('../config.json');
-const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('../MagicNumbers.json');
+const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { CODE_UNSUPPORTED_MEDIA_TYPE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 
 const ID_GEN_LENGTH = 32;
 const ALLOWED_MIMETYPES = /(image)|(video)|(audio)\//;

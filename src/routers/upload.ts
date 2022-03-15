@@ -1,4 +1,5 @@
-import { ErrWrap, User } from "../definitions";
+import { ErrWrap, User } from '../types/definitions';
+import { Config, MagicNumbers } from 'ass-json';
 
 import fs from 'fs-extra';
 import bb from 'express-busboy';
@@ -6,11 +7,11 @@ import bb from 'express-busboy';
 import { DateTime } from 'luxon';
 import { Webhook, MessageBuilder } from 'discord-webhook-node';
 import { processUploaded } from '../storage';
-const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace } = require('../../config.json');
 import { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
-const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE } = require('../../MagicNumbers.json');
 import { data } from '../data';
 import { users } from '../auth';
+const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace }: Config = fs.readJsonSync(path('config.json'));
+const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 import express, { Request, Response } from 'express';

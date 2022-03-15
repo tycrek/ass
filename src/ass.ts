@@ -1,5 +1,5 @@
-import { ErrWrap } from './definitions';
-
+import { ErrWrap } from './types/definitions';
+import { Config, MagicNumbers, Package } from 'ass-json';
 let doSetup = null;
 try {
 	// Check if config.json exists
@@ -25,15 +25,21 @@ import nofavicon from '@tycrek/express-nofavicon';
 import epcss from '@tycrek/express-postcss';
 import tailwindcss from 'tailwindcss';
 import helmet from 'helmet';
+
+import { path, log, getTrueHttp, getTrueDomain } from './utils';
+//#endregion
+// Load the JSON
+const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { CODE_INTERNAL_SERVER_ERROR }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
+const { name, version, homepage }: Package = fs.readJsonSync(path('package.json'));
+
+//#region Local imports
 import uploadRouter from './routers/upload';
 import resourceRouter from './routers/resource';
-import { path, log, getTrueHttp, getTrueDomain } from './utils';
-const { CODE_INTERNAL_SERVER_ERROR } = require('../MagicNumbers.json');
-const { name: ASS_NAME, version: ASS_VERSION, homepage } = require('../package.json');
 //#endregion
 
 // Welcome :D
-log.blank().info(`* ${ASS_NAME} v${ASS_VERSION} *`).blank();
+log.blank().info(`* ${name} v${version} *`).blank();
 
 //#region Variables, module setup
 const app = express();

@@ -1,4 +1,4 @@
-import { FileData } from './definitions';
+import { FileData } from './types/definitions';
 import fs from 'fs-extra';
 import Path from 'path';
 import fetch from 'node-fetch';
