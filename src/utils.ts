@@ -110,9 +110,9 @@ module.exports = {
 	verify,
 	renameFile: (req: Request, newName: string) => new Promise((resolve: Function, reject) => {
 		try {
-			const paths = [req.file!.destination, newName];
-			fs.rename(path(req.file!.path), path(...paths));
-			req.file!.path = Path.join(...paths);
+			const paths = [req.file.destination, newName];
+			fs.rename(path(req.file.path), path(...paths));
+			req.file.path = Path.join(...paths);
 			resolve();
 		} catch (err) {
 			reject(err);

@@ -51,19 +51,19 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 	const generator = req.headers['x-ass-access']?.toString() || resourceIdType;
 
 	// Save domain with file
-	req.file!.domain = `${getTrueHttp()}${trueDomain}`;
+	req.file.domain = `${getTrueHttp()}${trueDomain}`;
 
 	// Get the uploaded time in milliseconds
-	req.file!.timestamp = DateTime.now().toMillis();
+	req.file.timestamp = DateTime.now().toMillis();
 
 	// Save the timezone offset
 	req.file!.timeoffset = req.headers['x-ass-timeoffset']?.toString() || 'UTC+0';
 
 	// Keep track of the token that uploaded the resource
-	req.file!.token = req.token ?? '';
+	req.file.token = req.token ?? '';
 
 	// Attach any embed overrides, if necessary
-	req.file!.opengraph = {
+	req.file.opengraph = {
 		title: req.headers['x-ass-og-title'],
 		description: req.headers['x-ass-og-description'],
 		author: req.headers['x-ass-og-author'],
@@ -74,13 +74,13 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 	};
 
 	// Fix spaces in originalname
-	req.file!.originalname = req.file!.originalname.replace(/\s/g, spaceReplace === '!' ? '' : spaceReplace);
+	req.file!.originalname = req.file.originalname.replace(/\s/g, spaceReplace === '!' ? '' : spaceReplace);
 
 	// Generate a unique resource ID
 	let resourceId = '';
 
 	// Function to call to generate a fresh ID. Used for multiple attempts in case an ID is already taken
-	const gen = () => generateId(generator, resourceIdSize, parseInt(req.headers['x-ass-gfycat']?.toString() || gfyIdSize.toString()), req.file!.originalname);
+	const gen = () => generateId(generator, resourceIdSize, parseInt(req.headers['x-ass-gfycat']?.toString() || gfyIdSize.toString()), req.file.originalname);
 
 	// Keeps track of the number of attempts in case all ID's are taken
 	const attempts = {
@@ -109,13 +109,13 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 		.then(() => data().put(resourceId.split('.')[0], req.file))
 		.then(() => {
 			// Log the upload
-			const logInfo = `${req.file!.originalname} (${req.file!.mimetype}, ${formatBytes(req.file!.size)})`;
+			const logInfo = `${req.file!.originalname} (${req.file!.mimetype}, ${formatBytes(req.file.size)})`;
 			log.success('File uploaded', logInfo, `uploaded by ${users[req.token ?? ''] ? users[req.token ?? ''].username : '<token-only>'}`);
 
 			// Build the URLs
 			const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
 			const thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
-			const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file!.deleteId}`;
+			const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
 
 			// Send the response
 			res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
@@ -135,9 +135,9 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 							.setTitle(logInfo)
 							//@ts-ignore
 							.setURL(resourceUrl)
-							.setDescription(`**Size:** \`${formatBytes(req.file!.size)}\`\n**[Delete](${deleteUrl})**`)
+							.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
 							.setThumbnail(thumbnailUrl)
-							.setColor(req.file!.vibrant)
+							.setColor(req.file.vibrant)
 							.setTimestamp();
 
 						// Send the embed to the webhook, then delete the client after to free resources
@@ -149,7 +149,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 
 					// Also update the users upload count
 					if (!users[req.token ?? '']) {
-						const generateUsername = () => generateId('random', 20, 0, req.file!.size.toString()); // skipcq: JS-0074
+						const generateUsername = () => generateId('random', 20, 0, req.file.size.toString()); // skipcq: JS-0074
 						let username: string = generateUsername();
 
 						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
