@@ -75,24 +75,22 @@ export function verify(req: Request, users: JSON) {
 	return req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization);
 }
 
-export function generateId(mode: string, length: number, gfyLength: number, originalName: string) {
-	return (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName);
-}
-
-// Set up pathing
-export const path = (...paths: string[]) => Path.join(process.cwd(), ...paths);
-
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
 	r: 'random',    // Use a randomly generated ID with a mixed-case alphanumeric character set
 	gfy: 'gfycat'   // Gfycat-style ID's (https://gfycat.com/unsungdiscretegrub)
 };
-
 const GENERATORS = new Map();
 GENERATORS.set(idModes.zws, zwsGen);
 GENERATORS.set(idModes.r, randomGen);
 GENERATORS.set(idModes.gfy, gfyGen);
+export function generateId(mode: string, length: number, gfyLength: number, originalName: string) {
+	return (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName);
+}
+
+// Set up pathing
+export const path = (...paths: string[]) => Path.join(process.cwd(), ...paths);
 
 export const isProd = require('@tycrek/isprod')();
 module.exports = {
