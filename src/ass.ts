@@ -101,12 +101,14 @@ app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resour
 // Error handler
 app.use((err: ErrWrap, _req: Request, res: Response, _next: NextFunction) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
 
-// Host the server
-log
-	.info('Users', `${Object.keys(users).length}`)
-	.info('Files', `${data.size}`)
-	.info('Data engine', data.name, data.type)
-	.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
-	.info('Custom index', ASS_INDEX_ENABLED ? `enabled` : 'disabled')
-	.blank()
-	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'}`));
+(function start() {
+	if (data() == null) setTimeout(start, 100);
+	else log
+		.info('Users', `${Object.keys(users).length}`)
+		.info('Files', `${data().size}`)
+		.info('Data engine', data().name, data().type)
+		.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
+		.info('Custom index', ASS_INDEX_ENABLED ? `enabled` : 'disabled')
+		.blank()
+		.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'}`));
+})();
