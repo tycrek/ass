@@ -9,6 +9,7 @@ services:
     command: npm start
     container_name: ass-docker
     restart: unless-stopped
+    user: 1000:1000
     ports:
       - "40115:40115"
     volumes:
