@@ -17,7 +17,7 @@ do
 done
 
 # Ensure proper file permissions for rootless
-chown -R 1000:1000 config.json auth.json data.json uploads share
+chown -R 1001:1001 config.json auth.json data.json uploads share
 chmod -R 774 config.json data.json uploads share
 
 # Wait for user to confirm
