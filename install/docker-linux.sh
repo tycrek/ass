@@ -16,6 +16,10 @@ do
 	fi
 done
 
+# Ensure proper file permissions for rootless
+chown -R 1000:1000 config.json auth.json data.json uploads share
+chmod -R 774 config.json data.json uploads share
+
 # Wait for user to confirm
 echo "Continuing will run docker-compose. Continue? (Press Ctrl+C to abort)"
 read -n 1 -s -r -p "Press any key to continue..."
