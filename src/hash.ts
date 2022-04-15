@@ -6,8 +6,6 @@ import { log } from './utils';
 
 /**
  * Generates a SHA1 hash for the provided file
- * @param {*} file The file to hash
- * @returns The SHA1 hash
  */
 export default (file: FileData): Promise<string> =>
 	new Promise((resolve, reject) =>

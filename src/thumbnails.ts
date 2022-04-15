@@ -19,9 +19,6 @@ const THUMBNAIL = {
 
 /**
  * Builds a safe escaped ffmpeg command
- * @param {String} src Path to the input file
- * @param {String} dest Path of the output file
- * @returns {String} The command to execute
  */
 function getCommand(src: String, dest: String) {
 	return shell([
@@ -37,8 +34,6 @@ function getCommand(src: String, dest: String) {
 
 /**
  * Builds a thumbnail filename
- * @param {String} oldName The original filename
- * @returns {String} The filename for the thumbnail
  */
 function getNewName(oldName: String) {
 	return oldName.concat('.thumbnail.jpg');
@@ -46,8 +41,6 @@ function getNewName(oldName: String) {
 
 /**
  * Builds a path to the thumbnails
- * @param {String} oldName The original filename
- * @returns {String} The path to the thumbnail
  */
 function getNewNamePath(oldName: String) {
 	return path(diskFilePath, 'thumbnails/', getNewName(oldName));
@@ -55,7 +48,6 @@ function getNewNamePath(oldName: String) {
 
 /**
  * Extracts an image from a video file to use as a thumbnail, using ffmpeg
- * @param {*} file The video file to pull a frame from
  */
 function getVideoThumbnail(file: FileData) {
 	return new Promise((resolve: Function, reject: Function) => exec(
@@ -67,7 +59,6 @@ function getVideoThumbnail(file: FileData) {
 
 /**
  * Generates a thumbnail for the provided image
- * @param {*} file The file to generate a thumbnail for
  */
 function getImageThumbnail(file: FileData) {
 	return new Promise((resolve, reject) =>
@@ -81,8 +72,6 @@ function getImageThumbnail(file: FileData) {
 
 /**
  * Generates a thumbnail
- * @param {*} file The file to generate a thumbnail for
- * @returns The thumbnail filename (NOT the path)
  */
 export default (file: FileData): Promise<string> =>
 	new Promise((resolve, reject) =>
