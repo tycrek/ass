@@ -2,7 +2,8 @@ import { FileData } from './types/definitions';
 import { Config } from 'ass-json';
 import fs from 'fs-extra';
 import ffmpeg from 'ffmpeg-static';
-import Jimp from 'jimp';
+import sharp from 'sharp';
+
 // @ts-ignore
 import shell from 'any-shell-escape';
 import { exec } from 'child_process';
@@ -70,11 +71,10 @@ function getVideoThumbnail(file: FileData) {
  */
 function getImageThumbnail(file: FileData) {
 	return new Promise((resolve, reject) =>
-		Jimp.read(file.path)
-			.then((image) => image
-				.quality(THUMBNAIL.QUALITY)
-				.resize(THUMBNAIL.WIDTH, THUMBNAIL.HEIGHT, Jimp.RESIZE_BICUBIC)
-				.write(getNewNamePath(file.randomId)))
+		sharp(file.path)
+			.resize(THUMBNAIL.WIDTH, THUMBNAIL.HEIGHT, { kernel: 'cubic' })
+			.jpeg({ quality: THUMBNAIL.QUALITY })
+			.toFile(getNewNamePath(file.randomId))
 			.then(resolve)
 			.catch(reject));
 }

@@ -1,5 +1,6 @@
 import { FileData } from './types/definitions';
 import Vibrant from 'node-vibrant';
+import sharp from 'sharp';
 import { randomHexColour } from './utils';
 
 // Vibrant parameters
@@ -13,10 +14,11 @@ const QUALITY = 3;
  * @param {*} reject Runs if Promise failed
  */
 function getVibrant(file: FileData, resolve: Function, reject: Function) {
-	Vibrant.from(file.path)
-		.maxColorCount(COLOR_COUNT)
-		.quality(QUALITY)
-		.getPalette()
+	sharp(file.path).png().toBuffer()
+		.then((data) => Vibrant.from(data)
+			.maxColorCount(COLOR_COUNT)
+			.quality(QUALITY)
+			.getPalette())
 		.then((palettes) => resolve(palettes[Object.keys(palettes).sort((a, b) => palettes[b]!.population - palettes[a]!.population)[0]]!.hex))
 		.catch((err) => reject(err));
 }
