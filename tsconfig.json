@@ -2,8 +2,9 @@
 	"extends": "@tsconfig/node16/tsconfig.json",
 	"compilerOptions": {
 		"outDir": "./dist",
+		"target": "ES2021",
 		"lib": [
-			"ES2020",
+			"ES2021",
 			"DOM"
 		],
 		"allowJs": true,

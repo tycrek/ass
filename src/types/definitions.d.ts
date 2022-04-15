@@ -1,4 +1,16 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
+
+declare global {
+	namespace Express {
+		interface Request {
+			resourceId: string
+			ass: { resourceId: string }
+			token: string
+			file: FileData
+			files: { [key: string]: any }
+		}
+	}
+}
 
 export interface User {
 	token: string
@@ -53,18 +65,6 @@ export interface OpenGraphData {
 	provider?: string | string[]
 	providerUrl?: string | string[]
 	color?: string | string[]
-}
-
-export interface AssRequest extends Request {
-	resourceId?: string
-	ass?: { resourceId: string }
-	token?: string
-	file?: FileData
-	files?: { [key: string]: any }
-}
-
-export interface AssResponse extends Response {
-
 }
 
 export interface ErrWrap extends Error {

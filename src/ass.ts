@@ -1,39 +1,39 @@
-import { AssRequest, AssResponse, ErrWrap } from './definitions';
+import { ErrWrap } from './types/definitions';
+import { Config, MagicNumbers, Package } from 'ass-json';
 
-let doSetup = null;
-try {
-	// Check if config.json exists
-	require('../config.json');
-} catch (err) {
-	doSetup = require('./setup').doSetup;
-}
+//#region Imports
+import fs from 'fs-extra';
+import express, { Request, Response } from 'express';
+import nofavicon from '@tycrek/express-nofavicon';
+import epcss from '@tycrek/express-postcss';
+import tailwindcss from 'tailwindcss';
+import helmet from 'helmet';
 
-// Run first time setup if using Docker (pseudo-process, setup will be run with docker exec)
-if (doSetup) {
+import { path, log, getTrueHttp, getTrueDomain } from './utils';
+//#endregion
+
+//#region Setup - Run first time setup if using Docker (pseudo-process, setup will be run with docker exec)
+import { doSetup } from './setup';
+const configPath = path('config.json');
+if (!fs.existsSync(configPath)) {
 	doSetup();
 	// @ts-ignore
 	return;
 }
+//#endregion
 
-// Load the config
-const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSia } = require('../config.json');
+// Load the JSON
+const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { CODE_INTERNAL_SERVER_ERROR }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
+const { name, version, homepage }: Package = fs.readJsonSync(path('package.json'));
 
-//#region Imports
-import fs from 'fs-extra';
-import express from 'express';
-const nofavicon = require('@tycrek/express-nofavicon');
-const epcss = require('@tycrek/express-postcss');
-import tailwindcss from 'tailwindcss';
-import helmet from 'helmet';
+//#region Local imports
 import uploadRouter from './routers/upload';
 import resourceRouter from './routers/resource';
-import { path, log, getTrueHttp, getTrueDomain } from './utils';
-const { CODE_INTERNAL_SERVER_ERROR } = require('../MagicNumbers.json');
-const { name: ASS_NAME, version: ASS_VERSION, homepage } = require('../package.json');
 //#endregion
 
 // Welcome :D
-log.blank().info(`* ${ASS_NAME} v${ASS_VERSION} *`).blank();
+log.blank().info(`* ${name} v${version} *`).blank();
 
 //#region Variables, module setup
 const app = express();
@@ -96,17 +96,19 @@ app.use('/css', epcss({
 }));
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
-app.use('/:resourceId', (req: AssRequest, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
+app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 // Error handler
-app.use((err: ErrWrap, _req: AssRequest, res: AssResponse, _next: Function) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
+app.use((err: ErrWrap, _req: Request, res: Response) => log.error(err).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
 
-// Host the server
-log
-	.info('Users', `${Object.keys(users).length}`)
-	.info('Files', `${data.size}`)
-	.info('Data engine', data.name, data.type)
-	.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
-	.info('Custom index', ASS_INDEX_ENABLED ? `enabled` : 'disabled')
-	.blank()
-	.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'}`));
+(function start() {
+	if (data() == null) setTimeout(start, 100);
+	else log
+		.info('Users', `${Object.keys(users).length}`)
+		.info('Files', `${data().size}`)
+		.info('Data engine', data().name, data().type)
+		.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
+		.info('Custom index', ASS_INDEX_ENABLED ? `enabled` : 'disabled')
+		.blank()
+		.express().Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'}`));
+})();

@@ -1,7 +1,7 @@
-import { FileData } from "./definitions";
+import { FileData } from './types/definitions';
 import fs, { ReadStream } from 'fs-extra';
 import { path } from './utils';
-const { SkynetClient } = require('@skynetlabs/skynet-nodejs');
+import { SkynetClient } from '@skynetlabs/skynet-nodejs';
 
 function getFullPath(fileData: FileData) {
 	return path('share', '.skynet', `${fileData.randomId}${fileData.ext}`.replace(/sia\:\/\//gi, ''));
