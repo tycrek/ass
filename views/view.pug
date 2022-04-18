@@ -41,4 +41,5 @@ html
 						span #{timestamp} (#{size})
 						br
 						span: a.link(href='#' onclick=`window.location = '${resourceAttr.src}?download=yes'; return false;` download=title) Download
-				.mx-4.mb-8.text-footer: p Image hosted by #[a.link(href='https://github.com/tycrek/ass' target='_blank'): strong ass], the superior self-hosted ShareX server
+				if showAd
+					.mx-4.mb-8.text-footer: p Image hosted by #[a.link(href='https://github.com/tycrek/ass' target='_blank'): strong ass], the superior self-hosted ShareX server

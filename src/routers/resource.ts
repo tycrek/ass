@@ -16,6 +16,10 @@ import { users } from '../auth';
 import express from 'express';
 const router = express.Router();
 
+let theme = {};
+if (path('share/', 'theme.json'))
+	theme = fs.readJsonSync(path('share/', 'theme.json'));
+
 // Middleware for parsing the resource ID and handling 404
 router.use((req: Request, res: Response, next) => {
 	// Parse the resource ID
@@ -57,7 +61,9 @@ router.get('/', (req: Request, res: Response, next) => data().get(req.ass.resour
 		ogtype: fileData.is.video ? 'video.other' : fileData.is.image ? 'image' : 'website',
 		urlType: `og:${fileData.is.video ? 'video' : fileData.is.audio ? 'audio' : 'image'}`,
 		opengraph: replaceholder(ogs.join('\n'), fileData.size, fileData.timestamp, fileData.timeoffset, fileData.originalname),
-		viewDirect
+		viewDirect,
+		//@ts-ignore
+		showAd: theme.showAd ?? true,
 	});
 }).catch(next));
 
