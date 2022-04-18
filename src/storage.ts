@@ -34,7 +34,16 @@ function getDatedDirname() {
 }
 
 function getLocalFilename(req: Request) {
-	return `${getDatedDirname()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
+	let name = `${getDatedDirname()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
+
+	// Append a number if this file has already been uploaded before
+	let count = 0;
+	while (fs.existsSync(path(name))) {
+		count++
+		name = count == 1 ? name.concat(`-${count}`) : name.substring(0, name.lastIndexOf('-')).concat(`-${count}`);
+	}
+
+	return name;
 }
 
 export function processUploaded(req: Request, res: Response, next: Function) { // skipcq: JS-0045
@@ -82,6 +91,9 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 	delete req.file.truncated;
 	delete req.file.done;
 
+	// Temp file name used in case file already exists (long story; just don't touch this)
+	let tempFileName = '';
+
 	// Operations
 	// @ts-ignore
 	Promise.all([Thumbnail(req.file), Vibrant(req.file), Hash(req.file), fs.stat(req.file.path)])
@@ -118,7 +130,8 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 
 				// Save to local storage
 				else return fs.ensureDir(getDatedDirname())
-					.then(() => fs.copy(req.file.path, getLocalFilename(req), { preserveTimestamps: true }))
+					.then(() => tempFileName = getLocalFilename(req))
+					.then(() => fs.copy(req.file.path, tempFileName, { preserveTimestamps: true }))
 					.then(resolve).catch(reject);
 			}))
 		.then(() => log.debug('File saved', req.file.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
@@ -129,7 +142,7 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 		.then(() => log.debug('Temp file', 'deleted'))
 
 		// Fix the file path
-		.then(() => !s3enabled && (req.file.path = getLocalFilename(req))) // skipcq: JS-0090
+		.then(() => !s3enabled && (req.file.path = tempFileName)) // skipcq: JS-0090
 		.then(() => next())
 		.catch((err) => next(err));
 }
