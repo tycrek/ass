@@ -65,6 +65,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - Usage metrics
 - Thumbnail support
 - Mimetype blocking
+- Themeable viewer page
 - Basic multi-user support
 - Configurable global upload size limit (per-user coming soon)
 - Custom pluggable frontends using [Git Submodules]
@@ -289,6 +290,21 @@ You may use Discord webhooks as an easy way to keep track of your uploads. The f
 Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, & a link to delete the file. To disable webhooks, simply remove the headers from your config.
 
 [create a new Webhook]: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+
+## Customizing the viewer
+
+If you want to customize the font or colours of the viewer page, create a file in the `share/` directory called `theme.json`. Available options are:
+
+| Option | Purpose |
+| ------ | ------- |
+| **`font`** | The font family to use; defaults to `"Josefin Sans"`. Fonts with a space should be surrounded by double quotes. |
+| **`bgPage`** | Background colour for the whole page |
+| **`bgViewer`** | Background colour for the viewer element |
+| **`txtPrimary`** | Primary text colour; this should be your main brand colour. |
+| **`txtSecondary`** | Secondary text colour; this is used for the file details. |
+| **`linkHover`** | Colour of the `hover` effect for links |
+| **`linkActive`** | Colour of the `active` effect for links |
+| **`borderHover`** | Colour of the `hover` effect for borders; this is used for the underlining links. |
 
 ## Custom index
 
