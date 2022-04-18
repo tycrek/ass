@@ -179,7 +179,7 @@ docker-compose up --force-recreate --build -d && docker image prune -f # && dock
 
 - `docker-compose` exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
    - `uploads/`
-   - `share/` (for future use)
+   - `share/`
    - `config.json`
    - `auth.json`
    - `data.json`
