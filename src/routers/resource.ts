@@ -17,7 +17,7 @@ import express from 'express';
 const router = express.Router();
 
 let theme = {};
-if (path('share/', 'theme.json'))
+if (fs.existsSync(path('share/', 'theme.json')))
 	theme = fs.readJsonSync(path('share/', 'theme.json'));
 
 // Middleware for parsing the resource ID and handling 404
