@@ -23,7 +23,7 @@ if (!fs.existsSync(configPath)) {
 //#endregion
 
 // Load the JSON
-const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSia, diskFilePath }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_INTERNAL_SERVER_ERROR }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 const { name, version, homepage }: Package = fs.readJsonSync(path('package.json'));
 
@@ -46,6 +46,9 @@ const ROUTERS = {
 import { users } from './auth';
 import { data } from './data';
 //#endregion
+
+// Create thumbnails directory
+fs.ensureDirSync(path(diskFilePath, 'thumbnails'));
 
 // Enable/disable Express features
 app.enable('case sensitive routing');
