@@ -7,6 +7,17 @@ const { bucketSize } = require('./storage');
 const { TLog } = require('@tycrek/log');
 const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
 
+/**
+ * Thank you CoPilot for helping write whatever the fuck this is -tycrek, 2022-04-18
+ */
+function whileWait(expression, timeout = 1000) {
+	return new Promise(async (resolve, reject) => {
+		while (expression())
+			await new Promise((resolve) => setTimeout(resolve, timeout));
+		resolve();
+	});
+}
+
 module.exports = () => {
 	const data = require('./data').data;
 	const { users } = fs.readJsonSync(path.join(process.cwd(), 'auth.json'));
@@ -16,7 +27,8 @@ module.exports = () => {
 	let oldSize = 0;
 	let d = [];
 
-	data.get()
+	whileWait(() => data() === undefined)
+		.then(() => data().get())
 		.then((D) => (d = D.map(([, resource]) => resource)))
 		.then(() =>
 			d.forEach(({ token, size }) => {
@@ -47,7 +59,7 @@ module.exports = () => {
 			Object.values(users).forEach(({ username, count, size }) => log.info(`- ${username}`, formatBytes(size), `${count} files`));
 			process.exit(0);
 		})
-		.catch(log.c.error);
+		.catch(console.error);
 }
 
 if (require.main === module) module.exports();
