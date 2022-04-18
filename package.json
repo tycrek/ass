@@ -17,6 +17,7 @@
     "engine-check": "node dist/checkEngine.js",
     "prestart": "npm run engine-check",
     "presetup": "npm run engine-check",
+    "purge": "node dist/purge.js",
     "docker-logs": "docker-compose logs -f --tail=50 --no-log-prefix ass",
     "docker-update": "git pull && npm run docker-uplite",
     "docker-uplite": "docker-compose up --force-recreate --build -d && docker image prune -f",

@@ -412,6 +412,7 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `dev` | Chains the `build` and `compile` scripts together. |
 | `setup` | Starts the easy setup process. Should be run after any updates that introduce new config options. |
 | `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
+| `purge` | Purges all uploads and data associated with them. This does **not** delete any users, however. |
 | `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
 | `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
