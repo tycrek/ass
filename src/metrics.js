@@ -4,7 +4,7 @@ const { s3enabled } = require('../config.json');
 const { formatBytes } = require('./utils');
 const { bucketSize } = require('./storage');
 
-const TLog = require('@tycrek/log');
+const { TLog } = require('@tycrek/log');
 const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
 
 module.exports = () => {

@@ -57,7 +57,7 @@ function getConfirmSchema(description) {
 // If directly called on the command line, run setup script
 function doSetup() {
 	const path = (...paths) => require('path').join(process.cwd(), ...paths);
-	const TLog = require('@tycrek/log');
+	const { TLog } = require('@tycrek/log');
 	const fs = require('fs-extra');
 	const prompt = require('prompt');
 	const token = require('./generators/token');
