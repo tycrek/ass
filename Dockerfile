@@ -4,16 +4,17 @@
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
 
 # Node 16 image
-FROM node:16.14.0-alpine3.15
+FROM node:16.14.0
 
 # Set working directory
 WORKDIR /opt/ass/
 
-# create rootless user with uid/gid as 1001
-RUN addgroup -g 1001 ass && adduser --disabled-password --gecos "" --home "/opt/ass" --no-create-home --uid 1001 --ingroup ass ass
+# Create rootless user with uid/gid as 1001
+RUN addgroup -g 1001 ass && \
+    adduser --disabled-password --gecos "" --home "/opt/ass" --no-create-home --uid 1001 --ingroup ass ass
 
 # Set permissions for rootless user
-RUN chown -R ass /opt/ass/&& chmod -R 774 /opt/ass/
+RUN chown -R ass /opt/ass/ && chmod -R 774 /opt/ass/
 
 # Ensure these directories & files exist for compose volumes
 RUN mkdir -p /opt/ass/uploads/thumbnails/ && \
