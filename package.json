@@ -41,7 +41,7 @@
     "@skynetlabs/skynet-nodejs": "^2.3.0",
     "@tsconfig/node16": "^1.0.1",
     "@tycrek/express-nofavicon": "^1.0.3",
-    "@tycrek/express-postcss": "^0.1.0",
+    "@tycrek/express-postcss": "^0.2.4",
     "@tycrek/isprod": "^2.0.2",
     "@tycrek/log": "^0.6.0-7",
     "@tycrek/papito": "^0.3.4",

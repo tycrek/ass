@@ -5,7 +5,7 @@ import { Config, MagicNumbers, Package } from 'ass-json';
 import fs from 'fs-extra';
 import express, { Request, Response } from 'express';
 import nofavicon from '@tycrek/express-nofavicon';
-import epcss from '@tycrek/express-postcss';
+import { epcss } from '@tycrek/express-postcss';
 import tailwindcss from 'tailwindcss';
 import helmet from 'helmet';
 
