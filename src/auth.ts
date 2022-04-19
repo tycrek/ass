@@ -17,4 +17,4 @@ fs.watch(path('auth.json'), { persistent: false },
 				log.info('New token added', Object.keys(users)[Object.keys(users).length - 1] || 'No new token');
 			}
 		})
-		.catch(log.c.error));
+		.catch(console.error));

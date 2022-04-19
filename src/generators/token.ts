@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 import fs from 'fs-extra';
 import path from 'path';
 import randomGen from './random';
-const TLog = require('@tycrek/log');
+import { TLog } from '@tycrek/log';
 const log = new TLog();
 
 const MAX_USERNAME = 20;
@@ -34,5 +34,5 @@ if (require.main === module) {
 			.comment('A new token has been generated and automatically applied.')
 			.comment('You do not need to restart \'ass\'.')
 			.success('Your token', token, `username: ${name}`))
-		.catch(log.c.error);
+		.catch(console.error);
 }

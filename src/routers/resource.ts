@@ -1,33 +1,39 @@
-import { FileData, IsPossible, AssRequest, AssResponse } from '../definitions';
+import { FileData, IsPossible } from '../types/definitions';
+import { Config, MagicNumbers } from 'ass-json';
 
 import fs from 'fs-extra';
 import escape from 'escape-html';
-import fetch, { Response } from 'node-fetch';
+import fetch, { Response as FetchResponse } from 'node-fetch';
+import { Request, Response } from 'express';
 import { deleteS3 } from '../storage';
 import { SkynetDelete, SkynetDownload } from '../skynet';
-const { diskFilePath, s3enabled, viewDirect, useSia } = require('../../config.json');
 import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
-const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, } = require('../../MagicNumbers.json');
+const { diskFilePath, s3enabled, viewDirect, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 import { data } from '../data';
 import { users } from '../auth';
 
 import express from 'express';
 const router = express.Router();
 
+let theme = {};
+if (fs.existsSync(path('share/', 'theme.json')))
+	theme = fs.readJsonSync(path('share/', 'theme.json'));
+
 // Middleware for parsing the resource ID and handling 404
-router.use((req: AssRequest, res: AssResponse, next) => {
+router.use((req: Request, res: Response, next) => {
 	// Parse the resource ID
 	req.ass = { resourceId: escape(req.resourceId || '').split('.')[0] };
 
 	// If the ID is invalid, return 404. Otherwise, continue normally
-	data.has(req.ass.resourceId)
+	data().has(req.ass.resourceId)
 		.then((has: boolean) => has ? next() : res.sendStatus(CODE_NOT_FOUND)) // skipcq: JS-0229
 		.catch(next);
 });
 
 // View file
-router.get('/', (req: AssRequest, res: AssResponse, next) => data.get(req.ass?.resourceId).then((fileData: FileData) => {
-	const resourceId = req.ass!.resourceId;
+router.get('/', (req: Request, res: Response, next) => data().get(req.ass.resourceId).then((fileData: FileData) => {
+	const resourceId = req.ass.resourceId;
 
 	// Build OpenGraph meta tags
 	const og = fileData.opengraph, ogs = [''];
@@ -55,19 +61,21 @@ router.get('/', (req: AssRequest, res: AssResponse, next) => data.get(req.ass?.r
 		ogtype: fileData.is.video ? 'video.other' : fileData.is.image ? 'image' : 'website',
 		urlType: `og:${fileData.is.video ? 'video' : fileData.is.audio ? 'audio' : 'image'}`,
 		opengraph: replaceholder(ogs.join('\n'), fileData.size, fileData.timestamp, fileData.timeoffset, fileData.originalname),
-		viewDirect
+		viewDirect,
+		//@ts-ignore
+		showAd: theme.showAd ?? true,
 	});
 }).catch(next));
 
 // Direct resource
-router.get('/direct*', (req: AssRequest, res: AssResponse, next) => data.get(req.ass?.resourceId).then((fileData: FileData) => {
+router.get('/direct*', (req: Request, res: Response, next) => data().get(req.ass.resourceId).then((fileData: FileData) => {
 	// Send file as an attachement for downloads
 	if (req.query.download)
 		res.header('Content-Disposition', `attachment; filename="${fileData.originalname}"`);
 
 	// Return the file differently depending on what storage option was used
 	const uploaders = {
-		s3: () => fetch(getS3url(fileData.randomId, fileData.ext)).then((file: Response) => {
+		s3: () => fetch(getS3url(fileData.randomId, fileData.ext)).then((file: FetchResponse) => {
 			file.headers.forEach((value, header) => res.setHeader(header, value));
 			file.body?.pipe(res);
 		}),
@@ -86,8 +94,8 @@ router.get('/direct*', (req: AssRequest, res: AssResponse, next) => data.get(req
 }).catch(next));
 
 // Thumbnail response
-router.get('/thumbnail', (req: AssRequest, res: AssResponse, next) =>
-	data.get(req.ass?.resourceId)
+router.get('/thumbnail', (req: Request, res: Response, next) =>
+	data().get(req.ass.resourceId)
 		.then(({ is, thumbnail }: { is: IsPossible, thumbnail: string }) => fs.readFile((!is || (is.image || is.video)) ? path(diskFilePath, 'thumbnails/', thumbnail) : is.audio ? 'views/ass-audio-icon.png' : 'views/ass-file-icon.png'))
 		.then((fileData: Buffer) => res.type('jpg').send(fileData))
 		.catch(next));
@@ -95,8 +103,8 @@ router.get('/thumbnail', (req: AssRequest, res: AssResponse, next) =>
 // oEmbed response for clickable authors/providers
 // https://oembed.com/
 // https://old.reddit.com/r/discordapp/comments/82p8i6/a_basic_tutorial_on_how_to_get_the_most_out_of/
-router.get('/oembed', (req: AssRequest, res: AssResponse, next) =>
-	data.get(req.ass?.resourceId)
+router.get('/oembed', (req: Request, res: Response, next) =>
+	data().get(req.ass.resourceId)
 		.then((fileData: FileData) =>
 			res.type('json').send({
 				version: '1.0',
@@ -113,9 +121,9 @@ router.get('/oembed', (req: AssRequest, res: AssResponse, next) =>
 		.catch(next));
 
 // Delete file
-router.get('/delete/:deleteId', (req: AssRequest, res: AssResponse, next) => {
+router.get('/delete/:deleteId', (req: Request, res: Response, next) => {
 	let oldName: string, oldType: string; // skipcq: JS-0119
-	data.get(req.ass?.resourceId)
+	data().get(req.ass.resourceId)
 		.then((fileData: FileData) => {
 			// Extract info for logs
 			oldName = fileData.originalname;
@@ -133,7 +141,7 @@ router.get('/delete/:deleteId', (req: AssRequest, res: AssResponse, next) => {
 				(!fileData.is || (fileData.is.image || fileData.is.video)) && fs.existsSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))
 					? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)) : () => Promise.resolve()]);
 		})
-		.then(() => data.del(req.ass?.resourceId))
+		.then(() => data().del(req.ass.resourceId))
 		.then(() => (log.success('Deleted', oldName, oldType), res.type('text').send('File has been deleted!'))) // skipcq: JS-0090
 		.catch(next);
 });

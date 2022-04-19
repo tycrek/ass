@@ -1,11 +1,14 @@
-import { FileData } from "./definitions";
+import { FileData } from './types/definitions';
+import { Config } from 'ass-json';
+import fs from 'fs-extra';
 import ffmpeg from 'ffmpeg-static';
-import Jimp from 'jimp';
+import sharp from 'sharp';
+
 // @ts-ignore
 import shell from 'any-shell-escape';
 import { exec } from 'child_process';
 import { isProd, path } from './utils';
-const { diskFilePath } = require('../config.json');
+const { diskFilePath }: Config = fs.readJsonSync(path('config.json'));
 
 // Thumbnail parameters
 const THUMBNAIL = {
@@ -16,9 +19,6 @@ const THUMBNAIL = {
 
 /**
  * Builds a safe escaped ffmpeg command
- * @param {String} src Path to the input file
- * @param {String} dest Path of the output file
- * @returns {String} The command to execute
  */
 function getCommand(src: String, dest: String) {
 	return shell([
@@ -34,8 +34,6 @@ function getCommand(src: String, dest: String) {
 
 /**
  * Builds a thumbnail filename
- * @param {String} oldName The original filename
- * @returns {String} The filename for the thumbnail
  */
 function getNewName(oldName: String) {
 	return oldName.concat('.thumbnail.jpg');
@@ -43,8 +41,6 @@ function getNewName(oldName: String) {
 
 /**
  * Builds a path to the thumbnails
- * @param {String} oldName The original filename
- * @returns {String} The path to the thumbnail
  */
 function getNewNamePath(oldName: String) {
 	return path(diskFilePath, 'thumbnails/', getNewName(oldName));
@@ -52,7 +48,6 @@ function getNewNamePath(oldName: String) {
 
 /**
  * Extracts an image from a video file to use as a thumbnail, using ffmpeg
- * @param {*} file The video file to pull a frame from
  */
 function getVideoThumbnail(file: FileData) {
 	return new Promise((resolve: Function, reject: Function) => exec(
@@ -64,23 +59,19 @@ function getVideoThumbnail(file: FileData) {
 
 /**
  * Generates a thumbnail for the provided image
- * @param {*} file The file to generate a thumbnail for
  */
 function getImageThumbnail(file: FileData) {
 	return new Promise((resolve, reject) =>
-		Jimp.read(file.path)
-			.then((image) => image
-				.quality(THUMBNAIL.QUALITY)
-				.resize(THUMBNAIL.WIDTH, THUMBNAIL.HEIGHT, Jimp.RESIZE_BICUBIC)
-				.write(getNewNamePath(file.randomId)))
+		sharp(file.path)
+			.resize(THUMBNAIL.WIDTH, THUMBNAIL.HEIGHT, { kernel: 'cubic' })
+			.jpeg({ quality: THUMBNAIL.QUALITY })
+			.toFile(getNewNamePath(file.randomId))
 			.then(resolve)
 			.catch(reject));
 }
 
 /**
  * Generates a thumbnail
- * @param {*} file The file to generate a thumbnail for
- * @returns The thumbnail filename (NOT the path)
  */
 export default (file: FileData): Promise<string> =>
 	new Promise((resolve, reject) =>

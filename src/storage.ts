@@ -1,16 +1,18 @@
 // https://docs.digitalocean.com/products/spaces/resources/s3-sdk-examples/
 // https://www.digitalocean.com/community/tutorials/how-to-upload-a-file-to-object-storage-with-node-js
-import { AssRequest, AssResponse, FileData } from './definitions';
+import { FileData } from './types/definitions';
+import { Config, MagicNumbers } from 'ass-json'
 
 import fs, { Stats } from 'fs-extra';
 import aws from 'aws-sdk';
 import Thumbnail from './thumbnails';
 import Vibrant from './vibrant';
 import Hash from './hash';
-import { generateId, log } from './utils';
+import { path, generateId, log } from './utils';
 import { SkynetUpload } from './skynet';
-const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize, useSia } = require('../config.json');
-const { CODE_UNSUPPORTED_MEDIA_TYPE } = require('../MagicNumbers.json');
+import { Request, Response } from 'express';
+const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { CODE_UNSUPPORTED_MEDIA_TYPE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 
 const ID_GEN_LENGTH = 32;
 const ALLOWED_MIMETYPES = /(image)|(video)|(audio)\//;
@@ -31,23 +33,32 @@ function getDatedDirname() {
 	return `${diskFilePath}${diskFilePath.endsWith('/') ? '' : '/'}${year}-${`0${month}`.slice(-2)}`; // skipcq: JS-0074
 }
 
-function getLocalFilename(req: AssRequest) {
-	return `${getDatedDirname()}/${saveAsOriginal ? req.file!.originalname : req.file!.sha1}`;
+function getLocalFilename(req: Request) {
+	let name = `${getDatedDirname()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
+
+	// Append a number if this file has already been uploaded before
+	let count = 0;
+	while (fs.existsSync(path(name))) {
+		count++
+		name = count == 1 ? name.concat(`-${count}`) : name.substring(0, name.lastIndexOf('-')).concat(`-${count}`);
+	}
+
+	return name;
 }
 
-export function processUploaded(req: AssRequest, res: AssResponse, next: Function) { // skipcq: JS-0045
+export function processUploaded(req: Request, res: Response, next: Function) { // skipcq: JS-0045
 	// Fix file object
-	req.file = req.files!.file;
+	req.file = req.files.file;
 
 	// Other fixes
-	req.file!.ext = '.'.concat((req.file!.filename ?? '').split('.').pop() ?? '');
-	req.file!.originalname = req.file!.filename ?? '';
-	req.file!.path = req.file!.file ?? '';
-	req.file!.randomId = generateId('random', ID_GEN_LENGTH, 0, '');
-	req.file!.deleteId = generateId('random', ID_GEN_LENGTH, 0, '');
+	req.file.ext = '.'.concat((req.file.filename ?? '').split('.').pop() ?? '');
+	req.file.originalname = req.file.filename ?? '';
+	req.file.path = req.file.file ?? '';
+	req.file.randomId = generateId('random', ID_GEN_LENGTH, 0, '');
+	req.file.deleteId = generateId('random', ID_GEN_LENGTH, 0, '');
 
 	// Set up types
-	req.file!.is = {
+	req.file.is = {
 		image: false,
 		video: false,
 		audio: false,
@@ -55,16 +66,16 @@ export function processUploaded(req: AssRequest, res: AssResponse, next: Functio
 	};
 
 	// Specify correct type
-	const isType = req.file!.mimetype.includes('image') ? 'image' : req.file!.mimetype.includes('video') ? 'video' : req.file!.mimetype.includes('audio') ? 'audio' : 'other';
-	req.file!.is[isType] = true;
+	const isType = req.file!.mimetype.includes('image') ? 'image' : req.file.mimetype.includes('video') ? 'video' : req.file.mimetype.includes('audio') ? 'audio' : 'other';
+	req.file.is[isType] = true;
 
 	// Block the resource if the mimetype is not an image or video
-	if (mediaStrict && !ALLOWED_MIMETYPES.test(req.file!.mimetype))
+	if (mediaStrict && !ALLOWED_MIMETYPES.test(req.file.mimetype))
 		return log
-			.warn('Upload blocked', req.file!.originalname, req.file!.mimetype)
+			.warn('Upload blocked', req.file.originalname, req.file.mimetype)
 			.warn('Strict media mode', 'only images, videos, & audio are file permitted')
 			.callback(() =>
-				fs.remove(req.file!.path)
+				fs.remove(req.file.path)
 					.then(() => log
 						.debug('Temp file', 'deleted')
 						.callback(() => res.sendStatus(CODE_UNSUPPORTED_MEDIA_TYPE)))
@@ -73,29 +84,32 @@ export function processUploaded(req: AssRequest, res: AssResponse, next: Functio
 						.callback(next, err)));
 
 	// Remove unwanted fields
-	delete req.file!.uuid;
-	delete req.file!.field;
-	delete req.file!.file;
-	delete req.file!.filename;
-	delete req.file!.truncated;
-	delete req.file!.done;
+	delete req.file.uuid;
+	delete req.file.field;
+	delete req.file.file;
+	delete req.file.filename;
+	delete req.file.truncated;
+	delete req.file.done;
+
+	// Temp file name used in case file already exists (long story; just don't touch this)
+	let tempFileName = '';
 
 	// Operations
 	// @ts-ignore
-	Promise.all([Thumbnail(req.file), Vibrant(req.file), Hash(req.file), fs.stat(req.file!.path)])
+	Promise.all([Thumbnail(req.file), Vibrant(req.file), Hash(req.file), fs.stat(req.file.path)])
 		// skipcq: JS-0086
 		.then(([thumbnail, vibrant, sha1, stat]: [string, string, string, Stats]) => (
-			req.file!.thumbnail = thumbnail, // skipcq: JS-0090
-			req.file!.vibrant = vibrant, // skipcq: JS-0090
-			req.file!.sha1 = sha1, // skipcq: JS-0090
-			req.file!.size = stat.size // skipcq: JS-0090
+			req.file.thumbnail = thumbnail, // skipcq: JS-0090
+			req.file.vibrant = vibrant, // skipcq: JS-0090
+			req.file.sha1 = sha1, // skipcq: JS-0090
+			req.file.size = stat.size // skipcq: JS-0090
 		))
 
 		// Check if file size is too big
-		.then(() => { if (req.file!.size / Math.pow(1024, 2) > maxUploadSize) throw new Error('LIMIT_FILE_SIZE'); })
+		.then(() => { if (req.file.size / Math.pow(1024, 2) > maxUploadSize) throw new Error('LIMIT_FILE_SIZE'); })
 
 		// Save file
-		.then(() => log.debug('Saving file', req.file!.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
+		.then(() => log.debug('Saving file', req.file.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
 		.then(() =>
 			// skipcq: JS-0229
 			new Promise((resolve, reject) => {
@@ -103,31 +117,32 @@ export function processUploaded(req: AssRequest, res: AssResponse, next: Functio
 				// Upload to Amazon S3
 				if (s3enabled) return s3.putObject({
 					Bucket: s3bucket,
-					Key: req.file!.randomId.concat(req.file!.ext),
+					Key: req.file.randomId.concat(req.file.ext),
 					ACL: 'public-read',
-					ContentType: req.file!.mimetype,
-					Body: fs.createReadStream(req.file!.path)
+					ContentType: req.file.mimetype,
+					Body: fs.createReadStream(req.file.path)
 				}).promise().then(resolve).catch(reject);
 
 				// Use Sia Skynet
-				else if (useSia) return SkynetUpload(req.file!.path)
-					.then((skylink) => req.file!.randomId = skylink)
+				else if (useSia) return SkynetUpload(req.file.path)
+					.then((skylink) => req.file.randomId = skylink)
 					.then(resolve).catch(reject);
 
 				// Save to local storage
 				else return fs.ensureDir(getDatedDirname())
-					.then(() => fs.copy(req.file!.path, getLocalFilename(req), { preserveTimestamps: true }))
+					.then(() => tempFileName = getLocalFilename(req))
+					.then(() => fs.copy(req.file.path, tempFileName, { preserveTimestamps: true }))
 					.then(resolve).catch(reject);
 			}))
-		.then(() => log.debug('File saved', req.file!.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
+		.then(() => log.debug('File saved', req.file.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
 		.catch((err) => next(err))
 
 		// Delete the file
-		.then(() => fs.remove(req.file!.path))
+		.then(() => fs.remove(req.file.path))
 		.then(() => log.debug('Temp file', 'deleted'))
 
 		// Fix the file path
-		.then(() => !s3enabled && (req.file!.path = getLocalFilename(req))) // skipcq: JS-0090
+		.then(() => !s3enabled && (req.file.path = tempFileName)) // skipcq: JS-0090
 		.then(() => next())
 		.catch((err) => next(err));
 }

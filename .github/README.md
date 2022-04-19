@@ -65,6 +65,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - Usage metrics
 - Thumbnail support
 - Mimetype blocking
+- Themeable viewer page
 - Basic multi-user support
 - Configurable global upload size limit (per-user coming soon)
 - Custom pluggable frontends using [Git Submodules]
@@ -178,7 +179,7 @@ docker-compose up --force-recreate --build -d && docker image prune -f # && dock
 
 - `docker-compose` exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
    - `uploads/`
-   - `share/` (for future use)
+   - `share/`
    - `config.json`
    - `auth.json`
    - `data.json`
@@ -290,6 +291,21 @@ Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, & a
 
 [create a new Webhook]: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
 
+## Customizing the viewer
+
+If you want to customize the font or colours of the viewer page, create a file in the `share/` directory called `theme.json`. Available options are:
+
+| Option | Purpose |
+| ------ | ------- |
+| **`font`** | The font family to use; defaults to `"Josefin Sans"`. Fonts with a space should be surrounded by double quotes. |
+| **`bgPage`** | Background colour for the whole page |
+| **`bgViewer`** | Background colour for the viewer element |
+| **`txtPrimary`** | Primary text colour; this should be your main brand colour. |
+| **`txtSecondary`** | Secondary text colour; this is used for the file details. |
+| **`linkHover`** | Colour of the `hover` effect for links |
+| **`linkActive`** | Colour of the `active` effect for links |
+| **`borderHover`** | Colour of the `hover` effect for borders; this is used for the underlining links. |
+
 ## Custom index
 
 By default, ass directs the index route `/` to this README. Follow these steps to use a custom index:
@@ -339,7 +355,9 @@ For hosts who are looking for a reliable, always available storage solution with
 [Amazon S3]: https://en.wikipedia.org/wiki/Amazon_S3
 [Skynet Labs]: https://github.com/SkynetLabs
 
-## Custom frontends
+## Custom frontends - OUTDATED
+
+**Please be aware that this section is outdated (marked as of 2022-04-15). It will be updated when I overhaul the frontend system.**
 
 ass is intended to provide a strong backend for developers to build their own frontends around. [Git Submodules] make it easy to create custom frontends. Submodules are their own projects, which means you are free to build the router however you wish, as long as it exports the required items. A custom frontend is really just an [Express.js router].
 
@@ -394,6 +412,7 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `dev` | Chains the `build` and `compile` scripts together. |
 | `setup` | Starts the easy setup process. Should be run after any updates that introduce new config options. |
 | `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
+| `purge` | Purges all uploads and data associated with them. This does **not** delete any users, however. |
 | `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
 | `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |

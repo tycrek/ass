@@ -57,7 +57,7 @@ function getConfirmSchema(description) {
 // If directly called on the command line, run setup script
 function doSetup() {
 	const path = (...paths) => require('path').join(process.cwd(), ...paths);
-	const TLog = require('@tycrek/log');
+	const { TLog, getChalk } = require('@tycrek/log');
 	const fs = require('fs-extra');
 	const prompt = require('prompt');
 	const token = require('./generators/token');
@@ -245,7 +245,7 @@ function doSetup() {
 		// Verify information is correct
 		.then(() => log
 			.blank()
-			.info('Please verify your information', '\n'.concat(Object.entries(results).map(([setting, value]) => `${'            '}${log.chalk.dim.gray('-->')} ${log.chalk.bold.white(`${setting}:`)} ${log.chalk.white(value)}`).join('\n')))
+			.info('Please verify your information', '\n'.concat(Object.entries(results).map(([setting, value]) => `${'            '}${getChalk().dim.gray('-->')} ${getChalk().bold.white(`${setting}:`)} ${getChalk().white(value)}`).join('\n')))
 			.blank())
 
 		// Apply old configs
