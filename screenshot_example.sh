@@ -51,30 +51,26 @@ if [[ -f "${FILE}.png" ]]; then
             # printf instead of echo as echo appends a newline
             printf "%s" "$URL" | xclip -sel clip # it is safe to use xclip on xorg, so we don't need wl-copy
         elif [[ "${XDG_SESSION_TYPE}" == wayland ]]; then
-            # if desktop session is wayland instead of xclip, use wl-copy
+            # if desktop session is wayland instead of xclip, use wl-copy (wl-clipboard)
             printf "%s" "$URL" | wl-copy
         else
             echo -en "Invalid desktop session!\n Exiting."
             exit 1
         fi
-        rm "${FILE}" # Delete the image locally
-        exit 1
+        rm "${FILE}.png" # Delete the image locally
     else
         # If domain & key are not set, assume it is a local screenshot and copy the image directly to clipboard
         if [[ "${XDG_SESSION_TYPE}" == x11 ]]; then # if display backend is x11, use xclip
-            # TODO: find a way to copy image to clipboard on qt environments, like KDE Plasma
-            echo -en "Local screenshots are only available on Wayland (for now).\nExiting..."
-            exit 1
+            cat "${FILE}.png" | xclip -sel clip -target image/png
         elif [[ "${XDG_SESSION_TYPE}" == wayland ]]; then # if display backend is wayland, use wl-clipboard (available on AUR or can be self-compiled)
             wl-copy < "${FILE}"
-            exit 1
         else
-            echo -en "Local screenshots are only available on Wayland (for now).\nExiting..."
-            #TODO: find a way to copy image to clipboard on qt environments, like KDE Plasma
-            exit 1
+            echo -en "Unknown display backend... Assuming Xorg and using xclip..."
+            cat "${FILE}.png" | xclip -sel clip -target image/png
         fi
     fi
+    rm "${FILE}.png"
 else
     # Abort screenshot if $FILE.png does not exist
-    echo "Screenshot aborted."
+    echo -en "Target file was not found.\nAbording screenshot."
 fi
