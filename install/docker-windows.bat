@@ -14,21 +14,21 @@ if not exist "./auth.json" echo. >> "./auth.json"
 if not exist "./data.json" echo. >> "./data.json"
 
 REM Wait for user to confirm
-ECHO Continuing will run docker-compose. Continue? (Press Ctrl+C to abort)
+ECHO Continuing will run docker compose. Continue? (Press Ctrl+C to abort)
 PAUSE
 
 ECHO Running setup...
 
-REM docker-compose up -d
-docker-compose up -d &&
+REM docker compose up -d
+docker compose up -d &&
 
 REM Run setup within the container
-docker-compose exec ass npm run setup &&
+docker compose exec ass npm run setup &&
 
 REM Restart the container when complete
-docker-compose restart &&
+docker compose restart &&
 
 REM Done!
 ECHO ass-docker for Windows installed!
 ECHO Run the following to view commands:
-ECHO > docker-compose logs -f --tail=50 --no-log-prefix ass
+ECHO > docker compose logs -f --tail=50 --no-log-prefix ass
