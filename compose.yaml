@@ -6,7 +6,7 @@
 services:
   ass:
     build: .
-    command: npm run dev
+    command: npm start
     container_name: ass-docker
     restart: unless-stopped
     ports:
