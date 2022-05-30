@@ -18,7 +18,7 @@ try {
 	var { useSsl, port, domain, isProxied, diskFilePath, s3bucket, s3endpoint, s3usePathStyle } = require('../config.json'); // skipcq: JS-0239, JS-0102
 } catch (ex) {
 	// @ts-ignore
-	if (ex.code !== 'MODULE_NOT_FOUND' || !Object.prototype.toString.call(ex).includes('Unexpected end of JSON input')) console.error(ex);
+	if (ex.code !== 'MODULE_NOT_FOUND' || !ex.toString().includes('Unexpected end')) console.error(ex);
 }
 
 export function getTrueHttp() {
