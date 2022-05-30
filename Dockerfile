@@ -15,8 +15,7 @@ COPY . ./
 # Update npm to at least npm 8,
 # then install dependencies
 RUN npm i -g npm@8 typescript && \
-    npm i --save-dev && \
-    npm run build
+    npm i --save-dev
 
 # Ensure these directories & files exist for compose volumes
 RUN mkdir -p /opt/ass/uploads/thumbnails/ && \
@@ -26,4 +25,4 @@ RUN mkdir -p /opt/ass/uploads/thumbnails/ && \
     touch /opt/ass/data.json
 
 # Start ass
-CMD npm start
+CMD npm run dev
