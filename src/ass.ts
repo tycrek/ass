@@ -15,7 +15,7 @@ import { path, log, getTrueHttp, getTrueDomain } from './utils';
 //#region Setup - Run first time setup if using Docker (pseudo-process, setup will be run with docker exec)
 import { doSetup } from './setup';
 const configPath = path('config.json');
-if (!fs.existsSync(configPath)) {
+if (!fs.existsSync(configPath) || fs.readFileSync(configPath).toString().length === 0) {
 	doSetup();
 	// @ts-ignore
 	return;
