@@ -19,11 +19,8 @@ PAUSE
 
 ECHO Running setup...
 
-REM Bring up the container
-docker compose up
-
-REM Restart the container when setup complete
-docker compose restart
+REM Bring up the container and run the setup
+docker compose up -d && docker compose exec ass npm run setup && docker compose restart
 
 REM Done!
 ECHO ass-docker for Windows installed!
