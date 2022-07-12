@@ -1,4 +1,4 @@
-# ass Docker compose.yaml v0.1.1
+# ass Docker compose.yaml v0.2.0
 # authors:
 #  - tycrek <t@tycrek.com> (https://tycrek.com/)
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
@@ -6,7 +6,6 @@
 services:
   ass:
     build: .
-    command: npm start
     container_name: ass-docker
     restart: unless-stopped
     ports:
@@ -24,7 +23,6 @@ services:
         source: ./data.json
         target: /opt/ass/data.json
     tmpfs: /tmp # temp files such as uploads are stored here
-    working_dir: /opt/ass
     tty: true
     environment:
       - NODE_ENV=production # for production
