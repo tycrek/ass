@@ -162,18 +162,9 @@ npm run setup && docker-compose restart
 Easy! Just pull the changes & run this one-liner:
 
 ```bash
-# Pull the latest version of ass
-git pull
-
-# Rebuild the container with the new changes (uncomment the 2nd part if the update requires refreshing the config)
-docker-compose up --force-recreate --build -d && docker image prune -f # && docker-compose exec ass npm run setup && docker-compose restart
+# Pull the latest version of ass and rebuild the image
+git pull && docker compose build --no-cache && docker compose up -d
 ```
-
-- `--force-recreate` will force the container to rebuild
-- `--build` will build the image from the latest changes in the directory
-- `-d` will run the container in the background
-- `docker image prune -f` will remove old images that are no longer used by any containers
-- *These descriptions were suggested by [CoPilot], feel free to revise if necessary.*
 
 #### What else should I be aware of?
 

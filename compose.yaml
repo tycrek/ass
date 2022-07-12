@@ -1,12 +1,15 @@
-# ass Docker compose.yaml v0.1.2
+# ass Docker compose.yaml v0.2.0
 # authors:
 #  - tycrek <t@tycrek.com> (https://tycrek.com/)
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
+#
+# This file is designed to follow the latest Compose specification, defined here: https://github.com/compose-spec/compose-spec/blob/master/spec.md
+# Specific thing(s) to note:
+# - The filename, `compose.yaml`: "The default path for a Compose file is compose.yaml (preferred)" (https://github.com/compose-spec/compose-spec/blob/master/spec.md#compose-file)
 
 services:
   ass:
     build: .
-    command: npm start
     container_name: ass-docker
     restart: unless-stopped
     user: 1001:1001
@@ -25,7 +28,6 @@ services:
         source: ./data.json
         target: /opt/ass/data.json
     tmpfs: /tmp # temp files such as uploads are stored here
-    working_dir: /opt/ass
     tty: true
     environment:
       - NODE_ENV=production # for production
