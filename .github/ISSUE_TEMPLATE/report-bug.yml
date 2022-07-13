@@ -69,16 +69,6 @@ body:
     - Docker
   validations:
     required: true
-- type: dropdown
-  id: file-storage
-  attributes:
-    label: File storage
-    description: Where are you storing files?
-    options:
-    - Local
-    - S3
-  validations:
-    required: true
 - type: input
   id: operating-system
   attributes:
@@ -93,27 +83,3 @@ body:
     description: What is the version of Node.js?
   validations:
     required: true
-- type: input
-  id: storageengine
-  attributes:
-    label: Storage method
-    description: How are you storing your data? (Papito is the default)
-- type: checkboxes
-  id: reverse-proxy
-  attributes:
-    label: Reverse proxy
-    description: Are you using a reverse proxy?
-    options:
-    - label: I am using a reverse proxy
-- type: input
-  id: reverse-proxy-software
-  attributes:
-    label: Reverse proxy software
-    description: If you are using a reverse proxy, what is the name and version?
-- type: checkboxes
-  id: cloudflare
-  attributes:
-    label: Cloudflare
-    description: Are you a Cloudflare user?
-    options:
-    - label: I am using Cloudflare
