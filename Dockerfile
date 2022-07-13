@@ -1,4 +1,4 @@
-# ass Dockerfile v0.2.0
+# ass Dockerfile v0.3.0
 # authors:
 #  - tycrek <t@tycrek.com> (https://tycrek.com/)
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
