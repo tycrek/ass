@@ -23,7 +23,12 @@ RUN mkdir -p /opt/ass/uploads/thumbnails/ && \
     mkdir -p /opt/ass/share/ && \
     touch /opt/ass/config.json && \
     touch /opt/ass/auth.json && \
-    touch /opt/ass/data.json
+    touch /opt/ass/data.json && \
+    # Set permissions for rootless user
+    chown -R node:node /opt/ass
+
+# Set the user
+USER node
 
 # Start ass
 CMD npm start
