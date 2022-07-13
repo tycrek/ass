@@ -12,12 +12,6 @@ WORKDIR /opt/ass/
 # Copy directory files (config.json, source files etc.)
 COPY . ./
 
-# Update npm to at least npm 8,
-# then install dependencies
-RUN npm i -g npm@8 typescript && \
-    npm i --save-dev && \
-    npm run build
-
 # Ensure these directories & files exist for compose volumes
 RUN mkdir -p /opt/ass/uploads/thumbnails/ && \
     mkdir -p /opt/ass/share/ && \
@@ -29,6 +23,10 @@ RUN mkdir -p /opt/ass/uploads/thumbnails/ && \
 
 # Set the user
 USER node
+
+# Install dependencies as rootless user
+RUN npm i --save-dev && \
+    npm run build
 
 # Start ass
 CMD npm start
