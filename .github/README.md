@@ -9,9 +9,7 @@
 ![GitHub Repo stars]
 [![Discord badge]][Discord invite]
 
-**ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite.
-
-ass aims to be as **unopinionated** as possible. It allows nearly endless choice for users & hosts alike: Users can configure their upload settings directly from the ShareX interface (including embeds, webhooks, & more), while hosts are free to pick their preferred storage & data management methods.
+**ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite. ass aims to be as **unopinionated** as possible, giving users & hosts alike the ability to modify nearly everything.
 
 By default, ass comes with a resource viewing page, which includes metadata about the resource as well as a download button & inline viewers for images, videos, & audio. It does **not** have a user dashboard or registration system: **this is intentional!** Developers are free to [create their own frontends] using the languages & tools they are most comfortable with. Writing & using these frontends is fully documented below, in the wiki, & in the source code.
 
@@ -117,12 +115,9 @@ ass supports two installation methods: Docker (recommended) & local (manual).
 <summary><em>Expand for Docker/Docker Compose installation steps</em></summary>
 <br>
 
-[docker-compose] is the recommended way to install ass. These steps assume you are already family with Docker, so if you're not, please [read the docs]. It also assumes that you have a working Docker installation with `docker-compose` installed.
+[Docker Compose] is the recommended way to install ass. These steps assume you are already family with Docker. If not, you should probably use the local installation method. They also assume that you have a working Docker installation with Docker Compose v2 installed.
 
-**If your local installation of Docker Compose complains about a missing `docker-compose` file, this is your problem, not mine.** Update Compose to the latest version to remove that warning. I wrote the Compose file using the [latest Compose specification](https://github.com/compose-spec/compose-spec/blob/master/spec.md), so any issues will be caused by an outdated version of Compose.
-
-[docker-compose]: https://docs.docker.com/compose/
-[read the docs]: https://docs.docker.com/
+[Docker Compose]: https://docs.docker.com/compose/
 
 #### Install using docker-compose
 
@@ -139,22 +134,22 @@ You should now be able to access the ass server at `http://localhost:40115/` (as
 
 #### What is this script doing?
 
-It creates directories & files required for `docker-compose` to work. It then calls `docker-compose` to build the image & run ass. On first run, ass will detect an empty config file, so it will run the setup script in a headless terminal with no possible input. Luckily, you can use `docker-exec` to start your *own* terminal in which to run the setup script (the install scripts call this for you). After setup, the container is restarted & you are prompted to open logs so you can confirm that the setup was successful. Each install script also has comments for every step, so you can see what's going on.
+It creates directories & files required for Docker Compose to properly set up volumes. After that, it simply builds the image & container, then launches the setup process.
 
 #### How do I run the npm scripts?
 
-Since all 3 primary data files are bound to the container with Volumes, you can run the scripts in two ways:
+Since all 3 primary data files are bound to the container with Volumes, you can run the scripts in two ways: `docker compose exec` or `npm` on the host.
 
 ```bash
-# Use docker-compose exec to check the usage metrics
-docker-compose exec ass npm run metrics
+# Check the usage metrics
+docker compose exec ass npm run metrics
 
-# Use docker-compose exec to run the setup script
-docker-compose exec ass npm run setup && docker-compose restart
+# Run the setup script
+docker compose exec ass npm run setup && docker compose restart
 
 # Run npm on the host to run the setup script (also works for metrics)
-# (You will have to meet the Node.js & npm requirements on your host)
-npm run setup && docker-compose restart
+# (You will have to meet the Node.js & npm requirements on your host for this to work properly)
+npm run setup && docker compose restart
 ```
 
 #### How do I update?
@@ -162,19 +157,19 @@ npm run setup && docker-compose restart
 Easy! Just pull the changes & run this one-liner:
 
 ```bash
-# Pull the latest version of ass and rebuild the image
+# Pull the latest version of ass & rebuild the image
 git pull && docker compose build --no-cache && docker compose up -d
 ```
 
 #### What else should I be aware of?
 
-- `docker-compose` exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
-   - `uploads/`
-   - `share/`
-   - `config.json`
-   - `auth.json`
-   - `data.json`
-- I have personally tested running using these commands (migrating from an existing local deployment!) with Digital Ocean Spaces (S3 object-storage), a PostgreSQL database, & a custom frontend all on the same container. It should also work for you but feel free to let me know if you have any issues.
+Deploying ass with Docker exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
+
+- `uploads/`
+- `share/`
+- `config.json`
+- `auth.json`
+- `data.json`
 
 </details>
 
@@ -186,12 +181,11 @@ git pull && docker compose build --no-cache && docker compose up -d
 
 1. You should have **Node.js 16** & **npm 8 or later** installed. 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
-3. Run `npm i -g typescript` to install TypeScript globally
-4. Run `npm i --save-dev` to install the required dependencies (`--save-dev` is **required** for compilation)
-5. Run `npm run build` to compile the TypeScript files
+3. Run `npm i --save-dev` to install the required dependencies (`--save-dev` is **required** for compilation)
+4. Run `npm run build` to compile the TypeScript files
 5. Run `npm start` to start ass.
 
-The first time you run ass, the setup process will automatically be called and you will be shown your first authorization token; save this as you will need it to configure ShareX.
+The first time you run ass, the setup process will automatically be called & you will be shown your first authorization token; save this as you will need it to configure ShareX.
 
 </details>
 
@@ -335,13 +329,13 @@ Local storage is the simplest option, but relies on you having a lot of disk spa
 
 Any existing object storage server that's compatible with [Amazon S3] can be used with ass. I personally host my files using Digital Ocean Spaces, which implements S3.
 
-S3 servers are generally very fast and have very good uptime, though this will depend on the hosting provider and plan you choose.
+S3 servers are generally very fast & have very good uptime, though this will depend on the hosting provider & plan you choose.
 
 ### Skynet
 
 [Skynet] is a decentralized CDN created by [Skynet Labs]. It utilizes the [Sia] blockchain, the leading decentralized cloud storage platform, which boasts "no signups, no servers, no trusted third parties".
 
-For hosts who are looking for a reliable, always available storage solution with lots of capacity and no costs, Skynet may be your best option. However, uploads tend to be on the slower side (though speeds will improve as the Sia network grows).
+For hosts who are looking for a reliable, always available storage solution with lots of capacity & no costs, Skynet may be your best option. However, uploads tend to be on the slower side (though speeds will improve as the Sia network grows).
 
 [Amazon S3]: https://en.wikipedia.org/wiki/Amazon_S3
 [Skynet Labs]: https://github.com/SkynetLabs
@@ -385,7 +379,7 @@ ass is intended to provide a strong backend for developers to build their own fr
 [npm AMongoose]: https://www.npmjs.com/package/ass-mongoose
 [@dylancl]: https://github.com/dylancl
 
-A Papito data engine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details, and ass will handle the rest, using the resource ID as the key.
+A Papito data engine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details & ass will handle the rest, using the resource ID as the key.
 
 **~~For a detailed walkthrough on developing engines, [consult the wiki][ctw2].~~ Outdated!**
 
@@ -400,10 +394,10 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | ------ | ----------- |
 | **`start`** | Starts the ass server. This is the default script & is run with **`npm start`**. |
 | `build` | Compiles the TypeScript files into JavaScript. |
-| `dev` | Chains the `build` and `compile` scripts together. |
+| `dev` | Chains the `build` & `compile` scripts together. |
 | `setup` | Starts the easy setup process. Should be run after any updates that introduce new config options. |
 | `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
-| `purge` | Purges all uploads and data associated with them. This does **not** delete any users, however. |
+| `purge` | Purges all uploads & data associated with them. This does **not** delete any users, however. |
 | `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
 | `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
