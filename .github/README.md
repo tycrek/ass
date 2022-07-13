@@ -226,11 +226,11 @@ In your Cloudflare DNS dashboard, set your domain/subdomain to **DNS Only** if y
       - Name: `Authorization`
 	  - Value: (the value provided by `npm start` on first run)
 5. **Response** tab:
-   - URL: `$json:.resource$`
-   - Thumbnail: `$json:.thumbnail$`
-   - Deletion URL: `$json:.delete$`
-   - Error message: `$response$`
-   - MagicCap users: **do not** include the `.` in the above (i.e. `$json:resource$`)
+   - URL: `{json:.resource}`
+   - Thumbnail: `{json:.thumbnail}`
+   - Deletion URL: `{json:.delete}`
+   - Error message: `{response}`
+   - MagicCap users: **do not** include the `.` in the above & replace `{}` with `$` (i.e. `$json:resource$`)
 6. The file `sample_config.sxcu` can also be modified & imported to suit your needs
 
 ### Header overrides
