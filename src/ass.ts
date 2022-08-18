@@ -23,7 +23,7 @@ if (!fs.existsSync(configPath) || fs.readFileSync(configPath).toString().length 
 //#endregion
 
 // Load the JSON
-const { host, port, useSsl, isProxied, s3enabled, frontendName, indexFile, useSia, diskFilePath }: Config = fs.readJsonSync(path('config.json'));
+const { host, port, useSsl, isProxied, s3enabled, frontendName, useSia, diskFilePath }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_INTERNAL_SERVER_ERROR }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 const { name, version, homepage }: Package = fs.readJsonSync(path('package.json'));
 
@@ -73,11 +73,12 @@ useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 app.use(nofavicon);
 
 // Use custom index, otherwise render README.md
-const ASS_INDEX = indexFile !== '' && fs.existsSync(path('share', indexFile)) && require(`../share/${indexFile}`);
-const ASS_INDEX_ENABLED = typeof ASS_INDEX === typeof Function;
-app.get('/', (req, res, next) => ASS_INDEX_ENABLED // skipcq: JS-0229
-	? ASS_INDEX(req, res, next)
-	: res.redirect(homepage));
+type ASS_INDEX_TYPE = 'html' | 'js' | undefined;
+const ASS_INDEX: ASS_INDEX_TYPE = fs.existsSync(path('share', 'index.html')) ? 'html' : fs.existsSync(path('share', 'index.js')) ? 'js' : undefined;
+app.get('/', (req, res, next) =>
+	ASS_INDEX === 'html' ? res.sendFile(path('share', 'index.html')) :
+		ASS_INDEX === 'js' ? require(path('share', 'index.js'))(req, res, next) :
+			res.redirect(homepage))
 
 // Set up custom frontend
 const ASS_FRONTEND = fs.existsSync(path(`./${frontendName}/package.json`)) ? (require('submodule'), require(`../${frontendName}`)) : { enabled: false };
@@ -111,7 +112,7 @@ app.use((err: ErrWrap, _req: Request, res: Response) => log.error(err.message).e
 		.info('Files', `${data().size}`)
 		.info('Data engine', data().name, data().type)
 		.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
-		.info('Custom index', ASS_INDEX_ENABLED ? `enabled` : 'disabled')
+		.info('Custom index', ASS_INDEX ?? 'disabled')
 		.blank()
 		.express()!.Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'}`));
 })();
