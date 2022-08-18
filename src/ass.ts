@@ -70,11 +70,11 @@ const bruteforce = new ExpressBrute(new ExpressBrute.MemoryStore(), {
 	minWait: 50, // 50ms
 	maxWait: 500, // 500ms
 	lifetime: 5, // 5 seconds
-	failCallback: (req, res, next, nextValidRequestDate) => res.sendStatus(429),
+	failCallback: (_req, res, _next, _nextValidRequestDate) => res.sendStatus(429),
 });
 
 // Routes to protect
-app.get(['/'], bruteforce.prevent, (req, res, next) => next());
+app.get(['/'], bruteforce.prevent, (_req, _res, next) => next());
 
 // Express logger middleware
 app.use(log.middleware());
