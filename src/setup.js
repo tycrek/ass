@@ -14,7 +14,6 @@ const config = {
 	viewDirect: false,
 	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
-	indexFile: '',
 	useSia: false,
 	s3enabled: false,
 };
@@ -171,12 +170,6 @@ function doSetup() {
 				description: 'Name of your frontend (leave blank if not using frontends)',
 				type: 'string',
 				default: config.frontendName,
-				required: false
-			},
-			indexFile: {
-				description: 'Filename for your custom index, if using one (must be a JS file)',
-				type: 'string',
-				default: config.indexFile,
 				required: false
 			},
 			useSia: {
