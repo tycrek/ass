@@ -295,12 +295,12 @@ If you want to customize the font or colours of the viewer page, create a file i
 
 By default, ass directs the index route `/` to this README. Follow these steps to use a custom index:
 
-1. Run `npm run setup` to re-run the setup script.
-   - The defaults are set by your existing config, so you can press `Enter` to accept the defaults on most prompts.
-   - The one setting you want to change is `Filename for your custom index`. Enter a name for your index, including `.js` (custom index's must be `.js` files).
-2. Make a new file in the `share/` directory matching the name you entered (this directory can be found in the `ass/` directory. It is created automatically after setup is run).
-3. Your index file needs to export a single function taking three arguments: `(req, res, next)`. Some code samples for common use cases are provided below.
-4. Restart ass. The startup info logs should say **`Custom index:`**` enabled`.
+1. Create a file in the `share/` directory called `index.html` or `index.js`.
+   - ass will treat `index.html` as an HTML file and will send it to the client.
+   - ass will treat `index.js` as a Node.js file that exports a function representing [Express middleware](https://expressjs.com/en/guide/using-middleware.html). ass will pass all handling of the index to this function. The function should take three arguments: `(req, res, next)`. Some code samples for common use cases are provided below.
+   - If both `index.html` and `index.js` are present, the `index.html` file will be served first.
+2. Add whatever you want to the file.
+3. Restart ass. The startup info logs should mention which file is being used as the index.
 
 ### Custom index code samples
 
@@ -308,13 +308,6 @@ By default, ass directs the index route `/` to this README. Follow these steps t
 
 ```js
 module.exports = (req, res, next) => res.redirect('/register');
-```
-
-**Send an HTML file**
-
-```js
-const path = require('path');
-module.exports = (req, res, next) => res.sendFile(path.join(__dirname, 'index.html'));
 ```
 
 ## File storage
