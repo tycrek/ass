@@ -58,6 +58,24 @@ app.disable('x-powered-by');
 app.set('trust proxy', isProxied);
 app.set('view engine', 'pug');
 
+// Rate limiting using express-brute
+// ! Notice !
+// The rate limiting used here is very trivial and should be used with caution.
+// I plan to improve this in the future somehow (possibly with redis, who knows).
+// - tycrek, 2022-08-18
+// todo: fix this eventually
+import ExpressBrute from 'express-brute';
+const bruteforce = new ExpressBrute(new ExpressBrute.MemoryStore(), {
+	freeRetries: 50,
+	minWait: 50, // 50ms
+	maxWait: 500, // 500ms
+	lifetime: 5, // 5 seconds
+	failCallback: (req, res, next, nextValidRequestDate) => res.sendStatus(429),
+});
+
+// Routes to protect
+app.get(['/'], bruteforce.prevent, (req, res, next) => next());
+
 // Express logger middleware
 app.use(log.middleware());
 
