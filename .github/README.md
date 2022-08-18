@@ -194,7 +194,7 @@ The first time you run ass, the setup process will automatically be called & you
 For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any reverse proxy should work (such as Apache or Nginx). I also have a [tutorial on easily setting up Caddy][my tutorial] as a reverse proxy server.
 
 [Caddy]: https://caddyserver.com/
-[my tutorial]: https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
+[my tutorial]: https://old.jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
 
 ## Generating new tokens
 
@@ -333,10 +333,11 @@ S3 servers are generally very fast & have very good uptime, though this will dep
 
 ### Skynet
 
-[Skynet] is a decentralized CDN created by [Skynet Labs]. It utilizes the [Sia] blockchain, the leading decentralized cloud storage platform, which boasts "no signups, no servers, no trusted third parties".
+**As of August 12, 2022, [Skynet Labs is shut down].** Skynet *will continue to work*, as such is the nature of decentralized services.
 
-For hosts who are looking for a reliable, always available storage solution with lots of capacity & no costs, Skynet may be your best option. However, uploads tend to be on the slower side (though speeds will improve as the Sia network grows).
+[Skynet] is a decentralized CDN created by [Skynet Labs]. It utilizes the [Sia] blockchain, the leading decentralized cloud storage platform, which boasts "no signups, no servers, no trusted third parties". For hosts who are looking for a reliable, always available storage solution with lots of capacity & no costs, Skynet may be your best option. However, uploads tend to be on the slower side (though speeds will improve as the Sia network grows).
 
+[Skynet Labs is shut down]: https://skynetlabs.com/news/skynet-labs-shutting-down-skynet-remains-online
 [Amazon S3]: https://en.wikipedia.org/wiki/Amazon_S3
 [Skynet Labs]: https://github.com/SkynetLabs
 
@@ -354,7 +355,7 @@ ass is intended to provide a strong backend for developers to build their own fr
 
 ## Data Engines
 
-[Papito data engines] are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
+[Papito data engines] are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload. **Update August 2022:** I plan to overhaul Papito and how all this works *eventually*. If this comment is still here in a year, ~~kick~~ message me.
 
 [Papito data engines]: https://github.com/tycrek/papito
 
@@ -400,13 +401,7 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `purge` | Purges all uploads & data associated with them. This does **not** delete any users, however. |
 | `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
-| `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
-| `docker-update` | Calls `git pull` then runs the `docker-uplite` script. |
-| `docker-uplite` | Alias for `docker-compose up --force-recreate --build -d && docker image prune -f` |
-| `docker-upfull` | Alias for `npm run docker-update && npm run docker-resetup` |
-| `docker-resetup` | Alias for `docker-compose exec ass npm run setup && docker-compose restart` |
 
-[tlog Socket plugin]: https://github.com/tycrek/tlog#socket
 [`FORCE_COLOR`]: https://nodejs.org/dist/latest-v16.x/docs/api/cli.html#cli_force_color_1_2_3
 
 ## Flameshot users (Linux)
@@ -420,14 +415,15 @@ Use [this script]. For the `KEY`, put your token. Thanks to [@ToxicAven] for cre
 
 Please follow the [Contributing Guidelines] when submiting Issues or Pull Requests.
 
-[Contributing Guidelines]: https://github.com/tycrek/ass/blob/master/CONTRIBUTING.md
+[Contributing Guidelines]: https://github.com/tycrek/ass/blob/master/.github/CONTRIBUTING.md
 
 ## Credits
 
-- [GitHub CoPilot]... seriously, this thing is *good*.
-- Special thanks to [hlsl#1359] for the awesome logo!
+- Thanks to [hlsl#1359] for the logo
 - [Gfycat] for their wordlists
+- [Aven], for helping kickstart the project
+- My spiteful ass for motivating me to actually take this project to new heights
 
-[CoPilot]: https://copilot.github.com/
-[GitHub CoPilot]:https://copilot.github.com/
-[hlsl#1359]: http://be.net/zevwolf
+[hlsl#1359]: https://behance.net/zevwolf
+[Aven]: https://github.com/ToxicAven
+
