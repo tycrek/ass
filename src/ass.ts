@@ -77,7 +77,7 @@ type ASS_INDEX_TYPE = 'html' | 'js' | undefined;
 const ASS_INDEX: ASS_INDEX_TYPE = fs.existsSync(path('share', 'index.html')) ? 'html' : fs.existsSync(path('share', 'index.js')) ? 'js' : undefined;
 app.get('/', (req, res, next) =>
 	ASS_INDEX === 'html' ? res.sendFile(path('share', 'index.html')) :
-		ASS_INDEX === 'js' ? require(path('share', 'index.js'))(req, res, next) :
+		ASS_INDEX === 'js' ? require(path('share', 'index.js'))(req, res, next) : // skipcq: JS-0359
 			res.redirect(homepage))
 
 // Set up custom frontend
