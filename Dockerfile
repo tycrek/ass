@@ -1,4 +1,4 @@
-# ass Dockerfile v0.3.0
+# ass Dockerfile v0.3.1
 # authors:
 #  - tycrek <t@tycrek.com> (https://tycrek.com/)
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
@@ -17,12 +17,7 @@ RUN mkdir -p /opt/ass/uploads/thumbnails/ && \
     mkdir -p /opt/ass/share/ && \
     touch /opt/ass/config.json && \
     touch /opt/ass/auth.json && \
-    touch /opt/ass/data.json && \
-    # Set permissions for rootless user
-    chown -R node:node /opt/ass
-
-# Set the user
-USER node
+    touch /opt/ass/data.json
 
 # Install dependencies as rootless user
 RUN npm i --save-dev && \
