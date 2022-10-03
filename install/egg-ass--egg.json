@@ -1,0 +1,113 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v1",
+        "update_url": null
+    },
+    "exported_at": "2022-05-20T10:12:44-05:00",
+    "name": "Ass-Egg",
+    "author": "darkerink@zenaxis.org",
+    "description": "This is an Egg For Ass https:\/\/github.com\/tycrek\/ass\/ The superior self-hosted ShareX server",
+    "features": null,
+    "images": [
+        "ghcr.io\/software-noob\/pterodactyl-images:nodejs_16"
+    ],
+    "file_denylist": [],
+    "startup": "cd ass && npm start",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Listening on 0.0.0.0\"\r\n}",
+        "logs": "{}",
+        "stop": "^C && exit"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\n\r\napt update\r\n\r\napt -y install git curl\r\n\r\ncurl -sL https:\/\/deb.nodesource.com\/setup_16.x | bash - \\\r\n    && apt -y install nodejs\r\n\r\necho Nodejs and NPM versions\r\nnode -v\r\nnpm -v\r\n\r\ncd \/mnt\/server # This is where all the server files are located\r\n\r\necho removing Ass \r\nrm -rf ass\r\n\r\necho Cloning Ass\r\n\r\ngit clone https:\/\/github.com\/tycrek\/ass # Clones Ass\r\n\r\ncd ass # Cd's Into ass\r\n\r\necho Installing Packages\r\nnpm i # Installs the Packages\r\n\r\necho Building\r\nnpm run build # Build Ass\r\n\r\necho {} > auth.json\r\n\r\nif [ \"${A_DOMAIN}\" = \"{HOST_AND_PORT}\" ]; then\r\n   A_DOMAIN=\"${SERVER_IP}:${SERVER_PORT}\"\r\nelse\r\n   echo \"False\"\r\nfi\r\n\r\n\r\necho \"{\r\n    \\\"host\\\": \\\"0.0.0.0\\\",\r\n    \\\"port\\\": ${SERVER_PORT},\r\n    \\\"domain\\\": \\\"${A_DOMAIN}\\\",\r\n    \\\"maxUploadSize\\\": ${MAX_UPLOAD},\r\n    \\\"isProxied\\\": true,\r\n    \\\"useSsl\\\": true,\r\n    \\\"resourceIdSize\\\": ${RESOURCE_ID_SIZE},\r\n    \\\"resourceIdType\\\": \\\"${RESOURCE_ID_TYPE}\\\",\r\n    \\\"spaceReplace\\\": \\\"${SPACE_REPLACE}\\\",\r\n    \\\"gfyIdSize\\\": 2,\r\n    \\\"mediaStrict\\\": ${MEDIA_STRICT},\r\n    \\\"viewDirect\\\": ${VIEW_DIRECT},\r\n    \\\"dataEngine\\\": \\\"${DATA_ENGINE}\\\",\r\n    \\\"frontendName\\\": \\\"${FRONTEND_NAME}\\\",\r\n    \\\"indexFile\\\": \\\"\\\",\r\n    \\\"useSia\\\": false,\r\n    \\\"s3enabled\\\": false,\r\n    \\\"s3endpoint\\\": \\\"sfo3.digitaloceanspaces.com\\\",\r\n    \\\"s3bucket\\\": \\\"bucket-name\\\",\r\n    \\\"s3usePathStyle\\\": false,\r\n    \\\"s3accessKey\\\": \\\"accessKey\\\",\r\n    \\\"s3secretKey\\\": \\\"secretKey\\\",\r\n    \\\"__WARNING__\\\": \\\"The following configs are no longer used and are here for backwards compatibility. For optimal use, DO NOT edit them.\\\",\r\n    \\\"diskFilePath\\\": \\\"uploads\/\\\",\r\n    \\\"saveWithDate\\\": true,\r\n    \\\"saveAsOriginal\\\": false\r\n}\" >> config.json\r\n\r\necho Making new Token\r\nnpm run new-token # Make a New Token\r\n\r\necho Finished",
+            "container": "debian:buster-slim",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Domain",
+            "description": "Domain name to send to ShareX clients",
+            "env_variable": "A_DOMAIN",
+            "default_value": "{HOST_AND_PORT}",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "Resource Type",
+            "description": "Maximum size for uploaded files, in megabytes",
+            "env_variable": "RESOURCE_ID_TYPE",
+            "default_value": "random",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "DataEngine",
+            "description": "The Dataengine to use",
+            "env_variable": "DATA_ENGINE",
+            "default_value": "@tycrek\/papito",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "Resource Size",
+            "description": "URL length (length of IDs for your files, recommended: 6-15. Higher = more uploads, but longer URLs)",
+            "env_variable": "RESOURCE_ID_SIZE",
+            "default_value": "8",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "Max Upload Size",
+            "description": "Maximum size for uploaded files, in megabytes",
+            "env_variable": "MAX_UPLOAD",
+            "default_value": "100",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "Space Replace Char",
+            "description": "Character to replace spaces in filenames with (must be a hyphen -, underscore _, or use ! to remove spaces)",
+            "env_variable": "SPACE_REPLACE",
+            "default_value": "_",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "Media Strict",
+            "description": "Only allow uploads of media files (images, videos, audio)",
+            "env_variable": "MEDIA_STRICT",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean"
+        },
+        {
+            "name": "Frontend Name",
+            "description": "The Frontend Name",
+            "env_variable": "FRONTEND_NAME",
+            "default_value": "ass-x",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string"
+        },
+        {
+            "name": "View Direct",
+            "description": "View uploads in the browser as a direct resource, rather than a viewing page",
+            "env_variable": "VIEW_DIRECT",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean"
+        }
+    ]
+}
