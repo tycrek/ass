@@ -189,6 +189,23 @@ The first time you run ass, the setup process will automatically be called & you
 
 </details>
 
+### Pterodactyl
+
+<details>
+<summary><em>Expand for Pterodactyl Instalation steps</em></summary>
+<br>
+
+1. You should have A Pterodactyl Panel installed
+2. Go To install/egg-ass--egg.json
+3. Copy The Json File or download it so you dont need to create new file again
+4. If you have copied the json file Create a New File, The name is up to you but the extension should be .json
+5. Insert The egg using the nest section on the pterodactyl admin panel
+6. Create Server with that egg
+7. Wait Untill the instalation complete
+8. For The Authorization Token is on the auth.json file
+
+</details>
+
 ## Using HTTPS
 
 For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any reverse proxy should work (such as Apache or Nginx). I also have a [tutorial on easily setting up Caddy][my tutorial] as a reverse proxy server.
