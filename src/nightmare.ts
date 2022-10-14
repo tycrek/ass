@@ -18,7 +18,7 @@ export const removeGPS = (file: string): Promise<boolean> => {
 					fs.read(fd, Buffer.alloc(size), 0, size, offset)
 						.then(({ buffer }) => Promise.resolve(buffer)),
 				// Write function
-				(val: string, offset: number, enc: any): Promise<void> =>
+				(val: string, offset: number, enc: BufferEncoding): Promise<void> =>
 					fs.write(fd, Buffer.alloc(val.length, val, enc), 0, val.length, offset)
 						.then(() => Promise.resolve())))
 			.then(resolve)
