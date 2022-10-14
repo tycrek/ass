@@ -23,6 +23,7 @@ const s3config = {
 	s3endpoint: 'sfo3.digitaloceanspaces.com',
 	s3bucket: 'bucket-name',
 	s3usePathStyle: false,
+	s3redirect: false,
 	s3accessKey: 'accessKey',
 	s3secretKey: 'secretKey',
 };
@@ -205,6 +206,12 @@ function doSetup() {
 				description: 'S3 path endpoint, otherwise uses subdomain endpoint',
 				type: 'boolean',
 				default: s3config.s3usePathStyle,
+				required: false
+			},
+			s3redirect: {
+				description: 'Redirect to /direct endpoint to the S3 resource rather than ass proxying the file',
+				type: 'boolean',
+				default: s3config.s3redirect,
 				required: false
 			},
 			s3accessKey: {

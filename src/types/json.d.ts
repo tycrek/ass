@@ -20,6 +20,7 @@ declare module 'ass-json' {
 		s3endpoint: string
 		s3bucket: string
 		s3usePathStyle: boolean
+		s3redirect: boolean
 		s3accessKey: string
 		s3secretKey: string
 		__WARNING__: string
