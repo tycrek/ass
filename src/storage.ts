@@ -11,6 +11,7 @@ import Hash from './hash';
 import { path, generateId, log } from './utils';
 import { SkynetUpload } from './skynet';
 import { Request, Response } from 'express';
+import { removeGPS } from './nightmare';
 const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize, useSia }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNSUPPORTED_MEDIA_TYPE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 
@@ -108,6 +109,11 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 		// Check if file size is too big
 		.then(() => { if (req.file.size / Math.pow(1024, 2) > maxUploadSize) throw new Error('LIMIT_FILE_SIZE'); })
 
+		// Strip EXIF data
+		.then(() => removeGPS(req.file.path))
+		.then((result) => log.debug('EXIF GPS data', result ? 'removed' : 'not removed'))
+		.catch((err) => log.debug('!! EXIF GPS data could not be removed', err))
+
 		// Save file
 		.then(() => log.debug('Saving file', req.file.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
 		.then(() =>
@@ -159,7 +165,7 @@ function listAllKeys(resolve: Function, reject: Function, token?: string) {
 	let allKeys: string[] = [];
 	s3.listObjectsV2({ Bucket: s3bucket, ContinuationToken: token }).promise()
 		.then((data: { [key: string]: any }) => (allKeys = allKeys.concat(data.Contents), data.IsTruncated ? listAllKeys(resolve, reject, data.NextContinuationToken) : resolve(allKeys.length))) // skipcq: JS-0086, JS-0090
-		.catch((err) => reject(err));
+		.catch((err: Error) => reject(err));
 }
 
 export function bucketSize() {
