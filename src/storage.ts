@@ -159,7 +159,7 @@ function listAllKeys(resolve: Function, reject: Function, token?: string) {
 	let allKeys: string[] = [];
 	s3.listObjectsV2({ Bucket: s3bucket, ContinuationToken: token }).promise()
 		.then((data: { [key: string]: any }) => (allKeys = allKeys.concat(data.Contents), data.IsTruncated ? listAllKeys(resolve, reject, data.NextContinuationToken) : resolve(allKeys.length))) // skipcq: JS-0086, JS-0090
-		.catch((err) => reject(err));
+		.catch((err: Error) => reject(err));
 }
 
 export function bucketSize() {
