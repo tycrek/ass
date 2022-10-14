@@ -8,7 +8,7 @@ import { Request, Response } from 'express';
 import { deleteS3 } from '../storage';
 import { SkynetDelete, SkynetDownload } from '../skynet';
 import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
-const { diskFilePath, s3enabled, viewDirect, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { diskFilePath, s3enabled, s3redirect, viewDirect, useSia }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 import { data } from '../data';
 import { users } from '../auth';
@@ -79,6 +79,7 @@ router.get('/direct*', (req: Request, res: Response, next) => data().get(req.ass
 			file.headers.forEach((value, header) => res.setHeader(header, value));
 			file.body?.pipe(res);
 		}),
+		s3redirect: () => res.redirect(getS3url(fileData.randomId, fileData.ext)),
 		sia: () => SkynetDownload(fileData)
 			.then((stream) => stream.pipe(res))
 			.then(() => SkynetDelete(fileData)),
@@ -91,7 +92,7 @@ router.get('/direct*', (req: Request, res: Response, next) => data().get(req.ass
 					.sendFile(path(fileData.path), (err) => err ? reject(err) : resolve(void 0))))
 	};
 
-	return uploaders[fileData.randomId.startsWith('sia://') ? 'sia' : s3enabled ? 's3' : 'local']();
+	return uploaders[fileData.randomId.startsWith('sia://') ? 'sia' : s3enabled ? (s3redirect ? 's3redirect' : 's3') : 'local']();
 }).catch(next));
 
 // Thumbnail response
