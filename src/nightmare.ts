@@ -5,6 +5,10 @@
 import { removeLocation } from '@xoi/gps-metadata-remover';
 import fs from 'fs-extra';
 
+/**
+ * This strips GPS EXIF data from files using the @xoi/gps-metadata-remover package
+ * @returns A Promise that resolves to `true` if GPS data was removed, `false` if not
+ */
 export const removeGPS = (file: string): Promise<boolean> => {
 	return new Promise((resolve, reject) =>
 		fs.open(file, 'r+')
