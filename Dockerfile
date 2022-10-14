@@ -20,21 +20,19 @@ npm install --location=project --save-dev && npm run build
 # Delete build deps.
 RUN apk del .build-deps
 # Delete unnsessasary files.
-RUN rm -rf /build/Dockerfile /build/package-lock.json /build/.git* /build/.github /build/sample_config.sxcu \
+RUN rm -rf /build/Dockerfile /build/.git* /build/.github /build/sample_config.sxcu \
  /build/.deepsource.toml /build/LICENSE /build/flameshot_example.sh
 
 # The runtime
-FROM alpine:3.16 AS RUNTIME
+FROM node:16-alpine AS RUNTIME
 # Set Production
 ENV NODE_ENV "production"
 # Give Credit To The Maker
-LABEL maintainer="tycrek" version="0.12.0" description="The superior self-hosted ShareX server"
+LABEL maintainer="tycrek" version="0.13.0" description="The superior self-hosted ShareX server"
 # And Copy the build files.
 WORKDIR /ass
 COPY --from=BUILD /usr/local/bin /usr/local/bin 
 COPY --from=BUILD /usr/bin /usr/bin 
-COPY --from=BUILD /usr/lib/ /usr/lib/
-COPY --from=BUILD /lib/ /lib/
 COPY --from=BUILD /build/ .
 # Make sure compose can bind the directorys
 RUN mkdir -p /ass/uploads/thumbnails/ && \
