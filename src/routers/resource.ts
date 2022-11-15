@@ -83,11 +83,12 @@ router.get('/direct*', (req: Request, res: Response, next) => data().get(req.ass
 			.then((stream) => stream.pipe(res))
 			.then(() => SkynetDelete(fileData)),
 		local: () => fs.pathExists(path(fileData.path))
-			.then((exists) => {
-				if (!exists) throw new Error('File does not exist');
-				res.header('Accept-Ranges', 'bytes').header('Content-Length', `${fileData.size}`).type(fileData.mimetype);
-				fs.createReadStream(fileData.path).pipe(res);
-			})
+			.then((exists) => new Promise((resolve, reject) => !exists
+				? reject(new Error('File does not exist'))
+				: res.header('Accept-Ranges', 'bytes')
+					.header('Content-Length', `${fileData.size}`)
+					.type(fileData.mimetype)
+					.sendFile(path(fileData.path), (err) => err ? reject(err) : resolve(void 0))))
 	};
 
 	return uploaders[fileData.randomId.startsWith('sia://') ? 'sia' : s3enabled ? 's3' : 'local']();

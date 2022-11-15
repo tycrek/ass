@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://jmoore.dev/files/ass-round-square-logo-white-with-text.png"></a></h1>
+  <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://imagedelivery.net/cNsTmYlz178gQNL42swQfw/44357fc5-8afd-4a17-76b9-556660b5fc00/public"></a></h1>
 </div>
 
 ![GitHub package.json version]
@@ -47,6 +47,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - Upload images, gifs, videos, audio, & files
 - Token-based authentication
 - Download & delete resources
+- GPS data automatically removed
 - Fully customizable Discord embeds
 - Built-in web viewer with video & audio player
 - Embed images, gifs, & videos directly in Discord

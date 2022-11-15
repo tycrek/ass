@@ -1,6 +1,6 @@
 {
   "name": "ass",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "npm run build && npm start",
-    "build": "tsc",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=1024\" tsc",
     "start": "node dist/ass.js",
     "setup": "node dist/setup.js",
     "metrics": "node dist/metrics.js",
@@ -45,6 +45,7 @@
     "@tycrek/isprod": "^2.0.2",
     "@tycrek/log": "^0.6.0-7",
     "@tycrek/papito": "^0.3.4",
+    "@xoi/gps-metadata-remover": "^1.1.1",
     "any-shell-escape": "^0.1.1",
     "autoprefixer": "^10.4.4",
     "aws-sdk": "^2.1115.0",
