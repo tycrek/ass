@@ -1,3 +1,1 @@
-export default () => {
-	return `${Date.now()}`;
-};
+export default () => `${Date.now()}`;
