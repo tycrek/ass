@@ -10,7 +10,7 @@ import { processUploaded } from '../storage';
 import { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
 import { data } from '../data';
 import { users } from '../auth';
-const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace }: Config = fs.readJsonSync(path('config.json'));
+const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace, adminWebhookEnabled, adminWebhookUrl, adminWebhookUsername, adminWebhookAvatar }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
@@ -110,12 +110,38 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 		.then(() => {
 			// Log the upload
 			const logInfo = `${req.file!.originalname} (${req.file!.mimetype}, ${formatBytes(req.file.size)})`;
-			log.success('File uploaded', logInfo, `uploaded by ${users[req.token ?? ''] ? users[req.token ?? ''].username : '<token-only>'}`);
+			const uploader = users[req.token ?? ''] ? users[req.token ?? ''].username : '<token-only>';
+			log.success('File uploaded', logInfo, `uploaded by ${uploader}`);
 
 			// Build the URLs
 			const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
 			const thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
 			const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
+
+			const buildSendWebhook = (url: string, username: string, avatar: string, admin = false) => {
+				if (url === '') return;
+
+				// Build the webhook
+				const hook = new Webhook(url);
+				hook.setUsername(username);
+				hook.setAvatar(avatar);
+
+				// Build the embed
+				const embed = new MessageBuilder()
+					.setTitle(logInfo)
+					//@ts-ignore
+					.setURL(resourceUrl)
+					.setDescription(`${admin ? `**User:** \`${uploader}\`\n` : ''}**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
+					.setThumbnail(thumbnailUrl)
+					.setColor(req.file.vibrant)
+					.setTimestamp();
+
+				// Send the embed to the webhook, then delete the client after to free resources
+				log.debug(`Sending${admin ? ' admin' : ''} embed to webhook`);
+				hook.send(embed)
+					.then(() => log.debug(`Webhook${admin ? ' admin' : ''} sent`))
+					.catch((err) => log.error('Webhook error').err(err));
+			}
 
 			// Send the response
 			res.type('json').send({ resource: resourceUrl, thumbnail: thumbnailUrl, delete: deleteUrl })
@@ -123,29 +149,19 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 					log.debug('Upload response sent');
 
 					// After we have sent the user the response, also send a Webhook to Discord (if headers are present)
-					if (req.headers['x-ass-webhook-url']) {
+					if (req.headers['x-ass-webhook-url'])
+						buildSendWebhook(
+							req.headers['x-ass-webhook-url']?.toString(),
+							req.headers['x-ass-webhook-username']?.toString() || 'ass',
+							req.headers['x-ass-webhook-avatar']?.toString() || ASS_LOGO);
 
-						// Build the webhook
-						const hook = new Webhook(req.headers['x-ass-webhook-url']?.toString());
-						hook.setUsername(req.headers['x-ass-webhook-username']?.toString() || 'ass');
-						hook.setAvatar(req.headers['x-ass-webhook-avatar']?.toString() || ASS_LOGO);
-
-						// Build the embed
-						const embed = new MessageBuilder()
-							.setTitle(logInfo)
-							//@ts-ignore
-							.setURL(resourceUrl)
-							.setDescription(`**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
-							.setThumbnail(thumbnailUrl)
-							.setColor(req.file.vibrant)
-							.setTimestamp();
-
-						// Send the embed to the webhook, then delete the client after to free resources
-						log.debug('Sending embed to webhook');
-						hook.send(embed)
-							.then(() => log.debug('Webhook sent'))
-							.catch((err) => log.error('Webhook error').err(err));
-					}
+					// Send the webhook to the default webhook, if it exists
+					if (adminWebhookEnabled)
+						buildSendWebhook(
+							adminWebhookUrl,
+							adminWebhookUsername.trim().length === 0 ? 'ass admin logs' : adminWebhookUsername,
+							adminWebhookAvatar.trim().length === 0 ? ASS_LOGO : adminWebhookAvatar,
+							true);
 
 					// Also update the users upload count
 					if (!users[req.token ?? '']) {
