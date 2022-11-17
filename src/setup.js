@@ -127,12 +127,12 @@ function doSetup() {
 				required: false
 			},
 			resourceIdType: {
-				description: 'URL type (can be one of: zws, random, gfycat, original)',
+				description: 'URL type (can be one of: zws, random, gfycat, original, timestamp)',
 				type: 'string',
 				default: config.resourceIdType,
 				require: false,
-				pattern: /(original|zws|random|gfycat)/gi, // skipcq: JS-0113
-				message: 'Must be one of: zws, random, gfycat, original'
+				pattern: /(original|zws|random|gfycat|timestamp)/gi, // skipcq: JS-0113
+				message: 'Must be one of: zws, random, gfycat, original, timestamp'
 			},
 			spaceReplace: {
 				description: 'Character to replace spaces in filenames with (must be a hyphen -, underscore _, or use ! to remove spaces)',

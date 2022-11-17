@@ -58,6 +58,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
    - Mixed-case alphanumeric
    - Gfycat
    - Original
+   - Timestamp
 
 #### For hosts & developers
 
@@ -102,6 +103,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 | **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
 | **Gfycat** | Gfycat-style ID's (for example: `https://example.com/unsung-discrete-grub`). Thanks to [Gfycat] for the wordlists |
 | **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
+| **Timestamp** | The quick but dirty mode. URL is a timestamp of when the file was uploaded, in milliseconds. This is the most unique mode, but also potentially the longest (Gfycat could be longer, easily). **Keep in mind this is vulnerable to iteration attacks** |
 
 [ZWS sample]: https://user-images.githubusercontent.com/29926144/113785625-bf43a480-96f4-11eb-8dd7-7f164f33ada2.png
 [Gfycat]: https://gfycat.com
@@ -252,7 +254,7 @@ If you need to override a specific part of the config to be different from the g
 | Header | Purpose |
 | ------ | ------- |
 | **`X-Ass-Domain`** | Override the domain returned for the clipboard (useful for multi-domain hosts) |
-| **`X-Ass-Access`** | Override the generator used for the resource URL. Must be one of: `original`, `zws`, `gfycat`, or `random` ([see above](#access-types)) |
+| **`X-Ass-Access`** | Override the generator used for the resource URL. Must be one of: `original`, `zws`, `gfycat`, `random`, or `timestamp` ([see above](#access-types)) |
 | **`X-Ass-Gfycat`** | Override the length of Gfycat ID's. Defaults to `2` |
 | **`X-Ass-Timeoffset`** | Override the timestamp offset. Defaults to `UTC+0` |
 
