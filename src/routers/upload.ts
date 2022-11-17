@@ -129,10 +129,11 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 				// Build the embed
 				const embed = new MessageBuilder()
 					.setTitle(logInfo)
-					//@ts-ignore
-					.setURL(resourceUrl)
+					// @ts-ignore
+					.setUrl(resourceUrl)
 					.setDescription(`${admin ? `**User:** \`${uploader}\`\n` : ''}**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
 					.setThumbnail(thumbnailUrl)
+					// @ts-ignore
 					.setColor(req.file.vibrant)
 					.setTimestamp();
 
