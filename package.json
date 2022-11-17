@@ -1,6 +1,6 @@
 {
   "name": "ass",
-  "version": "0.11.0-rc.1",
+  "version": "0.13.0",
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
@@ -9,7 +9,8 @@
   },
   "scripts": {
     "dev": "npm run build && npm start",
-    "build": "tsc",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=1024\" tsc",
+    "build-skip-options": "tsc",
     "start": "node dist/ass.js",
     "setup": "node dist/setup.js",
     "metrics": "node dist/metrics.js",
@@ -45,6 +46,7 @@
     "@tycrek/isprod": "^2.0.2",
     "@tycrek/log": "^0.6.0-7",
     "@tycrek/papito": "^0.3.4",
+    "@xoi/gps-metadata-remover": "^1.1.1",
     "any-shell-escape": "^0.1.1",
     "autoprefixer": "^10.4.4",
     "aws-sdk": "^2.1115.0",
@@ -54,6 +56,7 @@
     "discord-webhook-node": "^1.1.8",
     "escape-html": "^1.0.3",
     "express": "^4.17.3",
+    "express-brute": "^1.0.1",
     "express-busboy": "^8.0.2",
     "ffmpeg-static": "^4.4.0",
     "fs-extra": "^10.0.1",
@@ -75,6 +78,7 @@
   "devDependencies": {
     "@types/escape-html": "^1.0.1",
     "@types/express": "^4.17.13",
+    "@types/express-brute": "^1.0.1",
     "@types/express-busboy": "^8.0.0",
     "@types/ffmpeg-static": "^3.0.0",
     "@types/fs-extra": "^9.0.12",

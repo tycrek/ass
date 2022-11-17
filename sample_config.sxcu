@@ -1,5 +1,5 @@
 {
-  "Version": "13.4.0",
+  "Version": "14.0.1",
   "Name": "ass",
   "DestinationType": "ImageUploader, TextUploader, FileUploader",
   "RequestMethod": "POST",
@@ -9,8 +9,8 @@
   },
   "Body": "MultipartFormData",
   "FileFormName": "file",
-  "URL": "$json:.resource$",
-  "ThumbnailURL": "$json:.thumbnail$",
-  "DeletionURL": "$json:.delete$",
-  "ErrorMessage": "$response$"
+  "URL": "{json:.resource}",
+  "ThumbnailURL": "{json:.thumbnail}",
+  "DeletionURL": "{json:.delete}",
+  "ErrorMessage": "{response}"
 }

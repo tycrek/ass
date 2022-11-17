@@ -8,6 +8,7 @@ import token from './generators/token';
 import zwsGen from './generators/zws';
 import randomGen from './generators/random';
 import gfyGen from './generators/gfycat';
+import tsGen from './generators/timestamp';
 import logger from './logger';
 import { Request } from 'express';
 const { HTTP, HTTPS, KILOBYTES } = require('../MagicNumbers.json');
@@ -18,7 +19,7 @@ try {
 	var { useSsl, port, domain, isProxied, diskFilePath, s3bucket, s3endpoint, s3usePathStyle } = require('../config.json'); // skipcq: JS-0239, JS-0102
 } catch (ex) {
 	// @ts-ignore
-	if (ex.code !== 'MODULE_NOT_FOUND') console.error(ex);
+	if (ex.code !== 'MODULE_NOT_FOUND' || !ex.toString().includes('Unexpected end')) console.error(ex);
 }
 
 export function getTrueHttp() {
@@ -79,12 +80,14 @@ const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
 	r: 'random',    // Use a randomly generated ID with a mixed-case alphanumeric character set
-	gfy: 'gfycat'   // Gfycat-style ID's (https://gfycat.com/unsungdiscretegrub)
+	gfy: 'gfycat',   // Gfycat-style ID's (https://gfycat.com/unsungdiscretegrub)
+	ts: 'timestamp', // Timestamp-based ID's
 };
 const GENERATORS = new Map();
 GENERATORS.set(idModes.zws, zwsGen);
 GENERATORS.set(idModes.r, randomGen);
 GENERATORS.set(idModes.gfy, gfyGen);
+GENERATORS.set(idModes.ts, tsGen);
 export function generateId(mode: string, length: number, gfyLength: number, originalName: string) {
 	return (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName);
 }

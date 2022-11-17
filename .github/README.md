@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://jmoore.dev/files/ass-round-square-logo-white-with-text.png"></a></h1>
+  <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://imagedelivery.net/cNsTmYlz178gQNL42swQfw/44357fc5-8afd-4a17-76b9-556660b5fc00/public"></a></h1>
 </div>
 
 ![GitHub package.json version]
@@ -9,9 +9,7 @@
 ![GitHub Repo stars]
 [![Discord badge]][Discord invite]
 
-**ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite.
-
-ass aims to be as **unopinionated** as possible. It allows nearly endless choice for users & hosts alike: Users can configure their upload settings directly from the ShareX interface (including embeds, webhooks, & more), while hosts are free to pick their preferred storage & data management methods.
+**ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite. ass aims to be as **unopinionated** as possible, giving users & hosts alike the ability to modify nearly everything.
 
 By default, ass comes with a resource viewing page, which includes metadata about the resource as well as a download button & inline viewers for images, videos, & audio. It does **not** have a user dashboard or registration system: **this is intentional!** Developers are free to [create their own frontends] using the languages & tools they are most comfortable with. Writing & using these frontends is fully documented below, in the wiki, & in the source code.
 
@@ -49,6 +47,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - Upload images, gifs, videos, audio, & files
 - Token-based authentication
 - Download & delete resources
+- GPS data automatically removed
 - Fully customizable Discord embeds
 - Built-in web viewer with video & audio player
 - Embed images, gifs, & videos directly in Discord
@@ -59,6 +58,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
    - Mixed-case alphanumeric
    - Gfycat
    - Original
+   - Timestamp
 
 #### For hosts & developers
 
@@ -103,6 +103,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 | **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
 | **Gfycat** | Gfycat-style ID's (for example: `https://example.com/unsung-discrete-grub`). Thanks to [Gfycat] for the wordlists |
 | **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
+| **Timestamp** | The quick but dirty mode. URL is a timestamp of when the file was uploaded, in milliseconds. This is the most unique mode, but also potentially the longest (Gfycat could be longer, easily). **Keep in mind this is vulnerable to iteration attacks** |
 
 [ZWS sample]: https://user-images.githubusercontent.com/29926144/113785625-bf43a480-96f4-11eb-8dd7-7f164f33ada2.png
 [Gfycat]: https://gfycat.com
@@ -117,12 +118,9 @@ ass supports two installation methods: Docker (recommended) & local (manual).
 <summary><em>Expand for Docker/Docker Compose installation steps</em></summary>
 <br>
 
-[docker-compose] is the recommended way to install ass. These steps assume you are already family with Docker, so if you're not, please [read the docs]. It also assumes that you have a working Docker installation with `docker-compose` installed.
+[Docker Compose] is the recommended way to install ass. These steps assume you are already family with Docker. If not, you should probably use the local installation method. They also assume that you have a working Docker installation with Docker Compose v2 installed.
 
-**If your local installation of Docker Compose complains about a missing `docker-compose` file, this is your problem, not mine.** Update Compose to the latest version to remove that warning. I wrote the Compose file using the [latest Compose specification](https://github.com/compose-spec/compose-spec/blob/master/spec.md), so any issues will be caused by an outdated version of Compose.
-
-[docker-compose]: https://docs.docker.com/compose/
-[read the docs]: https://docs.docker.com/
+[Docker Compose]: https://docs.docker.com/compose/
 
 #### Install using docker-compose
 
@@ -139,22 +137,22 @@ You should now be able to access the ass server at `http://localhost:40115/` (as
 
 #### What is this script doing?
 
-It creates directories & files required for `docker-compose` to work. It then calls `docker-compose` to build the image & run ass. On first run, ass will detect an empty config file, so it will run the setup script in a headless terminal with no possible input. Luckily, you can use `docker-exec` to start your *own* terminal in which to run the setup script (the install scripts call this for you). After setup, the container is restarted & you are prompted to open logs so you can confirm that the setup was successful. Each install script also has comments for every step, so you can see what's going on.
+It creates directories & files required for Docker Compose to properly set up volumes. After that, it simply builds the image & container, then launches the setup process.
 
 #### How do I run the npm scripts?
 
-Since all 3 primary data files are bound to the container with Volumes, you can run the scripts in two ways:
+Since all 3 primary data files are bound to the container with Volumes, you can run the scripts in two ways: `docker compose exec` or `npm` on the host.
 
 ```bash
-# Use docker-compose exec to check the usage metrics
-docker-compose exec ass npm run metrics
+# Check the usage metrics
+docker compose exec ass npm run metrics
 
-# Use docker-compose exec to run the setup script
-docker-compose exec ass npm run setup && docker-compose restart
+# Run the setup script
+docker compose exec ass npm run setup && docker compose restart
 
 # Run npm on the host to run the setup script (also works for metrics)
-# (You will have to meet the Node.js & npm requirements on your host)
-npm run setup && docker-compose restart
+# (You will have to meet the Node.js & npm requirements on your host for this to work properly)
+npm run setup && docker compose restart
 ```
 
 #### How do I update?
@@ -162,28 +160,19 @@ npm run setup && docker-compose restart
 Easy! Just pull the changes & run this one-liner:
 
 ```bash
-# Pull the latest version of ass
-git pull
-
-# Rebuild the container with the new changes (uncomment the 2nd part if the update requires refreshing the config)
-docker-compose up --force-recreate --build -d && docker image prune -f # && docker-compose exec ass npm run setup && docker-compose restart
+# Pull the latest version of ass & rebuild the image
+git pull && docker compose build --no-cache && docker compose up -d
 ```
-
-- `--force-recreate` will force the container to rebuild
-- `--build` will build the image from the latest changes in the directory
-- `-d` will run the container in the background
-- `docker image prune -f` will remove old images that are no longer used by any containers
-- *These descriptions were suggested by [CoPilot], feel free to revise if necessary.*
 
 #### What else should I be aware of?
 
-- `docker-compose` exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
-   - `uploads/`
-   - `share/`
-   - `config.json`
-   - `auth.json`
-   - `data.json`
-- I have personally tested running using these commands (migrating from an existing local deployment!) with Digital Ocean Spaces (S3 object-storage), a PostgreSQL database, & a custom frontend all on the same container. It should also work for you but feel free to let me know if you have any issues.
+Deploying ass with Docker exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
+
+- `uploads/`
+- `share/`
+- `config.json`
+- `auth.json`
+- `data.json`
 
 </details>
 
@@ -195,12 +184,11 @@ docker-compose up --force-recreate --build -d && docker image prune -f # && dock
 
 1. You should have **Node.js 16** & **npm 8 or later** installed. 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
-3. Run `npm i -g typescript` to install TypeScript globally
-4. Run `npm i --save-dev` to install the required dependencies (`--save-dev` is **required** for compilation)
-5. Run `npm run build` to compile the TypeScript files
+3. Run `npm i --save-dev` to install the required dependencies (`--save-dev` is **required** for compilation)
+4. Run `npm run build` to compile the TypeScript files
 5. Run `npm start` to start ass.
 
-The first time you run ass, the setup process will automatically be called and you will be shown your first authorization token; save this as you will need it to configure ShareX.
+The first time you run ass, the setup process will automatically be called & you will be shown your first authorization token; save this as you will need it to configure ShareX.
 
 </details>
 
@@ -209,7 +197,7 @@ The first time you run ass, the setup process will automatically be called and y
 For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any reverse proxy should work (such as Apache or Nginx). I also have a [tutorial on easily setting up Caddy][my tutorial] as a reverse proxy server.
 
 [Caddy]: https://caddyserver.com/
-[my tutorial]: https://jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
+[my tutorial]: https://old.jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
 
 ## Generating new tokens
 
@@ -235,11 +223,11 @@ In your Cloudflare DNS dashboard, set your domain/subdomain to **DNS Only** if y
       - Name: `Authorization`
 	  - Value: (the value provided by `npm start` on first run)
 5. **Response** tab:
-   - URL: `$json:.resource$`
-   - Thumbnail: `$json:.thumbnail$`
-   - Deletion URL: `$json:.delete$`
-   - Error message: `$response$`
-   - MagicCap users: **do not** include the `.` in the above (i.e. `$json:resource$`)
+   - URL: `{json:.resource}`
+   - Thumbnail: `{json:.thumbnail}`
+   - Deletion URL: `{json:.delete}`
+   - Error message: `{response}`
+   - MagicCap users: **do not** include the `.` in the above & replace `{}` with `$` (i.e. `$json:resource$`)
 6. The file `sample_config.sxcu` can also be modified & imported to suit your needs
 
 ### Header overrides
@@ -249,7 +237,7 @@ If you need to override a specific part of the config to be different from the g
 | Header | Purpose |
 | ------ | ------- |
 | **`X-Ass-Domain`** | Override the domain returned for the clipboard (useful for multi-domain hosts) |
-| **`X-Ass-Access`** | Override the generator used for the resource URL. Must be one of: `original`, `zws`, `gfycat`, or `random` ([see above](#access-types)) |
+| **`X-Ass-Access`** | Override the generator used for the resource URL. Must be one of: `original`, `zws`, `gfycat`, `random`, or `timestamp` ([see above](#access-types)) |
 | **`X-Ass-Gfycat`** | Override the length of Gfycat ID's. Defaults to `2` |
 | **`X-Ass-Timeoffset`** | Override the timestamp offset. Defaults to `UTC+0` |
 
@@ -310,12 +298,12 @@ If you want to customize the font or colours of the viewer page, create a file i
 
 By default, ass directs the index route `/` to this README. Follow these steps to use a custom index:
 
-1. Run `npm run setup` to re-run the setup script.
-   - The defaults are set by your existing config, so you can press `Enter` to accept the defaults on most prompts.
-   - The one setting you want to change is `Filename for your custom index`. Enter a name for your index, including `.js` (custom index's must be `.js` files).
-2. Make a new file in the `share/` directory matching the name you entered (this directory can be found in the `ass/` directory. It is created automatically after setup is run).
-3. Your index file needs to export a single function taking three arguments: `(req, res, next)`. Some code samples for common use cases are provided below.
-4. Restart ass. The startup info logs should say **`Custom index:`**` enabled`.
+1. Create a file in the `share/` directory called `index.html` or `index.js`.
+   - ass will treat `index.html` as an HTML file and will send it to the client.
+   - ass will treat `index.js` as a Node.js file that exports a function representing [Express middleware](https://expressjs.com/en/guide/using-middleware.html). ass will pass all handling of the index to this function. The function should take three arguments: `(req, res, next)`. Some code samples for common use cases are provided below.
+   - If both `index.html` and `index.js` are present, the `index.html` file will be served first.
+2. Add whatever you want to the file.
+3. Restart ass. The startup info logs should mention which file is being used as the index.
 
 ### Custom index code samples
 
@@ -323,13 +311,6 @@ By default, ass directs the index route `/` to this README. Follow these steps t
 
 ```js
 module.exports = (req, res, next) => res.redirect('/register');
-```
-
-**Send an HTML file**
-
-```js
-const path = require('path');
-module.exports = (req, res, next) => res.sendFile(path.join(__dirname, 'index.html'));
 ```
 
 ## File storage
@@ -344,14 +325,15 @@ Local storage is the simplest option, but relies on you having a lot of disk spa
 
 Any existing object storage server that's compatible with [Amazon S3] can be used with ass. I personally host my files using Digital Ocean Spaces, which implements S3.
 
-S3 servers are generally very fast and have very good uptime, though this will depend on the hosting provider and plan you choose.
+S3 servers are generally very fast & have very good uptime, though this will depend on the hosting provider & plan you choose.
 
 ### Skynet
 
-[Skynet] is a decentralized CDN created by [Skynet Labs]. It utilizes the [Sia] blockchain, the leading decentralized cloud storage platform, which boasts "no signups, no servers, no trusted third parties".
+**As of August 12, 2022, [Skynet Labs is shut down].** Skynet *will continue to work*, as such is the nature of decentralized services.
 
-For hosts who are looking for a reliable, always available storage solution with lots of capacity and no costs, Skynet may be your best option. However, uploads tend to be on the slower side (though speeds will improve as the Sia network grows).
+[Skynet] is a decentralized CDN created by [Skynet Labs]. It utilizes the [Sia] blockchain, the leading decentralized cloud storage platform, which boasts "no signups, no servers, no trusted third parties". For hosts who are looking for a reliable, always available storage solution with lots of capacity & no costs, Skynet may be your best option. However, uploads tend to be on the slower side (though speeds will improve as the Sia network grows).
 
+[Skynet Labs is shut down]: https://skynetlabs.com/news/skynet-labs-shutting-down-skynet-remains-online
 [Amazon S3]: https://en.wikipedia.org/wiki/Amazon_S3
 [Skynet Labs]: https://github.com/SkynetLabs
 
@@ -369,7 +351,7 @@ ass is intended to provide a strong backend for developers to build their own fr
 
 ## Data Engines
 
-[Papito data engines] are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload.
+[Papito data engines] are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload. **Update August 2022:** I plan to overhaul Papito and how all this works *eventually*. If this comment is still here in a year, ~~kick~~ message me.
 
 [Papito data engines]: https://github.com/tycrek/papito
 
@@ -394,7 +376,7 @@ ass is intended to provide a strong backend for developers to build their own fr
 [npm AMongoose]: https://www.npmjs.com/package/ass-mongoose
 [@dylancl]: https://github.com/dylancl
 
-A Papito data engine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details, and ass will handle the rest, using the resource ID as the key.
+A Papito data engine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details & ass will handle the rest, using the resource ID as the key.
 
 **~~For a detailed walkthrough on developing engines, [consult the wiki][ctw2].~~ Outdated!**
 
@@ -409,19 +391,13 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | ------ | ----------- |
 | **`start`** | Starts the ass server. This is the default script & is run with **`npm start`**. |
 | `build` | Compiles the TypeScript files into JavaScript. |
-| `dev` | Chains the `build` and `compile` scripts together. |
+| `dev` | Chains the `build` & `compile` scripts together. |
 | `setup` | Starts the easy setup process. Should be run after any updates that introduce new config options. |
 | `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
-| `purge` | Purges all uploads and data associated with them. This does **not** delete any users, however. |
+| `purge` | Purges all uploads & data associated with them. This does **not** delete any users, however. |
 | `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
-| `docker-logs` | Alias for `docker-compose logs -f --tail=50 --no-log-prefix ass` |
-| `docker-update` | Calls `git pull` then runs the `docker-uplite` script. |
-| `docker-uplite` | Alias for `docker-compose up --force-recreate --build -d && docker image prune -f` |
-| `docker-upfull` | Alias for `npm run docker-update && npm run docker-resetup` |
-| `docker-resetup` | Alias for `docker-compose exec ass npm run setup && docker-compose restart` |
 
-[tlog Socket plugin]: https://github.com/tycrek/tlog#socket
 [`FORCE_COLOR`]: https://nodejs.org/dist/latest-v16.x/docs/api/cli.html#cli_force_color_1_2_3
 
 ## Flameshot users (Linux)
@@ -435,14 +411,15 @@ Use [this script]. For the `KEY`, put your token. Thanks to [@ToxicAven] for cre
 
 Please follow the [Contributing Guidelines] when submiting Issues or Pull Requests.
 
-[Contributing Guidelines]: https://github.com/tycrek/ass/blob/master/CONTRIBUTING.md
+[Contributing Guidelines]: https://github.com/tycrek/ass/blob/master/.github/CONTRIBUTING.md
 
 ## Credits
 
-- [GitHub CoPilot]... seriously, this thing is *good*.
-- Special thanks to [hlsl#1359] for the awesome logo!
+- Thanks to [hlsl#1359] for the logo
 - [Gfycat] for their wordlists
+- [Aven], for helping kickstart the project
+- My spiteful ass for motivating me to actually take this project to new heights
 
-[CoPilot]: https://copilot.github.com/
-[GitHub CoPilot]:https://copilot.github.com/
-[hlsl#1359]: http://be.net/zevwolf
+[hlsl#1359]: https://behance.net/zevwolf
+[Aven]: https://github.com/ToxicAven
+

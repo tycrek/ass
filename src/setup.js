@@ -14,7 +14,6 @@ const config = {
 	viewDirect: false,
 	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
-	indexFile: '',
 	useSia: false,
 	s3enabled: false,
 };
@@ -128,12 +127,12 @@ function doSetup() {
 				required: false
 			},
 			resourceIdType: {
-				description: 'URL type (can be one of: zws, random, gfycat, original)',
+				description: 'URL type (can be one of: zws, random, gfycat, original, timestamp)',
 				type: 'string',
 				default: config.resourceIdType,
 				require: false,
-				pattern: /(original|zws|random|gfycat)/gi, // skipcq: JS-0113
-				message: 'Must be one of: zws, random, gfycat, original'
+				pattern: /(original|zws|random|gfycat|timestamp)/gi, // skipcq: JS-0113
+				message: 'Must be one of: zws, random, gfycat, original, timestamp'
 			},
 			spaceReplace: {
 				description: 'Character to replace spaces in filenames with (must be a hyphen -, underscore _, or use ! to remove spaces)',
@@ -171,12 +170,6 @@ function doSetup() {
 				description: 'Name of your frontend (leave blank if not using frontends)',
 				type: 'string',
 				default: config.frontendName,
-				required: false
-			},
-			indexFile: {
-				description: 'Filename for your custom index, if using one (must be a JS file)',
-				type: 'string',
-				default: config.indexFile,
 				required: false
 			},
 			useSia: {
