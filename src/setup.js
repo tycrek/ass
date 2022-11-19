@@ -15,8 +15,16 @@ const config = {
 	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
 	useSia: false,
+	adminWebhookEnabled: false,
 	s3enabled: false,
 };
+
+// Default admin webhook
+const adminWebhookConfig = {
+	adminWebhookUrl: '',
+	adminWebhookUsername: '',
+	adminWebhookAvatar: '',
+}
 
 // Default S3 config
 const s3config = {
@@ -178,10 +186,39 @@ function doSetup() {
 				default: config.useSia,
 				required: false
 			},
+			adminWebhookEnabled: {
+				description: 'Enable admin Discord webhook (This will let you audit ALL uploads, from ALL users)',
+				type: 'boolean',
+				default: config.adminWebhookEnabled,
+				required: false
+			},
 			s3enabled: {
 				description: 'Enable uploading to S3 storage endpoints',
 				type: 'boolean',
 				default: config.s3enabled,
+				required: false
+			}
+		}
+	};
+
+	const adminWebhookSchema = {
+		properties: {
+			adminWebhookUrl: {
+				description: 'Discord webhook URL for admin notifications',
+				type: 'string',
+				default: adminWebhookConfig.adminWebhookUrl,
+				required: true
+			},
+			adminWebhookUsername: {
+				description: 'Username to send the webhook as',
+				type: 'string',
+				default: adminWebhookConfig.adminWebhookUsername,
+				required: false
+			},
+			adminWebhookAvatar: {
+				description: 'Avatar to use for the webhook icon',
+				type: 'string',
+				default: adminWebhookConfig.adminWebhookAvatar,
 				required: false
 			}
 		}
@@ -231,9 +268,12 @@ function doSetup() {
 	prompt.get(setupSchema)
 		.then((r) => results = r) // skipcq: JS-0086
 
+		// Check if using admin webhook
+		.then(() => results.adminWebhookEnabled ? prompt.get(adminWebhookSchema) : adminWebhookConfig) // skipcq: JS-0229
+		.then((r) => Object.entries(r).forEach(([k, v]) => results[k] = v)) // skipcq: JS-0086
 		// Check if using S3
 		.then(() => results.s3enabled ? prompt.get(s3schema) : s3config) // skipcq: JS-0229
-		.then((r) => Object.entries(r).forEach(([key, value]) => results[key] = value)) // skipcq: JS-0086
+		.then((r) => Object.entries(r).forEach(([k, v]) => results[k] = v)) // skipcq: JS-0086
 
 		// Verify information is correct
 		.then(() => log
