@@ -1,7 +1,8 @@
-# ass Docker compose.yaml v0.2.0
+# ass Docker compose.yaml v0.3.0
 # authors:
 #  - tycrek <t@tycrek.com> (https://tycrek.com/)
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
+#  - Zyztem <hello@zyztem.xyz> (https://zyztem.xyz)
 #
 # This file is designed to follow the latest Compose specification, defined here: https://github.com/compose-spec/compose-spec/blob/master/spec.md
 # Specific thing(s) to note:
@@ -15,17 +16,17 @@ services:
     ports:
       - "40115:40115"
     volumes:
-      - ./uploads:/opt/ass/uploads
-      - ./share:/opt/ass/share
+      - ./uploads:/ass/uploads
+      - ./share:/ass/share
       - type: bind
         source: ./config.json
-        target: /opt/ass/config.json
+        target: /ass/config.json
       - type: bind
         source: ./auth.json
-        target: /opt/ass/auth.json
+        target: /ass/auth.json
       - type: bind
         source: ./data.json
-        target: /opt/ass/data.json
+        target: /ass/data.json
     tmpfs: /tmp # temp files such as uploads are stored here
     tty: true
     environment:
