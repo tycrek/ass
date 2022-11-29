@@ -18,10 +18,11 @@ const defaults = {
 	bgViewer: '#151515',
 
 	// Text colours
-	txtPrimary: '#FD842D',
+	txtPrimary: '#BDBDBD',
 	txtSecondary: '#BDBDBD',
 
 	// Links
+	linkPrimary: '#FD842D',
 	linkHover: '#FD710D',
 	linkActive: '#DE5E02',
 

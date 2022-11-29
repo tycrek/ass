@@ -21,10 +21,10 @@ html
 				* { display: none !important; }
 			meta(http-equiv='refresh' content=`0; url='${resourceAttr.src}'`)
 
-	body.font-main.text-secondary.bg-page
+	body.font-main.bg-page
 		.w-full.h-full.flex.justify-center.items-center.text-center
 			.bg-viewer.rounded-24
-				h4.mx-4.mt-6.mb-4.text-3xl.font-main!=title
+				h4.mx-4.mt-6.mb-4.text-3xl.font-main.text-primary!=title
 				figure.block.mx-10.my-4.flex.flex-col.align-items-center
 					if fileIs.video
 						video.res-media(controls loop muted playsinline preload='metadata')&attributes(resourceAttr)
@@ -36,10 +36,10 @@ html
 						code!=mimetype
 					figcaption
 						br
-						span.text-2xl Uploaded by #[strong!=uploader]
+						span.text-2xl.text-primary Uploaded by #[strong!=uploader]
 						br
-						span #{timestamp} (#{size})
+						span.text-secondary #{timestamp} (#{size})
 						br
 						span: a.link(href='#' onclick=`window.location = '${resourceAttr.src}?download=yes'; return false;` download=title) Download
 				if showAd
-					.mx-4.mb-8.text-footer: p Image hosted by #[a.link(href='https://github.com/tycrek/ass' target='_blank'): strong ass], the superior self-hosted ShareX server
+					.mx-4.mb-8.text-footer.text-secondary: p Image hosted by #[a.link(href='https://github.com/tycrek/ass' target='_blank'): strong ass], the superior self-hosted ShareX server
