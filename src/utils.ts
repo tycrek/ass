@@ -70,10 +70,6 @@ export function replaceholder(data: string, size: number, timestamp: number, tim
 
 export function arrayEquals(arr1: any[], arr2: any[]) {
 	return arr1.length === arr2.length && arr1.slice().sort().every((value: string, index: number) => value === arr2.slice().sort()[index])
-};
-
-export function verify(req: Request, users: JSON) {
-	return req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization);
 }
 
 const idModes = {
@@ -108,7 +104,6 @@ module.exports = {
 	replaceholder,
 	randomHexColour,
 	sanitize,
-	verify,
 	renameFile: (req: Request, newName: string) => new Promise((resolve: Function, reject) => {
 		try {
 			const paths = [req.file.destination, newName];

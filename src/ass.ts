@@ -44,7 +44,7 @@ const ROUTERS = {
 };
 
 // Read users and data
-import { users } from './auth';
+import { onStart as AuthOnStart, users } from './auth';
 import { data } from './data';
 //#endregion
 
@@ -127,10 +127,12 @@ app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resour
 // Error handler
 app.use((err: ErrWrap, _req: Request, res: Response) => log.error(err.message).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
 
-(function start() {
+(async function start() {
+	await AuthOnStart();
+
 	if (data() == null) setTimeout(start, 100);
 	else log
-		.info('Users', `${Object.keys(users).length}`)
+		.info('Users', `${users.size}`)
 		.info('Files', `${data().size}`)
 		.info('Data engine', data().name, data().type)
 		.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)

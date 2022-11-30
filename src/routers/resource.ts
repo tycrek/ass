@@ -11,7 +11,7 @@ import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, ge
 const { diskFilePath, s3enabled, viewDirect, useSia }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 import { data } from '../data';
-import { users } from '../auth';
+import { findFromToken } from '../auth';
 
 import express from 'express';
 const router = express.Router();
@@ -49,7 +49,7 @@ router.get('/', (req: Request, res: Response, next) => data().get(req.ass.resour
 		fileIs: fileData.is,
 		title: escape(fileData.originalname),
 		mimetype: fileData.mimetype,
-		uploader: users[fileData.token].username,
+		uploader: findFromToken(fileData.token)?.user.username || 'Unknown',
 		timestamp: formatTimestamp(fileData.timestamp, fileData.timeoffset),
 		size: formatBytes(fileData.size),
 		// todo: figure out how to not ignore this

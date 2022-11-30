@@ -12,11 +12,6 @@ declare global {
 	}
 }
 
-export interface User {
-	token: string
-	username: string
-}
-
 export interface FileData {
 	// Data from request file object
 	uuid?: string
