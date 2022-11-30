@@ -23,7 +23,7 @@ import { Request } from 'express';
 /**
  * Map of users
  */
-export const users = new Map<string, User>();
+export const users = [] as User[];
 
 /**
  * Migrates the old auth.json format to the new one
@@ -36,15 +36,15 @@ const migrate = (): Promise<Users> => new Promise(async (resolve, reject) => {
 	const oldUsers = fs.readJsonSync(authPath).users as OldUsers;
 
 	// Create a new users object
-	const newUsers: Users = { users: {}, meta: {} };
+	const newUsers: Users = { users: [], meta: {} };
 	newUsers.migrated = true;
 
 	// Loop through each user
 	Object.entries(oldUsers).forEach(([token, { username }]) => {
 
 		// Create a new user object
-		const id = nanoid();
 		const newUser: User = {
+			unid: nanoid(),
 			username: username,
 			passhash: '', // TODO: Figure out how to configure passwords
 			token,
@@ -52,7 +52,7 @@ const migrate = (): Promise<Users> => new Promise(async (resolve, reject) => {
 			meta: {}
 		};
 
-		newUsers.users[id] = newUser;
+		newUsers.users.push(newUser);
 	});
 
 	// Save the new users object to auth.json
@@ -69,8 +69,8 @@ export const createNewUser = (username: string, passhash: string, admin: boolean
 	// todo: finish this
 
 	// Create a new user object
-	const id = nanoid();
 	const newUser: User = {
+		unid: nanoid(),
 		username,
 		passhash,
 		token: nanoid(32),
@@ -79,13 +79,13 @@ export const createNewUser = (username: string, passhash: string, admin: boolean
 	};
 
 	// Add the user to the users map
-	users.set(id, newUser);
+	users.push(newUser);
 
 	// Save the new user to auth.json
 	const authPath = path('auth.json');
-	const auth = fs.readJsonSync(authPath) as Users;
-	auth.users[id] = newUser;
-	fs.writeJson(authPath, auth, { spaces: '\t' });
+	const authData = fs.readJsonSync(authPath) as Users;
+	authData.users.push(newUser);
+	fs.writeJson(authPath, authData, { spaces: '\t' });
 });
 
 
@@ -126,20 +126,17 @@ export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject)
 			}
 
 			// Add users to the map
-			Object.entries(json.users).forEach(([uuid, user]) => users.set(uuid, user));
+			json.users.forEach((user) => users.push(user));
 		})
 		.catch((errReadJson) => log.error('Failed to read auth.json').callback(reject, errReadJson))
 		.then(resolve);
 });
 
 /**
- * Retrieves a user using their upload token.
+ * Retrieves a user using their upload token. Returns `null` if the user does not exist.
  */
 export const findFromToken = (token: string) => {
-	for (const [uuid, user] of users)
-		if (user.token === token)
-			return { uuid, user };
-	return null;
+	return users.find((user) => user.token === token) || null;
 };
 
 /**

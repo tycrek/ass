@@ -49,7 +49,7 @@ router.get('/', (req: Request, res: Response, next) => data().get(req.ass.resour
 		fileIs: fileData.is,
 		title: escape(fileData.originalname),
 		mimetype: fileData.mimetype,
-		uploader: findFromToken(fileData.token)?.user.username || 'Unknown',
+		uploader: findFromToken(fileData.token)?.username ?? 'Unknown',
 		timestamp: formatTimestamp(fileData.timestamp, fileData.timeoffset),
 		size: formatBytes(fileData.size),
 		// todo: figure out how to not ignore this

@@ -3,6 +3,11 @@
  */
 export interface User {
 	/**
+	 * Unique ID, provided by Nano ID
+	 */
+	unid: string
+
+	/**
 	 * Name of the user
 	 */
 	username: string
@@ -37,9 +42,7 @@ export interface Users {
 	/**
 	 * List of users. The key is the user's unique ID.
 	 */
-	users: {
-		[key: string]: User
-	}
+	users: User[]
 
 	/**
 	 * Indicates whether auth.json has been migrated

@@ -132,7 +132,7 @@ app.use((err: ErrWrap, _req: Request, res: Response) => log.error(err.message).e
 
 	if (data() == null) setTimeout(start, 100);
 	else log
-		.info('Users', `${users.size}`)
+		.info('Users', `${users.length}`)
 		.info('Files', `${data().size}`)
 		.info('Data engine', data().name, data().type)
 		.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)

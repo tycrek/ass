@@ -110,7 +110,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 		.then(() => {
 			// Log the upload
 			const logInfo = `${req.file!.originalname} (${req.file!.mimetype}, ${formatBytes(req.file.size)})`;
-			const uploader = findFromToken(req.token)?.user.username ?? 'Unknown';
+			const uploader = findFromToken(req.token)?.username ?? 'Unknown';
 			log.success('File uploaded', logInfo, `uploaded by ${uploader}`);
 
 			// Build the URLs
