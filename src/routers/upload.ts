@@ -130,7 +130,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 				const embed = new MessageBuilder()
 					.setTitle(logInfo)
 					// @ts-ignore
-					.setUrl(resourceUrl)
+					.setURL(resourceUrl) // I don't know why this is throwing an error when `setUrl` is used but it does. This is a workaround.
 					.setDescription(`${admin ? `**User:** \`${uploader}\`\n` : ''}**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
 					.setThumbnail(thumbnailUrl)
 					// @ts-ignore
