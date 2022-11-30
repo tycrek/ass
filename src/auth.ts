@@ -142,7 +142,7 @@ export const findFromToken = (token: string) => {
 /**
  * Verifies that the upload token in the request exists in the user map
  */
-export const verify = (req: Request) => {
+export const verifyValidToken = (req: Request) => {
 	return req.headers.authorization && findFromToken(req.headers.authorization);
 };
 

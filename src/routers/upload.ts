@@ -9,7 +9,7 @@ import { Webhook, MessageBuilder } from 'discord-webhook-node';
 import { processUploaded } from '../storage';
 import { path, log, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
 import { data } from '../data';
-import { findFromToken, verify } from '../auth';
+import { findFromToken, verifyValidToken } from '../auth';
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace, adminWebhookEnabled, adminWebhookUrl, adminWebhookUsername, adminWebhookAvatar }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 
@@ -35,7 +35,7 @@ bb.extend(router, {
 router.post('/', (req: Request, res: Response, next: Function) => {
 	req.headers.authorization = req.headers.authorization || '';
 	req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
-	!verify(req) ? log.warn('Upload blocked', 'Unauthorized').callback(() => res.sendStatus(CODE_UNAUTHORIZED)) : next(); // skipcq: JS-0093
+	!verifyValidToken(req) ? log.warn('Upload blocked', 'Unauthorized').callback(() => res.sendStatus(CODE_UNAUTHORIZED)) : next(); // skipcq: JS-0093
 });
 
 // Upload file
