@@ -34,10 +34,10 @@ export const users = [] as User[];
  * Migrates the old auth.json format to the new one
  * @since v0.14.0
  */
-const migrate = (): Promise<Users> => new Promise(async (resolve, reject) => {
+const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(async (resolve, reject) => {
 
 	// Get ready to read the old auth.json file
-	const authPath = path('auth.json');
+	const authPath = path(authFileName);
 	const oldUsers = fs.readJsonSync(authPath).users as OldUsers;
 
 	// Create a new users object
@@ -118,8 +118,8 @@ export const setUserPassword = (unid: string, password: string): Promise<User> =
  * Called by ass.ts on startup
  */
 export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject) => {
-	const file = path(authFile);
 
+	const file = path(authFile);
 	log.debug('Reading', file);
 
 	// Check if the file exists
@@ -139,7 +139,7 @@ export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject)
 			// Check if the file is the old format
 			if (json.migrated === undefined || !json.migrated) return (
 				log.debug('auth.json is in old format, migrating'),
-				migrate());
+				migrate(authFile));
 			else return json;
 		})
 		.then((json: Users) => {
