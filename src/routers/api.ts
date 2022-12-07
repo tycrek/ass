@@ -8,6 +8,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { users } from '../auth';
 import { data } from '../data';
 
+const RouterApi = Router();
 const RouterUser = Router();
 const RouterResource = Router();
 
@@ -19,4 +20,11 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	(token && users[token])
 		? next()
 		: res.sendStatus(401);
+};
+
+export const onStart = () => {
+	RouterApi.use('/user', RouterUser);
+	RouterApi.use('/resource', RouterResource);
+
+	return RouterApi;
 };

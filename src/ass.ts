@@ -10,6 +10,7 @@ import tailwindcss from 'tailwindcss';
 import helmet from 'helmet';
 
 import { path, log, getTrueHttp, getTrueDomain } from './utils';
+import { onStart as ApiOnStart } from './routers/api';
 //#endregion
 
 //#region Setup - Run first time setup if using Docker (pseudo-process, setup will be run with docker exec)
@@ -104,6 +105,9 @@ ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // 
 
 // Upload router (has to come after custom frontends as express-busboy interferes with all POST calls)
 app.use('/', ROUTERS.upload);
+
+// API
+app.use('/api', ApiOnStart());
 
 // CSS
 app.use('/css', epcss({
