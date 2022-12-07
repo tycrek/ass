@@ -9,8 +9,17 @@ import { findFromToken, users } from '../auth';
 import { data } from '../data';
 
 const RouterApi = Router();
-const RouterUser = Router();
-const RouterResource = Router();
+
+function buildUserRouter() {
+	const RouterUser = Router();
+
+	return RouterUser;
+}
+function buildResourceRouter() {
+	const RouterResource = Router();
+
+	return RouterResource;
+}
 
 /**
  * Token authentication middleware
@@ -23,8 +32,8 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const onStart = () => {
-	RouterApi.use('/user', RouterUser);
-	RouterApi.use('/resource', RouterResource);
+	RouterApi.use('/user', buildUserRouter());
+	RouterApi.use('/resource', buildResourceRouter());
 
 	return RouterApi;
 };
