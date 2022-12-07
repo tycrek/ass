@@ -43,23 +43,24 @@ const migrate = (): Promise<Users> => new Promise(async (resolve, reject) => {
 	newUsers.migrated = true;
 
 	// Loop through each user
-	Object.entries(oldUsers).forEach(async ([token, { username }]) => {
+	await Promise.all(Object.entries(oldUsers).map(async ([token, { username }]) => {
 
 		// Determine if this user is the admin
 		const admin = Object.keys(oldUsers).indexOf(token) === 0;
+		const passhash = admin ? await bcrypt.hash(nanoid(32), SALT_ROUNDS) : '';
 
 		// Create a new user object
 		const newUser: User = {
 			unid: nanoid(),
-			username: username,
-			passhash: admin ? await bcrypt.hash(nanoid(32), SALT_ROUNDS) : '',
+			username,
+			passhash,
 			token,
 			admin,
 			meta: {}
 		};
 
 		newUsers.users.push(newUser);
-	});
+	}));
 
 	// Save the new users object to auth.json
 	fs.writeJson(authPath, newUsers, { spaces: '\t' })
