@@ -23,7 +23,9 @@
     "docker-update": "git pull && npm run docker-uplite",
     "docker-uplite": "docker-compose up --force-recreate --build -d && docker image prune -f",
     "docker-upfull": "npm run docker-update && npm run docker-resetup",
-    "docker-resetup": "docker-compose exec ass npm run setup && docker-compose restart"
+    "docker-resetup": "docker-compose exec ass npm run setup && docker-compose restart",
+    "cli-setpassword": "node dist/tools/script.setpassword.js",
+    "cli-testpassword": "node dist/tools/script.testpassword.js"
   },
   "repository": "github:tycrek/ass",
   "keywords": [
