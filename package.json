@@ -50,6 +50,7 @@
     "any-shell-escape": "^0.1.1",
     "autoprefixer": "^10.4.4",
     "aws-sdk": "^2.1115.0",
+    "bcrypt": "^5.1.0",
     "check-node-version": "^4.2.1",
     "crypto-random-string": "3.3.1",
     "cssnano": "^5.1.7",
@@ -77,6 +78,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/escape-html": "^1.0.1",
     "@types/express": "^4.17.13",
     "@types/express-brute": "^1.0.1",
