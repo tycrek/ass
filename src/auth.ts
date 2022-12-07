@@ -7,6 +7,7 @@ import { log, path, arrayEquals } from './utils';
 import { nanoid } from 'nanoid';
 import { User, Users, OldUsers } from './types/auth';
 import { Request } from 'express';
+import bcrypt from 'bcrypt';
 
 /**
  * !!!!!
@@ -40,15 +41,18 @@ const migrate = (): Promise<Users> => new Promise(async (resolve, reject) => {
 	newUsers.migrated = true;
 
 	// Loop through each user
-	Object.entries(oldUsers).forEach(([token, { username }]) => {
+	Object.entries(oldUsers).forEach(async ([token, { username }]) => {
+
+		// Determine if this user is the admin
+		const admin = Object.keys(oldUsers).indexOf(token) === 0;
 
 		// Create a new user object
 		const newUser: User = {
 			unid: nanoid(),
 			username: username,
-			passhash: '', // TODO: Figure out how to configure passwords
+			passhash: admin ? await bcrypt.hash(nanoid(32), 10) : '',
 			token,
-			admin: Object.keys(oldUsers).indexOf(token) === 0,
+			admin,
 			meta: {}
 		};
 
