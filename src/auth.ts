@@ -92,6 +92,22 @@ export const createNewUser = (username: string, passhash: string, admin: boolean
 	fs.writeJson(authPath, authData, { spaces: '\t' });
 });
 
+export const setUserPassword = (unid: string, password: string): Promise<User> => new Promise(async (resolve, reject) => {
+
+	// Find the user
+	const user = users.find((user) => user.unid === unid);
+	if (!user) return reject(new Error('User not found'));
+
+	// Set the password
+	user.passhash = await bcrypt.hash(password, 10);
+
+	// Save the new user to auth.json
+	const authPath = path('auth.json');
+	const authData = fs.readJsonSync(authPath) as Users;
+	const userIndex = authData.users.findIndex((user) => user.unid === unid);
+	authData.users[userIndex] = user;
+	fs.writeJson(authPath, authData, { spaces: '\t' });
+});
 
 /**
  * Called by ass.ts on startup
