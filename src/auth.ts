@@ -66,6 +66,27 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 
 	// Save the new users object to auth.json
 	fs.writeJson(authPath, newUsers, { spaces: '\t' })
+		.catch(reject)
+
+		// Migrate the datafile (token => uploader)
+		.then(() => data().get())
+		.then((fileData: [string, FileData][]) =>
+
+			// Wait for all the deletions and puts to finish
+			Promise.all(fileData.map(async ([key, file]) => {
+
+				// We need to use `newUsers` because `users` hasn't been re-assigned yet
+				const user = newUsers.users.find((user) => user.token === file.token!)?.unid ?? ''; // ? This is probably fine
+
+				// Because of the stupid way I wrote papito, we need to DEL before we can PUT
+				await data().del(key);
+
+				// PUT the new data
+				return data().put(key, { ...file, uploader: user });
+			})))
+
+		// We did it hoofuckingray
+		.then(() => log.success('Migrated all auth & file data to new auth system'))
 		.then(() => resolve(newUsers))
 		.catch(reject);
 });
