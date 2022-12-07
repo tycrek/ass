@@ -195,9 +195,9 @@ export const verifyValidToken = (req: Request) => {
 	return req.headers.authorization && findFromToken(req.headers.authorization);
 };
 
-// todo: This is definitely broken
+// todo: move inside of onStart (currently broken)
 // Monitor auth.json for changes (triggered by running 'npm run new-token')
-fs.watch(path('auth.json'), { persistent: false },
+/* fs.watch(path('auth.json'), { persistent: false },
 	(eventType: String) => eventType === 'change' && fs.readJson(path('auth.json'))
 		.then((json: { users: JSON[] }) => {
 			if (!(arrayEquals(Object.keys(users), Object.keys(json.users)))) {
@@ -207,3 +207,4 @@ fs.watch(path('auth.json'), { persistent: false },
 			}
 		})
 		.catch(console.error));
+ */
