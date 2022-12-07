@@ -60,7 +60,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 	req.file!.timeoffset = req.headers['x-ass-timeoffset']?.toString() || 'UTC+0';
 
 	// Keep track of the token that uploaded the resource
-	req.file.token = req.token ?? '';
+	req.file.uploader = findFromToken(req.token)?.unid ?? '';
 
 	// Attach any embed overrides, if necessary
 	req.file.opengraph = {

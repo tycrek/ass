@@ -3,11 +3,13 @@
  */
 
 import fs from 'fs-extra';
-import { log, path, arrayEquals } from './utils';
 import { nanoid } from 'nanoid';
-import { User, Users, OldUsers } from './types/auth';
 import { Request } from 'express';
 import bcrypt from 'bcrypt';
+import { log, path, arrayEquals } from './utils';
+import { data } from './data';
+import { User, Users, OldUsers } from './types/auth';
+import { FileData } from './types/definitions';
 
 const SALT_ROUNDS = 10;
 
