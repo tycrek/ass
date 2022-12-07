@@ -139,6 +139,9 @@ export const setUserPassword = (unid: string, password: string): Promise<User> =
  * Called by ass.ts on startup
  */
 export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject) => {
+	// Reset user array (https://stackoverflow.com/questions/1232040/how-do-i-empty-an-array-in-javascript#1232046)
+	// ! I don't think this works properly..?
+	users.splice(0, users.length);
 
 	const file = path(authFile);
 	log.debug('Reading', file);
