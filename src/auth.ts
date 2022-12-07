@@ -68,7 +68,7 @@ const migrate = (): Promise<Users> => new Promise(async (resolve, reject) => {
 /**
  * This is a WIP
  */
-export const createNewUser = (username: string, passhash: string, admin: boolean, meta?: { [key: string]: User }): Promise<User> => new Promise(async (resolve, reject) => {
+export const createNewUser = (username: string, password: string, admin: boolean, meta?: { [key: string]: User }): Promise<User> => new Promise(async (resolve, reject) => {
 
 	// todo: finish this
 
@@ -76,7 +76,7 @@ export const createNewUser = (username: string, passhash: string, admin: boolean
 	const newUser: User = {
 		unid: nanoid(),
 		username,
-		passhash,
+		passhash: await bcrypt.hash(password, 10),
 		token: nanoid(32),
 		admin,
 		meta: meta || {}
