@@ -9,6 +9,8 @@ import { User, Users, OldUsers } from './types/auth';
 import { Request } from 'express';
 import bcrypt from 'bcrypt';
 
+const SALT_ROUNDS = 10;
+
 /**
  * !!!!!
  * Things for tycrek to do:
@@ -50,7 +52,7 @@ const migrate = (): Promise<Users> => new Promise(async (resolve, reject) => {
 		const newUser: User = {
 			unid: nanoid(),
 			username: username,
-			passhash: admin ? await bcrypt.hash(nanoid(32), 10) : '',
+			passhash: admin ? await bcrypt.hash(nanoid(32), SALT_ROUNDS) : '',
 			token,
 			admin,
 			meta: {}
@@ -76,7 +78,7 @@ export const createNewUser = (username: string, password: string, admin: boolean
 	const newUser: User = {
 		unid: nanoid(),
 		username,
-		passhash: await bcrypt.hash(password, 10),
+		passhash: await bcrypt.hash(password, SALT_ROUNDS),
 		token: nanoid(32),
 		admin,
 		meta: meta || {}
@@ -99,7 +101,7 @@ export const setUserPassword = (unid: string, password: string): Promise<User> =
 	if (!user) return reject(new Error('User not found'));
 
 	// Set the password
-	user.passhash = await bcrypt.hash(password, 10);
+	user.passhash = await bcrypt.hash(password, SALT_ROUNDS);
 
 	// Save the new user to auth.json
 	const authPath = path('auth.json');
