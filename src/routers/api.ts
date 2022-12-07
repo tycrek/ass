@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { users } from '../auth';
+import { findFromToken, users } from '../auth';
 import { data } from '../data';
 
 const RouterApi = Router();
@@ -16,8 +16,8 @@ const RouterResource = Router();
  * Token authentication middleware
  */
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-	const token = req.headers.authorization;
-	(token && users[token])
+	const user = findFromToken(req.headers.authorization ?? '');
+	(user && user.admin)
 		? next()
 		: res.sendStatus(401);
 };
