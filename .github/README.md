@@ -375,6 +375,8 @@ Other things to note:
 
 **Please be aware that this section is outdated (marked as of 2022-04-15). It will be updated when I overhaul the frontend system.**
 
+**Update 2022-12-24: I plan to overhaul this early in 2023.**
+
 ass is intended to provide a strong backend for developers to build their own frontends around. [Git Submodules] make it easy to create custom frontends. Submodules are their own projects, which means you are free to build the router however you wish, as long as it exports the required items. A custom frontend is really just an [Express.js router].
 
 **For a detailed walkthrough on developing your first frontend, [consult the wiki][ctw1].**
