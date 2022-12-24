@@ -3,7 +3,7 @@ import { Config, MagicNumbers, Package } from 'ass-json';
 
 //#region Imports
 import fs from 'fs-extra';
-import express, { Request, Response } from 'express';
+import express, { Request, Response, json as BodyParserJson } from 'express';
 import nofavicon from '@tycrek/express-nofavicon';
 import { epcss } from '@tycrek/express-postcss';
 import tailwindcss from 'tailwindcss';
@@ -79,6 +79,10 @@ app.get(['/'], bruteforce.prevent, (_req, _res, next) => next());
 
 // Express logger middleware
 app.use(log.middleware());
+
+// Body parser for API POST requests
+// (I really don't like this being top level but it does not work inside the API Router as of 2022-12-24)
+app.use(BodyParserJson());
 
 // Helmet security middleware
 app.use(helmet.noSniff());

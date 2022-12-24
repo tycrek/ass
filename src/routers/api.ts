@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { findFromToken, users } from '../auth';
+import { findFromToken, setUserPassword, users } from '../auth';
 import { data } from '../data';
 import { User } from '../types/auth';
 
@@ -44,6 +44,17 @@ function buildUserRouter() {
 	// Get user by token
 	userRouter.get('/token/:token', (req: Request, res: Response) =>
 		userFinder(res, users.find(user => user.token === req.params.token)));
+
+	// Reset password (new plaintext password in form data; HOST SHOULD BE USING HTTPS)
+	// Admin only
+	userRouter.post('/reset', adminAuthMiddleware, (req: Request, res: Response) => {
+		const id = req.body.id;
+		const newPassword = req.body.password;
+
+		setUserPassword(id, newPassword)
+			.then(() => res.sendStatus(200))
+			.catch(() => res.sendStatus(500));
+	});
 
 	// Get a user (must be last as it's a catch-all)
 	// Admin only
