@@ -21,8 +21,34 @@ const adminAuthMiddleware = (req: Request, res: Response, next: NextFunction) =>
 	const user = findFromToken(req.headers.authorization ?? '');
 	(user && user.admin) ? next() : res.sendStatus(401);
 };
+
+/**
+ * Simple function to either return JSON or a 404, so I don't have to write it 40 times.
+ */
+const userFinder = (res: Response, user: User | undefined) => user ? res.json(user) : res.sendStatus(404);
+
 function buildUserRouter() {
 	const userRouter = Router();
+
+	// Index
+	userRouter.get('/', (_req: Request, res: Response) => res.sendStatus(200));
+
+	// Get all users
+	// Admin only
+	userRouter.get('/all', adminAuthMiddleware, (req: Request, res: Response) => res.json(users));
+
+	// Get self
+	userRouter.get('/self', (req: Request, res: Response) =>
+		userFinder(res, findFromToken(req.headers['authorization'] ?? '') ?? undefined));
+
+	// Get user by token
+	userRouter.get('/token/:token', (req: Request, res: Response) =>
+		userFinder(res, users.find(user => user.token === req.params.token)));
+
+	// Get a user (must be last as it's a catch-all)
+	// Admin only
+	userRouter.get('/:id', adminAuthMiddleware, (req: Request, res: Response) =>
+		userFinder(res, users.find(user => user.unid === req.params.id || user.username === req.params.id)));
 
 	return userRouter;
 }
