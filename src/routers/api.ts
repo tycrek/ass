@@ -33,16 +33,6 @@ function buildResourceRouter() {
 	return resourceRouter;
 }
 
-/**
- * Token authentication middleware
- */
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-	const user = findFromToken(req.headers.authorization ?? '');
-	(user && user.admin)
-		? next()
-		: res.sendStatus(401);
-};
-
 export const onStart = () => {
 	RouterApi.use('/user', buildUserRouter());
 	RouterApi.use('/resource', buildResourceRouter());
