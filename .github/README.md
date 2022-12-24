@@ -337,6 +337,17 @@ S3 servers are generally very fast & have very good uptime, though this will dep
 [Amazon S3]: https://en.wikipedia.org/wiki/Amazon_S3
 [Skynet Labs]: https://github.com/SkynetLabs
 
+## New user system (v0.14.0)
+
+The user system was overhauled in v0.14.0 to allow more features and flexibility. New fields on users include `admin`, `passhash`, `unid`, and `meta` (these will be documented more once the system is finalized).
+
+ass will automatically convert your old `auth.json` to the new format. **Always backup your `auth.json` and `data.json` before updating**. By default, the original user (named `ass`) will be marked as an admin. Adding new users via `npm run new-token <username>` should work as expected, though you'll need to re-launch ass to load the new file.
+
+**Things still borked:**
+
+- Creating a default user on new installs
+- Creating/modifying/deleting users via the API
+- The filewatcher that reloads `auth.json` when modified on CLI (to be changed in the future)
 ## Custom frontends - OUTDATED
 
 **Please be aware that this section is outdated (marked as of 2022-04-15). It will be updated when I overhaul the frontend system.**
