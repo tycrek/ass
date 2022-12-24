@@ -22,14 +22,15 @@ const adminAuthMiddleware = (req: Request, res: Response, next: NextFunction) =>
 	(user && user.admin) ? next() : res.sendStatus(401);
 };
 function buildUserRouter() {
-	const RouterUser = Router();
+	const userRouter = Router();
 
-	return RouterUser;
+	return userRouter;
 }
-function buildResourceRouter() {
-	const RouterResource = Router();
 
-	return RouterResource;
+function buildResourceRouter() {
+	const resourceRouter = Router();
+
+	return resourceRouter;
 }
 
 /**
