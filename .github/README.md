@@ -348,6 +348,29 @@ ass will automatically convert your old `auth.json` to the new format. **Always 
 - Creating a default user on new installs
 - Creating/modifying/deleting users via the API
 - The filewatcher that reloads `auth.json` when modified on CLI (to be changed in the future)
+
+## Developer API
+
+ass includes an API (v0.14.0) for frontend developers to easily integrate with. Right now the API is pretty limited but I will expand on it in the future, with frontend developer feedback.
+
+Any endpoints requiring authorization will require an `Authorization` header with the value being the user's upload token. Admin users are a new feature introduced in v0.14.0. Admin users can access all endpoints, while non-admin users can only access those relevant to them.
+
+Other things to note:
+
+- **All endpoints are prefixed with `/api/`**.
+- All endpoints will return a JSON object unless otherwise specified.
+- Successful endpoints *should* return a `200` status code. Any errors will use the corresponding `4xx` or `5xx` status code (such as `401 Unauthorized`).
+
+### API endpoints
+
+| Endpoint | Purpose | Admin? |
+| -------- | ------- | ------ |
+| **`GET /user/all`** | Returns a list of all users | Yes |
+| **`GET /user/self`** | Returns the current user | No |
+| **`GET /user/token/:token`** | Returns the user with the given token | No |
+| **`POST /user/reset`** | Resets the current user's **password** (token resets coming soon) | No |
+| **`GET /user/:id`** | Returns the user with the given ID | Yes |
+
 ## Custom frontends - OUTDATED
 
 **Please be aware that this section is outdated (marked as of 2022-04-15). It will be updated when I overhaul the frontend system.**
