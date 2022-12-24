@@ -16,6 +16,10 @@ declare module 'ass-json' {
 		frontendName: string
 		indexFile: string
 		useSia: boolean
+		adminWebhookEnabled: boolean
+		adminWebhookUrl: string
+		adminWebhookUsername: string
+		adminWebhookAvatar: string
 		s3enabled: boolean
 		s3endpoint: string
 		s3bucket: string
