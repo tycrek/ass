@@ -54,7 +54,7 @@ function buildUserRouter() {
 
 		setUserPassword(id, newPassword)
 			.then(() => res.sendStatus(200))
-			.catch(() => res.sendStatus(500));
+			.catch((err) => (log.error(err), res.sendStatus(500)));
 	});
 
 	// Create a new user

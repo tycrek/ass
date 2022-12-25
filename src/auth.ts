@@ -137,7 +137,9 @@ export const setUserPassword = (unid: string, password: string): Promise<User> =
 	const authData = fs.readJsonSync(authPath) as Users;
 	const userIndex = authData.users.findIndex((user) => user.unid === unid);
 	authData.users[userIndex] = user;
-	fs.writeJson(authPath, authData, { spaces: '\t' });
+	fs.writeJson(authPath, authData, { spaces: '\t' })
+		.then(() => resolve(user))
+		.catch(reject);
 });
 
 /**
