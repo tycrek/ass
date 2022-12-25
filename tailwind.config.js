@@ -19,7 +19,7 @@ const defaults = {
 
 	// Text colours
 	txtPrimary: '#BDBDBD',
-	txtSecondary: '#BDBDBD',
+	txtSecondary: '#8D8D8D',
 
 	// Links
 	linkPrimary: '#FD842D',
