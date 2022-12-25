@@ -136,6 +136,7 @@ export const createNewUser = (username: string, password: string, admin: boolean
 	if (!authData.meta) authData.meta = {};
 
 	fs.writeJson(authPath, authData, { spaces: '\t' })
+		.then(() => log.info('Created new user', newUser.username, newUser.unid))
 		.then(() => resolve(newUser))
 		.catch(reject);
 });
@@ -221,16 +222,13 @@ export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject)
  * Retrieves a user using their upload token. Returns `null` if the user does not exist.
  * @since v0.14.0
  */
-export const findFromToken = (token: string) => {
-	return users.find((user) => user.token === token) || null;
-};
+export const findFromToken = (token: string) => users.find((user) => user.token === token) || null;
 
 /**
  * Verifies that the upload token in the request exists in the user map
  * @since v0.14.0
  */
-export const verifyValidToken = (req: Request) => {
-	return req.headers.authorization && findFromToken(req.headers.authorization);
+export const verifyValidToken = (req: Request) => req.headers.authorization && findFromToken(req.headers.authorization);
 
 /**
  * Verifies that the CLI key in the request matches the one in auth.json
