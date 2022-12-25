@@ -92,7 +92,7 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 });
 
 /**
- * This is a WIP
+ * Creates a new user account
  */
 export const createNewUser = (username: string, password: string, admin: boolean, meta?: { [key: string]: any }): Promise<User> => new Promise(async (resolve, reject) => {
 
@@ -112,7 +112,12 @@ export const createNewUser = (username: string, password: string, admin: boolean
 	// Save the new user to auth.json
 	const authPath = path('auth.json');
 	const authData = fs.readJsonSync(authPath) as Users;
+
+	if (!authData.users) authData.users = [];
 	authData.users.push(newUser);
+
+	if (!authData.meta) authData.meta = {};
+
 	fs.writeJson(authPath, authData, { spaces: '\t' })
 		.then(() => resolve(newUser))
 		.catch(reject);
@@ -166,16 +171,16 @@ export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject)
 				migrate(authFile));
 			else return json;
 		})
-		.then((json: Users) => {
+		.then(async (json) => {
 
 			// Check if the file is empty
-			if (Object.keys(json).length === 0) {
+			if (!json.users || json.users.length === 0) {
 				log.debug('auth.json is empty, creating default user');
-				//return createDefaultUser(); // todo: need to do this
+				return await createNewUser('ass', nanoid(), true);
 			}
 
 			// Add users to the map
-			json.users.forEach((user) => users.push(user));
+			return json.users.forEach((user) => users.push(user));
 		})
 		.catch((errReadJson) => log.error('Failed to read auth.json').callback(reject, errReadJson))
 		.then(resolve);
