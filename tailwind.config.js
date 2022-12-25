@@ -53,6 +53,7 @@ module.exports = {
 			colors: {
 				'primary': theme.txtPrimary || defaults.txtPrimary,
 				'secondary': theme.txtSecondary || defaults.txtSecondary,
+				'link-primary': theme.linkPrimary || defaults.linkPrimary,
 				'link-hover': theme.linkHover || defaults.linkHover,
 				'link-active': theme.linkActive || defaults.linkActive,
 			},
