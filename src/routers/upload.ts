@@ -1,5 +1,5 @@
 import { ErrWrap } from '../types/definitions';
-import { Config, MagicNumbers } from 'ass-json';
+import { Config, MagicNumbers, Package } from 'ass-json';
 
 import fs from 'fs-extra';
 import bb from 'express-busboy';
@@ -11,8 +11,10 @@ import { processUploaded } from '../storage';
 import { path, log, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
 import { data } from '../data';
 import { findFromToken, verifyValidToken } from '../auth';
+
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace, adminWebhookEnabled, adminWebhookUrl, adminWebhookUsername, adminWebhookAvatar }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
+const { name, version, homepage }: Package = fs.readJsonSync(path('package.json'));
 
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 import express, { Request, Response } from 'express';
@@ -131,6 +133,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 				const embed = new EmbedBuilder()
 					.setTitle(logInfo)
 					.setURL(resourceUrl)
+					.setAuthor({ name: `${name} ${version}`, url: homepage, icon_url: ASS_LOGO })
 					.setDescription(`${admin ? `**User:** \`${uploader}\`\n` : ''}**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
 					.setThumbnail({ url: thumbnailUrl })
 					.setColor(req.file.vibrant)
