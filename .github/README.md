@@ -351,12 +351,13 @@ S3 servers are generally very fast & have very good uptime, though this will dep
 
 The user system was overhauled in v0.14.0 to allow more features and flexibility. New fields on users include `admin`, `passhash`, `unid`, and `meta` (these will be documented more once the system is finalized).
 
+New installs will automatically generate a default user. Check the `auth.json` file for the token. You will use this for API requests and to authenticate within ShareX.
+
 ass will automatically convert your old `auth.json` to the new format. **Always backup your `auth.json` and `data.json` before updating**. By default, the original user (named `ass`) will be marked as an admin. Adding new users via `npm run new-token <username>` is currently not supported. Please see the API below for how to add a new user via the API.
 
-**Things still borked:**
+**Things still not added:**
 
-- Creating a default user on new installs
-- Creating/modifying/deleting users via the API
+- Modifying/deleting users via the API
 - The filewatcher that reloads `auth.json` when modified on CLI (to be changed in the future)
 
 ## Developer API
