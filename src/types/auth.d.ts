@@ -50,6 +50,11 @@ export interface Users {
 	migrated?: boolean
 
 	/**
+	 * Access key for the CLI
+	 */
+	cliKey?: string
+
+	/**
 	 * Extra metadata. Frontends can use this to store extra data.
 	 */
 	meta: {

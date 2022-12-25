@@ -203,6 +203,13 @@ export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject)
 				return await createNewUser('ass', nanoid(), true);
 			}
 
+			// Check if the CLI key is set
+			if (!json.cliKey || json.cliKey.length === 0) {
+				log.debug('CLI key is not set, generating new key');
+				json.cliKey = nanoid(32);
+				fs.writeJsonSync(file, json, { spaces: '\t' });
+			}
+
 			// Add users to the map
 			return json.users.forEach((user) => users.push(user));
 		})
@@ -224,6 +231,14 @@ export const findFromToken = (token: string) => {
  */
 export const verifyValidToken = (req: Request) => {
 	return req.headers.authorization && findFromToken(req.headers.authorization);
+
+/**
+ * Verifies that the CLI key in the request matches the one in auth.json
+ * @since v0.14.0
+ */
+export const verifyCliKey = (req: Request) => {
+	const cliKey: string = fs.readJsonSync(path('auth.json')).cliKey;
+	return req.headers.authorization != null && req.headers.authorization === cliKey;
 };
 
 // todo: move inside of onStart (currently broken)

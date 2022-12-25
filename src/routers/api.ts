@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { findFromToken, setUserPassword, users, createNewUser } from '../auth';
+import { findFromToken, setUserPassword, users, createNewUser, verifyCliKey } from '../auth';
 import { log } from '../utils';
 import { data } from '../data';
 import { User } from '../types/auth';
@@ -21,7 +21,7 @@ const RouterApi = Router();
  */
 const adminAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	const user = findFromToken(req.headers.authorization ?? '');
-	(user && user.admin) ? next() : res.sendStatus(401);
+	(verifyCliKey(req) || (user && user.admin)) ? next() : res.sendStatus(401);
 };
 
 /**
