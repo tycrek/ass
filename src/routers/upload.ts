@@ -1,4 +1,4 @@
-import { ErrWrap, User } from '../types/definitions';
+import { ErrWrap } from '../types/definitions';
 import { Config, MagicNumbers } from 'ass-json';
 
 import fs from 'fs-extra';
@@ -7,9 +7,9 @@ import bb from 'express-busboy';
 import { DateTime } from 'luxon';
 import { Webhook, MessageBuilder } from 'discord-webhook-node';
 import { processUploaded } from '../storage';
-import { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
+import { path, log, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
 import { data } from '../data';
-import { users } from '../auth';
+import { findFromToken, verifyValidToken } from '../auth';
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace, adminWebhookEnabled, adminWebhookUrl, adminWebhookUsername, adminWebhookAvatar }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 
@@ -35,7 +35,7 @@ bb.extend(router, {
 router.post('/', (req: Request, res: Response, next: Function) => {
 	req.headers.authorization = req.headers.authorization || '';
 	req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
-	!verify(req, users) ? log.warn('Upload blocked', 'Unauthorized').callback(() => res.sendStatus(CODE_UNAUTHORIZED)) : next(); // skipcq: JS-0093
+	!verifyValidToken(req) ? log.warn('Upload blocked', 'Unauthorized').callback(() => res.sendStatus(CODE_UNAUTHORIZED)) : next(); // skipcq: JS-0093
 });
 
 // Upload file
@@ -60,7 +60,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 	req.file!.timeoffset = req.headers['x-ass-timeoffset']?.toString() || 'UTC+0';
 
 	// Keep track of the token that uploaded the resource
-	req.file.token = req.token ?? '';
+	req.file.uploader = findFromToken(req.token)?.unid ?? '';
 
 	// Attach any embed overrides, if necessary
 	req.file.opengraph = {
@@ -110,7 +110,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 		.then(() => {
 			// Log the upload
 			const logInfo = `${req.file!.originalname} (${req.file!.mimetype}, ${formatBytes(req.file.size)})`;
-			const uploader = users[req.token ?? ''] ? users[req.token ?? ''].username : '<token-only>';
+			const uploader = findFromToken(req.token)?.username ?? 'Unknown';
 			log.success('File uploaded', logInfo, `uploaded by ${uploader}`);
 
 			// Build the URLs
@@ -130,7 +130,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 				const embed = new MessageBuilder()
 					.setTitle(logInfo)
 					// @ts-ignore
-					.setUrl(resourceUrl)
+					.setURL(resourceUrl) // I don't know why this is throwing an error when `setUrl` is used but it does. This is a workaround.
 					.setDescription(`${admin ? `**User:** \`${uploader}\`\n` : ''}**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
 					.setThumbnail(thumbnailUrl)
 					// @ts-ignore
@@ -163,22 +163,6 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 							adminWebhookUsername.trim().length === 0 ? 'ass admin logs' : adminWebhookUsername,
 							adminWebhookAvatar.trim().length === 0 ? ASS_LOGO : adminWebhookAvatar,
 							true);
-
-					// Also update the users upload count
-					if (!users[req.token ?? '']) {
-						const generateUsername = () => generateId('random', 20, 0, req.file.size.toString()); // skipcq: JS-0074
-						let username: string = generateUsername();
-
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						while (Object.values(users).findIndex((user: User) => user.username === username) !== -1)  // skipcq: JS-0073
-							username = generateUsername();
-
-						users[req.token ?? ''] = { username, count: 0 };
-					}
-					users[req.token ?? ''].count += 1;
-					fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
-
 					log.debug('Upload request flow completed', '');
 				});
 		})

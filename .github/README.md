@@ -337,9 +337,45 @@ S3 servers are generally very fast & have very good uptime, though this will dep
 [Amazon S3]: https://en.wikipedia.org/wiki/Amazon_S3
 [Skynet Labs]: https://github.com/SkynetLabs
 
+## New user system (v0.14.0)
+
+The user system was overhauled in v0.14.0 to allow more features and flexibility. New fields on users include `admin`, `passhash`, `unid`, and `meta` (these will be documented more once the system is finalized).
+
+ass will automatically convert your old `auth.json` to the new format. **Always backup your `auth.json` and `data.json` before updating**. By default, the original user (named `ass`) will be marked as an admin. Adding new users via `npm run new-token <username>` should work as expected, though you'll need to re-launch ass to load the new file.
+
+**Things still borked:**
+
+- Creating a default user on new installs
+- Creating/modifying/deleting users via the API
+- The filewatcher that reloads `auth.json` when modified on CLI (to be changed in the future)
+
+## Developer API
+
+ass includes an API (v0.14.0) for frontend developers to easily integrate with. Right now the API is pretty limited but I will expand on it in the future, with frontend developer feedback.
+
+Any endpoints requiring authorization will require an `Authorization` header with the value being the user's upload token. Admin users are a new feature introduced in v0.14.0. Admin users can access all endpoints, while non-admin users can only access those relevant to them.
+
+Other things to note:
+
+- **All endpoints are prefixed with `/api/`**.
+- All endpoints will return a JSON object unless otherwise specified.
+- Successful endpoints *should* return a `200` status code. Any errors will use the corresponding `4xx` or `5xx` status code (such as `401 Unauthorized`).
+
+### API endpoints
+
+| Endpoint | Purpose | Admin? |
+| -------- | ------- | ------ |
+| **`GET /user/all`** | Returns a list of all users | Yes |
+| **`GET /user/self`** | Returns the current user | No |
+| **`GET /user/token/:token`** | Returns the user with the given token | No |
+| **`POST /user/reset`** | Resets the current user's **password** (token resets coming soon) | No |
+| **`GET /user/:id`** | Returns the user with the given ID | Yes |
+
 ## Custom frontends - OUTDATED
 
 **Please be aware that this section is outdated (marked as of 2022-04-15). It will be updated when I overhaul the frontend system.**
+
+**Update 2022-12-24: I plan to overhaul this early in 2023.**
 
 ass is intended to provide a strong backend for developers to build their own frontends around. [Git Submodules] make it easy to create custom frontends. Submodules are their own projects, which means you are free to build the router however you wish, as long as it exports the required items. A custom frontend is really just an [Express.js router].
 

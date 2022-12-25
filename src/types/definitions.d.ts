@@ -12,11 +12,6 @@ declare global {
 	}
 }
 
-export interface User {
-	token: string
-	username: string
-}
-
 export interface FileData {
 	// Data from request file object
 	uuid?: string
@@ -43,7 +38,11 @@ export interface FileData {
 	domain: string
 	timestamp: number
 	timeoffset: string
-	token: string
+	/**
+	 * @deprecated
+	 */
+	token?: string
+	uploader: string
 	opengraph: OpenGraphData
 
 	// I found this in utils and idk where it comes from
