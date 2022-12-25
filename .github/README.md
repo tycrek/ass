@@ -382,8 +382,10 @@ Other things to note:
 | **`GET /user/all`** | Returns a list of all users | Yes |
 | **`GET /user/self`** | Returns the current user | No |
 | **`GET /user/token/:token`** | Returns the user with the given token | No |
-| **`POST /user/reset`** | Resets the current user's **password** (token resets coming soon) | No |
+| **`POST /user/reset`** | Resets the current user's **password** (token resets coming soon). Request body must be a JSON object including `username` and `password`. | No |
 | **`GET /user/:id`** | Returns the user with the given ID | Yes |
+| **`POST /user/new`** | Creates a new user. Request body must be a JSON object including `username` and `password`. You may optionally include `admin` (boolean) or `meta` (object). Returns 400 if fails. | Yes |
+
 
 ## Custom frontends - OUTDATED
 
