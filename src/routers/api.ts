@@ -5,7 +5,8 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { findFromToken, setUserPassword, users } from '../auth';
+import { findFromToken, setUserPassword, users, createNewUser } from '../auth';
+import { log } from '../utils';
 import { data } from '../data';
 import { User } from '../types/auth';
 
@@ -54,6 +55,23 @@ function buildUserRouter() {
 		setUserPassword(id, newPassword)
 			.then(() => res.sendStatus(200))
 			.catch(() => res.sendStatus(500));
+	});
+
+	// Create a new user
+	// Admin only
+	userRouter.post('/new', adminAuthMiddleware, (req: Request, res: Response) => {
+		const username: string | undefined = req.body.username;
+		const password: string | undefined = req.body.password;
+		const admin = req.body.admin ?? false;
+		const meta: any = req.body.meta ?? {};
+
+		// Block if username or password is empty, or if username is already taken
+		if (username == null || username.length === 0 || password == null || password.length == 0 || users.find(user => user.username === username))
+			return res.sendStatus(400);
+
+		createNewUser(username, password, admin, meta)
+			.then((user) => res.send(user))
+			.catch((err) => (log.error(err), res.sendStatus(500)));
 	});
 
 	// Get a user (must be last as it's a catch-all)
