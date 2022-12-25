@@ -6,7 +6,7 @@ import fs from 'fs-extra';
 import { nanoid } from 'nanoid';
 import { Request } from 'express';
 import bcrypt from 'bcrypt';
-import { log, path, arrayEquals } from './utils';
+import { log, path } from './utils';
 import { data } from './data';
 import { User, Users, OldUsers } from './types/auth';
 import { FileData } from './types/definitions';
@@ -238,17 +238,3 @@ export const verifyCliKey = (req: Request) => {
 	const cliKey: string = fs.readJsonSync(path('auth.json')).cliKey;
 	return req.headers.authorization != null && req.headers.authorization === cliKey;
 };
-
-// todo: move inside of onStart (currently broken)
-// Monitor auth.json for changes (triggered by running 'npm run new-token')
-/* fs.watch(path('auth.json'), { persistent: false },
-	(eventType: String) => eventType === 'change' && fs.readJson(path('auth.json'))
-		.then((json: { users: JSON[] }) => {
-			if (!(arrayEquals(Object.keys(users), Object.keys(json.users)))) {
-				// @ts-ignore
-				Object.keys(json.users).forEach((token) => (!Object.prototype.hasOwnProperty.call(users, token)) && (users[token] = json.users[token]));
-				log.info('New token added', Object.keys(users)[Object.keys(users).length - 1] || 'No new token');
-			}
-		})
-		.catch(console.error));
- */

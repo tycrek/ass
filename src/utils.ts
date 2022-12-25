@@ -68,10 +68,6 @@ export function replaceholder(data: string, size: number, timestamp: number, tim
 		.replace(/&timestamp/g, formatTimestamp(timestamp, timeoffset));
 }
 
-export function arrayEquals(arr1: any[], arr2: any[]) {
-	return arr1.length === arr2.length && arr1.slice().sort().every((value: string, index: number) => value === arr2.slice().sort()[index])
-}
-
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
@@ -116,7 +112,6 @@ module.exports = {
 	}),
 	generateToken: () => token(),
 	generateId,
-	arrayEquals,
 	downloadTempS3: (file: FileData) => new Promise((resolve: Function, reject) =>
 		fetch(getS3url(file.randomId, file.ext))
 			.then((f2) => f2.body!.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))
