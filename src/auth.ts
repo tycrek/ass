@@ -94,9 +94,7 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 /**
  * This is a WIP
  */
-export const createNewUser = (username: string, password: string, admin: boolean, meta?: { [key: string]: User }): Promise<User> => new Promise(async (resolve, reject) => {
-
-	// todo: finish this
+export const createNewUser = (username: string, password: string, admin: boolean, meta?: { [key: string]: any }): Promise<User> => new Promise(async (resolve, reject) => {
 
 	// Create a new user object
 	const newUser: User = {
@@ -115,7 +113,9 @@ export const createNewUser = (username: string, password: string, admin: boolean
 	const authPath = path('auth.json');
 	const authData = fs.readJsonSync(authPath) as Users;
 	authData.users.push(newUser);
-	fs.writeJson(authPath, authData, { spaces: '\t' });
+	fs.writeJson(authPath, authData, { spaces: '\t' })
+		.then(() => resolve(newUser))
+		.catch(reject);
 });
 
 export const setUserPassword = (unid: string, password: string): Promise<User> => new Promise(async (resolve, reject) => {
