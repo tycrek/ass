@@ -12,6 +12,8 @@ const config = {
 	spaceReplace: '_',
 	mediaStrict: false,
 	viewDirect: false,
+	useIdInViewer: false,
+	idInViewerExtension: false,
 	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
 	useSia: false,
@@ -166,6 +168,18 @@ function doSetup() {
 				description: 'View uploads in browser as direct resource, rather than a viewing page',
 				type: 'boolean',
 				default: config.viewDirect,
+				required: false
+			},
+			useIdInViewer: {
+				description: 'Use the ID in the web viewer instead of the filename',
+				type: 'boolean',
+				default: config.useIdInViewer,
+				required: false
+			},
+			idInViewerExtension: {
+				description: '(Only applies if "useIdInViewer" is true) Include the file extension in the ID in the web viewer',
+				type: 'boolean',
+				default: config.idInViewerExtension,
 				required: false
 			},
 			dataEngine: {

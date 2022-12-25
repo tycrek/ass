@@ -104,11 +104,11 @@ dist
 .tern-port
 
 # tokens
-auth.json
+auth.json*
 auth.*.json
 
 # data
-data.json
+data.json*
 
 # uploads
 uploads/

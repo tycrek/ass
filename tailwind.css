@@ -13,7 +13,7 @@
 		@apply no-underline hover_no-underline active_no-underline visited_no-underline
 
 			/* regular, visited */
-			text-primary visited_text-primary
+			text-link-primary visited_text-link-primary
 			border-b-2 visited_border-b-2
 			border-transparent visited_border-transparent
 			rounded-sm visited_rounded-sm

@@ -199,10 +199,6 @@ For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any
 [Caddy]: https://caddyserver.com/
 [my tutorial]: https://old.jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
 
-## Generating new tokens
-
-If you need to generate a new token at any time, run `npm run new-token <username>`. This will **automatically** load the new token so there is no need to restart ass. Username field is optional; if left blank, a random username will be created.
-
 ## Cloudflare users
 
 In your Cloudflare DNS dashboard, set your domain/subdomain to **DNS Only** if you experience issues with **Proxied**.
@@ -247,7 +243,7 @@ If you primarily share media on Discord, you can add these additional (optional)
 
 | Header | Purpose |
 | ------ | ------- |
-| **`X-Ass-OG-Title`** | Large text shown above your media |
+| **`X-Ass-OG-Title`** | Large text shown above your media. Required for embeds to appear on desktop. |
 | **`X-Ass-OG-Description`** | Small text shown below the title but above the media (does not show up on videos) |
 | **`X-Ass-OG-Author`** | Small text shown above the title |
 | **`X-Ass-OG-Author-Url`** | URL to open when the Author is clicked |
@@ -264,6 +260,20 @@ You can insert certain metadata into your embeds with these placeholders:
 | **`&size`** | The files size with proper notation rounded to two decimals (example: `7.06 KB`) |
 | **`&filename`** | The original filename of the uploaded file |
 | **`&timestamp`** | The timestamp of when the file was uploaded (example: `Oct 14, 1983, 1:30 PM`) |
+
+#### Server-side embed configuration
+
+You may also specify a default embed config on the server. Keep in mind that if users specify the `X-Ass-OG-Title` header, the server-side config will be ignored. To configure the server-side embed, create a new file in the `share/` directory named `embed.json`. Available options are:
+
+- **`title`**
+- `description`
+- `author`
+- `authorUrl`
+- `provider`
+- `providerUrl`
+- `color`
+
+Their values are equivalent to the headers listed above.
 
 ### Webhooks
 
@@ -290,6 +300,7 @@ If you want to customize the font or colours of the viewer page, create a file i
 | **`bgViewer`** | Background colour for the viewer element |
 | **`txtPrimary`** | Primary text colour; this should be your main brand colour. |
 | **`txtSecondary`** | Secondary text colour; this is used for the file details. |
+| **`linkPrimary`** | Primary link colour |
 | **`linkHover`** | Colour of the `hover` effect for links |
 | **`linkActive`** | Colour of the `active` effect for links |
 | **`borderHover`** | Colour of the `hover` effect for borders; this is used for the underlining links. |
@@ -337,9 +348,64 @@ S3 servers are generally very fast & have very good uptime, though this will dep
 [Amazon S3]: https://en.wikipedia.org/wiki/Amazon_S3
 [Skynet Labs]: https://github.com/SkynetLabs
 
+## New user system (v0.14.0)
+
+The user system was overhauled in v0.14.0 to allow more features and flexibility. New fields on users include `admin`, `passhash`, `unid`, and `meta` (these will be documented more once the system is finalized).
+
+New installs will automatically generate a default user. Check the `auth.json` file for the token. You will use this for API requests and to authenticate within ShareX.
+
+ass will automatically convert your old `auth.json` to the new format. **Always backup your `auth.json` and `data.json` before updating**. By default, the original user (named `ass`) will be marked as an admin.
+
+### Adding users
+
+You may add users via the CLI or the API. I'll document the API further in the future.
+
+#### CLI
+
+```bash
+npm run cli-adduser <username> <password> [admin] [meta]
+```
+
+| Argument | Purpose |
+| -------- | ------- |
+| **`username`** `string` | The username of the user. |
+| **`password`** `string` | The password of the user. |
+| **`admin?`** `boolean` | Whether the user is an admin. Defaults to `false`. |
+| **`meta?`** `string` | Any additional metadata to store on the user, as a JSON string. |
+
+**Things still not added:**
+
+- Modifying/deleting users via the API
+
+## Developer API
+
+ass includes an API (v0.14.0) for frontend developers to easily integrate with. Right now the API is pretty limited but I will expand on it in the future, with frontend developer feedback.
+
+Any endpoints requiring authorization will require an `Authorization` header with the value being the user's upload token. Admin users are a new feature introduced in v0.14.0. Admin users can access all endpoints, while non-admin users can only access those relevant to them.
+
+Other things to note:
+
+- **All endpoints are prefixed with `/api/`**.
+- All endpoints will return a JSON object unless otherwise specified.
+- Successful endpoints *should* return a `200` status code. Any errors will use the corresponding `4xx` or `5xx` status code (such as `401 Unauthorized`).
+
+### API endpoints
+
+| Endpoint | Purpose | Admin? |
+| -------- | ------- | ------ |
+| **`GET /user/all`** | Returns a list of all users | Yes |
+| **`GET /user/self`** | Returns the current user | No |
+| **`GET /user/token/:token`** | Returns the user with the given token | No |
+| **`POST /user/reset`** | Resets the current user's **password** (token resets coming soon). Request body must be a JSON object including `username` and `password`. | No |
+| **`GET /user/:id`** | Returns the user with the given ID | Yes |
+| **`POST /user/new`** | Creates a new user. Request body must be a JSON object including `username` and `password`. You may optionally include `admin` (boolean) or `meta` (object). Returns 400 if fails. | Yes |
+
+
 ## Custom frontends - OUTDATED
 
 **Please be aware that this section is outdated (marked as of 2022-04-15). It will be updated when I overhaul the frontend system.**
+
+**Update 2022-12-24: I plan to overhaul this early in 2023.**
 
 ass is intended to provide a strong backend for developers to build their own frontends around. [Git Submodules] make it easy to create custom frontends. Submodules are their own projects, which means you are free to build the router however you wish, as long as it exports the required items. A custom frontend is really just an [Express.js router].
 
@@ -395,7 +461,6 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `setup` | Starts the easy setup process. Should be run after any updates that introduce new config options. |
 | `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
 | `purge` | Purges all uploads & data associated with them. This does **not** delete any users, however. |
-| `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
 
 [`FORCE_COLOR`]: https://nodejs.org/dist/latest-v16.x/docs/api/cli.html#cli_force_color_1_2_3

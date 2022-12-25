@@ -1,17 +1,20 @@
-import { ErrWrap, User } from '../types/definitions';
-import { Config, MagicNumbers } from 'ass-json';
+import { ErrWrap } from '../types/definitions';
+import { Config, MagicNumbers, Package, ServerSideEmbed } from 'ass-json';
 
 import fs from 'fs-extra';
 import bb from 'express-busboy';
 //const rateLimit = require('express-rate-limit');
 import { DateTime } from 'luxon';
-import { Webhook, MessageBuilder } from 'discord-webhook-node';
+import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
+
 import { processUploaded } from '../storage';
-import { path, log, verify, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
+import { path, log, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
 import { data } from '../data';
-import { users } from '../auth';
+import { findFromToken, verifyValidToken } from '../auth';
+
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace, adminWebhookEnabled, adminWebhookUrl, adminWebhookUsername, adminWebhookAvatar }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
+const { name, version, homepage }: Package = fs.readJsonSync(path('package.json'));
 
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 import express, { Request, Response } from 'express';
@@ -34,8 +37,8 @@ bb.extend(router, {
 // Block unauthorized requests and attempt token sanitization
 router.post('/', (req: Request, res: Response, next: Function) => {
 	req.headers.authorization = req.headers.authorization || '';
-	req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
-	!verify(req, users) ? log.warn('Upload blocked', 'Unauthorized').callback(() => res.sendStatus(CODE_UNAUTHORIZED)) : next(); // skipcq: JS-0093
+	req.token = req.headers.authorization.replace(/[^\da-z_-]/gi, ''); // Strip anything that isn't a digit, ASCII letter, or underscore/hyphen
+	!verifyValidToken(req) ? log.warn('Upload blocked', 'Unauthorized').callback(() => res.sendStatus(CODE_UNAUTHORIZED)) : next(); // skipcq: JS-0093
 });
 
 // Upload file
@@ -60,17 +63,22 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 	req.file!.timeoffset = req.headers['x-ass-timeoffset']?.toString() || 'UTC+0';
 
 	// Keep track of the token that uploaded the resource
-	req.file.token = req.token ?? '';
+	req.file.uploader = findFromToken(req.token)?.unid ?? '';
+
+	// Load server-side embed config, if it exists
+	const ssePath = path('share/embed.json');
+	const sse: ServerSideEmbed | undefined = fs.existsSync(ssePath) ? fs.readJsonSync(path('share/embed.json')) : undefined;
+	const useSse = sse && sse.title != undefined && sse.title != '';
 
 	// Attach any embed overrides, if necessary
 	req.file.opengraph = {
-		title: req.headers['x-ass-og-title'],
-		description: req.headers['x-ass-og-description'],
-		author: req.headers['x-ass-og-author'],
-		authorUrl: req.headers['x-ass-og-author-url'],
-		provider: req.headers['x-ass-og-provider'],
-		providerUrl: req.headers['x-ass-og-provider-url'],
-		color: req.headers['x-ass-og-color']
+		title: useSse ? sse.title : req.headers['x-ass-og-title'],
+		description: useSse ? sse.description : req.headers['x-ass-og-description'],
+		author: useSse ? sse.author : req.headers['x-ass-og-author'],
+		authorUrl: useSse ? sse.authorUrl : req.headers['x-ass-og-author-url'],
+		provider: useSse ? sse.provider : req.headers['x-ass-og-provider'],
+		providerUrl: useSse ? sse.providerUrl : req.headers['x-ass-og-provider-url'],
+		color: useSse ? sse.color : req.headers['x-ass-og-color']
 	};
 
 	// Fix spaces in originalname
@@ -110,7 +118,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 		.then(() => {
 			// Log the upload
 			const logInfo = `${req.file!.originalname} (${req.file!.mimetype}, ${formatBytes(req.file.size)})`;
-			const uploader = users[req.token ?? ''] ? users[req.token ?? ''].username : '<token-only>';
+			const uploader = findFromToken(req.token)?.username ?? 'Unknown';
 			log.success('File uploaded', logInfo, `uploaded by ${uploader}`);
 
 			// Build the URLs
@@ -127,19 +135,18 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 				hook.setAvatar(avatar);
 
 				// Build the embed
-				const embed = new MessageBuilder()
+				const embed = new EmbedBuilder()
 					.setTitle(logInfo)
-					// @ts-ignore
-					.setUrl(resourceUrl)
+					.setURL(resourceUrl)
+					.setAuthor({ name: `${name} ${version}`, url: homepage, icon_url: ASS_LOGO })
 					.setDescription(`${admin ? `**User:** \`${uploader}\`\n` : ''}**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
-					.setThumbnail(thumbnailUrl)
-					// @ts-ignore
+					.setThumbnail({ url: thumbnailUrl })
 					.setColor(req.file.vibrant)
 					.setTimestamp();
 
 				// Send the embed to the webhook, then delete the client after to free resources
 				log.debug(`Sending${admin ? ' admin' : ''} embed to webhook`);
-				hook.send(embed)
+				hook.addEmbed(embed).send()
 					.then(() => log.debug(`Webhook${admin ? ' admin' : ''} sent`))
 					.catch((err) => log.error('Webhook error').err(err));
 			}
@@ -163,22 +170,6 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 							adminWebhookUsername.trim().length === 0 ? 'ass admin logs' : adminWebhookUsername,
 							adminWebhookAvatar.trim().length === 0 ? ASS_LOGO : adminWebhookAvatar,
 							true);
-
-					// Also update the users upload count
-					if (!users[req.token ?? '']) {
-						const generateUsername = () => generateId('random', 20, 0, req.file.size.toString()); // skipcq: JS-0074
-						let username: string = generateUsername();
-
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						while (Object.values(users).findIndex((user: User) => user.username === username) !== -1)  // skipcq: JS-0073
-							username = generateUsername();
-
-						users[req.token ?? ''] = { username, count: 0 };
-					}
-					users[req.token ?? ''].count += 1;
-					fs.writeJsonSync(path('auth.json'), { users }, { spaces: 4 });
-
 					log.debug('Upload request flow completed', '');
 				});
 		})

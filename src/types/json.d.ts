@@ -12,6 +12,8 @@ declare module 'ass-json' {
 		gfyIdSize: number
 		mediaStrict: boolean
 		viewDirect: boolean
+		useIdInViewer: boolean
+		idInViewerExtension: boolean
 		dataEngine: string
 		frontendName: string
 		indexFile: string
@@ -49,5 +51,15 @@ declare module 'ass-json' {
 		name: string
 		version: string
 		homepage: string
+	}
+
+	interface ServerSideEmbed {
+		title: string
+		description?: string
+		author?: string
+		authorUrl?: string
+		provider?: string
+		providerUrl?: string
+		color?: string
 	}
 }
