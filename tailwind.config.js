@@ -18,10 +18,11 @@ const defaults = {
 	bgViewer: '#151515',
 
 	// Text colours
-	txtPrimary: '#FD842D',
-	txtSecondary: '#BDBDBD',
+	txtPrimary: '#BDBDBD',
+	txtSecondary: '#8D8D8D',
 
 	// Links
+	linkPrimary: '#FD842D',
 	linkHover: '#FD710D',
 	linkActive: '#DE5E02',
 
@@ -52,6 +53,7 @@ module.exports = {
 			colors: {
 				'primary': theme.txtPrimary || defaults.txtPrimary,
 				'secondary': theme.txtSecondary || defaults.txtSecondary,
+				'link-primary': theme.linkPrimary || defaults.linkPrimary,
 				'link-hover': theme.linkHover || defaults.linkHover,
 				'link-active': theme.linkActive || defaults.linkActive,
 			},

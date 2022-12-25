@@ -300,6 +300,7 @@ If you want to customize the font or colours of the viewer page, create a file i
 | **`bgViewer`** | Background colour for the viewer element |
 | **`txtPrimary`** | Primary text colour; this should be your main brand colour. |
 | **`txtSecondary`** | Secondary text colour; this is used for the file details. |
+| **`linkPrimary`** | Primary link colour |
 | **`linkHover`** | Colour of the `hover` effect for links |
 | **`linkActive`** | Colour of the `active` effect for links |
 | **`borderHover`** | Colour of the `hover` effect for borders; this is used for the underlining links. |
