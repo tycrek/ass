@@ -25,7 +25,8 @@
     "docker-upfull": "npm run docker-update && npm run docker-resetup",
     "docker-resetup": "docker-compose exec ass npm run setup && docker-compose restart",
     "cli-setpassword": "node dist/tools/script.setpassword.js",
-    "cli-testpassword": "node dist/tools/script.testpassword.js"
+    "cli-testpassword": "node dist/tools/script.testpassword.js",
+    "cli-adduser": "node dist/tools/script.adduser.js"
   },
   "repository": "github:tycrek/ass",
   "keywords": [
