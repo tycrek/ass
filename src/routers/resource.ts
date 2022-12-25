@@ -7,8 +7,9 @@ import fetch, { Response as FetchResponse } from 'node-fetch';
 import { Request, Response } from 'express';
 import { deleteS3 } from '../storage';
 import { SkynetDelete, SkynetDownload } from '../skynet';
+import { checkIfZws } from '../generators/zws';
 import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
-const { diskFilePath, s3enabled, viewDirect, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { diskFilePath, s3enabled, viewDirect, useIdInViewer, idInViewerExtension, useSia }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 import { data } from '../data';
 import { users } from '../auth';
@@ -47,7 +48,7 @@ router.get('/', (req: Request, res: Response, next) => data().get(req.ass.resour
 	// Send the view to the client
 	res.render('view', {
 		fileIs: fileData.is,
-		title: escape(fileData.originalname),
+		title: useIdInViewer && !checkIfZws(resourceId) ? `${resourceId}${idInViewerExtension ? `${fileData.ext}` : ''}` : escape(fileData.originalname),
 		mimetype: fileData.mimetype,
 		uploader: users.find(user => user.unid === fileData.uploader)?.username || 'Unknown',
 		timestamp: formatTimestamp(fileData.timestamp, fileData.timeoffset),

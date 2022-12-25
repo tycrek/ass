@@ -12,6 +12,8 @@ declare module 'ass-json' {
 		gfyIdSize: number
 		mediaStrict: boolean
 		viewDirect: boolean
+		useIdInViewer: boolean
+		idInViewerExtension: boolean
 		dataEngine: string
 		frontendName: string
 		indexFile: string
