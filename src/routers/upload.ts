@@ -37,7 +37,7 @@ bb.extend(router, {
 // Block unauthorized requests and attempt token sanitization
 router.post('/', (req: Request, res: Response, next: Function) => {
 	req.headers.authorization = req.headers.authorization || '';
-	req.token = req.headers.authorization.replace(/[^\da-z]/gi, ''); // Strip anything that isn't a digit or ASCII letter
+	req.token = req.headers.authorization.replace(/[^\da-z_-]/gi, ''); // Strip anything that isn't a digit, ASCII letter, or underscore/hyphen
 	!verifyValidToken(req) ? log.warn('Upload blocked', 'Unauthorized').callback(() => res.sendStatus(CODE_UNAUTHORIZED)) : next(); // skipcq: JS-0093
 });
 
