@@ -25,15 +25,16 @@ html
 		.w-full.h-full.flex.justify-center.items-center.text-center
 			.bg-viewer.rounded-24
 				h4.mx-4.mt-6.mb-4.text-3xl.font-main!=title
-				figure.block.mx-10.my-4.flex.flex-col.align-items-center
-					if fileIs.video
-						video.res-media(controls loop muted playsinline preload='metadata')&attributes(resourceAttr)
-					else if fileIs.image
-						img.res-media(decoding='async')&attributes(resourceAttr)
-					else if fileIs.audio
-						audio.res-media(controls loop preload='metadata')&attributes(resourceAttr)
-					else
-						code!=mimetype
+				figure.mx-10.my-4.flex.flex-col.align-items-center.justify-center
+					.flex.justify-center
+						if fileIs.video
+							video.res-media(controls loop muted playsinline preload='metadata')&attributes(resourceAttr)
+						else if fileIs.image
+							img.res-media(decoding='async')&attributes(resourceAttr)
+						else if fileIs.audio
+							audio.res-media(controls loop preload='metadata')&attributes(resourceAttr)
+						else
+							code!=mimetype
 					figcaption
 						br
 						span.text-2xl Uploaded by #[strong!=uploader]
