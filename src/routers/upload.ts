@@ -1,5 +1,5 @@
 import { ErrWrap } from '../types/definitions';
-import { Config, MagicNumbers, Package } from 'ass-json';
+import { Config, MagicNumbers, Package, ServerSideEmbed } from 'ass-json';
 
 import fs from 'fs-extra';
 import bb from 'express-busboy';
@@ -65,15 +65,20 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 	// Keep track of the token that uploaded the resource
 	req.file.uploader = findFromToken(req.token)?.unid ?? '';
 
+	// Load server-side embed config, if it exists
+	const ssePath = path('share/embed.json');
+	const sse: ServerSideEmbed | undefined = fs.existsSync(ssePath) ? fs.readJsonSync(path('share/embed.json')) : undefined;
+	const useSse = sse && sse.title != undefined && sse.title != '';
+
 	// Attach any embed overrides, if necessary
 	req.file.opengraph = {
-		title: req.headers['x-ass-og-title'],
-		description: req.headers['x-ass-og-description'],
-		author: req.headers['x-ass-og-author'],
-		authorUrl: req.headers['x-ass-og-author-url'],
-		provider: req.headers['x-ass-og-provider'],
-		providerUrl: req.headers['x-ass-og-provider-url'],
-		color: req.headers['x-ass-og-color']
+		title: useSse ? sse.title : req.headers['x-ass-og-title'],
+		description: useSse ? sse.description : req.headers['x-ass-og-description'],
+		author: useSse ? sse.author : req.headers['x-ass-og-author'],
+		authorUrl: useSse ? sse.authorUrl : req.headers['x-ass-og-author-url'],
+		provider: useSse ? sse.provider : req.headers['x-ass-og-provider'],
+		providerUrl: useSse ? sse.providerUrl : req.headers['x-ass-og-provider-url'],
+		color: useSse ? sse.color : req.headers['x-ass-og-color']
 	};
 
 	// Fix spaces in originalname
