@@ -15,7 +15,6 @@
     "start": "node dist/ass.js",
     "setup": "node dist/setup.js",
     "metrics": "node dist/metrics.js",
-    "new-token": "node dist/generators/token.js",
     "engine-check": "node dist/checkEngine.js",
     "prestart": "npm run engine-check",
     "presetup": "npm run engine-check",

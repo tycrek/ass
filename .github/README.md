@@ -199,10 +199,6 @@ For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any
 [Caddy]: https://caddyserver.com/
 [my tutorial]: https://old.jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
 
-## Generating new tokens
-
-If you need to generate a new token at any time, run `npm run new-token <username>`. This will **automatically** load the new token so there is no need to restart ass. Username field is optional; if left blank, a random username will be created.
-
 ## Cloudflare users
 
 In your Cloudflare DNS dashboard, set your domain/subdomain to **DNS Only** if you experience issues with **Proxied**.
@@ -355,7 +351,7 @@ S3 servers are generally very fast & have very good uptime, though this will dep
 
 The user system was overhauled in v0.14.0 to allow more features and flexibility. New fields on users include `admin`, `passhash`, `unid`, and `meta` (these will be documented more once the system is finalized).
 
-ass will automatically convert your old `auth.json` to the new format. **Always backup your `auth.json` and `data.json` before updating**. By default, the original user (named `ass`) will be marked as an admin. Adding new users via `npm run new-token <username>` should work as expected, though you'll need to re-launch ass to load the new file.
+ass will automatically convert your old `auth.json` to the new format. **Always backup your `auth.json` and `data.json` before updating**. By default, the original user (named `ass`) will be marked as an admin. Adding new users via `npm run new-token <username>` is currently not supported. Please see the API below for how to add a new user via the API.
 
 **Things still borked:**
 
@@ -447,7 +443,6 @@ ass has a number of pre-made npm scripts for you to use. **All** of these script
 | `setup` | Starts the easy setup process. Should be run after any updates that introduce new config options. |
 | `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
 | `purge` | Purges all uploads & data associated with them. This does **not** delete any users, however. |
-| `new-token` | Generates a new API token. Accepts one parameter for specifying a username, like `npm run new-token <username>`. ass automatically detects the new token & reloads it, so there's no need to restart the server. |
 | `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
 
 [`FORCE_COLOR`]: https://nodejs.org/dist/latest-v16.x/docs/api/cli.html#cli_force_color_1_2_3
