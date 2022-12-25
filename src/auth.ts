@@ -16,8 +16,8 @@ const SALT_ROUNDS = 10;
 /**
  * !!!!!
  * Things for tycrek to do:
- * - [ ] Add a way to configure passwords
- * - [ ] Create new users
+ * - [x] Add a way to configure passwords
+ * - [x] Create new users
  * - [ ] Modify user (admin, meta, replace token/token history)
  * - [ ] Delete user
  * - [x] Get user
@@ -70,14 +70,14 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 
 		// Migrate the datafile (token => uploader)
 		.then(() => data().get())
-		.then((fileData: [string, FileData][]) => {
+		.then((fileData: [string, FileData][]) =>
 
 			// ! A note about this block.
 			// I know it's gross. But using Promise.all crashes low-spec servers, so I had to do it this way. Sorry.
 			// Thanks to CoPilot for writing `runQueue` :D
 
 			// Wait for all the deletions and puts to finish
-			return new Promise((resolve, reject) => {
+			new Promise((resolve, reject) => {
 
 				// Create a queue of functions to run
 				const queue = fileData.map(([key, file]) => async () => {
@@ -99,8 +99,7 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 				};
 
 				runQueue(0);
-			});
-		})
+			}))
 
 		// We did it hoofuckingray
 		.then(() => log.success('Migrated all auth & file data to new auth system'))
@@ -110,6 +109,7 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 
 /**
  * Creates a new user account
+ * @since v0.14.0
  */
 export const createNewUser = (username: string, password: string, admin: boolean, meta?: { [key: string]: any }): Promise<User> => new Promise(async (resolve, reject) => {
 
@@ -140,6 +140,10 @@ export const createNewUser = (username: string, password: string, admin: boolean
 		.catch(reject);
 });
 
+/**
+ * Sets the password for a user
+ * @since v0.14.0
+ */
 export const setUserPassword = (unid: string, password: string): Promise<User> => new Promise(async (resolve, reject) => {
 
 	// Find the user
@@ -161,6 +165,7 @@ export const setUserPassword = (unid: string, password: string): Promise<User> =
 
 /**
  * Called by ass.ts on startup
+ * @since v0.14.0
  */
 export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject) => {
 	// Reset user array (https://stackoverflow.com/questions/1232040/how-do-i-empty-an-array-in-javascript#1232046)
@@ -207,6 +212,7 @@ export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject)
 
 /**
  * Retrieves a user using their upload token. Returns `null` if the user does not exist.
+ * @since v0.14.0
  */
 export const findFromToken = (token: string) => {
 	return users.find((user) => user.token === token) || null;
@@ -214,6 +220,7 @@ export const findFromToken = (token: string) => {
 
 /**
  * Verifies that the upload token in the request exists in the user map
+ * @since v0.14.0
  */
 export const verifyValidToken = (req: Request) => {
 	return req.headers.authorization && findFromToken(req.headers.authorization);

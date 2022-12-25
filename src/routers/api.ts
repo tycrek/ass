@@ -17,6 +17,7 @@ const RouterApi = Router();
 
 /**
  * Token authentication middleware for Admins
+ * @since v0.14.0
  */
 const adminAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	const user = findFromToken(req.headers.authorization ?? '');
@@ -25,6 +26,7 @@ const adminAuthMiddleware = (req: Request, res: Response, next: NextFunction) =>
 
 /**
  * Simple function to either return JSON or a 404, so I don't have to write it 40 times.
+ * @since v0.14.0
  */
 const userFinder = (res: Response, user: User | undefined) => user ? res.json(user) : res.sendStatus(404);
 
