@@ -354,12 +354,28 @@ The user system was overhauled in v0.14.0 to allow more features and flexibility
 
 New installs will automatically generate a default user. Check the `auth.json` file for the token. You will use this for API requests and to authenticate within ShareX.
 
-ass will automatically convert your old `auth.json` to the new format. **Always backup your `auth.json` and `data.json` before updating**. By default, the original user (named `ass`) will be marked as an admin. Adding new users via `npm run new-token <username>` is currently not supported. Please see the API below for how to add a new user via the API.
+ass will automatically convert your old `auth.json` to the new format. **Always backup your `auth.json` and `data.json` before updating**. By default, the original user (named `ass`) will be marked as an admin.
+
+### Adding users
+
+You may add users via the CLI or the API. I'll document the API further in the future.
+
+#### CLI
+
+```bash
+npm run cli-adduser <username> <password> [admin] [meta]
+```
+
+| Argument | Purpose |
+| -------- | ------- |
+| **`username`** `string` | The username of the user. |
+| **`password`** `string` | The password of the user. |
+| **`admin?`** `boolean` | Whether the user is an admin. Defaults to `false`. |
+| **`meta?`** `string` | Any additional metadata to store on the user, as a JSON string. |
 
 **Things still not added:**
 
 - Modifying/deleting users via the API
-- The filewatcher that reloads `auth.json` when modified on CLI (to be changed in the future)
 
 ## Developer API
 
