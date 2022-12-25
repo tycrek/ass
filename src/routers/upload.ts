@@ -1,17 +1,20 @@
 import { ErrWrap } from '../types/definitions';
-import { Config, MagicNumbers } from 'ass-json';
+import { Config, MagicNumbers, Package } from 'ass-json';
 
 import fs from 'fs-extra';
 import bb from 'express-busboy';
 //const rateLimit = require('express-rate-limit');
 import { DateTime } from 'luxon';
-import { Webhook, MessageBuilder } from 'discord-webhook-node';
+import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
+
 import { processUploaded } from '../storage';
 import { path, log, getTrueHttp, getTrueDomain, generateId, formatBytes } from '../utils';
 import { data } from '../data';
 import { findFromToken, verifyValidToken } from '../auth';
+
 const { maxUploadSize, resourceIdSize, gfyIdSize, resourceIdType, spaceReplace, adminWebhookEnabled, adminWebhookUrl, adminWebhookUsername, adminWebhookAvatar }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_PAYLOAD_TOO_LARGE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
+const { name, version, homepage }: Package = fs.readJsonSync(path('package.json'));
 
 const ASS_LOGO = 'https://cdn.discordapp.com/icons/848274994375294986/8d339d4a2f3f54b2295e5e0ff62bd9e6.png?size=1024';
 import express, { Request, Response } from 'express';
@@ -127,19 +130,18 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 				hook.setAvatar(avatar);
 
 				// Build the embed
-				const embed = new MessageBuilder()
+				const embed = new EmbedBuilder()
 					.setTitle(logInfo)
-					// @ts-ignore
-					.setURL(resourceUrl) // I don't know why this is throwing an error when `setUrl` is used but it does. This is a workaround.
+					.setURL(resourceUrl)
+					.setAuthor({ name: `${name} ${version}`, url: homepage, icon_url: ASS_LOGO })
 					.setDescription(`${admin ? `**User:** \`${uploader}\`\n` : ''}**Size:** \`${formatBytes(req.file.size)}\`\n**[Delete](${deleteUrl})**`)
-					.setThumbnail(thumbnailUrl)
-					// @ts-ignore
+					.setThumbnail({ url: thumbnailUrl })
 					.setColor(req.file.vibrant)
 					.setTimestamp();
 
 				// Send the embed to the webhook, then delete the client after to free resources
 				log.debug(`Sending${admin ? ' admin' : ''} embed to webhook`);
-				hook.send(embed)
+				hook.addEmbed(embed).send()
 					.then(() => log.debug(`Webhook${admin ? ' admin' : ''} sent`))
 					.catch((err) => log.error('Webhook error').err(err));
 			}
