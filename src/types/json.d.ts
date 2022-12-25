@@ -52,4 +52,14 @@ declare module 'ass-json' {
 		version: string
 		homepage: string
 	}
+
+	interface ServerSideEmbed {
+		title: string
+		description?: string
+		author?: string
+		authorUrl?: string
+		provider?: string
+		providerUrl?: string
+		color?: string
+	}
 }
