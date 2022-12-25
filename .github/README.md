@@ -247,7 +247,7 @@ If you primarily share media on Discord, you can add these additional (optional)
 
 | Header | Purpose |
 | ------ | ------- |
-| **`X-Ass-OG-Title`** | Large text shown above your media |
+| **`X-Ass-OG-Title`** | Large text shown above your media. Required for embeds to appear on desktop. |
 | **`X-Ass-OG-Description`** | Small text shown below the title but above the media (does not show up on videos) |
 | **`X-Ass-OG-Author`** | Small text shown above the title |
 | **`X-Ass-OG-Author-Url`** | URL to open when the Author is clicked |
@@ -264,6 +264,20 @@ You can insert certain metadata into your embeds with these placeholders:
 | **`&size`** | The files size with proper notation rounded to two decimals (example: `7.06 KB`) |
 | **`&filename`** | The original filename of the uploaded file |
 | **`&timestamp`** | The timestamp of when the file was uploaded (example: `Oct 14, 1983, 1:30 PM`) |
+
+#### Server-side embed configuration
+
+You may also specify a default embed config on the server. Keep in mind that if users specify the `X-Ass-OG-Title` header, the server-side config will be ignored. To configure the server-side embed, create a new file in the `share/` directory named `embed.json`. Available options are:
+
+- **`title`**
+- `description`
+- `author`
+- `authorUrl`
+- `provider`
+- `providerUrl`
+- `color`
+
+Their values are equivalent to the headers listed above.
 
 ### Webhooks
 
