@@ -39,8 +39,10 @@ declare module 'ass-json' {
 		HTTPS: number
 		CODE_OK: number
 		CODE_NO_CONTENT: number
+		CODE_BAD_REQUEST: number
 		CODE_UNAUTHORIZED: number
 		CODE_NOT_FOUND: number
+		CODE_CONFLICT: number
 		CODE_PAYLOAD_TOO_LARGE: number
 		CODE_UNSUPPORTED_MEDIA_TYPE: number
 		CODE_INTERNAL_SERVER_ERROR: number
