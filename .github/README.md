@@ -390,18 +390,23 @@ Other things to note:
 - **All endpoints are prefixed with `/api/`**.
 - All endpoints will return a JSON object unless otherwise specified.
 - Successful endpoints *should* return a `200` status code. Any errors will use the corresponding `4xx` or `5xx` status code (such as `401 Unauthorized`).
+- ass's API will try to be as compliant with the HTTP spec as possible. For example, using `POST/PUT` for create/modify, and response codes such as `409 Conflict` for duplicate entries. This compliance may not be 100% perfect, but I will try my best.
 
 ### API endpoints
 
 | Endpoint | Purpose | Admin? |
 | -------- | ------- | ------ |
-| **`GET /user/all`** | Returns a list of all users | Yes |
+| **`GET /user/`** | Returns a list of all users | Yes |
+| **`GET /user/:id`** | Returns the user with the given ID | Yes |
 | **`GET /user/self`** | Returns the current user | No |
 | **`GET /user/token/:token`** | Returns the user with the given token | No |
-| **`POST /user/reset`** | Resets the current user's **password** (token resets coming soon). Request body must be a JSON object including `username` and `password`. | No |
-| **`GET /user/:id`** | Returns the user with the given ID | Yes |
-| **`POST /user/new`** | Creates a new user. Request body must be a JSON object including `username` and `password`. You may optionally include `admin` (boolean) or `meta` (object). Returns 400 if fails. | Yes |
-
+| **`POST /user/`** | Creates a new user. Request body must be a JSON object including `username` and `password`. You may optionally include `admin` (boolean) or `meta` (object). Returns 400 if fails. | Yes |
+| **`POST /user/password/reset/:id`** | Force resets the user's **password**. Request body must be a JSON object including a `password`. | Yes |
+| **`DELETE /user/:id`** | Deletes the user with the given ID, as well as all their uploads. | Yes |
+| **`PUT /user/meta/:id`** | Updates the user's metadata. Request body must be a JSON object with keys `key` and `value`, with the key/value you want to set in the users metadata. Optionally you may include `force: boolean` to override existing keys. | Yes |
+| **`DELETE /user/meta/:id`** | Deletes a key/value from a users metadata. Request body must be a JSON object with a `key` property specifying the key to delete. | Yes |
+| **`PUT /user/username/:id`** | Updates the user's username. Request body must be a JSON object with a `username` property. | Yes |
+| **`PUT /user/token/:id`** | Regenerates a users upload token | Yes |
 
 ## Custom frontends - OUTDATED
 
