@@ -183,14 +183,44 @@ export const deleteUser = (unid: string): Promise<void> => new Promise((resolve,
 	// Remove the user from the users map
 	users.splice(users.indexOf(user), 1);
 
-	// Save the new user to auth.json
-	const authPath = path('auth.json');
-	const authData = fs.readJsonSync(authPath) as Users;
-	const userIndex = authData.users.findIndex((user) => user.unid === unid);
-	authData.users.splice(userIndex, 1);
-	fs.writeJson(authPath, authData, { spaces: '\t' })
+	// Remove the user's files
+	data().get().then((fileData: [string, FileData][]) => new Promise((resolve, reject) => {
+
+		// Create a queue of functions to run
+		const queue = fileData.map(([key, file]) => async () => {
+			if (file.uploader === unid) {
+				// Delete the file
+				const p = path(file.path);
+				await fs.unlink(p);
+
+				// Delete the thumbnail
+				const t = path(`uploads/thumbnails/${file.thumbnail}`);
+				await fs.unlink(t);
+
+				// Delete the info from the datafile
+				await data().del(key);
+			}
+		});
+
+		// Recursively run the queue (see note above in `migrate()`)
+		const runQueue = (index: number) => {
+			if (index >= queue.length) return resolve(void 0);
+			queue[index]().then(() => runQueue(index + 1)).catch(reject);
+		};
+
+		runQueue(0);
+	})
+		.then(() => {
+
+			// Save the new user to auth.json
+			const authPath = path('auth.json');
+			const authData = fs.readJsonSync(authPath) as Users;
+			const userIndex = authData.users.findIndex((user) => user.unid === unid);
+			authData.users.splice(userIndex, 1);
+			return fs.writeJson(authPath, authData, { spaces: '\t' })
+		})
 		.then(() => resolve())
-		.catch(reject);
+		.catch(reject));
 });
 
 /**
