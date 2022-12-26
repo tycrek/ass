@@ -1,6 +1,6 @@
 {
   "name": "ass",
-  "version": "0.14.0-alpha.1",
+  "version": "0.14.1",
   "description": "The superior self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
@@ -42,7 +42,6 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
-    "@skynetlabs/skynet-nodejs": "^2.3.0",
     "@tsconfig/node16": "^1.0.1",
     "@tycrek/discord-hookr": "^0.1.0",
     "@tycrek/express-nofavicon": "^1.0.3",
@@ -54,6 +53,7 @@
     "any-shell-escape": "^0.1.1",
     "autoprefixer": "^10.4.4",
     "aws-sdk": "^2.1115.0",
+    "axios": "^1.2.1",
     "bcrypt": "^5.1.0",
     "check-node-version": "^4.2.1",
     "crypto-random-string": "3.3.1",

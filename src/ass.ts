@@ -24,7 +24,7 @@ if (!fs.existsSync(configPath) || fs.readFileSync(configPath).toString().length 
 //#endregion
 
 // Load the JSON
-const { host, port, useSsl, isProxied, s3enabled, frontendName, useSia, diskFilePath }: Config = fs.readJsonSync(path('config.json'));
+const { host, port, useSsl, isProxied, s3enabled, frontendName, diskFilePath }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_INTERNAL_SERVER_ERROR }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 const { name, version, homepage }: Package = fs.readJsonSync(path('package.json'));
 
@@ -142,5 +142,5 @@ app.use((err: ErrWrap, _req: Request, res: Response) => log.error(err.message).e
 		.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
 		.info('Custom index', ASS_INDEX ?? 'disabled')
 		.blank()
-		.express()!.Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'}`));
+		.express()!.Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
 })();

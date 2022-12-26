@@ -16,7 +16,7 @@ const config = {
 	idInViewerExtension: false,
 	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
-	useSia: false,
+	savePerDay: false,
 	adminWebhookEnabled: false,
 	s3enabled: false,
 };
@@ -46,6 +46,7 @@ const oldConfig = {
 	diskFilePath: 'uploads/',
 	saveWithDate: true, // Some systems don't like dirs with massive amounts of files
 	saveAsOriginal: false, // Prone to conflicts, which ass doesn't handle
+	useSia: false, // Sia has been shut down in 2022, uploads fail as of 2022-12-26
 };
 
 function getConfirmSchema(description) {
@@ -194,10 +195,10 @@ function doSetup() {
 				default: config.frontendName,
 				required: false
 			},
-			useSia: {
-				description: 'Use Sia Skynet for decentralized file storage?',
+			savePerDay: {
+				description: 'Save uploads in folders by day (YYYY-MM-DD) instead of by month (YYYY-MM)',
 				type: 'boolean',
-				default: config.useSia,
+				default: config.savePerDay,
 				required: false
 			},
 			adminWebhookEnabled: {

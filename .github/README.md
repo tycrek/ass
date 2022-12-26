@@ -72,8 +72,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - Run locally or in a Docker container
 - **Multiple file storage methods**
    - Local file system
-   - Amazon S3, including [DigitalOcean Spaces]
-   - [Skynet] (free decentralized storage on the [Sia] blockchain)
+   - Amazon S3, including [DigitalOcean Spaces] (more coming soon)
 - **Multiple data storage methods** using [data engines]
    - **File**
       - JSON (default, [papito])
@@ -86,8 +85,6 @@ ass was designed with developers in mind. If you are a developer & want somethin
 [Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
 [ZWS]: https://zws.im
 [DigitalOcean Spaces]: https://www.digitalocean.com/products/spaces/
-[Skynet]: https://siasky.net/
-[Sia]: https://sia.tech/
 [data engines]: #data-engines
 [papito]: https://github.com/tycrek/papito
 [ass-psql]: https://github.com/tycrek/ass-psql
@@ -235,7 +232,9 @@ If you need to override a specific part of the config to be different from the g
 | **`X-Ass-Domain`** | Override the domain returned for the clipboard (useful for multi-domain hosts) |
 | **`X-Ass-Access`** | Override the generator used for the resource URL. Must be one of: `original`, `zws`, `gfycat`, `random`, or `timestamp` ([see above](#access-types)) |
 | **`X-Ass-Gfycat`** | Override the length of Gfycat ID's. Defaults to `2` |
-| **`X-Ass-Timeoffset`** | Override the timestamp offset. Defaults to `UTC+0` |
+| **`X-Ass-Timeoffset`** | Override the timestamp offset. Defaults to `UTC+0`. Available options are whatever [Luxon] accepts (for example: `America/Edmonton` or `UTC-7`) |
+
+[Luxon]: https://moment.github.io/luxon/#/zones?id=specifying-a-zone
 
 ### Fancy embeds
 
@@ -324,6 +323,12 @@ By default, ass directs the index route `/` to this README. Follow these steps t
 module.exports = (req, res, next) => res.redirect('/register');
 ```
 
+## Custom 404 page
+
+To use a custom 404 page, create a file in the `share/` directory called `404.html`. Restart ass, and any requests to missing resources will return HTTP 404 with the contents of this file.
+
+If there's interest, I may allow making this a function, similar to the custom index.
+
 ## File storage
 
 ass supports three methods of file storage: local, S3, or [Skynet].
@@ -337,16 +342,6 @@ Local storage is the simplest option, but relies on you having a lot of disk spa
 Any existing object storage server that's compatible with [Amazon S3] can be used with ass. I personally host my files using Digital Ocean Spaces, which implements S3.
 
 S3 servers are generally very fast & have very good uptime, though this will depend on the hosting provider & plan you choose.
-
-### Skynet
-
-**As of August 12, 2022, [Skynet Labs is shut down].** Skynet *will continue to work*, as such is the nature of decentralized services.
-
-[Skynet] is a decentralized CDN created by [Skynet Labs]. It utilizes the [Sia] blockchain, the leading decentralized cloud storage platform, which boasts "no signups, no servers, no trusted third parties". For hosts who are looking for a reliable, always available storage solution with lots of capacity & no costs, Skynet may be your best option. However, uploads tend to be on the slower side (though speeds will improve as the Sia network grows).
-
-[Skynet Labs is shut down]: https://skynetlabs.com/news/skynet-labs-shutting-down-skynet-remains-online
-[Amazon S3]: https://en.wikipedia.org/wiki/Amazon_S3
-[Skynet Labs]: https://github.com/SkynetLabs
 
 ## New user system (v0.14.0)
 
@@ -388,18 +383,23 @@ Other things to note:
 - **All endpoints are prefixed with `/api/`**.
 - All endpoints will return a JSON object unless otherwise specified.
 - Successful endpoints *should* return a `200` status code. Any errors will use the corresponding `4xx` or `5xx` status code (such as `401 Unauthorized`).
+- ass's API will try to be as compliant with the HTTP spec as possible. For example, using `POST/PUT` for create/modify, and response codes such as `409 Conflict` for duplicate entries. This compliance may not be 100% perfect, but I will try my best.
 
 ### API endpoints
 
 | Endpoint | Purpose | Admin? |
 | -------- | ------- | ------ |
-| **`GET /user/all`** | Returns a list of all users | Yes |
+| **`GET /user/`** | Returns a list of all users | Yes |
+| **`GET /user/:id`** | Returns the user with the given ID | Yes |
 | **`GET /user/self`** | Returns the current user | No |
 | **`GET /user/token/:token`** | Returns the user with the given token | No |
-| **`POST /user/reset`** | Resets the current user's **password** (token resets coming soon). Request body must be a JSON object including `username` and `password`. | No |
-| **`GET /user/:id`** | Returns the user with the given ID | Yes |
-| **`POST /user/new`** | Creates a new user. Request body must be a JSON object including `username` and `password`. You may optionally include `admin` (boolean) or `meta` (object). Returns 400 if fails. | Yes |
-
+| **`POST /user/`** | Creates a new user. Request body must be a JSON object including `username` and `password`. You may optionally include `admin` (boolean) or `meta` (object). Returns 400 if fails. | Yes |
+| **`POST /user/password/reset/:id`** | Force resets the user's **password**. Request body must be a JSON object including a `password`. | Yes |
+| **`DELETE /user/:id`** | Deletes the user with the given ID, as well as all their uploads. | Yes |
+| **`PUT /user/meta/:id`** | Updates the user's metadata. Request body must be a JSON object with keys `key` and `value`, with the key/value you want to set in the users metadata. Optionally you may include `force: boolean` to override existing keys. | Yes |
+| **`DELETE /user/meta/:id`** | Deletes a key/value from a users metadata. Request body must be a JSON object with a `key` property specifying the key to delete. | Yes |
+| **`PUT /user/username/:id`** | Updates the user's username. Request body must be a JSON object with a `username` property. | Yes |
+| **`PUT /user/token/:id`** | Regenerates a users upload token | Yes |
 
 ## Custom frontends - OUTDATED
 
