@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { findFromToken, setUserPassword, users, createNewUser, deleteUser, verifyCliKey } from '../auth';
+import { findFromToken, setUserPassword, users, createNewUser, deleteUser, setUserMeta, deleteUserMeta, verifyCliKey } from '../auth';
 import { log } from '../utils';
 import { data } from '../data';
 import { User } from '../types/auth';
@@ -102,11 +102,34 @@ function buildUserRouter() {
 			.catch((err) => errorHandler(res, err));
 	});
 
-	// Update a user
+	// Update a user meta key/value
 	// Admin only
-	userRouter.put('/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+	userRouter.put('/meta/:id', adminAuthMiddleware, (req: Request, res: Response) => {
 		const id = req.params.id;
-		//WIP
+		const key: string | undefined = req.body.key;
+		const value: any = req.body.value;
+		const force = req.body.force ?? false;
+
+		if (key == null || key.length === 0 || value == null || value.length === 0)
+			return res.sendStatus(400);
+
+		setUserMeta(id, key, value, force)
+			.then(() => res.sendStatus(200))
+			.catch((err) => errorHandler(res, err));
+	});
+
+	// Delete a user meta key
+	// Admin only
+	userRouter.delete('/meta/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+		const id = req.params.id;
+		const key: string | undefined = req.body.key;
+
+		if (key == null || key.length === 0)
+			return res.sendStatus(400);
+
+		deleteUserMeta(id, key)
+			.then(() => res.sendStatus(200))
+			.catch((err) => errorHandler(res, err));
 	});
 
 	return userRouter;
