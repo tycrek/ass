@@ -17,7 +17,6 @@ declare module 'ass-json' {
 		dataEngine: string
 		frontendName: string
 		indexFile: string
-		useSia: boolean
 		savePerDay: boolean
 		adminWebhookEnabled: boolean
 		adminWebhookUrl: string

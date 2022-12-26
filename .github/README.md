@@ -72,8 +72,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - Run locally or in a Docker container
 - **Multiple file storage methods**
    - Local file system
-   - Amazon S3, including [DigitalOcean Spaces]
-   - [Skynet] (free decentralized storage on the [Sia] blockchain)
+   - Amazon S3, including [DigitalOcean Spaces] (more coming soon)
 - **Multiple data storage methods** using [data engines]
    - **File**
       - JSON (default, [papito])
@@ -86,8 +85,6 @@ ass was designed with developers in mind. If you are a developer & want somethin
 [Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
 [ZWS]: https://zws.im
 [DigitalOcean Spaces]: https://www.digitalocean.com/products/spaces/
-[Skynet]: https://siasky.net/
-[Sia]: https://sia.tech/
 [data engines]: #data-engines
 [papito]: https://github.com/tycrek/papito
 [ass-psql]: https://github.com/tycrek/ass-psql
@@ -345,16 +342,6 @@ Local storage is the simplest option, but relies on you having a lot of disk spa
 Any existing object storage server that's compatible with [Amazon S3] can be used with ass. I personally host my files using Digital Ocean Spaces, which implements S3.
 
 S3 servers are generally very fast & have very good uptime, though this will depend on the hosting provider & plan you choose.
-
-### Skynet
-
-**As of August 12, 2022, [Skynet Labs is shut down].** Skynet *will continue to work*, as such is the nature of decentralized services.
-
-[Skynet] is a decentralized CDN created by [Skynet Labs]. It utilizes the [Sia] blockchain, the leading decentralized cloud storage platform, which boasts "no signups, no servers, no trusted third parties". For hosts who are looking for a reliable, always available storage solution with lots of capacity & no costs, Skynet may be your best option. However, uploads tend to be on the slower side (though speeds will improve as the Sia network grows).
-
-[Skynet Labs is shut down]: https://skynetlabs.com/news/skynet-labs-shutting-down-skynet-remains-online
-[Amazon S3]: https://en.wikipedia.org/wiki/Amazon_S3
-[Skynet Labs]: https://github.com/SkynetLabs
 
 ## New user system (v0.14.0)
 

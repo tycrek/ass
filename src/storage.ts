@@ -9,10 +9,9 @@ import Thumbnail from './thumbnails';
 import Vibrant from './vibrant';
 import Hash from './hash';
 import { path, generateId, log } from './utils';
-import { SkynetUpload } from './skynet';
 import { Request, Response } from 'express';
 import { removeGPS } from './nightmare';
-const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, savePerDay, mediaStrict, maxUploadSize, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, savePerDay, mediaStrict, maxUploadSize }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNSUPPORTED_MEDIA_TYPE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 
 const ID_GEN_LENGTH = 32;
@@ -129,7 +128,7 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 		.catch((err) => log.debug('!! EXIF GPS data could not be removed', err))
 
 		// Save file
-		.then(() => log.debug('Saving file', req.file.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
+		.then(() => log.debug('Saving file', req.file.originalname, s3enabled ? 'in S3' : 'on disk'))
 		.then(() =>
 			// skipcq: JS-0229
 			new Promise((resolve, reject) => {
@@ -143,18 +142,13 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 					Body: fs.createReadStream(req.file.path)
 				}).promise().then(resolve).catch(reject);
 
-				// Use Sia Skynet
-				else if (useSia) return SkynetUpload(req.file.path)
-					.then((skylink) => req.file.randomId = skylink)
-					.then(resolve).catch(reject);
-
 				// Save to local storage
 				else return fs.ensureDir(getDatedDirname())
 					.then(() => tempFileName = getLocalFilename(req))
 					.then(() => fs.copy(req.file.path, tempFileName, { preserveTimestamps: true }))
 					.then(resolve).catch(reject);
 			}))
-		.then(() => log.debug('File saved', req.file.originalname, s3enabled ? 'in S3' : useSia ? 'on Sia blockchain' : 'on disk'))
+		.then(() => log.debug('File saved', req.file.originalname, s3enabled ? 'in S3' : 'on disk'))
 		.catch((err) => next(err))
 
 		// Delete the file
