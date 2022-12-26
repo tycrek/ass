@@ -22,12 +22,9 @@ const RouterApi = Router();
 const errorHandler = (res: Response, err: Error | any) => {
 	log.error(err);
 	switch (err.message) {
-		case 'User not found':
-			return res.sendStatus(404);
-		case 'Meta key already exists':
-			return res.sendStatus(409);
-		default:
-			return res.sendStatus(500);
+		case 'User not found': return res.sendStatus(404);
+		case 'Meta key already exists': return res.sendStatus(409);
+		default: return res.sendStatus(500);
 	}
 };
 
