@@ -240,6 +240,33 @@ export const deleteUserMeta = (unid: string, key: string): Promise<User> => new 
 });
 
 /**
+ * Sets the username for a user
+ * @since v0.14.1
+ */
+export const setUsername = (unid: string, username: string): Promise<User> => new Promise((resolve, reject) => {
+
+	// Find the user
+	const user = users.find((user) => user.unid === unid);
+	if (!user) return reject(new Error('User not found'));
+
+	// Check if the username is already taken
+	if (users.find((user) => user.username === username)) return reject(new Error('Username already taken'));
+
+	// Set the username
+	user.username = username;
+
+	// Save the new user to auth.json
+	const authPath = path('auth.json');
+	const authData = fs.readJsonSync(authPath) as Users;
+	const userIndex = authData.users.findIndex((user) => user.unid === unid);
+	authData.users[userIndex] = user;
+	fs.writeJson(authPath, authData, { spaces: '\t' })
+		.then(() => log.info('Set username for', user.unid, username))
+		.then(() => resolve(user))
+		.catch(reject);
+});
+
+/**
  * Called by ass.ts on startup
  * @since v0.14.0
  */

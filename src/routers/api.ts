@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { findFromToken, setUserPassword, users, createNewUser, deleteUser, setUserMeta, deleteUserMeta, verifyCliKey } from '../auth';
+import { findFromToken, setUserPassword, users, createNewUser, deleteUser, setUserMeta, deleteUserMeta, setUsername, verifyCliKey } from '../auth';
 import { log } from '../utils';
 import { data } from '../data';
 import { User } from '../types/auth';
@@ -120,6 +120,20 @@ function buildUserRouter() {
 			return res.sendStatus(400);
 
 		setUserMeta(id, key, value, force)
+			.then(() => res.sendStatus(200))
+			.catch((err) => errorHandler(res, err));
+	});
+
+	// Sets a username
+	// Admin only
+	userRouter.put('/username/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+		const id = req.params.id;
+		const username: string | undefined = req.body.username;
+
+		if (username == null || username.length === 0)
+			return res.sendStatus(400);
+
+		setUsername(id, username)
 			.then(() => res.sendStatus(200))
 			.catch((err) => errorHandler(res, err));
 	});
