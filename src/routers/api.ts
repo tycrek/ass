@@ -89,6 +89,10 @@ function buildUserRouter() {
 			.catch((err) => errorHandler(res, err));
 	});
 
+	// Get all users
+	// Admin only
+	userRouter.get('/all', adminAuthMiddleware, (req: Request, res: Response) => res.json(users));
+
 	// Get a user (must be last as it's a catch-all)
 	// Admin only
 	userRouter.get('/:id', adminAuthMiddleware, (req: Request, res: Response) =>
@@ -104,7 +108,7 @@ function buildUserRouter() {
 			.catch((err) => errorHandler(res, err));
 	});
 
-	// Update a user meta key/value
+	// Update a user meta key/value (/meta can be after /:id because they are not HTTP GET)
 	// Admin only
 	userRouter.put('/meta/:id', adminAuthMiddleware, (req: Request, res: Response) => {
 		const id = req.params.id;
