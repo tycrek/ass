@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { findFromToken, setUserPassword, users, createNewUser, verifyCliKey } from '../auth';
+import { findFromToken, setUserPassword, users, createNewUser, deleteUser, verifyCliKey } from '../auth';
 import { log } from '../utils';
 import { data } from '../data';
 import { User } from '../types/auth';
@@ -14,6 +14,17 @@ import { User } from '../types/auth';
  * The primary API router
  */
 const RouterApi = Router();
+
+/**
+ * Logs an error and sends a 500 (404 if 'User not found' error)
+ * @since v0.14.1
+ */
+const errorHandler = (res: Response, err: Error | any) => {
+	log.error(err);
+	if (err.message === 'User not found')
+		return res.sendStatus(404);
+	res.sendStatus(500);
+};
 
 /**
  * Token authentication middleware for Admins
@@ -56,7 +67,7 @@ function buildUserRouter() {
 
 		setUserPassword(id, newPassword)
 			.then(() => res.sendStatus(200))
-			.catch((err) => (log.error(err), res.sendStatus(500)));
+			.catch((err) => errorHandler(res, err));
 	});
 
 	// Create a new user
@@ -73,13 +84,30 @@ function buildUserRouter() {
 
 		createNewUser(username, password, admin, meta)
 			.then((user) => res.send(user))
-			.catch((err) => (log.error(err), res.sendStatus(500)));
+			.catch((err) => errorHandler(res, err));
 	});
 
 	// Get a user (must be last as it's a catch-all)
 	// Admin only
 	userRouter.get('/:id', adminAuthMiddleware, (req: Request, res: Response) =>
 		userFinder(res, users.find(user => user.unid === req.params.id || user.username === req.params.id)));
+
+	// Delete a user
+	// Admin only
+	userRouter.delete('/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+		const id = req.params.id;
+
+		deleteUser(id)
+			.then(() => res.sendStatus(200))
+			.catch((err) => errorHandler(res, err));
+	});
+
+	// Update a user
+	// Admin only
+	userRouter.put('/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+		const id = req.params.id;
+		//WIP
+	});
 
 	return userRouter;
 }

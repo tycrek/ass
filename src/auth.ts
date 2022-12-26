@@ -165,6 +165,29 @@ export const setUserPassword = (unid: string, password: string): Promise<User> =
 });
 
 /**
+ * Deletes a user account
+ * @since v0.14.1
+ */
+export const deleteUser = (unid: string): Promise<void> => new Promise((resolve, reject) => {
+
+	// Find the user
+	const user = users.find((user) => user.unid === unid);
+	if (!user) return reject(new Error('User not found'));
+
+	// Remove the user from the users map
+	users.splice(users.indexOf(user), 1);
+
+	// Save the new user to auth.json
+	const authPath = path('auth.json');
+	const authData = fs.readJsonSync(authPath) as Users;
+	const userIndex = authData.users.findIndex((user) => user.unid === unid);
+	authData.users.splice(userIndex, 1);
+	fs.writeJson(authPath, authData, { spaces: '\t' })
+		.then(() => resolve())
+		.catch(reject);
+});
+
+/**
  * Called by ass.ts on startup
  * @since v0.14.0
  */
