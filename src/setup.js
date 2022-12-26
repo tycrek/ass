@@ -80,6 +80,7 @@ function doSetup() {
 		const existingConfig = require('../config.json');
 		Object.entries(existingConfig).forEach(([key, value]) => {
 			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = value); // skipcq: JS-0093
+			Object.prototype.hasOwnProperty.call(adminWebhookConfig, key) && (adminWebhookConfig[key] = value); // skipcq: JS-0093
 			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = value); // skipcq: JS-0093
 			Object.prototype.hasOwnProperty.call(oldConfig, key) && (oldConfig[key] = value); // skipcq: JS-0093
 		});
