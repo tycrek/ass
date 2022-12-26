@@ -111,7 +111,7 @@ function doSetup() {
 			domain: {
 				description: `Domain name to send to ShareX clients (example: ${config.domain})`,
 				type: 'string',
-				required: true,
+				required: false,
 				message: 'You must input a valid domain name or IP to continue'
 			},
 			maxUploadSize: {
