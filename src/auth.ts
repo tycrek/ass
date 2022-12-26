@@ -267,6 +267,30 @@ export const setUsername = (unid: string, username: string): Promise<User> => ne
 });
 
 /**
+ * Resets a token
+ * @since v0.14.1
+ */
+export const resetToken = (unid: string): Promise<User> => new Promise((resolve, reject) => {
+
+	// Find the user
+	const user = users.find((user) => user.unid === unid);
+	if (!user) return reject(new Error('User not found'));
+
+	// Reset the token
+	user.token = nanoid(32);
+
+	// Save the new user to auth.json
+	const authPath = path('auth.json');
+	const authData = fs.readJsonSync(authPath) as Users;
+	const userIndex = authData.users.findIndex((user) => user.unid === unid);
+	authData.users[userIndex] = user;
+	fs.writeJson(authPath, authData, { spaces: '\t' })
+		.then(() => log.info('Reset token for', user.unid))
+		.then(() => resolve(user))
+		.catch(reject);
+});
+
+/**
  * Called by ass.ts on startup
  * @since v0.14.0
  */
