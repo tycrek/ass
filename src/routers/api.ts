@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { findFromToken, setUserPassword, users, createNewUser, verifyCliKey } from '../auth';
+import { findFromToken, setUserPassword, users, createNewUser, deleteUser, setUserMeta, deleteUserMeta, verifyCliKey } from '../auth';
 import { log } from '../utils';
 import { data } from '../data';
 import { User } from '../types/auth';
@@ -14,6 +14,19 @@ import { User } from '../types/auth';
  * The primary API router
  */
 const RouterApi = Router();
+
+/**
+ * Logs an error and sends a 500 (404 if 'User not found' error)
+ * @since v0.14.1
+ */
+const errorHandler = (res: Response, err: Error | any) => {
+	log.error(err);
+	switch (err.message) {
+		case 'User not found': return res.sendStatus(404);
+		case 'Meta key already exists': return res.sendStatus(409);
+		default: return res.sendStatus(500);
+	}
+};
 
 /**
  * Token authentication middleware for Admins
@@ -56,7 +69,7 @@ function buildUserRouter() {
 
 		setUserPassword(id, newPassword)
 			.then(() => res.sendStatus(200))
-			.catch((err) => (log.error(err), res.sendStatus(500)));
+			.catch((err) => errorHandler(res, err));
 	});
 
 	// Create a new user
@@ -73,13 +86,57 @@ function buildUserRouter() {
 
 		createNewUser(username, password, admin, meta)
 			.then((user) => res.send(user))
-			.catch((err) => (log.error(err), res.sendStatus(500)));
+			.catch((err) => errorHandler(res, err));
 	});
+
+	// Get all users
+	// Admin only
+	userRouter.get('/all', adminAuthMiddleware, (req: Request, res: Response) => res.json(users));
 
 	// Get a user (must be last as it's a catch-all)
 	// Admin only
 	userRouter.get('/:id', adminAuthMiddleware, (req: Request, res: Response) =>
 		userFinder(res, users.find(user => user.unid === req.params.id || user.username === req.params.id)));
+
+	// Delete a user
+	// Admin only
+	userRouter.delete('/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+		const id = req.params.id;
+
+		deleteUser(id)
+			.then(() => res.sendStatus(200))
+			.catch((err) => errorHandler(res, err));
+	});
+
+	// Update a user meta key/value (/meta can be after /:id because they are not HTTP GET)
+	// Admin only
+	userRouter.put('/meta/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+		const id = req.params.id;
+		const key: string | undefined = req.body.key;
+		const value: any = req.body.value;
+		const force = req.body.force ?? false;
+
+		if (key == null || key.length === 0 || value == null || value.length === 0)
+			return res.sendStatus(400);
+
+		setUserMeta(id, key, value, force)
+			.then(() => res.sendStatus(200))
+			.catch((err) => errorHandler(res, err));
+	});
+
+	// Delete a user meta key
+	// Admin only
+	userRouter.delete('/meta/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+		const id = req.params.id;
+		const key: string | undefined = req.body.key;
+
+		if (key == null || key.length === 0)
+			return res.sendStatus(400);
+
+		deleteUserMeta(id, key)
+			.then(() => res.sendStatus(200))
+			.catch((err) => errorHandler(res, err));
+	});
 
 	return userRouter;
 }
