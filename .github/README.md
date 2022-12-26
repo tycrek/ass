@@ -326,6 +326,12 @@ By default, ass directs the index route `/` to this README. Follow these steps t
 module.exports = (req, res, next) => res.redirect('/register');
 ```
 
+## Custom 404 page
+
+To use a custom 404 page, create a file in the `share/` directory called `404.html`. Restart ass, and any requests to missing resources will return HTTP 404 with the contents of this file.
+
+If there's interest, I may allow making this a function, similar to the custom index.
+
 ## File storage
 
 ass supports three methods of file storage: local, S3, or [Skynet].

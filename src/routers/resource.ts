@@ -22,14 +22,30 @@ if (fs.existsSync(path('share/', 'theme.json')))
 	theme = fs.readJsonSync(path('share/', 'theme.json'));
 
 // Middleware for parsing the resource ID and handling 404
+let custom404 = {
+	html: '',
+	checked: false,
+	error: null,
+	path: path('share/', '404.html')
+};
 router.use((req: Request, res: Response, next) => {
 	// Parse the resource ID
 	req.ass = { resourceId: escape(req.resourceId || '').split('.')[0] };
 
 	// If the ID is invalid, return 404. Otherwise, continue normally
-	data().has(req.ass.resourceId)
-		.then((has: boolean) => has ? next() : res.sendStatus(CODE_NOT_FOUND)) // skipcq: JS-0229
+	const processRequest = () => data().has(req.ass.resourceId)
+		.then((has: boolean) => has ? next() : custom404.html.length !== 0 ? res.status(CODE_NOT_FOUND).sendFile(custom404.path) : res.sendStatus(CODE_NOT_FOUND)) // skipcq: JS-0229
 		.catch(next);
+
+	// check if share/404.html exists
+	if (!custom404.checked)
+		fs.access(custom404.path, fs.constants.F_OK)
+			.then(() => fs.readFile(custom404.path, 'utf8'))
+			.then((data: string) => custom404.html = data)
+			.catch((err) => custom404.error = err)
+			.finally(() => (custom404.checked = true, log.debug('Custom 404', custom404.html.length !== 0 ? 'found' : 'not found', custom404.error ? `${custom404.error}` : 'no errors')))
+			.then(() => processRequest());
+	else processRequest();
 });
 
 // View file
