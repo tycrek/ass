@@ -172,6 +172,24 @@ export const setUserPassword = (unid: string, password: string): Promise<User> =
 });
 
 /**
+ * Check a username & password, and return the token if it's correct
+ * @since v0.14.2
+ */
+export const checkUser = (username: string, password: string): Promise<string> => new Promise(async (resolve, reject) => {
+
+	// Find the user
+	const user = users.find((user) => user.username === username);
+	if (!user) return reject(new Error('User not found'));
+
+	// Check the password
+	const match = await bcrypt.compare(password, user.passhash);
+	if (!match) return reject(new Error('Incorrect password'));
+
+	// Return the token
+	resolve(user.token);
+});
+
+/**
  * Deletes a user account
  * @since v0.14.1
  */

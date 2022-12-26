@@ -7,7 +7,7 @@
 import { MagicNumbers } from 'ass-json';
 import fs from 'fs-extra';
 import { Router, Request, Response, NextFunction } from 'express';
-import { findFromToken, setUserPassword, users, createNewUser, deleteUser, setUserMeta, deleteUserMeta, setUsername, resetToken, verifyCliKey } from '../auth';
+import { findFromToken, setUserPassword, users, createNewUser, deleteUser, setUserMeta, deleteUserMeta, setUsername, resetToken, checkUser, verifyCliKey } from '../auth';
 import { log, path } from '../utils';
 import { data } from '../data';
 import { User } from '../types/auth';
@@ -81,6 +81,16 @@ function buildUserRouter() {
 
 		setUserPassword(id, newPassword)
 			.then(() => res.sendStatus(CODE_OK))
+			.catch((err) => errorHandler(res, err));
+	});
+
+	// Check password (plaintext password in form data; HOST SHOULD BE USING HTTPS)
+	userRouter.post('/password/check', (req: Request, res: Response) => {
+		const username = req.body.username;
+		const password = req.body.password;
+
+		checkUser(username, password)
+			.then((result) => res.send(result))
 			.catch((err) => errorHandler(res, err));
 	});
 
