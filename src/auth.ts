@@ -166,6 +166,7 @@ export const setUserPassword = (unid: string, password: string): Promise<User> =
 	const userIndex = authData.users.findIndex((user) => user.unid === unid);
 	authData.users[userIndex] = user;
 	fs.writeJson(authPath, authData, { spaces: '\t' })
+		.then(() => log.info('Set password for user', user.username, user.unid))
 		.then(() => resolve(user))
 		.catch(reject);
 });
@@ -182,6 +183,8 @@ export const deleteUser = (unid: string): Promise<void> => new Promise((resolve,
 
 	// Remove the user from the users map
 	users.splice(users.indexOf(user), 1);
+
+	let fileCount: number;
 
 	// Remove the user's files
 	data().get().then((fileData: [string, FileData][]) => new Promise((resolve, reject) => {
@@ -202,6 +205,8 @@ export const deleteUser = (unid: string): Promise<void> => new Promise((resolve,
 			}
 		});
 
+		fileCount = queue.length;
+
 		// Recursively run the queue (see note above in `migrate()`)
 		const runQueue = (index: number) => {
 			if (index >= queue.length) return resolve(void 0);
@@ -219,6 +224,7 @@ export const deleteUser = (unid: string): Promise<void> => new Promise((resolve,
 			authData.users.splice(userIndex, 1);
 			return fs.writeJson(authPath, authData, { spaces: '\t' })
 		})
+		.then(() => log.info('Deleted user', user.unid, `${fileCount} files deleted`))
 		.then(() => resolve())
 		.catch(reject));
 });
