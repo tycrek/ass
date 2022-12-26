@@ -50,7 +50,7 @@ router.use('/', (err: ErrWrap, _req: Request, res: Response, next: Function) => 
 // Process uploaded file
 router.post('/', (req: Request, res: Response, next: Function) => {
 	// Load overrides
-	const trueDomain = getTrueDomain(req.headers['x-ass-domain']);
+	const trueDomain = getTrueDomain(req.headers['x-ass-domain']?.toString() ?? undefined);
 	const generator = req.headers['x-ass-access']?.toString() || resourceIdType;
 
 	// Save domain with file

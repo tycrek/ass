@@ -45,7 +45,7 @@ const ROUTERS = {
 
 // Read users and data
 import { onStart as AuthOnStart, users } from './auth';
-import { data } from './data';
+import { onStart as DataOnStart, data } from './data';
 //#endregion
 
 // Create thumbnails directory
@@ -133,6 +133,7 @@ app.use((err: ErrWrap, _req: Request, res: Response) => log.error(err.message).e
 
 (async function start() {
 	await AuthOnStart();
+	await DataOnStart();
 
 	if (data() == null) setTimeout(start, 100);
 	else log
