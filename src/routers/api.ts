@@ -55,12 +55,9 @@ const userFinder = (res: Response, user: User | undefined) => user ? res.json(us
 function buildUserRouter() {
 	const userRouter = Router();
 
-	// Index
-	userRouter.get('/', (_req: Request, res: Response) => res.sendStatus(200));
-
-	// Get all users
+	// Index/Get all users
 	// Admin only
-	userRouter.get('/all', adminAuthMiddleware, (req: Request, res: Response) => res.json(users));
+	userRouter.get('/', adminAuthMiddleware, (req: Request, res: Response) => res.json(users));
 
 	// Get self
 	userRouter.get('/self', (req: Request, res: Response) =>
@@ -72,8 +69,9 @@ function buildUserRouter() {
 
 	// Reset password (new plaintext password in form data; HOST SHOULD BE USING HTTPS)
 	// Admin only
-	userRouter.post('/reset', adminAuthMiddleware, (req: Request, res: Response) => {
-		const id = req.body.id;
+	// todo: user-resets using existing password
+	userRouter.post('/password/reset/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+		const id = req.params.id;
 		const newPassword = req.body.password;
 
 		setUserPassword(id, newPassword)
@@ -83,7 +81,7 @@ function buildUserRouter() {
 
 	// Create a new user
 	// Admin only
-	userRouter.post('/new', adminAuthMiddleware, (req: Request, res: Response) => {
+	userRouter.post('/', adminAuthMiddleware, (req: Request, res: Response) => {
 		const username: string | undefined = req.body.username;
 		const password: string | undefined = req.body.password;
 		const admin = req.body.admin ?? false;
@@ -97,10 +95,6 @@ function buildUserRouter() {
 			.then((user) => res.send(user))
 			.catch((err) => errorHandler(res, err));
 	});
-
-	// Get all users
-	// Admin only
-	userRouter.get('/all', adminAuthMiddleware, (req: Request, res: Response) => res.json(users));
 
 	// Get a user (must be last as it's a catch-all)
 	// Admin only
@@ -149,6 +143,7 @@ function buildUserRouter() {
 
 	// Sets a username
 	// Admin only
+	// todo: allow users to change their own username
 	userRouter.put('/username/:id', adminAuthMiddleware, (req: Request, res: Response) => {
 		const id = req.params.id;
 		const username: string | undefined = req.body.username;
@@ -163,6 +158,7 @@ function buildUserRouter() {
 
 	// Resets a token
 	// Admin only
+	// todo: allow users to reset their own token
 	userRouter.put('/token/:id', adminAuthMiddleware, (req: Request, res: Response) => {
 		const id = req.params.id;
 
