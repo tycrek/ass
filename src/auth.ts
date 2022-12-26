@@ -135,6 +135,12 @@ export const createNewUser = (username: string, password: string, admin: boolean
 
 	if (!authData.meta) authData.meta = {};
 
+	// Check if the CLI key is set
+	if (!authData.cliKey || authData.cliKey.length === 0) {
+		log.debug('CLI key is not set, generating new key');
+		authData.cliKey = nanoid(32);
+	}
+
 	fs.writeJson(authPath, authData, { spaces: '\t' })
 		.then(() => log.info('Created new user', newUser.username, newUser.unid))
 		.then(() => resolve(newUser))
@@ -328,13 +334,6 @@ export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject)
 			if (!json.users || json.users.length === 0) {
 				log.debug('auth.json is empty, creating default user');
 				return await createNewUser('ass', nanoid(), true);
-			}
-
-			// Check if the CLI key is set
-			if (!json.cliKey || json.cliKey.length === 0) {
-				log.debug('CLI key is not set, generating new key');
-				json.cliKey = nanoid(32);
-				fs.writeJsonSync(file, json, { spaces: '\t' });
 			}
 
 			// Add users to the map
