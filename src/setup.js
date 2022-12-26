@@ -17,6 +17,7 @@ const config = {
 	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
 	useSia: false,
+	savePerDay: false,
 	adminWebhookEnabled: false,
 	s3enabled: false,
 };
@@ -198,6 +199,12 @@ function doSetup() {
 				description: 'Use Sia Skynet for decentralized file storage?',
 				type: 'boolean',
 				default: config.useSia,
+				required: false
+			},
+			savePerDay: {
+				description: 'Save uploads in folders by day (YYYY-MM-DD) instead of by month (YYYY-MM)',
+				type: 'boolean',
+				default: config.savePerDay,
 				required: false
 			},
 			adminWebhookEnabled: {

@@ -12,7 +12,7 @@ import { path, generateId, log } from './utils';
 import { SkynetUpload } from './skynet';
 import { Request, Response } from 'express';
 import { removeGPS } from './nightmare';
-const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, mediaStrict, maxUploadSize, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { s3enabled, s3endpoint, s3bucket, s3usePathStyle, s3accessKey, s3secretKey, diskFilePath, saveAsOriginal, saveWithDate, savePerDay, mediaStrict, maxUploadSize, useSia }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNSUPPORTED_MEDIA_TYPE }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 
 const ID_GEN_LENGTH = 32;
@@ -34,8 +34,22 @@ function getDatedDirname() {
 	return `${diskFilePath}${diskFilePath.endsWith('/') ? '' : '/'}${year}-${`0${month}`.slice(-2)}`; // skipcq: JS-0074
 }
 
+/**
+ * A bit hacky but it works
+ * @since 0.14.1
+ */
+function getDatedDirnameWithDay() {
+	if (!savePerDay) return getDatedDirname();
+
+	// Get current day
+	const [, day] = new Date().toLocaleDateString('en-US').split('/');
+
+	// Add 0 before single digit days (6 turns into 06)
+	return `${getDatedDirname()}-${`0${day}`.slice(-2)}`; // skipcq: JS-0074
+}
+
 function getLocalFilename(req: Request) {
-	let name = `${getDatedDirname()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
+	let name = `${getDatedDirnameWithDay()}/${saveAsOriginal ? req.file.originalname : req.file.sha1}`;
 
 	// Append a number if this file has already been uploaded before
 	let count = 0;
