@@ -119,7 +119,7 @@ function buildUserRouter() {
 		const password = req.body.password;
 
 		checkUser(username, password)
-			.then((result) => res.send(result))
+			.then((result) => res.type('text').send(result))
 			.catch((err) => errorHandler(res, err));
 	});
 
@@ -137,12 +137,12 @@ function buildUserRouter() {
 
 			// Block if username or password is empty, or if username is already taken
 			if (username == null || username.length === 0 || password == null || password.length == 0 || users.find(user => user.username === username))
-			return res.sendStatus(CODE_BAD_REQUEST);
+				return res.sendStatus(CODE_BAD_REQUEST);
 
-		createNewUser(username, password, admin, meta)
-			.then((user) => res.send(user))
-			.catch((err) => errorHandler(res, err));
-	});
+			createNewUser(username, password, admin, meta)
+				.then((user) => res.send(user))
+				.catch((err) => errorHandler(res, err));
+		});
 
 	// Get a user (must be last as it's a catch-all)
 	// Admin only
