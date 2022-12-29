@@ -17,6 +17,7 @@ const config = {
 	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
 	savePerDay: false,
+	allowRegistrations: false,
 	adminWebhookEnabled: false,
 	s3enabled: false,
 };
@@ -200,6 +201,12 @@ function doSetup() {
 				description: 'Save uploads in folders by day (YYYY-MM-DD) instead of by month (YYYY-MM)',
 				type: 'boolean',
 				default: config.savePerDay,
+				required: false
+			},
+			allowRegistrations: {
+				description: 'Allow public registration of accounts via API. (Admins are always allowed to do this)',
+				type: 'boolean',
+				default: config.allowRegistrations,
 				required: false
 			},
 			adminWebhookEnabled: {

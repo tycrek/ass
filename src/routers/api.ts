@@ -4,7 +4,7 @@
  * - Resources
  */
 
-import { MagicNumbers } from 'ass-json';
+import { MagicNumbers, Config } from 'ass-json';
 import fs from 'fs-extra';
 import { Router, Request, Response, NextFunction } from 'express';
 import { findFromToken, setUserPassword, users, createNewUser, deleteUser, setUserMeta, deleteUserMeta, setUsername, resetToken, checkUser, verifyCliKey } from '../auth';
@@ -14,6 +14,9 @@ import { User } from '../types/auth';
 
 // Load the status codes
 const { CODE_OK, CODE_BAD_REQUEST, CODE_UNAUTHORIZED, CODE_NOT_FOUND, CODE_CONFLICT, CODE_INTERNAL_SERVER_ERROR }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
+
+// Load the config
+const { allowRegistrations }: Config = fs.readJsonSync(path('config.json'));
 
 /**
  * The primary API router
@@ -43,12 +46,40 @@ const errorHandler = (res: Response, err: Error | any) => {
 };
 
 /**
- * Token authentication middleware for Admins
- * @since v0.14.0
+ * Authentication middleware
  */
-const adminAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
-	const user = findFromToken(req.headers.authorization ?? '');
-	(verifyCliKey(req) || (user && user.admin)) ? next() : res.sendStatus(CODE_UNAUTHORIZED);
+const Auth = {
+	/**
+	 * Token authentication middleware for Admins
+	 * @since v0.14.0
+	 */
+	Admin: (req: Request, res: Response, next: NextFunction) => {
+		const user = findFromToken(req.headers.authorization ?? '');
+		(verifyCliKey(req) || (user && user.admin)) ? next() : res.sendStatus(CODE_UNAUTHORIZED);
+	},
+
+	/**
+	 * Token authentication middleware for Users (self auth)
+	 * @since v0.14.3
+	 */
+	User: (req: Request, res: Response, next: NextFunction) => {
+		const user = findFromToken(req.headers.authorization ?? '');
+		const id = req.params.id ?? '';
+
+		user && (user.unid === id || user.admin) ? next() : res.sendStatus(CODE_UNAUTHORIZED);
+	},
+
+	/**
+	 * Token auth middleware switcher
+	 * @since v0.14.3
+	 */
+	Either: (req: Request, res: Response, next: NextFunction) => {
+		const user = findFromToken(req.headers.authorization ?? '');
+		const id = req.params.id ?? '';
+
+		// If the user is an admin, or the user is the same as the requested user, allow
+		(verifyCliKey(req) || (user && (user.unid === id || user.admin))) ? next() : res.sendStatus(CODE_UNAUTHORIZED);
+	}
 };
 
 /**
@@ -62,7 +93,7 @@ function buildUserRouter() {
 
 	// Index/Get all users
 	// Admin only
-	userRouter.get('/', adminAuthMiddleware, (req: Request, res: Response) => res.json(users));
+	userRouter.get('/', Auth.Admin, (req: Request, res: Response) => res.json(users));
 
 	// Get self
 	userRouter.get('/self', (req: Request, res: Response) =>
@@ -73,9 +104,7 @@ function buildUserRouter() {
 		userFinder(res, users.find(user => user.token === req.params.token)));
 
 	// Reset password (new plaintext password in form data; HOST SHOULD BE USING HTTPS)
-	// Admin only
-	// todo: user-resets using existing password
-	userRouter.post('/password/reset/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+	userRouter.post('/password/reset/:id', Auth.Either, (req: Request, res: Response) => {
 		const id = req.params.id;
 		const newPassword = req.body.password;
 
@@ -95,15 +124,19 @@ function buildUserRouter() {
 	});
 
 	// Create a new user
-	// Admin only
-	userRouter.post('/', adminAuthMiddleware, (req: Request, res: Response) => {
-		const username: string | undefined = req.body.username;
-		const password: string | undefined = req.body.password;
-		const admin = req.body.admin ?? false;
-		const meta: any = req.body.meta ?? {};
+	userRouter.post('/',
+		(req, res, next) => allowRegistrations ? next() : Auth.Admin(req, res, next),
+		(req: Request, res: Response) => {
+			const username: string | undefined = req.body.username;
+			const password: string | undefined = req.body.password;
+			const meta: any = req.body.meta ?? {};
 
-		// Block if username or password is empty, or if username is already taken
-		if (username == null || username.length === 0 || password == null || password.length == 0 || users.find(user => user.username === username))
+			// If public registration is enabled, make sure un-registered users are not set as admins
+			const user = findFromToken(req.headers.authorization ?? '');
+			const admin = (user?.admin ?? false) && (req.body.admin ?? false);
+
+			// Block if username or password is empty, or if username is already taken
+			if (username == null || username.length === 0 || password == null || password.length == 0 || users.find(user => user.username === username))
 			return res.sendStatus(CODE_BAD_REQUEST);
 
 		createNewUser(username, password, admin, meta)
@@ -113,12 +146,12 @@ function buildUserRouter() {
 
 	// Get a user (must be last as it's a catch-all)
 	// Admin only
-	userRouter.get('/:id', adminAuthMiddleware, (req: Request, res: Response) =>
+	userRouter.get('/:id', Auth.Admin, (req: Request, res: Response) =>
 		userFinder(res, users.find(user => user.unid === req.params.id || user.username === req.params.id)));
 
 	// Delete a user
 	// Admin only
-	userRouter.delete('/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+	userRouter.delete('/:id', Auth.Admin, (req: Request, res: Response) => {
 		const id = req.params.id;
 
 		deleteUser(id)
@@ -127,8 +160,7 @@ function buildUserRouter() {
 	});
 
 	// Update a user meta key/value (/meta can be after /:id because they are not HTTP GET)
-	// Admin only
-	userRouter.put('/meta/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+	userRouter.put('/meta/:id', Auth.Either, (req: Request, res: Response) => {
 		const id = req.params.id;
 		const key: string | undefined = req.body.key;
 		const value: any = req.body.value;
@@ -143,8 +175,7 @@ function buildUserRouter() {
 	});
 
 	// Delete a user meta key
-	// Admin only
-	userRouter.delete('/meta/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+	userRouter.delete('/meta/:id', Auth.Either, (req: Request, res: Response) => {
 		const id = req.params.id;
 		const key: string | undefined = req.body.key;
 
@@ -157,9 +188,7 @@ function buildUserRouter() {
 	});
 
 	// Sets a username
-	// Admin only
-	// todo: allow users to change their own username
-	userRouter.put('/username/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+	userRouter.put('/username/:id', Auth.Either, (req: Request, res: Response) => {
 		const id = req.params.id;
 		const username: string | undefined = req.body.username;
 
@@ -172,9 +201,7 @@ function buildUserRouter() {
 	});
 
 	// Resets a token
-	// Admin only
-	// todo: allow users to reset their own token
-	userRouter.put('/token/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+	userRouter.put('/token/:id', Auth.Either, (req: Request, res: Response) => {
 		const id = req.params.id;
 
 		resetToken(id)

@@ -18,6 +18,7 @@ declare module 'ass-json' {
 		frontendName: string
 		indexFile: string
 		savePerDay: boolean
+		allowRegistrations: boolean
 		adminWebhookEnabled: boolean
 		adminWebhookUrl: string
 		adminWebhookUsername: string
