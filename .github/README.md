@@ -393,13 +393,14 @@ Other things to note:
 | **`GET /user/:id`** | Returns the user with the given ID | Yes |
 | **`GET /user/self`** | Returns the current user | No |
 | **`GET /user/token/:token`** | Returns the user with the given token | No |
-| **`POST /user/`** | Creates a new user. Request body must be a JSON object including `username` and `password`. You may optionally include `admin` (boolean) or `meta` (object). Returns 400 if fails. | Yes |
-| **`POST /user/password/reset/:id`** | Force resets the user's **password**. Request body must be a JSON object including a `password`. | Yes |
+| **`POST /user/`** | Creates a new user. Request body must be a JSON object including `username` and `password`. You may optionally include `admin` (boolean) or `meta` (object). Returns 400 if fails. | *Depends on* `allowRegistrations` |
+| **`POST /user/password/check`** | Checks a given `username` and `password` in a JSON body. | No |
+| **`POST /user/password/reset/:id`** | Force resets the user's **password**. Request body must be a JSON object including a `password`. | Either |
 | **`DELETE /user/:id`** | Deletes the user with the given ID, as well as all their uploads. | Yes |
-| **`PUT /user/meta/:id`** | Updates the user's metadata. Request body must be a JSON object with keys `key` and `value`, with the key/value you want to set in the users metadata. Optionally you may include `force: boolean` to override existing keys. | Yes |
-| **`DELETE /user/meta/:id`** | Deletes a key/value from a users metadata. Request body must be a JSON object with a `key` property specifying the key to delete. | Yes |
-| **`PUT /user/username/:id`** | Updates the user's username. Request body must be a JSON object with a `username` property. | Yes |
-| **`PUT /user/token/:id`** | Regenerates a users upload token | Yes |
+| **`PUT /user/meta/:id`** | Updates the user's metadata. Request body must be a JSON object with keys `key` and `value`, with the key/value you want to set in the users metadata. Optionally you may include `force: boolean` to override existing keys. | Either |
+| **`DELETE /user/meta/:id`** | Deletes a key/value from a users metadata. Request body must be a JSON object with a `key` property specifying the key to delete. | Either |
+| **`PUT /user/username/:id`** | Updates the user's username. Request body must be a JSON object with a `username` property. | Either |
+| **`PUT /user/token/:id`** | Regenerates a users upload token | Either |
 
 ## Custom frontends - OUTDATED
 
