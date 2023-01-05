@@ -12,10 +12,12 @@ declare module 'ass-json' {
 		gfyIdSize: number
 		mediaStrict: boolean
 		viewDirect: boolean
+		useIdInViewer: boolean
+		idInViewerExtension: boolean
 		dataEngine: string
 		frontendName: string
 		indexFile: string
-		useSia: boolean
+		savePerDay: boolean
 		adminWebhookEnabled: boolean
 		adminWebhookUrl: string
 		adminWebhookUsername: string
@@ -37,8 +39,10 @@ declare module 'ass-json' {
 		HTTPS: number
 		CODE_OK: number
 		CODE_NO_CONTENT: number
+		CODE_BAD_REQUEST: number
 		CODE_UNAUTHORIZED: number
 		CODE_NOT_FOUND: number
+		CODE_CONFLICT: number
 		CODE_PAYLOAD_TOO_LARGE: number
 		CODE_UNSUPPORTED_MEDIA_TYPE: number
 		CODE_INTERNAL_SERVER_ERROR: number
@@ -49,5 +53,15 @@ declare module 'ass-json' {
 		name: string
 		version: string
 		homepage: string
+	}
+
+	interface ServerSideEmbed {
+		title: string
+		description?: string
+		author?: string
+		authorUrl?: string
+		provider?: string
+		providerUrl?: string
+		color?: string
 	}
 }

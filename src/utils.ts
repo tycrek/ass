@@ -1,3 +1,4 @@
+import { Config } from 'ass-json';
 import { FileData } from './types/definitions';
 import fs from 'fs-extra';
 import Path from 'path';
@@ -16,7 +17,9 @@ const { HTTP, HTTPS, KILOBYTES } = require('../MagicNumbers.json');
 // Catch config.json not existing when running setup script
 try {
 	// todo: fix this
-	var { useSsl, port, domain, isProxied, diskFilePath, s3bucket, s3endpoint, s3usePathStyle } = require('../config.json'); // skipcq: JS-0239, JS-0102
+	const configPath = Path.join(process.cwd(), 'config.json');
+	if (!fs.existsSync(configPath)) throw new Error('Config file not found');
+	var { useSsl, port, domain, isProxied, diskFilePath, s3bucket, s3endpoint, s3usePathStyle }: Config = fs.readJsonSync(configPath);
 } catch (ex) {
 	// @ts-ignore
 	if (ex.code !== 'MODULE_NOT_FOUND' || !ex.toString().includes('Unexpected end')) console.error(ex);
@@ -68,14 +71,6 @@ export function replaceholder(data: string, size: number, timestamp: number, tim
 		.replace(/&timestamp/g, formatTimestamp(timestamp, timeoffset));
 }
 
-export function arrayEquals(arr1: any[], arr2: any[]) {
-	return arr1.length === arr2.length && arr1.slice().sort().every((value: string, index: number) => value === arr2.slice().sort()[index])
-};
-
-export function verify(req: Request, users: JSON) {
-	return req.headers.authorization && Object.prototype.hasOwnProperty.call(users, req.headers.authorization);
-}
-
 const idModes = {
 	zws: 'zws',     // Zero-width spaces (see: https://zws.im/)
 	og: 'original', // Use original uploaded filename
@@ -108,7 +103,6 @@ module.exports = {
 	replaceholder,
 	randomHexColour,
 	sanitize,
-	verify,
 	renameFile: (req: Request, newName: string) => new Promise((resolve: Function, reject) => {
 		try {
 			const paths = [req.file.destination, newName];
@@ -121,7 +115,6 @@ module.exports = {
 	}),
 	generateToken: () => token(),
 	generateId,
-	arrayEquals,
 	downloadTempS3: (file: FileData) => new Promise((resolve: Function, reject) =>
 		fetch(getS3url(file.randomId, file.ext))
 			.then((f2) => f2.body!.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))

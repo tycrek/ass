@@ -6,9 +6,9 @@ import escape from 'escape-html';
 import fetch, { Response as FetchResponse } from 'node-fetch';
 import { Request, Response } from 'express';
 import { deleteS3 } from '../storage';
-import { SkynetDelete, SkynetDownload } from '../skynet';
+import { checkIfZws } from '../generators/zws';
 import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
-const { diskFilePath, s3enabled, viewDirect, useSia }: Config = fs.readJsonSync(path('config.json'));
+const { diskFilePath, s3enabled, viewDirect, useIdInViewer, idInViewerExtension }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));
 import { data } from '../data';
 import { users } from '../auth';
@@ -21,14 +21,30 @@ if (fs.existsSync(path('share/', 'theme.json')))
 	theme = fs.readJsonSync(path('share/', 'theme.json'));
 
 // Middleware for parsing the resource ID and handling 404
+let custom404 = {
+	html: '',
+	checked: false,
+	error: null,
+	path: path('share/', '404.html')
+};
 router.use((req: Request, res: Response, next) => {
 	// Parse the resource ID
 	req.ass = { resourceId: escape(req.resourceId || '').split('.')[0] };
 
 	// If the ID is invalid, return 404. Otherwise, continue normally
-	data().has(req.ass.resourceId)
-		.then((has: boolean) => has ? next() : res.sendStatus(CODE_NOT_FOUND)) // skipcq: JS-0229
+	const processRequest = () => data().has(req.ass.resourceId)
+		.then((has: boolean) => has ? next() : custom404.html.length !== 0 ? res.status(CODE_NOT_FOUND).sendFile(custom404.path) : res.sendStatus(CODE_NOT_FOUND)) // skipcq: JS-0229
 		.catch(next);
+
+	// check if share/404.html exists
+	if (!custom404.checked)
+		fs.access(custom404.path, fs.constants.F_OK)
+			.then(() => fs.readFile(custom404.path, 'utf8'))
+			.then((data: string) => custom404.html = data)
+			.catch((err) => custom404.error = err)
+			.finally(() => (custom404.checked = true, log.debug('Custom 404', custom404.html.length !== 0 ? 'found' : 'not found', custom404.error ? `${custom404.error}` : 'no errors')))
+			.then(() => processRequest());
+	else processRequest();
 });
 
 // View file
@@ -47,9 +63,9 @@ router.get('/', (req: Request, res: Response, next) => data().get(req.ass.resour
 	// Send the view to the client
 	res.render('view', {
 		fileIs: fileData.is,
-		title: escape(fileData.originalname),
+		title: useIdInViewer && !checkIfZws(resourceId) ? `${resourceId}${idInViewerExtension ? `${fileData.ext}` : ''}` : escape(fileData.originalname),
 		mimetype: fileData.mimetype,
-		uploader: users[fileData.token].username,
+		uploader: users.find(user => user.unid === fileData.uploader)?.username || 'Unknown',
 		timestamp: formatTimestamp(fileData.timestamp, fileData.timeoffset),
 		size: formatBytes(fileData.size),
 		// todo: figure out how to not ignore this
@@ -79,9 +95,6 @@ router.get('/direct*', (req: Request, res: Response, next) => data().get(req.ass
 			file.headers.forEach((value, header) => res.setHeader(header, value));
 			file.body?.pipe(res);
 		}),
-		sia: () => SkynetDownload(fileData)
-			.then((stream) => stream.pipe(res))
-			.then(() => SkynetDelete(fileData)),
 		local: () => fs.pathExists(path(fileData.path))
 			.then((exists) => new Promise((resolve, reject) => !exists
 				? reject(new Error('File does not exist'))
@@ -91,7 +104,7 @@ router.get('/direct*', (req: Request, res: Response, next) => data().get(req.ass
 					.sendFile(path(fileData.path), (err) => err ? reject(err) : resolve(void 0))))
 	};
 
-	return uploaders[fileData.randomId.startsWith('sia://') ? 'sia' : s3enabled ? 's3' : 'local']();
+	return uploaders[s3enabled ? 's3' : 'local']();
 }).catch(next));
 
 // Thumbnail response
@@ -138,7 +151,7 @@ router.get('/delete/:deleteId', (req: Request, res: Response, next) => {
 
 			// Save the file information
 			return Promise.all([
-				s3enabled ? deleteS3(fileData) : !useSia ? fs.rmSync(path(fileData.path)) : () => Promise.resolve(),
+				s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)),
 				(!fileData.is || (fileData.is.image || fileData.is.video)) && fs.existsSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))
 					? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)) : () => Promise.resolve()]);
 		})

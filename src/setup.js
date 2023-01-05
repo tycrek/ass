@@ -12,9 +12,11 @@ const config = {
 	spaceReplace: '_',
 	mediaStrict: false,
 	viewDirect: false,
+	useIdInViewer: false,
+	idInViewerExtension: false,
 	dataEngine: '@tycrek/papito',
 	frontendName: 'ass-x',
-	useSia: false,
+	savePerDay: false,
 	adminWebhookEnabled: false,
 	s3enabled: false,
 };
@@ -44,6 +46,7 @@ const oldConfig = {
 	diskFilePath: 'uploads/',
 	saveWithDate: true, // Some systems don't like dirs with massive amounts of files
 	saveAsOriginal: false, // Prone to conflicts, which ass doesn't handle
+	useSia: false, // Sia has been shut down in 2022, uploads fail as of 2022-12-26
 };
 
 function getConfirmSchema(description) {
@@ -77,6 +80,7 @@ function doSetup() {
 		const existingConfig = require('../config.json');
 		Object.entries(existingConfig).forEach(([key, value]) => {
 			Object.prototype.hasOwnProperty.call(config, key) && (config[key] = value); // skipcq: JS-0093
+			Object.prototype.hasOwnProperty.call(adminWebhookConfig, key) && (adminWebhookConfig[key] = value); // skipcq: JS-0093
 			Object.prototype.hasOwnProperty.call(s3config, key) && (s3config[key] = value); // skipcq: JS-0093
 			Object.prototype.hasOwnProperty.call(oldConfig, key) && (oldConfig[key] = value); // skipcq: JS-0093
 		});
@@ -107,7 +111,7 @@ function doSetup() {
 			domain: {
 				description: `Domain name to send to ShareX clients (example: ${config.domain})`,
 				type: 'string',
-				required: true,
+				required: false,
 				message: 'You must input a valid domain name or IP to continue'
 			},
 			maxUploadSize: {
@@ -168,6 +172,18 @@ function doSetup() {
 				default: config.viewDirect,
 				required: false
 			},
+			useIdInViewer: {
+				description: 'Use the ID in the web viewer instead of the filename',
+				type: 'boolean',
+				default: config.useIdInViewer,
+				required: false
+			},
+			idInViewerExtension: {
+				description: '(Only applies if "useIdInViewer" is true) Include the file extension in the ID in the web viewer',
+				type: 'boolean',
+				default: config.idInViewerExtension,
+				required: false
+			},
 			dataEngine: {
 				description: 'Data engine to use (must match an npm package name. If unsure, leave blank)',
 				type: 'string',
@@ -180,10 +196,10 @@ function doSetup() {
 				default: config.frontendName,
 				required: false
 			},
-			useSia: {
-				description: 'Use Sia Skynet for decentralized file storage?',
+			savePerDay: {
+				description: 'Save uploads in folders by day (YYYY-MM-DD) instead of by month (YYYY-MM)',
 				type: 'boolean',
-				default: config.useSia,
+				default: config.savePerDay,
 				required: false
 			},
 			adminWebhookEnabled: {
