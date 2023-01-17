@@ -44,9 +44,8 @@
   "dependencies": {
     "@tsconfig/node16": "^1.0.1",
     "@tycrek/discord-hookr": "^0.1.0",
-    "@tycrek/express-nofavicon": "^1.0.3",
     "@tycrek/express-postcss": "^0.2.4",
-    "@tycrek/isprod": "^2.0.2",
+    "@tycrek/joint": "^1.0.0-1",
     "@tycrek/log": "^0.6.0-7",
     "@tycrek/papito": "^0.3.4",
     "@xoi/gps-metadata-remover": "^1.1.1",

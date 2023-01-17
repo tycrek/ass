@@ -4,7 +4,7 @@ import { Config, MagicNumbers, Package } from 'ass-json';
 //#region Imports
 import fs from 'fs-extra';
 import express, { Request, Response, json as BodyParserJson } from 'express';
-import nofavicon from '@tycrek/express-nofavicon';
+import { nofavicon } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 import tailwindcss from 'tailwindcss';
 import helmet from 'helmet';
@@ -93,7 +93,8 @@ app.use(helmet.dnsPrefetchControl());
 useSsl && app.use(helmet.hsts({ preload: true })); // skipcq: JS-0093
 
 // Don't process favicon requests
-app.use(nofavicon);
+// todo: this doesn't actually return a 204 properly, it returns a 404
+app.use(nofavicon.none());
 
 // Use custom index, otherwise render README.md
 type ASS_INDEX_TYPE = 'html' | 'js' | undefined;
