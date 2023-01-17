@@ -45,7 +45,7 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ github.sha }}
             ghcr.io/${{ github.repository }}:${{ github.ref_name }}
       - name: Tag & Push latest image
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'master'
         uses: docker/build-push-action@v3
         with:
           context: .
