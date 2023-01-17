@@ -9,7 +9,7 @@
 
 services:
   ass:
-    build: .
+    image: ghcr.io/tycrek/ass:latest
     container_name: ass-docker
     restart: unless-stopped
     ports:
