@@ -64,7 +64,7 @@
     "ffmpeg-static": "^4.4.0",
     "fs-extra": "^10.0.1",
     "helmet": "^4.6.0",
-    "luxon": "^2.3.1",
+    "luxon": "^2.5.2",
     "nanoid": "^3.3.4",
     "node-fetch": "^2.6.7",
     "node-vibrant": "^3.1.6",
