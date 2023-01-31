@@ -191,14 +191,19 @@ The first time you run ass, the setup process will automatically be called & you
 
 ## Using HTTPS
 
-For HTTPS support, you must configure a reverse proxy. I recommend Caddy but any reverse proxy should work (such as Apache or Nginx). I also have a [tutorial on easily setting up Caddy][my tutorial] as a reverse proxy server.
+For HTTPS support, you must configure a reverse proxy. I recommend [Caddy] but any reverse proxy works fine (such as Apache or Nginx). A sample config for Caddy is provided below:
+
+```
+ass.example.com {
+    reverse_proxy localhost:40115
+}
+```
 
 [Caddy]: https://caddyserver.com/
-[my tutorial]: https://old.jmoore.dev/tutorials/2021/03/caddy-express-reverse-proxy/
 
 ## Cloudflare users
 
-In your Cloudflare DNS dashboard, set your domain/subdomain to **DNS Only** if you experience issues with **Proxied**.
+In your Cloudflare DNS dashboard, set your domain/subdomain to **DNS Only** if you experience issues with **Proxied**. This may not be necessary for all users.
 
 > <img src="https://user-images.githubusercontent.com/29926144/114085791-0f467680-986f-11eb-8cdb-34a9dfae3a23.png" height="140px">
 
