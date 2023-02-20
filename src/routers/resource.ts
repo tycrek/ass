@@ -6,7 +6,7 @@ import escape from 'escape-html';
 import fetch, { Response as FetchResponse } from 'node-fetch';
 import { Request, Response } from 'express';
 import { deleteS3 } from '../storage';
-import { checkIfZws } from '../generators/zws';
+import { checkIfZws } from '../generators/generators';
 import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder } from '../utils';
 const { diskFilePath, s3enabled, viewDirect, useIdInViewer, idInViewerExtension }: Config = fs.readJsonSync(path('config.json'));
 const { CODE_UNAUTHORIZED, CODE_NOT_FOUND, }: MagicNumbers = fs.readJsonSync(path('MagicNumbers.json'));

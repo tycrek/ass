@@ -6,10 +6,7 @@ import fetch from 'node-fetch';
 import sanitize from 'sanitize-filename';
 import { DateTime } from 'luxon';
 import token from './generators/token';
-import zwsGen from './generators/zws';
-import randomGen from './generators/random';
-import gfyGen from './generators/gfycat';
-import tsGen from './generators/timestamp';
+import { Zws, Random, GfyCat, Timestamp } from './generators/generators';
 import logger from './logger';
 import { Request } from 'express';
 import { isProd as ip } from '@tycrek/joint';
@@ -80,47 +77,18 @@ const idModes = {
 	ts: 'timestamp', // Timestamp-based ID's
 };
 const GENERATORS = new Map();
-GENERATORS.set(idModes.zws, zwsGen);
-GENERATORS.set(idModes.r, randomGen);
-GENERATORS.set(idModes.gfy, gfyGen);
-GENERATORS.set(idModes.ts, tsGen);
-export function generateId(mode: string, length: number, gfyLength: number, originalName: string) {
-	return (GENERATORS.has(mode) ? GENERATORS.get(mode)({ length, gfyLength }) : originalName);
+GENERATORS.set(idModes.zws, Zws);
+GENERATORS.set(idModes.r, Random);
+GENERATORS.set(idModes.gfy, GfyCat.genString);
+GENERATORS.set(idModes.ts, Timestamp);
+export function generateId(mode: string, length: number, originalName: string) {
+	return (GENERATORS.has(mode) ? GENERATORS.get(mode)(length) : originalName);
 }
 
 // Set up pathing
 export const path = (...paths: string[]) => Path.join(process.cwd(), ...paths);
 
 export const isProd = ip();
-module.exports = {
-	path,
-	getTrueHttp,
-	getTrueDomain,
-	getS3url,
-	getDirectUrl,
-	getResourceColor,
-	formatTimestamp,
-	formatBytes,
-	replaceholder,
-	randomHexColour,
-	sanitize,
-	renameFile: (req: Request, newName: string) => new Promise((resolve: Function, reject) => {
-		try {
-			const paths = [req.file.destination, newName];
-			fs.rename(path(req.file.path), path(...paths));
-			req.file.path = Path.join(...paths);
-			resolve();
-		} catch (err) {
-			reject(err);
-		}
-	}),
-	generateToken: () => token(),
-	generateId,
-	downloadTempS3: (file: FileData) => new Promise((resolve: Function, reject) =>
-		fetch(getS3url(file.randomId, file.ext))
-			.then((f2) => f2.body!.pipe(fs.createWriteStream(Path.join(__dirname, diskFilePath, sanitize(file.originalname))).on('close', () => resolve())))
-			.catch(reject)),
-}
 
 export const log = logger;
 /**
