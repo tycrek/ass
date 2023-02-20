@@ -88,7 +88,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 	let resourceId = '';
 
 	// Function to call to generate a fresh ID. Used for multiple attempts in case an ID is already taken
-	const gen = () => generateId(generator, resourceIdSize, parseInt(req.headers['x-ass-gfycat']?.toString() || gfyIdSize.toString()), req.file.originalname);
+	const gen = () => generateId(generator, resourceIdSize, req.file.originalname);
 
 	// Keeps track of the number of attempts in case all ID's are taken
 	const attempts = {

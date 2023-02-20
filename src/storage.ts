@@ -68,8 +68,8 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 	req.file.ext = '.'.concat((req.file.filename ?? '').split('.').pop() ?? '');
 	req.file.originalname = req.file.filename ?? '';
 	req.file.path = req.file.file ?? '';
-	req.file.randomId = generateId('random', ID_GEN_LENGTH, 0, '');
-	req.file.deleteId = generateId('random', ID_GEN_LENGTH, 0, '');
+	req.file.randomId = generateId('random', ID_GEN_LENGTH, '');
+	req.file.deleteId = generateId('random', ID_GEN_LENGTH, '');
 
 	// Set up types
 	req.file.is = {
