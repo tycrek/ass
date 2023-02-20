@@ -121,7 +121,7 @@ app.use('/css', epcss({
 		tailwindcss,
 		require('autoprefixer')(),
 		require('cssnano')(),
-		require('postcss-font-magician')(),
+		require('@tinycreek/postcss-font-magician')(),
 	],
 	warn: (warning: Error) => log.warn('PostCSS', warning.toString())
 }));
