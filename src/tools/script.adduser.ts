@@ -20,7 +20,7 @@ if (process.argv.length < 4) {
 	const admin = process.argv[4] ? process.argv[4].toLowerCase() === 'true' : false;
 	const meta = process.argv[5] ? JSON.parse(process.argv[5]) : {};
 
-	axios.post(`http://localhost:${port}/api/user/new`, { username, password, admin, meta }, { headers: { 'Authorization': cliKey } })
+	axios.post(`http://localhost:${port}/api/user`, { username, password, admin, meta }, { headers: { 'Authorization': cliKey } })
 		.then((response) => {
 			const user = response.data as User;
 			logger.info('User created', username, user.unid).callback(() => process.exit(0))
