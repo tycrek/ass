@@ -148,7 +148,7 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 				log.debug(`Sending${admin ? ' admin' : ''} embed to webhook`);
 				hook.addEmbed(embed).send()
 					.then(() => log.debug(`Webhook${admin ? ' admin' : ''} sent`))
-					.catch((err) => log.error('Webhook error').err(err));
+					.catch((err) => (log.error('Webhook error'), console.error(err)));
 			}
 
 			// Send the response

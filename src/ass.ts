@@ -78,7 +78,7 @@ const bruteforce = new ExpressBrute(new ExpressBrute.MemoryStore(), {
 app.get(['/'], bruteforce.prevent, (_req, _res, next) => next());
 
 // Express logger middleware
-app.use(log.middleware());
+// app.use(log.middleware());
 
 // Body parser for API POST requests
 // (I really don't like this being top level but it does not work inside the API Router as of 2022-12-24)
@@ -130,7 +130,11 @@ app.use('/css', epcss({
 app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
 
 // Error handler
-app.use((err: ErrWrap, _req: Request, res: Response) => log.error(err.message).err(err).callback(() => res.sendStatus(CODE_INTERNAL_SERVER_ERROR))); // skipcq: JS-0128
+app.use((err: ErrWrap, _req: Request, res: Response) => {
+	log.error(err.message);
+	console.error(err);
+	res.sendStatus(CODE_INTERNAL_SERVER_ERROR);
+});
 
 (async function start() {
 	await AuthOnStart();
@@ -144,5 +148,5 @@ app.use((err: ErrWrap, _req: Request, res: Response) => log.error(err.message).e
 		.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
 		.info('Custom index', ASS_INDEX ?? 'disabled')
 		.blank()
-		.express()!.Host(app, port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`));
+		.callback(() => app.listen(port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`)));
 })();

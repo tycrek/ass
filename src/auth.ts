@@ -370,7 +370,7 @@ export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject)
 			log.debug('File does not exist', authFile, 'will be created automatically');
 			return fs.writeJson(file, { migrated: true });
 		})
-		.catch((errWriteJson) => log.error('Failed to create auth.json').callback(reject, errWriteJson))
+		.catch((errWriteJson) => log.error('Failed to create auth.json').callback(() => reject(errWriteJson)))
 
 		// File exists or was created
 		.then(() => fs.readJson(file))
@@ -393,7 +393,7 @@ export const onStart = (authFile = 'auth.json') => new Promise((resolve, reject)
 			// Add users to the map
 			return json.users.forEach((user) => users.push(user));
 		})
-		.catch((errReadJson) => log.error('Failed to read auth.json').callback(reject, errReadJson))
+		.catch((errReadJson) => log.error('Failed to read auth.json').callback(() => reject(errReadJson)))
 		.then(resolve);
 });
 
