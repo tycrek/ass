@@ -1,15 +1,16 @@
-import { ErrWrap } from './types/definitions';
+import { ErrWrap, FileData } from './types/definitions';
 import { Config, MagicNumbers, Package } from 'ass-json';
 
 //#region Imports
 import fs from 'fs-extra';
 import express, { Request, Response, json as BodyParserJson } from 'express';
+import fetch, { Response as FetchResponse } from 'node-fetch';
 import { nofavicon } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 import tailwindcss from 'tailwindcss';
 import helmet from 'helmet';
 
-import { path, log, getTrueHttp, getTrueDomain } from './utils';
+import { path, log, getTrueHttp, getTrueDomain, getS3url } from './utils';
 import { onStart as ApiOnStart } from './routers/api';
 //#endregion
 
@@ -128,6 +129,42 @@ app.use('/css', epcss({
 
 // '/:resouceId' always needs to be LAST since it's a catch-all route
 app.use('/:resourceId', (req, _res, next) => (req.resourceId = req.params.resourceId, next()), ROUTERS.resource); // skipcq: JS-0086, JS-0090
+
+// Direct resource
+app.use('/:resourceId.*', (req: Request, res: Response, next: any) =>
+	data()
+		.get(req.params.resourceId)
+		.then(async (fileData: FileData) => {
+			// Send file as an attachment for downloads
+			if (req.query.download) {
+				res.header('Content-Disposition', `attachment; filename="${fileData.originalname}"`);
+			}
+			if (!fileData) {
+				// File with the given key does not exist
+				return res.sendStatus(404);
+			}
+			// Redirect to getS3url
+
+			const uploaders = {
+				s3: () => fetch(getS3url(fileData.randomId, fileData.ext)).then((file: FetchResponse) => {
+					file.headers.forEach((value: string | number | readonly string[], header: string) => res.setHeader(header, value));
+					file.body?.pipe(res);
+				}),
+				local: () => fs.pathExists(path(fileData.path))
+					.then((exists) => new Promise((resolve, reject) => !exists
+						? reject(new Error('File does not exist'))
+						: res.header('Accept-Ranges', 'bytes')
+							.header('Content-Length', `${fileData.size}`)
+							.type(fileData.mimetype)
+							.sendFile(path(fileData.path), (err) => err ? reject(err) : resolve(void 0))))
+			};
+			return uploaders[s3enabled ? 's3' : 'local']();
+		})
+		.catch((error: Error) => {
+			return res.sendStatus(404);
+		})
+);
+
 
 // Error handler
 app.use((err: ErrWrap, _req: Request, res: Response) => {
