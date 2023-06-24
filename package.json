@@ -1,7 +1,7 @@
 {
   "name": "ass",
   "version": "0.14.3",
-  "description": "The superior self-hosted ShareX server",
+  "description": "The simple self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
     "node": ">=16.14.x",
