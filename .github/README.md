@@ -96,7 +96,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 
 | Type | What is it? |
 | ---- | ----------- |
-| **[Zero-width spaces][ZWS]** | When pasted elsewhere, the URL appears to be *just* your domain name. Some browsers or sites may not recognize these URLs (Discord **does** support these)<br>![ZWS sample] |
+| **[Zero-width spaces][ZWS]** | When pasted elsewhere, the URL appears to be *just* your domain name. Some browsers or sites may not recognize these URLs (Discord sadly no longer supports these as of April 2023)<br>![ZWS sample] |
 | **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
 | **Gfycat** | Gfycat-style ID's (for example: `https://example.com/unsung-discrete-grub`). Thanks to [Gfycat] for the wordlists |
 | **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |

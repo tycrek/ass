@@ -18,5 +18,5 @@ function doCheck() {
 
 if (require.main !== module) module.exports = doCheck;
 else doCheck()
-	.then((result) => logger.comment(`Wanted: ${ENGINES.node} (npm ${ENGINES.npm})`).node().success(result))
+	.then((result) => logger.comment(`Wanted: ${ENGINES.node} (npm ${ENGINES.npm})`)/* .node() */.success(result))
 	.catch((err) => logger.error(err) && process.exit(1));
