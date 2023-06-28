@@ -95,7 +95,7 @@ export function processUploaded(req: Request, res: Response, next: Function) { /
 						.callback(() => res.sendStatus(CODE_UNSUPPORTED_MEDIA_TYPE)))
 					.catch((err) => log
 						.error('Temp file could not be deleted', err)
-						.callback(next, err)));
+						.callback(() => next(err))));
 
 	// Remove unwanted fields
 	delete req.file.uuid;

@@ -67,12 +67,13 @@ function getConfirmSchema(description) {
 // If directly called on the command line, run setup script
 function doSetup() {
 	const path = (...paths) => require('path').join(process.cwd(), ...paths);
-	const { TLog, getChalk } = require('@tycrek/log');
+	const { TLog } = require('@tycrek/log');
 	const fs = require('fs-extra');
 	const prompt = require('prompt');
+	const chalk = require('chalk');
 	const token = require('./generators/token');
 
-	const log = new TLog({ level: 'debug', timestamp: { enabled: false } });
+	const log = new TLog('debug').setTimestamp({ enabled: false });
 
 	// Override default configs with existing configs to allow migrating configs
 	// Now that's a lot of configs!
@@ -85,7 +86,7 @@ function doSetup() {
 			Object.prototype.hasOwnProperty.call(oldConfig, key) && (oldConfig[key] = value); // skipcq: JS-0093
 		});
 	} catch (ex) {
-		if (ex.code !== 'MODULE_NOT_FOUND' && !ex.toString().includes('Unexpected end')) log.error(ex);
+		if (ex.code !== 'MODULE_NOT_FOUND' && !ex.toString().includes('Unexpected end')) log.error(`${ex}`);
 	}
 
 	// Disabled the annoying "prompt: " prefix and removes colours
@@ -294,7 +295,7 @@ function doSetup() {
 		// Verify information is correct
 		.then(() => log
 			.blank()
-			.info('Please verify your information', '\n'.concat(Object.entries(results).map(([setting, value]) => `${'            '}${getChalk().dim.gray('-->')} ${getChalk().bold.white(`${setting}:`)} ${getChalk().white(value)}`).join('\n')))
+			.info('Please verify your information', '\n'.concat(Object.entries(results).map(([setting, value]) => `${'            '}${chalk.dim.gray('-->')} ${chalk.bold.white(`${setting}:`)} ${chalk.white(value)}`).join('\n')))
 			.blank())
 
 		// Apply old configs
@@ -302,7 +303,7 @@ function doSetup() {
 
 		// Confirm
 		.then(() => prompt.get(confirmSchema))
-		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : log.error('Setup aborted').callback(process.exit, 1)))
+		.then(({ confirm }) => (confirm ? fs.writeJson(path('config.json'), results, { spaces: 4 }) : log.error('Setup aborted').callback(() => process.exit(1))))
 
 		// Other setup tasks
 		.then(() => {
@@ -334,7 +335,7 @@ function doSetup() {
 
 		// Complete & exit
 		.then(() => log.blank().success('Setup complete').callback(() => process.exit(0)))
-		.catch((err) => log.blank().error(err).callback(() => process.exit(1)));
+		.catch((err) => log.blank().callback(() => console.error(err)).callback(() => process.exit(1)));
 }
 
 module.exports = {

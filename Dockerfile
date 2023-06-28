@@ -4,7 +4,7 @@
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
 
 # Node 16 image
-FROM node:16.14.0
+FROM node:16.19.1
 
 # Set working directory
 WORKDIR /opt/ass/

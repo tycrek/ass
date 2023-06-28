@@ -12,6 +12,7 @@ import gfyGen from './generators/gfycat';
 import tsGen from './generators/timestamp';
 import logger from './logger';
 import { Request } from 'express';
+import { isProd as ip } from '@tycrek/joint';
 const { HTTP, HTTPS, KILOBYTES } = require('../MagicNumbers.json');
 
 // Catch config.json not existing when running setup script
@@ -90,7 +91,7 @@ export function generateId(mode: string, length: number, gfyLength: number, orig
 // Set up pathing
 export const path = (...paths: string[]) => Path.join(process.cwd(), ...paths);
 
-export const isProd = require('@tycrek/isprod')();
+export const isProd = ip();
 module.exports = {
 	path,
 	getTrueHttp,

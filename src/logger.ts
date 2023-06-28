@@ -1,34 +1,10 @@
-import { TLog, DateTimePreset } from '@tycrek/log';
+import { TLog } from '@tycrek/log';
+import { DateTime } from 'luxon';
 
 // Set up logging
-const logger = new TLog({
-	// @ts-ignore
-	level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
-	timestamp: {
-		enabled: true,
-		colour: 'grey',
-		preset: DateTimePreset.DATETIME_MED
-	}
-});
+const logger = new TLog(process.env.NODE_ENV === 'production' ? 'info' : 'debug')
+	.setTimestamp({ preset: DateTime.DATETIME_MED });
 
-// Enable the Express logger
-logger.enable.express({
-	middleware: {
-		excludePaths: ['favicon.ico'],
-	},
-	trim: {
-		enabled: true,
-		maxLength: 80,
-		delim: ': ',
-	},
-	handle404: true,
-	handle500: false
-}).debug('Plugin enabled', 'Express');
-
-/**
- * @type {TLog}
- */
-// yeet
-
+// todo: re-enable the Express logger
 
 export default logger;
