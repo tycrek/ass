@@ -169,6 +169,14 @@ export function deleteS3(file: FileData) {
 		.catch(reject));
 }
 
+export function deleteS3Thumb(file: FileData) {
+	return new Promise((resolve, reject) => s3
+	    .deleteObject({ Bucket: s3bucket, Key: 'thumbnails/' + file.randomId + '.png'})
+		.promise()
+		.then(resolve)
+		.catch(reject));
+}
+
 function listAllKeys(resolve: Function, reject: Function, token?: string) {
 	let allKeys: string[] = [];
 	s3.listObjectsV2({ Bucket: s3bucket, ContinuationToken: token }).promise()

@@ -5,7 +5,7 @@ import fs from 'fs-extra';
 import escape from 'escape-html';
 import fetch, { Response as FetchResponse } from 'node-fetch';
 import { Request, Response } from 'express';
-import { deleteS3 } from '../storage';
+import { deleteS3, deleteS3Thumb } from '../storage';
 import { checkIfZws } from '../generators/zws';
 import { path, log, getTrueHttp, getTrueDomain, formatBytes, formatTimestamp, getS3url, getDirectUrl, getResourceColor, replaceholder, getS3Turl } from '../utils';
 const { diskFilePath, s3enabled, viewDirect, useIdInViewer, idInViewerExtension }: Config = fs.readJsonSync(path('config.json'));
@@ -162,8 +162,10 @@ router.get('/delete/:deleteId', (req: Request, res: Response, next) => {
 			// Save the file information
 			return Promise.all([
 				s3enabled ? deleteS3(fileData) : fs.rmSync(path(fileData.path)),
-				(!fileData.is || (fileData.is.image || fileData.is.video)) && fs.existsSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))
-					? fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail)) : () => Promise.resolve()]);
+				(!fileData.is || (fileData.is.image || fileData.is.video)) &&
+				(s3enabled ? deleteS3Thumb(fileData) : fs.rmSync(path(diskFilePath, 'thumbnails/', fileData.thumbnail))),
+				() => Promise.resolve()
+			]);
 		})
 		.then(() => data().del(req.ass.resourceId))
 		.then(() => (log.success('Deleted', oldName, oldType), res.type('text').send('File has been deleted!'))) // skipcq: JS-0090
