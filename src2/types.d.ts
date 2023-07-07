@@ -1,5 +1,7 @@
 declare module 'ass' {
 
+    type IdType = 'random' | 'original' | 'gfycat' | 'timestamp' | 'zws'
+
     /**
      * Core Express server config.
      * This is separate from the user configuration starting in 0.15.0
@@ -11,7 +13,11 @@ declare module 'ass' {
     }
 
     interface UserConfiguration {
-        idType: string;
+        uploadsDir: string;
+        idType: IdType;
+        idSize: number;
+        gfySize: number;
+        maximumFileSize: number;
     }
 }
 
