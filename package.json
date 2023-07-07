@@ -8,7 +8,7 @@
     "dev-win": "npm run build-skip-options && npm run start",
     "build": "NODE_OPTIONS=\"--max-old-space-size=1024\" tsc",
     "build-skip-options": "tsc",
-    "start": "node dist/ass.js",
+    "start": "node dist/app.js",
     "setup": "node dist/setup.js",
     "metrics": "node dist/metrics.js",
     "purge": "node dist/purge.js",
