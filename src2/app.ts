@@ -61,7 +61,9 @@ async function main() {
     app.use(log.express());
     app.use(BodyParserJson());
 
-    // todo: routing
+    // Routing
+    app.use('/setup', (await import('./routers/setup')).router);
+    app.use('/', (await import('./routers/index')).router);
 
     // Host app
     app.listen(serverConfig.port, serverConfig.host, () => log.success('Server listening', 'Ready for uploads'));
