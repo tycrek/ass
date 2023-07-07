@@ -66,7 +66,7 @@ async function main() {
     app.use('/', (await import('./routers/index')).router);
 
     // Host app
-    app.listen(serverConfig.port, serverConfig.host, () => log.success('Server listening', 'Ready for uploads'));
+    app.listen(serverConfig.port, serverConfig.host, () => log.success('Server listening', 'Ready for uploads', `click http://127.0.0.1:${serverConfig.port}`));
 }
 
 // Launch log
