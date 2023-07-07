@@ -3,10 +3,6 @@
   "version": "0.14.4",
   "description": "The simple self-hosted ShareX server",
   "main": "ass.js",
-  "engines": {
-    "node": ">=16.14.x",
-    "npm": ">=8.3.x"
-  },
   "scripts": {
     "dev": "npm run build && npm start",
     "dev-win": "npm run build-skip-options && npm run start",
