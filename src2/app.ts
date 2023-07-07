@@ -1,16 +1,17 @@
-import express, { json as BodyParserJson } from 'express';
+import express, { Request, Response, NextFunction, RequestHandler, json as BodyParserJson } from 'express';
 import fs from 'fs-extra';
 import { path, isProd } from '@tycrek/joint';
 import { log } from './log';
+import { ServerConfiguration } from 'ass';
 
 /**
- * Core Express server config.
- * This is separate from the user configuration starting in 0.15.0
+ * Custom middleware to attach the ass object (and construct the `host` property)
  */
-interface ServerConfiguration {
-    host: string,
-    port: number,
-    proxied: boolean
+function assMetaMiddleware(port: number, proxied: boolean): RequestHandler {
+    return (req: Request, _res: Response, next: NextFunction) => {
+        req.ass = { host: `${req.protocol}://${req.hostname}${proxied ? '' : `:${port}`}` };
+        next();
+    }
 }
 
 /**
@@ -60,6 +61,9 @@ async function main() {
     // Middleware
     app.use(log.express());
     app.use(BodyParserJson());
+    app.use(assMetaMiddleware(serverConfig.port, serverConfig.proxied));
+
+    app.get('/.ass.host', (req, res) => res.send(req.ass.host));
 
     // Routing
     app.use('/setup', (await import('./routers/setup')).router);
