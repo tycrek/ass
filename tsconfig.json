@@ -13,8 +13,5 @@
 	"include": [
 		"src/**/*.js",
 		"src/**/*.ts"
-	],
-	"exclude": [
-		"ass-x"
 	]
 }
