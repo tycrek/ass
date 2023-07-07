@@ -7,11 +7,10 @@
 			"ES2022",
 			"DOM"
 		],
-		"allowJs": true,
+		"allowJs": false,
 		"downlevelIteration": true
 	},
 	"include": [
-		"src/**/*.js",
-		"src/**/*.ts"
+		"src2/**/*.ts"
 	]
 }
