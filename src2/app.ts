@@ -95,3 +95,14 @@ log.blank()
 
 // Start program
 main().catch(() => process.exit(1));
+
+// Exit tasks
+['SIGINT', 'SIGTERM'].forEach((signal) => process.addListener(signal as any, () => {
+
+    // Hide ^C in console output
+    process.stdout.write('\r');
+
+    // Log then exit
+    log.info('Exiting', `received ${signal}`);
+    process.exit();
+}));
