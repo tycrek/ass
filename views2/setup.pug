@@ -1,2 +1,21 @@
-h1 hi
-p how are you
+doctype html
+html.dark.sl-theme-dark(lang='en')
+	head
+		meta(charset='UTF-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0')
+		title ass setup
+		meta(name='theme-color' content='black')
+		link(rel='stylesheet', href='/.css')
+		//- Shoelace-FontAwesome Pug mixin
+		include ../node_modules/shoelace-fontawesome-pug/sl-fa-mixin.pug
+		include ../node_modules/shoelace-pug-loader/loader.pug
+		+slTheme('dark')
+		//- Shoelace components
+		+slComponents('input', 'icon', 'button')
+	body.w-screen.h-screen.flex.items-center.justify-center
+		.w-full.md_max-w-xl.flex.flex-col.p-2.md_p-8
+			h1.text-3xl.font-bold.font-mono.text-center.mb-8 ass setup
+			p.text-lg.mb-4.text-center Welcome to ass, your new personal file upload server!
+			sl-input.mb-8#dummy(type='text' placeholder='dummy'): sl-icon(slot='prefix' name='fas-key' library='fa')
+			sl-button#submit(type='primary' submit) Submit
+		//- script(src='/ui.js')
