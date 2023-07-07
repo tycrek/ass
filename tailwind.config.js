@@ -40,7 +40,7 @@ module.exports = {
 	plugins: [
 		//require('tailwindcss-textshadow')
 	],
-	content: ['./views/**/*.pug'],
+	content: ['./views2/**/*.pug'],
 	theme: {
 		extend: {
 			fontFamily: {

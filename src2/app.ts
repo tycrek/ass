@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction, RequestHandler, json as BodyParserJson } from 'express';
 import fs from 'fs-extra';
 import { path, isProd } from '@tycrek/joint';
+import { epcss } from '@tycrek/express-postcss';
+import tailwindcss from 'tailwindcss';
 import { log } from './log';
 import { ServerConfiguration } from 'ass';
 
@@ -62,6 +64,18 @@ async function main() {
     app.use(log.express());
     app.use(BodyParserJson());
     app.use(assMetaMiddleware(serverConfig.port, serverConfig.proxied));
+
+    // CSS
+    app.use('/.css', epcss({
+        cssPath: path.join('tailwind2.css'),
+        plugins: [
+            tailwindcss,
+            (await import('autoprefixer')).default(),
+            (await import('cssnano')).default(),
+            (await import('@tinycreek/postcss-font-magician')).default(),
+        ],
+        warn: (warning: Error) => log.warn('PostCSS', warning.toString())
+    }));
 
     app.get('/.ass.host', (req, res) => res.send(req.ass.host));
 
