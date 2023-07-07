@@ -41,7 +41,7 @@
     "@tycrek/discord-hookr": "^0.1.0",
     "@tycrek/express-postcss": "^0.4.0",
     "@tycrek/joint": "^1.0.0-1",
-    "@tycrek/log": "^0.7.1",
+    "@tycrek/log": "^0.7.3",
     "@tycrek/papito": "^0.3.4",
     "@xoi/gps-metadata-remover": "^1.1.1",
     "any-shell-escape": "^0.1.1",
