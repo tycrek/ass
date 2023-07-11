@@ -191,9 +191,24 @@ function buildResourceRouter() {
 	return resourceRouter;
 }
 
+function buildVersionRouter() {
+	const versionRouter = Router();
+
+
+	versionRouter.get("/", (req: Request, res: Response) => {
+		const project = require('../../package.json');
+		res.type("json").send({
+			version: project.version})
+
+	});
+
+	return versionRouter;
+}
+
 export const onStart = () => {
 	RouterApi.use('/user', buildUserRouter());
 	RouterApi.use('/resource', buildResourceRouter());
+	RouterApi.use('/version', buildVersionRouter());
 
 	return RouterApi;
 };
