@@ -4,6 +4,7 @@ import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 import tailwindcss from 'tailwindcss';
 import { log } from './log';
+import { UserConfig } from './UserConfig';
 import { ServerConfiguration } from 'ass';
 
 /**
@@ -50,6 +51,11 @@ async function main() {
 		throw err;
 	}
 
+	// Attempt to load user configuration
+	const readUserConfig = (): Promise<void> => new Promise((resolve) =>
+		UserConfig.readConfigFile().then(() => resolve(void 0)).catch((err) => (console.error(err), resolve(void 0))));
+	await readUserConfig();
+
 	// Set up Express
 	const app = express();
 
@@ -84,8 +90,7 @@ async function main() {
 	app.use('/', (await import('./routers/index')).router);
 
 	// Host app
-	const userConfigExists = await fs.pathExists(path.join('userconfig.json'));
-	app.listen(serverConfig.port, serverConfig.host, () => log[userConfigExists ? 'success' : 'warn']('Server listening', userConfigExists ? 'Ready for uploads' : 'Setup required', `click http://127.0.0.1:${serverConfig.port}`));
+	app.listen(serverConfig.port, serverConfig.host, () => log[UserConfig.ready ? 'success' : 'warn']('Server listening', UserConfig.ready ? 'Ready for uploads' : 'Setup required', `click http://127.0.0.1:${serverConfig.port}`));
 }
 
 // Launch log

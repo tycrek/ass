@@ -29,25 +29,26 @@ const Checkers: UserConfigTypeChecker = {
 }
 
 export class UserConfig {
-	private static config: UserConfiguration;
-	private ready = false;
+	private static _config: UserConfiguration;
+	private static _ready = false;
 
-	public getConfig = () => UserConfig.config;
-	public getReady = () => this.ready;
+	public static get config() { return UserConfig._config; }
+	public static get ready() { return UserConfig._ready; }
 
-	constructor(config?: UserConfiguration) {
-
+	constructor(config?: any) {
 		// Typically this would only happen during first-time setup (for now)
 		if (config != null) {
-			UserConfig.config = this.parseConfig(config);
-			this.ready = true;
+			UserConfig._config = UserConfig.parseConfig(config);
+			UserConfig._ready = true;
 		}
 	}
 
 	/**
 	 * Ensures that all config options are valid
 	 */
-	private parseConfig(config: UserConfiguration) {
+	private static parseConfig(c: any) {
+		const config = (typeof c === 'string' ? JSON.parse(c) : c) as UserConfiguration;
+
 		if (!Checkers.uploadsDir(config.uploadsDir)) throw new Error(`Unable to access uploads directory: ${config.uploadsDir}`);
 		if (!Checkers.idType(config.idType)) throw new Error('Invalid ID type');
 		if (!Checkers.idSize(config.idSize)) throw new Error('Invalid ID size');
@@ -61,15 +62,15 @@ export class UserConfig {
 	/**
 	 * Save the config file to disk
 	 */
-	public saveConfigFile(): Promise<void> {
+	public static saveConfigFile(): Promise<void> {
 		return new Promise(async (resolve, reject) => {
 			try {
 
 				// Only save is the config has been parsed
-				if (!this.ready) throw new Error('Config not ready to be saved!');
+				if (!UserConfig._ready) throw new Error('Config not ready to be saved!');
 
 				// Write to file
-				await fs.writeFile(path.join('userconfig.json'), JSON.stringify(UserConfig.config, null, '\t'));
+				await fs.writeFile(path.join('userconfig.json'), JSON.stringify(UserConfig._config, null, '\t'));
 
 				resolve(void 0);
 			} catch (err) {
@@ -82,7 +83,7 @@ export class UserConfig {
 	/**
 	 * Reads the config file from disk
 	 */
-	public readConfigFile(): Promise<void> {
+	public static readConfigFile(): Promise<void> {
 		return new Promise(async (resolve, reject) => {
 			try {
 
@@ -90,8 +91,8 @@ export class UserConfig {
 				const data = (await fs.readFile(path.join('userconfig.json'))).toString();
 
 				// Ensure the config is valid
-				UserConfig.config = this.parseConfig(data as unknown as UserConfiguration);
-				this.ready = true;
+				UserConfig._config = UserConfig.parseConfig(data);
+				UserConfig._ready = true;
 
 				resolve(void 0);
 			} catch (err) {
