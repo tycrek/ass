@@ -6,8 +6,8 @@ import { log } from './log';
 /**
  * Returns a boolean if the provided value is a number
  */
-const numChecker = (val: string) => {
-	try { return !isNaN(parseInt(val)); }
+const numChecker = (val: any) => {
+	try { return !isNaN(parseInt(val)) && typeof val !== 'string'; }
 	catch (err) { return false; }
 }
 
