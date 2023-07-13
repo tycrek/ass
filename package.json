@@ -8,6 +8,7 @@
     "build": "rm -dr dist-*/ & npm run build:backend && npm run build:frontend",
     "build:backend": "tsc -p backend/",
     "build:frontend": "tsc -p frontend/",
+    "postbuild:frontend": "node common/fix-frontend-js.js",
     "start": "node dist-backend/app.js",
     "cli-setpassword": "node dist/tools/script.setpassword.js",
     "cli-testpassword": "node dist/tools/script.testpassword.js",
