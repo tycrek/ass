@@ -5,15 +5,15 @@ import { log } from '../log';
 import { UserConfiguration } from 'ass';
 
 const router = Router({ caseSensitive: true });
-const userConfigExists = fs.pathExistsSync(path.join('userconfig.json'));
+const userConfigExists = () => fs.pathExistsSync(path.join('userconfig.json'));
 
 // Static routes
-router.get('/', (req, res) => userConfigExists ? res.redirect('/') : res.render('setup'));
-router.get('/ui.js', (req, res) => userConfigExists ? res.send('') : res.type('text').sendFile(path.join('dist-frontend/setup.mjs')));
+router.get('/', (req, res) => userConfigExists() ? res.redirect('/') : res.render('setup'));
+router.get('/ui.js', (req, res) => userConfigExists() ? res.send('') : res.type('text').sendFile(path.join('dist-frontend/setup.mjs')));
 
 // Setup route
 router.post('/', BodyParserJson(), (req, res) => {
-    if (userConfigExists)
+    if (userConfigExists())
         return res.status(409).json({ success: false, message: 'User config already exists' });
 
     log.debug('Running setup');
