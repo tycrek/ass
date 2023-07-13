@@ -24,3 +24,12 @@ declare module 'ass' {
 //#region Dummy modules
 declare module '@tinycreek/postcss-font-magician';
 //#endregion
+
+// don't commit
+/* future UserConfig options:
+    mediaStrict: boolean;
+    viewDirect: boolean;
+    viewDirectDiscord: boolean;
+    adminWebhook: {}
+    s3: {}
+*/
