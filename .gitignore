@@ -17,9 +17,7 @@ uploads/
 
 # config
 config.json
-
-# certificates
-*.crt
+userconfig.json
 
 # share/ directory
 share/
