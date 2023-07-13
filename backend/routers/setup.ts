@@ -13,22 +13,18 @@ router.get('/', (req, res) => userConfigExists() ? res.redirect('/') : res.rende
 router.get('/ui.js', (req, res) => userConfigExists() ? res.send('') : res.type('text').sendFile(path.join('dist-frontend/setup.mjs')));
 
 // Setup route
-router.post('/', BodyParserJson(), (req, res) => {
+router.post('/', BodyParserJson(), async (req, res) => {
 	if (userConfigExists())
 		return res.status(409).json({ success: false, message: 'User config already exists' });
 
 	log.debug('Setup initiated');
 
-	// Parse body
 	try {
-		const confTest = new UserConfig(req.body as UserConfiguration);
+		// Parse body
+		const userConfig = new UserConfig(req.body as UserConfiguration);
 
-		// Temp logs
-		log.debug('Uploads dir', confTest.getConfig().uploadsDir);
-		log.debug('ID type', confTest.getConfig().idType);
-		log.debug('ID size', confTest.getConfig().idSize.toString());
-		log.debug('Gfy size', confTest.getConfig().gfySize.toString());
-		log.debug('Max file size', confTest.getConfig().maximumFileSize.toString());
+		// Save config
+		await userConfig.saveConfigFile();
 
 		return res.json({ success: true });
 	} catch (err: any) {
