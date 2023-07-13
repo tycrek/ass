@@ -22,10 +22,6 @@
   "license": "ISC",
   "bugs": "https://github.com/tycrek/ass/issues",
   "homepage": "https://github.com/tycrek/ass#readme",
-  "funding": {
-    "type": "patreon",
-    "url": "https://patreon.com/tycrek"
-  },
   "dependencies": {
     "@shoelace-style/shoelace": "^2.5.2",
     "@tinycreek/postcss-font-magician": "^4.1.0",
