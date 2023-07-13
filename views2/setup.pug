@@ -17,12 +17,12 @@ html.dark.sl-theme-dark(lang='en')
 			h1.text-3xl.font-bold.font-mono.mb-4 ass setup
 			p.text-lg.mb-6 Welcome to ass, your new personal file upload server!
 
-			sl-input.w-96.mb-2#dummy(type='text' label='Uploads directory' placeholder='/opt/ass/uploads' clearable): sl-icon(slot='prefix' name='fas-folders' library='fa')
+			sl-input.w-96.mb-2#dir(type='text' label='Uploads directory' placeholder='/opt/ass/uploads' clearable): sl-icon(slot='prefix' name='fas-folders' library='fa')
 			.flex.mb-2.gap-4.justify-center
-				sl-input.w-44#dummy(type='text' label='ID type' placeholder='random'): sl-icon(slot='prefix' name='fas-input-text' library='fa')
-				sl-input.w-44#dummy(type='number' label='ID size' placeholder='8'): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+				sl-input.w-44#idtype(type='text' label='ID type' placeholder='random'): sl-icon(slot='prefix' name='fas-input-text' library='fa')
+				sl-input.w-44#idsize(type='number' label='ID size' placeholder='8'): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
 			.flex.mb-2.gap-4.justify-center
-				sl-input.w-44#dummy(type='number' label='Gfycat size' placeholder='3'): sl-icon(slot='prefix' name='fas-cat' library='fa')
-				sl-input.w-44#dummy(type='number' label='Maximum file size (MB)' placeholder='50'): sl-icon(slot='prefix' name='fas-file' library='fa')
+				sl-input.w-44#gfysize(type='number' label='Gfycat size' placeholder='3'): sl-icon(slot='prefix' name='fas-cat' library='fa')
+				sl-input.w-44#filesize(type='number' label='Maximum file size (MB)' placeholder='50'): sl-icon(slot='prefix' name='fas-file' library='fa')
 			sl-button.w-32.mt-2.self-center#submit(type='primary' submit) Submit
-		//- script(src='/ui.js')
+		script(src='/setup/ui.js')
