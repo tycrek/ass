@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				success: boolean,
 				message: string
 			}) => {
-				if (!data.success) throw new Error(data.message);
+				if (!data.success) alert(data.message);
 				else alert('good?');
 			})
 			.catch((err) => errAlert('POST to /setup failed!', err));
