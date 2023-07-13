@@ -3,6 +3,7 @@ import { path } from '@tycrek/joint';
 import { Router, json as BodyParserJson } from 'express';
 import { log } from '../log';
 import { UserConfiguration } from 'ass';
+import { UserConfig } from '../UserConfig';
 
 const router = Router({ caseSensitive: true });
 const userConfigExists = () => fs.pathExistsSync(path.join('userconfig.json'));
@@ -16,19 +17,23 @@ router.post('/', BodyParserJson(), (req, res) => {
 	if (userConfigExists())
 		return res.status(409).json({ success: false, message: 'User config already exists' });
 
-	log.debug('Running setup');
+	log.debug('Setup initiated');
 
 	// Parse body
-	const body = req.body as UserConfiguration;
+	try {
+		const confTest = new UserConfig(req.body as UserConfiguration);
 
-	// temp: print body for testing
-	log.debug('Uploads dir', body.uploadsDir);
-	log.debug('ID type', body.idType);
-	log.debug('ID size', body.idSize.toString());
-	log.debug('Gfy size', body.gfySize.toString());
-	log.debug('Max file size', body.maximumFileSize.toString());
+		// Temp logs
+		log.debug('Uploads dir', confTest.getConfig().uploadsDir);
+		log.debug('ID type', confTest.getConfig().idType);
+		log.debug('ID size', confTest.getConfig().idSize.toString());
+		log.debug('Gfy size', confTest.getConfig().gfySize.toString());
+		log.debug('Max file size', confTest.getConfig().maximumFileSize.toString());
 
-	return res.json({ success: true });
+		return res.json({ success: true });
+	} catch (err: any) {
+		return res.status(400).json({ success: false, message: err.message });
+	}
 });
 
 export { router };
