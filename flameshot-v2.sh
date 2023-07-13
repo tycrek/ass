@@ -2,7 +2,7 @@
 
 ## * ass & cheek flameshot script * ##
 #
-# Required packages: flameshot, curl, xclip
+# Required packages: flameshot, curl, xclip, libnotify
 #
 # Authors:
 # - ToxicAven (https://github.com/ToxicAven)
@@ -60,6 +60,7 @@ if [ -f "$FILE" ]; then
     # Copy the URL to clipboard (using printf instead of echo to avoid a newline)
     printf "%s" "$URL" | xclip -sel clip
     echo "URL copied: $URL"
+    notify-send -a $(get_mode) -t 2000 "URL copied to clipboard" "<a href=\"$URL\">View in browser</a>"
 
     # Delete local file
     rm "$FILE"
