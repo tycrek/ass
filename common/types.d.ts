@@ -19,6 +19,14 @@ declare module 'ass' {
 		gfySize: number;
 		maximumFileSize: number;
 	}
+
+	interface UserConfigTypeChecker {
+		uploadsDir: (val: any) => boolean;
+		idType: (val: any) => boolean;
+		idSize: (val: any) => boolean;
+		gfySize: (val: any) => boolean;
+		maximumFileSize: (val: any) => boolean;
+	}
 }
 
 //#region Dummy modules

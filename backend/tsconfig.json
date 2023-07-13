@@ -5,7 +5,8 @@
 		"lib": [
 			"ES2022",
 		],
-		"moduleResolution": "Node"
+		"moduleResolution": "Node",
+		"strictPropertyInitialization": false
 	},
 	"include": [
 		"./**/*.ts",
