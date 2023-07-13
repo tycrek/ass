@@ -5,7 +5,7 @@ import { UserConfiguration, UserConfigTypeChecker } from 'ass';
  * Returns a boolean if the provided value is a number
  */
 const numChecker = (val: string) => {
-	try { parseInt(val); return true; }
+	try { return !isNaN(parseInt(val)); }
 	catch (err) { return false; }
 }
 
