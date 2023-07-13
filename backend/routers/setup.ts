@@ -13,22 +13,22 @@ router.get('/ui.js', (req, res) => userConfigExists() ? res.send('') : res.type(
 
 // Setup route
 router.post('/', BodyParserJson(), (req, res) => {
-    if (userConfigExists())
-        return res.status(409).json({ success: false, message: 'User config already exists' });
+	if (userConfigExists())
+		return res.status(409).json({ success: false, message: 'User config already exists' });
 
-    log.debug('Running setup');
+	log.debug('Running setup');
 
-    // Parse body
-    const body = req.body as UserConfiguration;
+	// Parse body
+	const body = req.body as UserConfiguration;
 
-    // temp: print body for testing
-    log.debug('Uploads dir', body.uploadsDir);
-    log.debug('ID type', body.idType);
-    log.debug('ID size', body.idSize.toString());
-    log.debug('Gfy size', body.gfySize.toString());
-    log.debug('Max file size', body.maximumFileSize.toString());
+	// temp: print body for testing
+	log.debug('Uploads dir', body.uploadsDir);
+	log.debug('ID type', body.idType);
+	log.debug('ID size', body.idSize.toString());
+	log.debug('Gfy size', body.gfySize.toString());
+	log.debug('Max file size', body.maximumFileSize.toString());
 
-    return res.json({ success: true });
+	return res.json({ success: true });
 });
 
 export { router };
