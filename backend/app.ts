@@ -23,6 +23,10 @@ function assMetaMiddleware(port: number, proxied: boolean): RequestHandler {
  */
 async function main() {
 
+	// Launch log
+	const pkg = await fs.readJson(path.join('package.json')) as { name: string, version: string };
+	log.blank().info(pkg.name, pkg.version).blank();
+
 	// Set default server configuration
 	const serverConfig: ServerConfiguration = {
 		host: '0.0.0.0',
@@ -92,12 +96,6 @@ async function main() {
 	// Host app
 	app.listen(serverConfig.port, serverConfig.host, () => log[UserConfig.ready ? 'success' : 'warn']('Server listening', UserConfig.ready ? 'Ready for uploads' : 'Setup required', `click http://127.0.0.1:${serverConfig.port}`));
 }
-
-// Launch log
-const pkg = fs.readJsonSync(path.join('package.json')) as { name: string, version: string };
-log.blank()
-	.info(pkg.name, pkg.version)
-	.blank();
 
 // Start program
 main().catch(() => process.exit(1));
