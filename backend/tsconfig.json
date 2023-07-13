@@ -1,7 +1,7 @@
 {
 	"extends": "@tsconfig/node18/tsconfig.json",
 	"compilerOptions": {
-		"outDir": "../dist",
+		"outDir": "../dist-backend",
 		"lib": [
 			"ES2022",
 		],
