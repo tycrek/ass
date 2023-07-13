@@ -50,7 +50,7 @@ export class UserConfig {
 		const config = (typeof c === 'string' ? JSON.parse(c) : c) as UserConfiguration;
 
 		if (!Checkers.uploadsDir(config.uploadsDir)) throw new Error(`Unable to access uploads directory: ${config.uploadsDir}`);
-		if (!Checkers.idType(config.idType)) throw new Error('Invalid ID type');
+		if (!Checkers.idType(config.idType)) throw new Error(`Invalid ID type: ${config.idType}`);
 		if (!Checkers.idSize(config.idSize)) throw new Error('Invalid ID size');
 		if (!Checkers.gfySize(config.gfySize)) throw new Error('Invalid Gfy size');
 		if (!Checkers.maximumFileSize(config.maximumFileSize)) throw new Error('Invalid maximum file size');

@@ -53,7 +53,7 @@ async function main() {
 
 	// Attempt to load user configuration
 	const readUserConfig = (): Promise<void> => new Promise((resolve) =>
-		UserConfig.readConfigFile().then(() => resolve(void 0)).catch((err) => (console.error(err), resolve(void 0))));
+		UserConfig.readConfigFile().then(() => resolve(void 0)).catch((err) => (err.code && err.code === 'ENOENT' ? {} : console.error(err), resolve(void 0))));
 	await readUserConfig();
 
 	// Set up Express
