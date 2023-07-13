@@ -74,7 +74,6 @@ export class UserConfig {
 				resolve(void 0);
 			} catch (err) {
 				log.error('Failed to save config file!');
-				console.error(err);
 				reject(err);
 			}
 		});
@@ -97,7 +96,6 @@ export class UserConfig {
 				resolve(void 0);
 			} catch (err) {
 				log.error('Failed to read config file!');
-				console.error(err);
 				reject(err);
 			}
 		});
