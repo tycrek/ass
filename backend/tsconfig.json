@@ -1,0 +1,14 @@
+{
+	"extends": "@tsconfig/node18/tsconfig.json",
+	"compilerOptions": {
+		"outDir": "../dist",
+		"lib": [
+			"ES2022",
+		],
+		"moduleResolution": "Node"
+	},
+	"include": [
+		"./**/*.ts",
+		"../**/common/*.ts"
+	]
+}
