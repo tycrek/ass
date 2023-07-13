@@ -44,12 +44,15 @@ export class UserConfig {
 		}
 	}
 
+	/**
+	 * Ensures that all config options are valid
+	 */
 	private parseConfig(config: UserConfiguration) {
 		if (!Checkers.uploadsDir(config.uploadsDir)) throw new Error(`Unable to access uploads directory: ${config.uploadsDir}`);
-		if (!Checkers.idType(config.idType)) throw new Error(`Invalid ID type: ${config.idType}`);
-		if (!Checkers.idSize(config.idSize)) throw new Error(`Invalid ID size: ${config.idSize}`);
-		if (!Checkers.gfySize(config.gfySize)) throw new Error(`Invalid Gfy size: ${config.gfySize}`);
-		if (!Checkers.maximumFileSize(config.maximumFileSize)) throw new Error(`Invalid maximum file size: ${config.maximumFileSize}`);
+		if (!Checkers.idType(config.idType)) throw new Error('Invalid ID type');
+		if (!Checkers.idSize(config.idSize)) throw new Error('Invalid ID size');
+		if (!Checkers.gfySize(config.gfySize)) throw new Error('Invalid Gfy size');
+		if (!Checkers.maximumFileSize(config.maximumFileSize)) throw new Error('Invalid maximum file size');
 
 		// All is fine, carry on!
 		return config;
