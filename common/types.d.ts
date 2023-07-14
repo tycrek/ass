@@ -7,9 +7,9 @@ declare module 'ass' {
 	 * This is separate from the user configuration starting in 0.15.0
 	 */
 	interface ServerConfiguration {
-		host: string,
-		port: number,
-		proxied: boolean
+		host: string;
+		port: number;
+		proxied: boolean;
 	}
 
 	interface UserConfiguration {
