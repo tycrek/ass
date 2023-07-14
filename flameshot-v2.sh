@@ -41,7 +41,8 @@ if [ -f "$FILE" ]; then
 
     # Configure upload fields
     FIELD="$([[ $MODE -eq 0 ]] && echo "file" || echo "image")=@$FILE"
-    POSTTO="https://$DOMAIN/$([[ $MODE -eq 0 ]] && echo "" || echo "upload")"
+    [[ "${DOMAIN%%:*}" = "127.0.0.1" ]] && PROTOCOL="http" || PROTOCOL="https"
+    POSTTO="$PROTOCOL://$DOMAIN/$([[ $MODE -eq 0 ]] && echo "" || echo "upload")"
 
     # Upload the file
     URL=$(curl -sS -X POST \
