@@ -11,7 +11,7 @@
 # - NotAShelf (https://github.com/NotAShelf)
 
 # ! Upload mode (ass=0,cheek=1)
-MODE=1
+MODE=0
 
 # Mode string switcher
 get_mode() {
