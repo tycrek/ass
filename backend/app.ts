@@ -97,7 +97,7 @@ async function main() {
 }
 
 // Start program
-main().catch(() => process.exit(1));
+main().catch((err) => (console.error(err), process.exit(1)));
 
 // Exit tasks
 ['SIGINT', 'SIGTERM'].forEach((signal) => process.addListener(signal as any, () => {
