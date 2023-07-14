@@ -1,3 +1,4 @@
+import { BusBoyFile } from 'ass';
 import { Request, Response } from 'express';
 
 declare global {
@@ -14,6 +15,8 @@ declare global {
 				 */
 				host: string
 			}
+
+			files: { [key: string]: BusBoyFile }
 		}
 	}
 }

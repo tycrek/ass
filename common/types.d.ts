@@ -28,6 +28,31 @@ declare module 'ass' {
 		gfySize: (val: any) => boolean;
 		maximumFileSize: (val: any) => boolean;
 	}
+
+	interface BusBoyFile {
+		uuid: string;
+		field: string;
+		file: string;
+		filename: string;
+		encoding: string;
+		mimetype: string;
+		truncated: boolean;
+		done: boolean;
+	}
+
+	interface AssFile {
+		fakeid: string;
+		id: NID;
+		mimetype: string;
+		filename: string;
+		save: {
+			local?: string;
+			s3?: any;
+		}
+		sha256: string;
+		timestamp: string;
+		uploader: NID;
+	}
 }
 
 //#region Dummy modules
