@@ -1,4 +1,5 @@
 declare module 'ass' {
+	type NID = string;
 
 	type IdType = 'random' | 'original' | 'gfycat' | 'timestamp' | 'zws'
 
