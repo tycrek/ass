@@ -19,6 +19,30 @@ declare module 'ass' {
 		idSize: number;
 		gfySize: number;
 		maximumFileSize: number;
+
+		s3?: S3Configuration;
+	}
+
+	interface S3Configuration {
+		/**
+		 * S3 endpoint to use
+		 */
+		endpoint: string;
+		/**
+		 * Bucket to upload to
+		*/
+		bucket: string;
+		/**
+		 * Optional region. Required for some providers
+		 */
+		region?: string;
+		/**
+		 * Access credentials
+		 */
+		credentials: {
+			accessKey: string;
+			secretKey: string;
+		}
 	}
 
 	interface UserConfigTypeChecker {
@@ -47,7 +71,11 @@ declare module 'ass' {
 		filename: string;
 		save: {
 			local?: string;
-			s3?: any;
+			s3?: {
+				privateUrl?: string;
+				publicUrl?: string;
+				thumbnailUrl?: string;
+			}
 		}
 		sha256: string;
 		timestamp: string;
