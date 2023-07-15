@@ -23,6 +23,9 @@ bb.extend(router, {
 // Render or redirect
 router.get('/', (req, res) => UserConfig.ready ? res.render('index') : res.redirect('/setup'));
 
+// temp file map
+const files = new Map<string, AssFile>();
+
 // Upload flow
 router.post('/', async (req, res) => {
 
@@ -72,11 +75,13 @@ router.post('/', async (req, res) => {
 			await fs.rm(bbFile.file);
 
 			// todo: get S3 save data
+			assFile.save.s3 = true;
 		}
 
 		log.debug('File saved to', !s3 ? assFile.save.local! : 'S3');
 
 		// todo: save metadata
+		files.set(assFile.fakeid, assFile);
 
 		return res.type('json').send({ resource: `${req.ass.host}/${assFile.fakeid}` });
 	} catch (err) {
