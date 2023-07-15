@@ -19,7 +19,7 @@ const Checkers: UserConfigTypeChecker = {
 		try {
 			fs.pathExistsSync(val)
 				? fs.accessSync(val)
-				: fs.mkdirSync(val);
+				: fs.mkdirSync(val, { recursive: true });
 			return true;
 		}
 		catch (err) {
