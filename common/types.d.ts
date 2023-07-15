@@ -21,6 +21,7 @@ declare module 'ass' {
 		maximumFileSize: number;
 
 		s3?: S3Configuration;
+		sql?: SqlConfiguration;
 	}
 
 	interface S3Configuration {
@@ -42,6 +43,15 @@ declare module 'ass' {
 		credentials: {
 			accessKey: string;
 			secretKey: string;
+		}
+	}
+
+	interface SqlConfiguration {
+		mySql?: {
+			host: string;
+			user: string;
+			password: string;
+			database: string;
 		}
 	}
 
