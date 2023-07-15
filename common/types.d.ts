@@ -76,7 +76,7 @@ declare module 'ass' {
 				privateUrl?: string;
 				publicUrl?: string;
 				thumbnailUrl?: string;
-			}
+			} | true;
 		}
 		sha256: string;
 		timestamp: string;
