@@ -104,20 +104,26 @@ router.get('/direct/:fakeId', async (req, res) => {
 	else {
 
 		// Get file metadata
-		const meta = files.get(fakeId);
+		const meta = files.get(fakeId)!;
+
+		// File data can come from either S3 or local filesystem
+		let output: Readable | NodeJS.ReadableStream;
 
 		// Try to retrieve the file
-		const file = await getFileS3(meta!.fileKey);
-		if (!file.Body) return res.status(500).send('Unknown error');
+		if (!!meta.save.s3) {
+			const file = await getFileS3(meta.fileKey);
+			if (!file.Body) return res.status(500).send('Unknown error');
+			output = file.Body as Readable;
+		} else output = fs.createReadStream(meta.save.local!);
 
 		// Configure response headers
-		res.type(meta!.mimetype)
-			.header('Content-Disposition', `inline; filename="${meta!.filename}"`)
+		res.type(meta.mimetype)
+			.header('Content-Disposition', `inline; filename="${meta.filename}"`)
 			.header('Cache-Control', 'public, max-age=31536000, immutable')
 			.header('Accept-Ranges', 'bytes');
 
 		// Send the file (thanks to https://stackoverflow.com/a/67373050)
-		(file.Body as Readable).pipe(res);
+		output.pipe(res);
 	}
 });
 
