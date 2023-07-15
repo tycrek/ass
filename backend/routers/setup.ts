@@ -7,7 +7,7 @@ const router = Router({ caseSensitive: true });
 
 // Static routes
 router.get('/', (req, res) => UserConfig.ready ? res.redirect('/') : res.render('setup'));
-router.get('/ui.js', (req, res) => UserConfig.ready ? res.send('') : res.type('text').sendFile(path.join('dist-frontend/setup.mjs')));
+router.get('/ui.js', (req, res) => UserConfig.ready ? res.send('') : res.type('text/javascript').sendFile(path.join('dist-frontend/setup.mjs')));
 
 // Setup route
 router.post('/', BodyParserJson(), async (req, res) => {
