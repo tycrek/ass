@@ -6,6 +6,7 @@ import { log } from '../log';
 import { UserConfig } from '../UserConfig';
 import { random } from '../generators';
 import { BusBoyFile, AssFile } from 'ass';
+import { uploadFileS3 } from '../s3';
 
 const router = Router({ caseSensitive: true });
 
@@ -30,6 +31,7 @@ router.post('/', async (req, res) => {
 
 	// Does the file actually exist
 	if (!req.files || !req.files['file']) return res.status(400).type('text').send('No file was provided!');
+	else log.debug('Upload request received', `Using ${UserConfig.config.s3 != null ? 'S3' : 'local'} storage`);
 
 	// Type-check the file data
 	const bbFile: BusBoyFile = req.files['file'];
@@ -37,27 +39,42 @@ router.post('/', async (req, res) => {
 	// Prepare file move
 	const uploads = UserConfig.config.uploadsDir;
 	const timestamp = Date.now().toString();
-	const destination = `${uploads}${uploads.endsWith('/') ? '' : '/'}${timestamp}_${bbFile.filename}`;
-	// todo: S3
+	const fileKey = `${timestamp}_${bbFile.filename}`;
+	const destination = `${uploads}${uploads.endsWith('/') ? '' : '/'}${fileKey}`;
+
+	// S3 configuration
+	const s3 = UserConfig.config.s3 != null ? UserConfig.config.s3 : false;
 
 	try {
 
 		// Move the file
-		await fs.move(bbFile.file, destination);
+		if (!s3) await fs.move(bbFile.file, destination);
+		else await uploadFileS3(await fs.readFile(bbFile.file), bbFile.mimetype, fileKey);
 
 		// Build ass metadata
 		const assFile: AssFile = {
 			fakeid: random({ length: UserConfig.config.idSize }), // todo: more generators
 			id: nanoid(32),
+			fileKey,
 			mimetype: bbFile.mimetype,
 			filename: bbFile.filename,
 			timestamp,
 			uploader: '0', // todo: users
-			save: { local: destination },
+			save: {},
 			sha256: '0' // todo: hashing
 		};
 
-		log.debug('File saved to', assFile.save.local!);
+		// Set the save location
+		if (!s3) assFile.save.local = destination;
+		else {
+
+			// Using S3 doesn't move temp file, delete it now
+			await fs.rm(bbFile.file);
+
+			// todo: get S3 save data
+		}
+
+		log.debug('File saved to', !s3 ? assFile.save.local! : 'S3');
 
 		// todo: save metadata
 
