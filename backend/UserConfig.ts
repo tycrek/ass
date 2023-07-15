@@ -22,7 +22,11 @@ const Checkers: UserConfigTypeChecker = {
 				: fs.mkdirSync(val);
 			return true;
 		}
-		catch (err) { return false; }
+		catch (err) {
+			log.warn('Cannot access directory', `${val}`);
+			console.error(err);
+			return false;
+		}
 	},
 	idType: (val) => {
 		const options = ['random', 'original', 'gfycat', 'timestamp', 'zws'];
