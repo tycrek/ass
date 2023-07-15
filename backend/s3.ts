@@ -14,7 +14,6 @@ import {
 	AbortMultipartUploadCommand,
 } from "@aws-sdk/client-s3";
 
-const NYI = 'Not yet implemented';
 const NYR = 'S3 not ready';
 
 /**
@@ -168,6 +167,8 @@ export const getFileS3 = (fileKey: string): Promise<GetObjectCommandOutput> => n
  * Deletes a file from your configured S3 provider
  */
 export const deleteFileS3 = (): Promise<void> => new Promise((resolve, reject) => {
+	const NYI = 'Not yet implemented';
+
 	if (!s3readyCheck) return reject(NYR);
 
 	log.warn('S3 Delete', NYI);
