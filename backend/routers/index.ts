@@ -6,7 +6,8 @@ import { log } from '../log';
 import { UserConfig } from '../UserConfig';
 import { random } from '../generators';
 import { BusBoyFile, AssFile } from 'ass';
-import { uploadFileS3 } from '../s3';
+import { getFileS3, uploadFileS3 } from '../s3';
+import { Readable } from 'stream';
 
 const router = Router({ caseSensitive: true });
 
@@ -88,6 +89,34 @@ router.post('/', async (req, res) => {
 		log.error('Failed to upload file', bbFile.filename);
 		console.error(err);
 		return res.status(500).send(err);
+	}
+});
+
+router.get('/:fakeId', (req, res) => res.redirect(`/direct/${req.params.fakeId}`));
+
+router.get('/direct/:fakeId', async (req, res) => {
+	if (!UserConfig.ready) res.redirect('/setup');
+
+	// Get the ID
+	const fakeId = req.params.fakeId;
+
+	if (!files.has(fakeId)) return res.status(404).send();
+	else {
+
+		// Get file metadata
+		const meta = files.get(fakeId);
+
+		// Try to retrieve the file
+		const file = await getFileS3(meta!.fileKey);
+		if (!file.Body) return res.status(500).send('Unknown error');
+
+		// Configure response headers
+		res.type(meta!.mimetype)
+			.header('Content-Disposition', `inline; filename="${meta!.filename}"`)
+			.header('Accept-Ranges', 'bytes');
+
+		// Send the file (thanks to https://stackoverflow.com/a/67373050)
+		(file.Body as Readable).pipe(res);
 	}
 });
 
