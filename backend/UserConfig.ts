@@ -16,7 +16,12 @@ const numChecker = (val: any) => {
  */
 const Checkers: UserConfigTypeChecker = {
 	uploadsDir: (val) => {
-		try { fs.accessSync(val); return true; }
+		try {
+			fs.pathExistsSync(val)
+				? fs.accessSync(val)
+				: fs.mkdirSync(val);
+			return true;
+		}
 		catch (err) { return false; }
 	},
 	idType: (val) => {
