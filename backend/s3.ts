@@ -130,26 +130,38 @@ const doMultipartUpload = (file: Buffer, mimetype: string, fileKey: string): Pro
 /**
  * Uploads a file to your configured S3 provider
  */
-export const uploadFileS3 = (file: Buffer, mimetype: string, fileKey: string): Promise<string> => new Promise(async (resolve, reject) => {
+export const uploadFileS3 = (file: Buffer, mimetype: string, fileKey: string): Promise<void> => new Promise(async (resolve, reject) => {
 	if (!s3readyCheck) return reject(NYR);
 
-	// todo: determine when to do multipart uplloads
-	await doObjectUpload(file, mimetype, fileKey);
+	try {
+		// todo: determine when to do multipart uplloads
+		await doObjectUpload(file, mimetype, fileKey);
 
-	// todo: still need to find a way to access it
-	resolve('hi');
+		// todo: still need to find a way to access it
+		resolve(void 0);
+	} catch (err) {
+		log.error('Failed to upload object to S3', fileKey);
+		console.error(err);
+		reject(err);
+	}
 });
 
 /**
  * Gets a file from your configured S3 provider
  */
-export const getFileS3 = (): Promise<string> => new Promise((resolve, reject) => {
+export const getFileS3 = (fileKey: string): Promise<GetObjectCommandOutput> => new Promise(async (resolve, reject) => {
 	if (!s3readyCheck) return reject(NYR);
 
-	// todo: S3 get logic
-
-	log.warn('S3 Get', NYI);
-	reject(NYI);
+	try {
+		resolve(await s3()!.send(new GetObjectCommand({
+			Bucket: UserConfig.config.s3!.bucket,
+			Key: fileKey
+		})));
+	} catch (err) {
+		log.error('Failed to get object from S3', fileKey);
+		console.error(err);
+		reject(err);
+	}
 });
 
 /**
