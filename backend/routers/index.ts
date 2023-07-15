@@ -113,6 +113,7 @@ router.get('/direct/:fakeId', async (req, res) => {
 		// Configure response headers
 		res.type(meta!.mimetype)
 			.header('Content-Disposition', `inline; filename="${meta!.filename}"`)
+			.header('Cache-Control', 'public, max-age=31536000, immutable')
 			.header('Accept-Ranges', 'bytes');
 
 		// Send the file (thanks to https://stackoverflow.com/a/67373050)
