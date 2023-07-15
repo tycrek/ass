@@ -67,6 +67,7 @@ declare module 'ass' {
 	interface AssFile {
 		fakeid: string;
 		id: NID;
+		fileKey: string;
 		mimetype: string;
 		filename: string;
 		save: {
