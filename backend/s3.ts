@@ -3,13 +3,15 @@ import { log } from './log';
 import {
 	S3Client,
 	S3ClientConfig,
+	PutObjectCommand,
+	PutObjectCommandOutput,
+	GetObjectCommand,
+	GetObjectCommandOutput,
 	CreateMultipartUploadCommand,
 	UploadPartCommand,
 	CompleteMultipartUploadCommand,
+	CompleteMultipartUploadCommandOutput,
 	AbortMultipartUploadCommand,
-	PutObjectCommand,
-	PutObjectAclCommandOutput,
-	CompleteMultipartUploadCommandOutput
 } from "@aws-sdk/client-s3";
 
 const NYI = 'Not yet implemented';
@@ -52,7 +54,7 @@ const s3 = (): S3Client | null => {
 /**
  * Basic single file upload
  */
-const doObjectUpload = (file: Buffer, mimetype: string, fileKey: string): Promise<PutObjectAclCommandOutput> =>
+const doObjectUpload = (file: Buffer, mimetype: string, fileKey: string): Promise<PutObjectCommandOutput> =>
 	new Promise((resolve, reject) => s3()!.send(new PutObjectCommand({
 		Bucket: UserConfig.config.s3!.bucket,
 		Key: fileKey,
