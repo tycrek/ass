@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		s3secretKey: document.querySelector('#s3-secretKey') as SlInput,
 		s3region: document.querySelector('#s3-region') as SlInput,
 
+		mySqlHost: document.querySelector('#mysql-host') as SlInput,
+		mySqlUser: document.querySelector('#mysql-user') as SlInput,
+		mySqlPassword: document.querySelector('#mysql-password') as SlInput,
+		mySqlDatabase: document.querySelector('#mysql-database') as SlInput,
+
 		submitButton: document.querySelector('#submit') as SlButton,
 	};
 
@@ -49,6 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
 			// Also append region, if it was provided
 			if (Elements.s3region.value != null && Elements.s3region.value !== '')
 				config.s3.region = Elements.s3region.value;
+		}
+
+		// Append MySQL to config, if specified
+		if (Elements.mySqlHost.value != null && Elements.mySqlHost.value !== '') {
+			if (!config.sql) config.sql = {};
+			config.sql.mySql = {
+				host: Elements.mySqlHost.value,
+				user: Elements.mySqlUser.value,
+				password: Elements.mySqlPassword.value,
+				database: Elements.mySqlDatabase.value
+			};
 		}
 
 		// Do setup

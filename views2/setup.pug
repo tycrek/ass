@@ -25,6 +25,7 @@ html.dark.sl-theme-dark(lang='en')
 			.flex.flex-col.items-center
 				p.text-lg.mb-4 Welcome to ass, your new personal file upload server!
 
+				//- * Base config
 				h2.setup-text-section-header.mt-12 Upload configuration
 				.setup-panel
 					h3.setup-text-item-title Uploads directory
@@ -38,6 +39,7 @@ html.dark.sl-theme-dark(lang='en')
 					h3.setup-text-item-title Maximum file size (MB)
 					sl-input#uploads-filesize(type='number' placeholder='50'): sl-icon(slot='prefix' name='fas-file' library='fa')
 
+				//- * S3
 				h2.setup-text-section-header.mt-4 S3 #[span.setup-text-optional optional]
 				.setup-panel
 					h3.setup-text-item-title Endpoint
@@ -50,6 +52,18 @@ html.dark.sl-theme-dark(lang='en')
 					sl-input#s3-secretKey(type='password' placeholder='EF56GH78IJ90KL12' clearable): sl-icon(slot='prefix' name='fas-user-secret' library='fa')
 					h3.setup-text-item-title Region #[span.setup-text-optional optional]
 					sl-input#s3-region(type='text' placeholder='us-east' clearable): sl-icon(slot='prefix' name='fas-map-location-dot' library='fa')
+
+				//- * MySQL
+				h2.setup-text-section-header.mt-4 MySQL #[span.setup-text-optional optional]
+				.setup-panel
+					h3.setup-text-item-title Host
+					sl-input#mysql-host(type='text' placeholder='mysql.example.com' clearable): sl-icon(slot='prefix' name='fas-server' library='fa')
+					h3.setup-text-item-title User
+					sl-input#mysql-user(type='text' placeholder='myassql' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
+					h3.setup-text-item-title Password
+					sl-input#mysql-password(type='password' placeholder='super-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
+					h3.setup-text-item-title Database
+					sl-input#mysql-database(type='text' placeholder='assdb' clearable): sl-icon(slot='prefix' name='fas-database' library='fa')
 
 				sl-button.w-32.mt-2.self-center#submit(type='primary' submit) Submit
 		script(src='/setup/ui.js')
