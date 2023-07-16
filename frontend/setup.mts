@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// * Setup button click handler
 	Elements.submitButton.addEventListener('click', async () => {
 
+		// Base configuration values
 		const config: UserConfiguration = {
 			uploadsDir: Elements.dirInput.value,
 			idType: Elements.idTypeInput.value as IdType,
@@ -34,6 +35,23 @@ document.addEventListener('DOMContentLoaded', () => {
 			maximumFileSize: parseInt(Elements.fileSizeInput.value),
 		};
 
+		// Append S3 to config, if specified
+		if (Elements.s3endpoint.value != null && Elements.s3endpoint.value !== '') {
+			config.s3 = {
+				endpoint: Elements.s3endpoint.value,
+				bucket: Elements.s3bucket.value,
+				credentials: {
+					accessKey: Elements.s3accessKey.value,
+					secretKey: Elements.s3secretKey.value
+				}
+			};
+
+			// Also append region, if it was provided
+			if (Elements.s3region.value != null && Elements.s3region.value !== '')
+				config.s3.region = Elements.s3region.value;
+		}
+
+		// Do setup
 		fetch('/setup', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
