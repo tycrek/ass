@@ -28,15 +28,15 @@ html.dark.sl-theme-dark(lang='en')
 				h2.setup-text-section-header.mt-12 Upload configuration
 				.setup-panel
 					h3.setup-text-item-title Uploads directory
-					sl-input#dir(type='text' placeholder='/opt/ass/uploads' clearable): sl-icon(slot='prefix' name='fas-folders' library='fa')
+					sl-input#uploads-dir(type='text' placeholder='/opt/ass/uploads' clearable): sl-icon(slot='prefix' name='fas-folders' library='fa')
 					h3.setup-text-item-title ID type
-					sl-input#idtype(type='text' placeholder='random'): sl-icon(slot='prefix' name='fas-input-text' library='fa')
+					sl-input#uploads-idtype(type='text' placeholder='random'): sl-icon(slot='prefix' name='fas-input-text' library='fa')
 					h3.setup-text-item-title ID size
-					sl-input#idsize(type='number' placeholder='8'): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+					sl-input#uploads-idsize(type='number' placeholder='8'): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
 					h3.setup-text-item-title Gfycat size
-					sl-input#gfysize(type='number' placeholder='3'): sl-icon(slot='prefix' name='fas-cat' library='fa')
+					sl-input#uploads-gfysize(type='number' placeholder='3'): sl-icon(slot='prefix' name='fas-cat' library='fa')
 					h3.setup-text-item-title Maximum file size (MB)
-					sl-input#filesize(type='number' placeholder='50'): sl-icon(slot='prefix' name='fas-file' library='fa')
+					sl-input#uploads-filesize(type='number' placeholder='50'): sl-icon(slot='prefix' name='fas-file' library='fa')
 
 				h2.setup-text-section-header.mt-4 S3 #[span.setup-text-optional optional]
 				.setup-panel

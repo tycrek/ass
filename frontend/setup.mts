@@ -8,11 +8,11 @@ const errAlert = (logTitle: string, err: any, stream: 'error' | 'warn' = 'error'
 document.addEventListener('DOMContentLoaded', () => {
 
 	const Elements = {
-		dirInput: document.querySelector('#dir') as SlInput,
-		idTypeInput: document.querySelector('#idtype') as SlInput,
-		idSizeInput: document.querySelector('#idsize') as SlInput,
-		gfySizeInput: document.querySelector('#gfysize') as SlInput,
-		fileSizeInput: document.querySelector('#filesize') as SlInput,
+		dirInput: document.querySelector('#uploads-dir') as SlInput,
+		idTypeInput: document.querySelector('#uploads-idtype') as SlInput,
+		idSizeInput: document.querySelector('#uploads-idsize') as SlInput,
+		gfySizeInput: document.querySelector('#uploads-gfysize') as SlInput,
+		fileSizeInput: document.querySelector('#uploads-filesize') as SlInput,
 
 		s3endpoint: document.querySelector('#s3-endpoint') as SlInput,
 		s3bucket: document.querySelector('#s3-bucket') as SlInput,
