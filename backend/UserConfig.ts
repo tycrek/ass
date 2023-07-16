@@ -12,6 +12,11 @@ const numChecker = (val: any) => {
 }
 
 /**
+ * Returns a boolean if the provided value is a non-empty string
+ */
+const basicStringChecker = (val: any) => typeof val === 'string' && val.length > 0;
+
+/**
  * User-config property type checker functions
  */
 const Checkers: UserConfigTypeChecker = {
