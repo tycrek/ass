@@ -82,18 +82,28 @@ export class UserConfig {
 	private static parseConfig(c: any) {
 		const config = (typeof c === 'string' ? JSON.parse(c) : c) as UserConfiguration;
 
+		// * Base config
 		if (!Checkers.uploadsDir(config.uploadsDir)) throw new Error(`Unable to access uploads directory: ${config.uploadsDir}`);
 		if (!Checkers.idType(config.idType)) throw new Error(`Invalid ID type: ${config.idType}`);
 		if (!Checkers.idSize(config.idSize)) throw new Error('Invalid ID size');
 		if (!Checkers.gfySize(config.gfySize)) throw new Error('Invalid Gfy size');
 		if (!Checkers.maximumFileSize(config.maximumFileSize)) throw new Error('Invalid maximum file size');
 
+		// * Optional S3 config
 		if (config.s3 != null) {
 			if (!Checkers.s3.endpoint(config.s3.endpoint)) throw new Error('Invalid S3 Endpoint');
 			if (!Checkers.s3.bucket(config.s3.bucket)) throw new Error('Invalid S3 Bucket');
 			if (!Checkers.s3.region(config.s3.region)) throw new Error('Invalid S3 Region');
 			if (!Checkers.s3.credentials.accessKey(config.s3.credentials.accessKey)) throw new Error('Invalid S3 Access key');
 			if (!Checkers.s3.credentials.secretKey(config.s3.credentials.secretKey)) throw new Error('Invalid S3 Secret key');
+		}
+
+		// * Optional SQL config(s) (Currently only checks MySQL)
+		if (config.sql?.mySql != null) {
+			if (!Checkers.sql.mySql.host(config.sql.mySql.host)) throw new Error('Invalid MySql Host');
+			if (!Checkers.sql.mySql.user(config.sql.mySql.user)) throw new Error('Invalid MySql User');
+			if (!Checkers.sql.mySql.password(config.sql.mySql.password)) throw new Error('Invalid MySql Password');
+			if (!Checkers.sql.mySql.database(config.sql.mySql.database)) throw new Error('Invalid MySql Database');
 		}
 
 		// All is fine, carry on!
