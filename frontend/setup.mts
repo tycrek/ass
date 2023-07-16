@@ -7,22 +7,31 @@ const errAlert = (logTitle: string, err: any, stream: 'error' | 'warn' = 'error'
 // * Wait for the document to be ready
 document.addEventListener('DOMContentLoaded', () => {
 
-	const dirInputElm = document.querySelector('#dir') as SlInput;
-	const idTypeInputElm = document.querySelector('#idtype') as SlInput;
-	const idSizeInputElm = document.querySelector('#idsize') as SlInput;
-	const gfySizeInputElm = document.querySelector('#gfysize') as SlInput;
-	const fileSizeInputElm = document.querySelector('#filesize') as SlInput;
-	const submitButtonElm = document.querySelector('#submit') as SlButton;
+	const Elements = {
+		dirInput: document.querySelector('#dir') as SlInput,
+		idTypeInput: document.querySelector('#idtype') as SlInput,
+		idSizeInput: document.querySelector('#idsize') as SlInput,
+		gfySizeInput: document.querySelector('#gfysize') as SlInput,
+		fileSizeInput: document.querySelector('#filesize') as SlInput,
+
+		s3endpoint: document.querySelector('#s3-endpoint') as SlInput,
+		s3bucket: document.querySelector('#s3-bucket') as SlInput,
+		s3accessKey: document.querySelector('#s3-accessKey') as SlInput,
+		s3secretKey: document.querySelector('#s3-secretKey') as SlInput,
+		s3region: document.querySelector('#s3-region') as SlInput,
+
+		submitButton: document.querySelector('#submit') as SlButton,
+	};
 
 	// * Setup button click handler
-	submitButtonElm.addEventListener('click', async () => {
+	Elements.submitButton.addEventListener('click', async () => {
 
 		const config: UserConfiguration = {
-			uploadsDir: dirInputElm.value,
-			idType: idTypeInputElm.value as IdType,
-			idSize: parseInt(idSizeInputElm.value),
-			gfySize: parseInt(gfySizeInputElm.value),
-			maximumFileSize: parseInt(fileSizeInputElm.value),
+			uploadsDir: Elements.dirInput.value,
+			idType: Elements.idTypeInput.value as IdType,
+			idSize: parseInt(Elements.idSizeInput.value),
+			gfySize: parseInt(Elements.gfySizeInput.value),
+			maximumFileSize: parseInt(Elements.fileSizeInput.value),
 		};
 
 		fetch('/setup', {
