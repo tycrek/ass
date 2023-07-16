@@ -61,6 +61,23 @@ declare module 'ass' {
 		idSize: (val: any) => boolean;
 		gfySize: (val: any) => boolean;
 		maximumFileSize: (val: any) => boolean;
+		s3: {
+			endpoint: (val: any) => boolean;
+			bucket: (val: any) => boolean;
+			region: (val: any) => boolean;
+			credentials: {
+				accessKey: (val: any) => boolean;
+				secretKey: (val: any) => boolean;
+			}
+		}
+		sql: {
+			mySql: {
+				host: (val: any) => boolean;
+				user: (val: any) => boolean;
+				password: (val: any) => boolean;
+				database: (val: any) => boolean;
+			}
+		}
 	}
 
 	interface BusBoyFile {

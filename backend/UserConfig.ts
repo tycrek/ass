@@ -40,6 +40,25 @@ const Checkers: UserConfigTypeChecker = {
 	idSize: numChecker,
 	gfySize: numChecker,
 	maximumFileSize: numChecker,
+
+	s3: {
+		endpoint: basicStringChecker,
+		bucket: basicStringChecker,
+		region: (val) => val == null || basicStringChecker(val),
+		credentials: {
+			accessKey: basicStringChecker,
+			secretKey: basicStringChecker
+		}
+	},
+
+	sql: {
+		mySql: {
+			host: basicStringChecker,
+			user: basicStringChecker,
+			password: basicStringChecker,
+			database: basicStringChecker
+		}
+	}
 }
 
 export class UserConfig {
@@ -68,6 +87,14 @@ export class UserConfig {
 		if (!Checkers.idSize(config.idSize)) throw new Error('Invalid ID size');
 		if (!Checkers.gfySize(config.gfySize)) throw new Error('Invalid Gfy size');
 		if (!Checkers.maximumFileSize(config.maximumFileSize)) throw new Error('Invalid maximum file size');
+
+		if (config.s3 != null) {
+			if (!Checkers.s3.endpoint(config.s3.endpoint)) throw new Error('Invalid S3 Endpoint');
+			if (!Checkers.s3.bucket(config.s3.bucket)) throw new Error('Invalid S3 Bucket');
+			if (!Checkers.s3.region(config.s3.region)) throw new Error('Invalid S3 Region');
+			if (!Checkers.s3.credentials.accessKey(config.s3.credentials.accessKey)) throw new Error('Invalid S3 Access key');
+			if (!Checkers.s3.credentials.secretKey(config.s3.credentials.secretKey)) throw new Error('Invalid S3 Secret key');
+		}
 
 		// All is fine, carry on!
 		return config;
