@@ -135,8 +135,6 @@ export const uploadFileS3 = (file: Buffer, mimetype: string, fileKey: string): P
 	try {
 		// todo: determine when to do multipart uplloads
 		await doObjectUpload(file, mimetype, fileKey);
-
-		// todo: still need to find a way to access it
 		resolve(void 0);
 	} catch (err) {
 		log.error('Failed to upload object to S3', fileKey);
