@@ -26,7 +26,7 @@ html.dark.sl-theme-dark(lang='en')
 				p.text-lg.mb-4 Welcome to ass, your new personal file upload server!
 
 				h2.setup-text-section-header.mt-12 Upload configuration
-				.flex.flex-col.setup-panel.pt-4
+				.setup-panel
 					h3.setup-text-item-title Uploads directory
 					sl-input#dir(type='text' placeholder='/opt/ass/uploads' clearable): sl-icon(slot='prefix' name='fas-folders' library='fa')
 					h3.setup-text-item-title ID type
@@ -39,7 +39,7 @@ html.dark.sl-theme-dark(lang='en')
 					sl-input#filesize(type='number' placeholder='50'): sl-icon(slot='prefix' name='fas-file' library='fa')
 
 				h2.setup-text-section-header.mt-4 S3 #[span.setup-text-optional optional]
-				.flex.flex-col.setup-panel.pt-4
+				.setup-panel
 					h3.setup-text-item-title Endpoint
 					sl-input#s3-endpoint(type='text' placeholder='https://s3.example.com' clearable): sl-icon(slot='prefix' name='fas-server' library='fa')
 					h3.setup-text-item-title Bucket

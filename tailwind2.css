@@ -17,6 +17,10 @@
 		@apply text-stone-400 italic;
 	}
 
+	.setup-panel {
+		@apply flex flex-col pt-4 w-full max-w-xs;
+	}
+
 	.setup-panel>sl-input {
 		@apply mb-4;
 	}
