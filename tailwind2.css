@@ -4,6 +4,22 @@
 
 @layer base {}
 
-@layer components {}
+@layer components {
+	.setup-text-section-header {
+		@apply text-2xl font-bold font-mono;
+	}
+
+	.setup-text-item-title {
+		@apply text-stone-300;
+	}
+
+	.setup-text-optional {
+		@apply text-stone-400 italic;
+	}
+
+	.setup-panel>sl-input {
+		@apply mb-4;
+	}
+}
 
 @layer utilities {}
