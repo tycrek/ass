@@ -173,7 +173,7 @@ export const get = (sector: DataSector, key: NID): Promise<AssFile | AssUser | f
 		const data: AssFile | AssUser | undefined = (MySql.ready)
 			? (await MySql.get(sector === 'files' ? 'assfiles' : 'assusers', key) as AssFile | AssUser | undefined)
 			: (await fs.readJson(PATHS[sector]))[sector][key];
-		(!data) ? reject(false) : resolve(data);
+		(!data) ? resolve(false) : resolve(data);
 	} catch (err) {
 		reject(err);
 	}
