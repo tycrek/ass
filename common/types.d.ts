@@ -134,6 +134,55 @@ declare module 'ass' {
 		timestamp: string;
 		uploader: NID;
 	}
+
+	/**
+	 * Structure of a token in 0.15.0, allowing more fancy features, maybe
+	 */
+	interface UploadToken {
+		/**
+		 * Token ID to link it to a user
+		 */
+		id: NID;
+		/**
+		 * The token itself. The user will need this for upload auth.
+		 */
+		token: string;
+		/**
+		 * Helps the user know what this token is used for
+		 */
+		hint: string;
+	}
+
+	/**
+	 * Object describing the users of an ass instance
+	 */
+	interface AssUser {
+		id: NID;
+		username: string;
+		password: string;
+		admin: boolean
+		tokens: NID[];
+		files: NID[];
+		meta: { [key: string]: any };
+	}
+
+	/**
+	 * JSON schema for files.json
+	 */
+	interface FilesSchema {
+		files: AssFile[];
+		meta: { [key: string]: any };
+	}
+
+	/**
+	 * JSON scheme for users.json
+	 */
+	interface UsersSchema {
+		tokens: UploadToken[];
+		users: AssUser[];
+		cliKey: string;
+		meta: { [key: string]: any };
+	}
 }
 
 //#region Dummy modules
