@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// * Setup button click handler
 	Elements.submitButton.addEventListener('click', async () => {
+		Elements.submitButton.disabled = true;
 
 		// Base configuration values
 		const config: UserConfiguration = {
@@ -81,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (!data.success) alert(data.message);
 				else alert('good?');
 			})
-			.catch((err) => errAlert('POST to /setup failed!', err));
+			.catch((err) => errAlert('POST to /setup failed!', err))
+			.finally(() => Elements.submitButton.disabled = false);
 	});
 });
