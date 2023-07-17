@@ -108,12 +108,12 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 		const useSql = MySql.ready;
 
 		if (sector === 'files') {
-			data = data as AssFile;
 
 			// * 1: Save as files (image, video, etc)
-
-			// ? Local JSON
+			data = data as AssFile;
 			if (!useSql) {
+
+				// ? Local JSON
 				const filesJson = await fs.readJson(PATHS.files) as FilesSchema;
 
 				// Check if key already exists
@@ -129,14 +129,17 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 
 				// Save the files
 				await bothWriter(filesJson, usersJson);
+			} else {
+
+				// ? SQL
 			}
 		} else {
-			data = data as AssUser;
 
 			// * 2: Save as users
-
-			// ? Local JSON
+			data = data as AssUser;
 			if (!useSql) {
+
+				// ? Local JSON
 				const usersJson = await fs.readJson(PATHS.users) as UsersSchema;
 
 				// Check if key already exists
@@ -146,6 +149,9 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 				usersJson.users[key] = data;
 
 				await fs.writeJson(PATHS.users, usersJson, { spaces: '\t' });
+			} else {
+
+				// ? SQL
 			}
 		}
 
