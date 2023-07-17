@@ -48,6 +48,9 @@ router.post('/', async (req, res) => {
 
 	try {
 
+		// Get the file size
+		const fileSize = (await fs.stat(bbFile.file)).size;
+
 		// * Move the file
 		if (!s3) await fs.move(bbFile.file, destination);
 		else await uploadFileS3(await fs.readFile(bbFile.file), bbFile.mimetype, fileKey);
@@ -61,7 +64,8 @@ router.post('/', async (req, res) => {
 			timestamp,
 			uploader: '0', // todo: users
 			save: {},
-			sha256: '0' // todo: hashing
+			sha256: '0', // todo: hashing
+			size: fileSize
 		};
 
 		// Set the save location

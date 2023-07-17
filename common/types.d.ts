@@ -127,6 +127,7 @@ declare module 'ass' {
 			} | true;
 		}
 		sha256: string;
+		size: number;
 		timestamp: string;
 		uploader: NID;
 	}
