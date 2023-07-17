@@ -107,11 +107,7 @@ declare module 'ass' {
 		/**
 		 * Public identifier used in the URL
 		 */
-		fakeid: string;
-		/**
-		 * Internal identifier
-		 */
-		id: NID;
+		fakeid: NID;
 		/**
 		 * Unique-but-human-readable ID. Combination of Epoch and filename.
 		 * This allows users to search for their file while also avoiding conflicts.
@@ -170,7 +166,10 @@ declare module 'ass' {
 	 * JSON schema for files.json
 	 */
 	interface FilesSchema {
-		files: AssFile[];
+		files: {
+			[key: NID]: AssFile;
+		}
+		useSql: boolean;
 		meta: { [key: string]: any };
 	}
 
@@ -179,8 +178,11 @@ declare module 'ass' {
 	 */
 	interface UsersSchema {
 		tokens: UploadToken[];
-		users: AssUser[];
+		users: {
+			[key: NID]: AssUser;
+		};
 		cliKey: string;
+		useSql: boolean;
 		meta: { [key: string]: any };
 	}
 }

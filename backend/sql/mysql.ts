@@ -2,6 +2,8 @@ import mysql, { Pool } from 'mysql2/promise';
 import { UserConfig } from '../UserConfig';
 import { log } from '../log';
 
+type TableNamesType = 'assfiles' | 'assusers' | 'asstokens';
+
 export class MySql {
 	private static _pool: Pool;
 
@@ -45,18 +47,20 @@ export class MySql {
 				} else {
 
 					// There's at least one row, do further checks
-					const tablesExist = { files: false, users: false };
+					const tablesExist = { files: false, users: false, tokens: false };
 
 					// Check which tables ACTUALLY do exist
 					for (let row of rows_tableData) {
-						const table = row[`Tables_in_${UserConfig.config.sql!.mySql!.database}`] as 'assfiles' | 'assusers';
+						const table = row[`Tables_in_${UserConfig.config.sql!.mySql!.database}`
+						] as TableNamesType;
 						if (table === 'assfiles') tablesExist.files = true;
 						if (table === 'assusers') tablesExist.users = true;
+						if (table === 'asstokens') tablesExist.tokens = true;
 						// ! Don't use `= table === ''` because this is a loop
 					}
 
 					// Mini-function for creating a one-off table
-					const createOneTable = async (name: string) => {
+					const createOneTable = async (name: TableNamesType) => {
 						log.warn('MySQL', `Table '${name}' missing, creating`);
 						await MySql._tableManager('create', name);
 						log.success('MySQL', `Table '${name}' created`);
@@ -65,6 +69,7 @@ export class MySql {
 					// Check & create tables
 					if (!tablesExist.files) await createOneTable('assfiles');
 					if (!tablesExist.users) await createOneTable('assusers');
+					if (!tablesExist.users) await createOneTable('asstokens');
 
 					// ! temp: drop tables for testing
 					/* await MySql._tableManager('drop', 'assfiles');

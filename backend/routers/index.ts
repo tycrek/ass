@@ -51,14 +51,13 @@ router.post('/', async (req, res) => {
 
 	try {
 
-		// Move the file
+		// * Move the file
 		if (!s3) await fs.move(bbFile.file, destination);
 		else await uploadFileS3(await fs.readFile(bbFile.file), bbFile.mimetype, fileKey);
 
 		// Build ass metadata
 		const assFile: AssFile = {
 			fakeid: random({ length: UserConfig.config.idSize }), // todo: more generators
-			id: nanoid(32),
 			fileKey,
 			mimetype: bbFile.mimetype,
 			filename: bbFile.filename,
@@ -71,11 +70,8 @@ router.post('/', async (req, res) => {
 		// Set the save location
 		if (!s3) assFile.save.local = destination;
 		else {
-
 			// Using S3 doesn't move temp file, delete it now
 			await fs.rm(bbFile.file);
-
-			// todo: get S3 save data
 			assFile.save.s3 = true;
 		}
 

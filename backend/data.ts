@@ -44,15 +44,17 @@ export const ensureFiles = (): Promise<void> => new Promise(async (resolve, reje
 
 		// * Default files.json
 		await createEmptyJson(PATHS.files, {
-			files: [],
+			files: {},
+			useSql: false,
 			meta: {}
 		} as FilesSchema);
 
 		// * Default users.json
 		await createEmptyJson(PATHS.users, {
 			tokens: [],
-			users: [],
+			users: {},
 			cliKey: nanoid(32),
+			useSql: false,
 			meta: {}
 		} as UsersSchema);
 
