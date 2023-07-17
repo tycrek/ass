@@ -2,6 +2,8 @@ import { path } from '@tycrek/joint';
 import { Router, json as BodyParserJson } from 'express';
 import { log } from '../log';
 import { UserConfig } from '../UserConfig';
+import { setDataModeToSql } from '../data';
+import { MySql } from '../sql/mysql';
 
 const router = Router({ caseSensitive: true });
 
@@ -22,6 +24,9 @@ router.post('/', BodyParserJson(), async (req, res) => {
 
 		// Save config
 		await UserConfig.saveConfigFile();
+
+		// Set data storage (not files) to SQL if required
+		await Promise.all([MySql.configure(), setDataModeToSql()]);
 
 		return res.json({ success: true });
 	} catch (err: any) {
