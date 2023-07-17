@@ -1,13 +1,13 @@
 import fs from 'fs-extra';
 import bb from 'express-busboy';
 import { Router } from 'express';
-import { nanoid } from 'nanoid';
 import { log } from '../log';
 import { UserConfig } from '../UserConfig';
 import { random } from '../generators';
 import { BusBoyFile, AssFile } from 'ass';
 import { getFileS3, uploadFileS3 } from '../s3';
 import { Readable } from 'stream';
+import * as data from '../data';
 
 const router = Router({ caseSensitive: true });
 
@@ -23,9 +23,6 @@ bb.extend(router, {
 
 // Render or redirect
 router.get('/', (req, res) => UserConfig.ready ? res.render('index') : res.redirect('/setup'));
-
-// temp file map
-const files = new Map<string, AssFile>();
 
 // Upload flow
 router.post('/', async (req, res) => {
@@ -75,11 +72,10 @@ router.post('/', async (req, res) => {
 			assFile.save.s3 = true;
 		}
 
+		// * Save metadata
+		data.put('files', assFile.fakeid, assFile);
+
 		log.debug('File saved to', !s3 ? assFile.save.local! : 'S3');
-
-		// todo: save metadata
-		files.set(assFile.fakeid, assFile);
-
 		return res.type('json').send({ resource: `${req.ass.host}/${assFile.fakeid}` });
 	} catch (err) {
 		log.error('Failed to upload file', bbFile.filename);

@@ -101,3 +101,48 @@ export const setDataModeToSql = (): Promise<void> => new Promise(async (resolve,
 	await bothWriter(files, users);
 	(issue) ? reject(new Error(issue)) : resolve(void 0);
 });
+
+export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Promise<void> => new Promise(async (resolve, reject) => {
+	try {
+		const useSql = false;
+
+		if (sector === 'files') {
+			data = data as AssFile;
+
+			// * 1: Save as files (image, video, etc)
+			const filesJson = await fs.readJson(PATHS.files) as FilesSchema;
+
+			// Check if key already exists
+			if (filesJson.files[key] != null) return reject(new Error(`File key ${key} already exists`));
+
+			// Otherwise add the data
+			filesJson.files[key] = data;
+
+			// Also save the key to the users file
+			const usersJson = await fs.readJson(PATHS.users) as UsersSchema;
+			// todo: uncomment this once users are implemented
+			// usersJson.users[data.uploader].files.push(key);
+
+			// Save the files
+			await bothWriter(filesJson, usersJson);
+		} else {
+			data = data as AssUser;
+
+			// * 2: Save as users
+			const usersJson = await fs.readJson(PATHS.users) as UsersSchema;
+
+			// Check if key already exists
+			if (usersJson.users[key] != null) return reject(new Error(`User key ${key} already exists`));
+
+			// Otherwise add the data
+			usersJson.users[key] = data;
+
+			await fs.writeJson(PATHS.users, usersJson, { spaces: '\t' });
+		}
+
+		log.info(`PUT data (${useSql ? 'SQL' : 'local JSON'})`, `${key}`, `${sector} sector`);
+		resolve(void 0);
+	} catch (err) {
+		reject(err);
+	}
+});
