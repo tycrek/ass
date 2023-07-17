@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				message: string
 			}) => {
 				if (!data.success) alert(data.message);
-				else alert('good?');
+				else window.location.href = '/';
 			})
 			.catch((err) => errAlert('POST to /setup failed!', err))
 			.finally(() => Elements.submitButton.disabled = false);
