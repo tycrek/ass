@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { log } from './log';
 import { AssFile, AssUser, NID, FilesSchema, UsersSchema } from 'ass';
 import { UserConfig } from './UserConfig';
+import { MySql } from './sql/mysql';
 
 /**
  * Switcher type for exported functions
@@ -104,40 +105,48 @@ export const setDataModeToSql = (): Promise<void> => new Promise(async (resolve,
 
 export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Promise<void> => new Promise(async (resolve, reject) => {
 	try {
-		const useSql = false;
+		const useSql = MySql.ready;
 
 		if (sector === 'files') {
 			data = data as AssFile;
 
 			// * 1: Save as files (image, video, etc)
-			const filesJson = await fs.readJson(PATHS.files) as FilesSchema;
 
-			// Check if key already exists
-			if (filesJson.files[key] != null) return reject(new Error(`File key ${key} already exists`));
+			// ? Local JSON
+			if (!useSql) {
+				const filesJson = await fs.readJson(PATHS.files) as FilesSchema;
 
-			// Otherwise add the data
-			filesJson.files[key] = data;
+				// Check if key already exists
+				if (filesJson.files[key] != null) return reject(new Error(`File key ${key} already exists`));
 
-			// Also save the key to the users file
-			const usersJson = await fs.readJson(PATHS.users) as UsersSchema;
-			// todo: uncomment this once users are implemented
-			// usersJson.users[data.uploader].files.push(key);
+				// Otherwise add the data
+				filesJson.files[key] = data;
 
-			// Save the files
-			await bothWriter(filesJson, usersJson);
+				// Also save the key to the users file
+				const usersJson = await fs.readJson(PATHS.users) as UsersSchema;
+				// todo: uncomment this once users are implemented
+				// usersJson.users[data.uploader].files.push(key);
+
+				// Save the files
+				await bothWriter(filesJson, usersJson);
+			}
 		} else {
 			data = data as AssUser;
 
 			// * 2: Save as users
-			const usersJson = await fs.readJson(PATHS.users) as UsersSchema;
 
-			// Check if key already exists
-			if (usersJson.users[key] != null) return reject(new Error(`User key ${key} already exists`));
+			// ? Local JSON
+			if (!useSql) {
+				const usersJson = await fs.readJson(PATHS.users) as UsersSchema;
 
-			// Otherwise add the data
-			usersJson.users[key] = data;
+				// Check if key already exists
+				if (usersJson.users[key] != null) return reject(new Error(`User key ${key} already exists`));
 
-			await fs.writeJson(PATHS.users, usersJson, { spaces: '\t' });
+				// Otherwise add the data
+				usersJson.users[key] = data;
+
+				await fs.writeJson(PATHS.users, usersJson, { spaces: '\t' });
+			}
 		}
 
 		log.info(`PUT data (${useSql ? 'SQL' : 'local JSON'})`, `${key}`, `${sector} sector`);
