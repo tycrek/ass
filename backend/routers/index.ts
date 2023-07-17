@@ -93,7 +93,13 @@ router.get('/direct/:fakeId', async (req, res) => {
 	const fakeId = req.params.fakeId;
 
 	// Get the file metadata
-	const _data = await data.get('files', fakeId);
+	let _data;
+	try { _data = await data.get('files', fakeId); }
+	catch (err) {
+		log.error('Failed to get', fakeId);
+		console.error(err);
+		return res.status(500).send();
+	}
 
 	if (!_data) return res.status(404).send();
 	else {
