@@ -10,11 +10,11 @@ export class MySql {
 	/**
 	 * Quick function for creating a simple JSON table
 	 */
-	private static _tableManager(mode: 'create' | 'drop', name: string): Promise<void> {
+	private static _tableManager(mode: 'create' | 'drop', name: string, schema = '( NanoID varchar(255), Data JSON )'): Promise<void> {
 		return new Promise((resolve, reject) =>
 			MySql._pool.query(
 				mode === 'create'
-					? `CREATE TABLE ${name} ( NanoID varchar(255), Data JSON );`
+					? `CREATE TABLE ${name} ${schema};`
 					: `DROP TABLE ${name};`)
 				.then(() => resolve())
 				.catch((err) => reject(err)));
@@ -42,7 +42,11 @@ export class MySql {
 				// Create tables if needed
 				if (rows_tableData.length === 0) {
 					log.warn('MySQL', 'Tables do not exist, creating');
-					await Promise.all([MySql._tableManager('create', 'assfiles'), MySql._tableManager('create', 'assusers')]);
+					await Promise.all([
+						MySql._tableManager('create', 'assfiles'),
+						MySql._tableManager('create', 'assusers'),
+						MySql._tableManager('create', 'asstokens')
+					]);
 					log.success('MySQL', 'Tables created').callback(resolve);
 				} else {
 
