@@ -13,6 +13,9 @@ declare module 'ass' {
 		proxied: boolean;
 	}
 
+	/**
+	 * User-defined configuration
+	 */
 	interface UserConfiguration {
 		uploadsDir: string;
 		idType: IdType;
@@ -80,9 +83,15 @@ declare module 'ass' {
 		}
 	}
 
+	/**
+	 * The in-progress structure of a file being uploaded (pre-ass processing)
+	 */
 	interface BusBoyFile {
 		uuid: string;
 		field: string;
+		/**
+		 * Absolute path to the temporary file on-disk
+		 */
 		file: string;
 		filename: string;
 		encoding: string;
@@ -91,12 +100,28 @@ declare module 'ass' {
 		done: boolean;
 	}
 
+	/**
+	 * Object describing the file as ass handles it (after BusBoy)
+	 */
 	interface AssFile {
+		/**
+		 * Public identifier used in the URL
+		 */
 		fakeid: string;
+		/**
+		 * Internal identifier
+		 */
 		id: NID;
+		/**
+		 * Unique-but-human-readable ID. Combination of Epoch and filename.
+		 * This allows users to search for their file while also avoiding conflicts.
+		 */
 		fileKey: string;
-		mimetype: string;
+		/**
+		 * The original filename when it was uploaded by the user
+		 */
 		filename: string;
+		mimetype: string;
 		save: {
 			local?: string;
 			s3?: {
