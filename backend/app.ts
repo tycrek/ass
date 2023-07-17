@@ -4,6 +4,7 @@ import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 import tailwindcss from 'tailwindcss';
 import { log } from './log';
+import { ensureFiles } from './data';
 import { UserConfig } from './UserConfig';
 import { ServerConfiguration } from 'ass';
 
@@ -26,6 +27,9 @@ async function main() {
 	// Launch log
 	const pkg = await fs.readJson(path.join('package.json')) as { name: string, version: string };
 	log.blank().info(pkg.name, pkg.version).blank();
+
+	// Ensure data files exist
+	await ensureFiles();
 
 	// Set default server configuration
 	const serverConfig: ServerConfiguration = {
