@@ -3,6 +3,8 @@ import { path } from '@tycrek/joint';
 import { UserConfiguration, UserConfigTypeChecker } from 'ass';
 import { log } from './log';
 
+const FILEPATH = path.join('.ass-data/userconfig.json');
+
 /**
  * Returns a boolean if the provided value is a number
  */
@@ -121,7 +123,7 @@ export class UserConfig {
 				if (!UserConfig._ready) throw new Error('Config not ready to be saved!');
 
 				// Write to file
-				await fs.writeFile(path.join('userconfig.json'), JSON.stringify(UserConfig._config, null, '\t'));
+				await fs.writeFile(FILEPATH, JSON.stringify(UserConfig._config, null, '\t'));
 
 				resolve(void 0);
 			} catch (err) {
@@ -139,7 +141,7 @@ export class UserConfig {
 			try {
 
 				// Read the file data
-				const data = (await fs.readFile(path.join('userconfig.json'))).toString();
+				const data = (await fs.readFile(FILEPATH)).toString();
 
 				// Ensure the config is valid
 				UserConfig._config = UserConfig.parseConfig(data);
