@@ -1,23 +1,8 @@
 # Dependency directories
 node_modules/
-jspm_packages/
 
 # build dirs
 dist*/
 
-# tokens
-auth.json*
-auth.*.json
-
-# data
-data.json*
-
-# uploads
-uploads/
-
-# config
-config.json
-userconfig.json
-
-# share/ directory
-share/
+# ass data
+.ass-data/
