@@ -25,15 +25,14 @@ export class MySql {
 	 */
 	public static configure(): Promise<void> {
 		return new Promise(async (resolve, reject) => {
-
-			// Config check
-			if (!UserConfig.ready) throw new Error('User configuration not ready');
-			if (!UserConfig.config.sql?.mySql) throw new Error('MySQL configuration missing');
-
-			// Create the pool
-			MySql._pool = mysql.createPool(UserConfig.config.sql.mySql);
-
 			try {
+
+				// Config check
+				if (!UserConfig.ready) throw new Error('User configuration not ready');
+				if (!UserConfig.config.sql?.mySql) throw new Error('MySQL configuration missing');
+
+				// Create the pool
+				MySql._pool = mysql.createPool(UserConfig.config.sql.mySql);
 
 				// Check if the pool is usable
 				const [rowz, _fields] = await MySql._pool.query(`SHOW FULL TABLES WHERE Table_Type LIKE 'BASE TABLE';`);
