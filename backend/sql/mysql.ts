@@ -85,7 +85,10 @@ export class MySql {
 
 					// Hopefully we are ready
 					if (tablesExist.files && tablesExist.users)
-						log.info('MySQL', 'Tables exist, ready').callback(resolve(void 0));
+						log.info('MySQL', 'Tables exist, ready').callback(() => {
+							MySql._ready = true;
+							resolve(void 0)
+						});
 					else throw new Error('Table(s) missing!');
 				}
 			} catch (err) {
