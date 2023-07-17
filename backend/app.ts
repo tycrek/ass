@@ -7,6 +7,7 @@ import { log } from './log';
 import { ensureFiles } from './data';
 import { UserConfig } from './UserConfig';
 import { ServerConfiguration } from 'ass';
+import { MySql } from './sql/mysql';
 
 /**
  * Custom middleware to attach the ass object (and construct the `host` property)
@@ -62,6 +63,9 @@ async function main() {
 	// Attempt to load user configuration
 	await new Promise((resolve) => UserConfig.readConfigFile().then(() => resolve(void 0))
 		.catch((err) => (err.code && err.code === 'ENOENT' ? {} : console.error(err), resolve(void 0))));
+
+	// If user config is ready, try to configure SQL
+	if (UserConfig.ready) await MySql.configure();
 
 	// Set up Express
 	const app = express();
