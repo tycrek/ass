@@ -113,4 +113,20 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 				.catch((err) => reject(err));
 		});
 	}
+
+	public static get(table: TableNamesType, key: NID): Promise<UploadToken | AssFile | AssUser | undefined> {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Run query
+				const [rowz, _fields] = await MySql._pool.query(`SELECT Data FROM ${table} WHERE NanoID = '${key}';`);
+
+				// Disgustingly interpret the query results
+				const rows_tableData = (rowz as unknown as { [key: string]: string }[])[0] as unknown as ({ Data: UploadToken | AssFile | AssUser | undefined });
+
+				resolve(rows_tableData?.Data ?? undefined);
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
 }

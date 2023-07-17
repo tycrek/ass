@@ -167,3 +167,14 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 		reject(err);
 	}
 });
+
+export const get = (sector: DataSector, key: NID): Promise<AssFile | AssUser | false> => new Promise(async (resolve, reject) => {
+	try {
+		const data: AssFile | AssUser | undefined = (MySql.ready)
+			? (await MySql.get(sector === 'files' ? 'assfiles' : 'assusers', key) as AssFile | AssUser | undefined)
+			: (await fs.readJson(PATHS[sector]))[sector][key];
+		(!data) ? reject(false) : resolve(data);
+	} catch (err) {
+		reject(err);
+	}
+});

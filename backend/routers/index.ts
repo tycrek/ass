@@ -92,11 +92,12 @@ router.get('/direct/:fakeId', async (req, res) => {
 	// Get the ID
 	const fakeId = req.params.fakeId;
 
-	if (!files.has(fakeId)) return res.status(404).send();
-	else {
+	// Get the file metadata
+	const _data = await data.get('files', fakeId);
 
-		// Get file metadata
-		const meta = files.get(fakeId)!;
+	if (!_data) return res.status(404).send();
+	else {
+		const meta = _data as AssFile;
 
 		// File data can come from either S3 or local filesystem
 		let output: Readable | NodeJS.ReadableStream;
