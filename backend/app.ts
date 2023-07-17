@@ -84,6 +84,9 @@ async function main() {
 	app.use(BodyParserJson());
 	app.use(assMetaMiddleware(serverConfig.port, serverConfig.proxied));
 
+	// Favicon
+	app.use('/favicon.ico', (req, res) => res.redirect('https://i.tycrek.dev/ass'));
+
 	// CSS
 	app.use('/.css', epcss({
 		cssPath: path.join('tailwind2.css'),
