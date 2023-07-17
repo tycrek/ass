@@ -7,6 +7,9 @@ type TableNamesType = 'assfiles' | 'assusers' | 'asstokens';
 export class MySql {
 	private static _pool: Pool;
 
+	private static _ready: boolean = false;
+	public static get ready() { return MySql._ready; }
+
 	/**
 	 * Quick function for creating a simple JSON table
 	 */
