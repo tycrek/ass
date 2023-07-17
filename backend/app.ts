@@ -65,7 +65,9 @@ async function main() {
 		.catch((err) => (err.code && err.code === 'ENOENT' ? {} : console.error(err), resolve(void 0))));
 
 	// If user config is ready, try to configure SQL
-	if (UserConfig.ready && UserConfig.config.sql?.mySql != null) await MySql.configure();
+	if (UserConfig.ready && UserConfig.config.sql?.mySql != null)
+		try { await MySql.configure(); }
+		catch (err) { throw new Error(`Failed to configure SQL`); }
 
 	// Set up Express
 	const app = express();
