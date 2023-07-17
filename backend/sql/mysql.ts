@@ -1,6 +1,7 @@
 import mysql, { Pool } from 'mysql2/promise';
 import { UserConfig } from '../UserConfig';
 import { log } from '../log';
+import { AssFile, AssUser, NID, UploadToken } from 'ass';
 
 type TableNamesType = 'assfiles' | 'assusers' | 'asstokens';
 
@@ -92,6 +93,21 @@ export class MySql {
 				console.error(err);
 				reject(err);
 			}
+		});
+	}
+
+	public static put(table: TableNamesType, key: NID, data: UploadToken | AssFile | AssUser): Promise<void> {
+		return new Promise(async (resolve, reject) => {
+			if (!MySql._ready) return reject(new Error('MySQL not ready'));
+
+			const query = `
+INSERT INTO ${table} ( NanoID, Data )
+VALUES ('${key}', '${JSON.stringify(data)}');
+`;
+
+			return MySql._pool.query(query)
+				.then(() => resolve(void 0))
+				.catch((err) => reject(err));
 		});
 	}
 }
