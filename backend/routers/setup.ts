@@ -26,7 +26,8 @@ router.post('/', BodyParserJson(), async (req, res) => {
 		await UserConfig.saveConfigFile();
 
 		// Set data storage (not files) to SQL if required
-		await Promise.all([MySql.configure(), setDataModeToSql()]);
+		if (UserConfig.config.sql?.mySql != null)
+			await Promise.all([MySql.configure(), setDataModeToSql()]);
 
 		return res.json({ success: true });
 	} catch (err: any) {
