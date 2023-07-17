@@ -132,6 +132,10 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 			} else {
 
 				// ? SQL
+				// todo: check existing
+				await MySql.put('assfiles', key, data);
+
+				// todo: modify users SQL files property
 			}
 		} else {
 
@@ -152,6 +156,8 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 			} else {
 
 				// ? SQL
+				// todo: check existing
+				await MySql.put('assusers', key, data);
 			}
 		}
 
