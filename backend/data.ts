@@ -161,7 +161,7 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 			}
 		}
 
-		log.info(`PUT data (${useSql ? 'SQL' : 'local JSON'})`, `${key}`, `${sector} sector`);
+		log.info(`PUT ${sector} data`, `using ${useSql ? 'SQL' : 'local JSON'}`, key);
 		resolve(void 0);
 	} catch (err) {
 		reject(err);
