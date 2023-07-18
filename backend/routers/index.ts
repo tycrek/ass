@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import bb from 'express-busboy';
 import { Router } from 'express';
+import crypto from 'crypto';
 import { log } from '../log';
 import { UserConfig } from '../UserConfig';
 import { random } from '../generators';
@@ -50,6 +51,9 @@ router.post('/', async (req, res) => {
 
 		// Get the file size
 		const fileSize = (await fs.stat(bbFile.file)).size;
+
+		// Get the hash
+		const sha256 = crypto.createHash('sha256').update(await fs.readFile(bbFile.file)).digest('base64');
 
 		// * Move the file
 		if (!s3) await fs.move(bbFile.file, destination);
