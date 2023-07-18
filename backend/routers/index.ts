@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
 	try {
 
 		// Get the file size
-		const fileSize = (await fs.stat(bbFile.file)).size;
+		const size = (await fs.stat(bbFile.file)).size;
 
 		// Get the hash
 		const sha256 = crypto.createHash('sha256').update(await fs.readFile(bbFile.file)).digest('base64');
@@ -62,14 +62,14 @@ router.post('/', async (req, res) => {
 		// Build ass metadata
 		const assFile: AssFile = {
 			fakeid: random({ length: UserConfig.config.idSize }), // todo: more generators
+			size,
+			sha256,
 			fileKey,
+			timestamp,
 			mimetype: bbFile.mimetype,
 			filename: bbFile.filename,
-			timestamp,
 			uploader: '0', // todo: users
 			save: {},
-			sha256: '0', // todo: hashing
-			size: fileSize
 		};
 
 		// Set the save location
