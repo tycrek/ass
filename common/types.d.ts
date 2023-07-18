@@ -163,6 +163,13 @@ declare module 'ass' {
 		meta: { [key: string]: any };
 	}
 
+	interface AssUserNewReq {
+		username: string;
+		password: string;
+		admin?: boolean;
+		meta?: { [key: string]: any };
+	}
+
 	/**
 	 * JSON schema for files.json
 	 */
