@@ -103,6 +103,7 @@ async function main() {
 
 	// Routing
 	app.use('/setup', (await import('./routers/setup')).router);
+	app.use('/api', (await import('./routers/api')).router);
 	app.use('/', (await import('./routers/index')).router);
 
 	// Host app
