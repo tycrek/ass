@@ -53,12 +53,14 @@ const s3 = (): S3Client | null => {
 /**
  * Basic single file upload
  */
-const doObjectUpload = (file: Buffer, mimetype: string, fileKey: string): Promise<PutObjectCommandOutput> =>
+const doObjectUpload = (file: Buffer, fileKey: string, mimetype: string, size: number, sha256: string): Promise<PutObjectCommandOutput> =>
 	new Promise((resolve, reject) => s3()!.send(new PutObjectCommand({
 		Bucket: UserConfig.config.s3!.bucket,
 		Key: fileKey,
 		ContentType: mimetype,
-		Body: new Uint8Array(file)
+		ContentLength: size,
+		Body: new Uint8Array(file),
+		ChecksumSHA256: sha256
 	})).then(resolve).catch(reject));
 
 /**
@@ -129,12 +131,12 @@ const doMultipartUpload = (file: Buffer, mimetype: string, fileKey: string): Pro
 /**
  * Uploads a file to your configured S3 provider
  */
-export const uploadFileS3 = (file: Buffer, mimetype: string, fileKey: string): Promise<void> => new Promise(async (resolve, reject) => {
+export const uploadFileS3 = (file: Buffer, fileKey: string, mimetype: string, size: number, sha256: string): Promise<void> => new Promise(async (resolve, reject) => {
 	if (!s3readyCheck) return reject(NYR);
 
 	try {
 		// todo: determine when to do multipart uplloads
-		await doObjectUpload(file, mimetype, fileKey);
+		await doObjectUpload(file, fileKey, mimetype, size, sha256);
 		resolve(void 0);
 	} catch (err) {
 		log.error('Failed to upload object to S3', fileKey);

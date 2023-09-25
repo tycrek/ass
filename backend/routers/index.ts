@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
 
 		// * Move the file
 		if (!s3) await fs.move(bbFile.file, destination);
-		else await uploadFileS3(await fs.readFile(bbFile.file), bbFile.mimetype, fileKey);
+		else await uploadFileS3(await fs.readFile(bbFile.file), fileKey, bbFile.mimetype, size, sha256);
 
 		// Build ass metadata
 		const assFile: AssFile = {
