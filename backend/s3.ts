@@ -39,7 +39,7 @@ const s3 = (): S3Client | null => {
 		};
 
 		// Attach region to config if required
-		s3config.region = region != null ? region : '';
+		s3config.region = region != null ? region : 'auto';
 
 		// Build the new client
 		_s3client = new S3Client(s3config);
