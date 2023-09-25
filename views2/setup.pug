@@ -39,6 +39,14 @@ html.dark.sl-theme-dark(lang='en')
 					h3.setup-text-item-title Maximum file size (MB)
 					sl-input#uploads-filesize(type='number' placeholder='50'): sl-icon(slot='prefix' name='fas-file' library='fa')
 
+				//- * Admin User
+				h2.setup-text-section-header.mt-4 Admin User
+				.setup-panel
+					h3.setup-text-item-title Username
+					sl-input#user-username(type='text' placeholder='admin' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
+					h3.setup-text-item-title Password
+					sl-input#user-password(type='password' placeholder='the-most-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
+
 				//- * S3
 				h2.setup-text-section-header.mt-4 S3 #[span.setup-text-optional optional]
 				.setup-panel

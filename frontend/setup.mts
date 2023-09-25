@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		mySqlPassword: document.querySelector('#mysql-password') as SlInput,
 		mySqlDatabase: document.querySelector('#mysql-database') as SlInput,
 
+		userUsername: document.querySelector('#user-username') as SlInput,
+		userPassword: document.querySelector('#user-password') as SlInput,
+
 		submitButton: document.querySelector('#submit') as SlButton,
 	};
 
@@ -68,6 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			};
 		}
 
+		// ! Make sure the admin user fields are set
+		const adminErrReset = (message: string) => (Elements.submitButton.disabled = false, alert(message));
+		if (Elements.userUsername.value == null || Elements.userUsername.value === '')
+			return adminErrReset('Admin username is required!');
+		if (Elements.userPassword.value == null || Elements.userPassword.value === '')
+			return adminErrReset('Admin password is required!');
+
 		// Do setup
 		fetch('/setup', {
 			method: 'POST',
@@ -80,7 +90,24 @@ document.addEventListener('DOMContentLoaded', () => {
 				message: string
 			}) => {
 				if (!data.success) alert(data.message);
-				else window.location.href = '/';
+
+				// Create first user (YES I KNOW THIS NESTING IS GROSS)
+				else return fetch('/api/user', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						username: Elements.userUsername.value,
+						password: Elements.userPassword.value,
+						admin: true
+					})
+				}).then((res) => res.json())
+					.then((data: {
+						success: boolean,
+						message: string
+					}) => {
+						alert(data.message);
+						if (data.success) window.location.href = '/dashboard';
+					});
 			})
 			.catch((err) => errAlert('POST to /setup failed!', err))
 			.finally(() => Elements.submitButton.disabled = false);
