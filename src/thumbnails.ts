@@ -26,8 +26,8 @@ function getCommand(src: String, dest: String) {
 		'-v', (isProd ? 'error' : 'debug'), // Log level
 		'-i', src,                                                         // Input file
 		'-ss', '00:00:01.000',                                             // Timestamp of frame to grab
+                '-vf', `scale=${THUMBNAIL.WIDTH}:${THUMBNAIL.HEIGHT}:force_original_aspect_ratio=increase,crop=${THUMBNAIL.WIDTH}:${THUMBNAIL.HEIGHT}`, // Dimensions of output file
 		'-frames:v', '1',                                                  // Number of frames to grab
-		'-s', `${THUMBNAIL.WIDTH}x${THUMBNAIL.HEIGHT}`,                    // Dimensions of output file
 		dest                                                               // Output file
 	]);
 }

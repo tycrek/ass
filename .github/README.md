@@ -124,7 +124,7 @@ ass supports two installation methods: Docker (recommended) & local (manual).
 1. Clone the ass repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
 2. Run the command that corresponds to your OS:
    - **Linux**: `./install/docker-linux.sh` (uses `#!/bin/bash`)
-   - **Windows**: `install/docker-windows.bat` (from Command Prompt)
+   - **Windows**: `install\docker-windows.bat` (from Command Prompt)
    - These scripts are identical using the equivalent commands in each OS.
 3. Work through the setup process when prompted.
 
