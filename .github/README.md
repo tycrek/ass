@@ -13,6 +13,10 @@
 
 By default, ass comes with a resource viewing page, which includes metadata about the resource as well as a download button & inline viewers for images, videos, & audio. It does **not** have a user dashboard or registration system: **this is intentional!** Developers are free to [create their own frontends] using the languages & tools they are most comfortable with. Writing & using these frontends is fully documented below, in the wiki, & in the source code.
 
+### Notice (Sep 2023)
+
+The current release version 0.14.4 is now in "maintenence mode". What this means is I'll only be providing updates to catastrophic issues. However! I'm currently working on [a new version](https://github.com/tycrek/ass/pull/220), 0.15.0, which is a lot more stable and organized. I have no ETA but please know that I'm continuing to work on it when I can. Version 0.14.4 is still functional, just a bit rough around the edges.
+
 #### Developers ❤
 
 ass was designed with developers in mind. If you are a developer & want something changed to better suit you, let me know & we'll see what we can do!
