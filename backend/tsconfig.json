@@ -2,10 +2,6 @@
 	"extends": "@tsconfig/node18/tsconfig.json",
 	"compilerOptions": {
 		"outDir": "../dist-backend",
-		"lib": [
-			"ES2022",
-		],
-		"moduleResolution": "Node",
 		"strictPropertyInitialization": false
 	},
 	"include": [
