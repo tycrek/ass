@@ -86,7 +86,7 @@ async function main() {
 
 	app.set('trust proxy', serverConfig.proxied);
 	app.set('view engine', 'pug');
-	app.set('views', 'views2/');
+	app.set('views', 'views/');
 
 	// Middleware
 	app.use(log.express());
