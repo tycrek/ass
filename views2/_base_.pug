@@ -12,4 +12,13 @@ html.dark.sl-theme-dark(lang='en')
 		include ../node_modules/shoelace-pug-loader/loader.pug
 		+slTheme('dark')
 		+slAuto
-	block content
+	body.w-screen.h-screen.flex.flex-col
+
+		//- Header
+		.w-full.border-b.border-stone-500.flex.justify-center.items-center.py-3
+			h1.text-4xl.font-bold.font-mono: block section
+				span [section]
+
+		//- Centering width-fixer
+		.w-full.flex.justify-center
+			.w-full.md_max-w-xl.px-4.pt-16: block content
