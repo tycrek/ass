@@ -4,7 +4,7 @@ import { log } from '../log';
 import { UserConfig } from '../UserConfig';
 import * as data from '../data';
 import { AssUser, AssUserNewReq } from 'ass';
-import { nanoid } from 'nanoid';
+import { nanoid } from '../generators';
 
 const router = Router({ caseSensitive: true });
 

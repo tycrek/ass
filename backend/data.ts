@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
-import { nanoid } from 'nanoid';
+import { nanoid } from './generators';
 import { log } from './log';
 import { AssFile, AssUser, NID, FilesSchema, UsersSchema } from 'ass';
 import { UserConfig } from './UserConfig';

@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { randomBytes } from 'crypto';
+import { randomBytes, getRandomValues } from 'crypto';
 import cryptoRandomString from 'crypto-random-string';
 import { path } from '@tycrek/joint';
 
@@ -47,3 +47,4 @@ export const gfycat = ({ gfyLength }: Length) => {
 	return gfycat.concat(getWord(animals));
 };
 
+export const nanoid = (size = 21) => getRandomValues(new Uint8Array(size)).reduce(((t, e) => t += (e &= 63) < 36 ? e.toString(36) : e < 62 ? (e - 26).toString(36).toUpperCase() : e > 62 ? "-" : "_"), "");
