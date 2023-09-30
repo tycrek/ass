@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {}
+
+@layer components {
+	.res-media {
+		@apply border-l-4 rounded max-h-half-port;
+	}
+
+	.link {
+		@apply no-underline hover_no-underline active_no-underline visited_no-underline
+
+			/* regular, visited */
+			text-link-primary visited_text-link-primary
+			border-b-2 visited_border-b-2
+			border-transparent visited_border-transparent
+			rounded-sm visited_rounded-sm
+
+			/* hover */
+			hover_text-link-hover
+			hover_border-hover
+
+			/* active */
+			active_text-link-active
+
+			/* transitions */
+			ease-linear duration-150 transition-all;
+	}
+}
+
+@layer utilities {}

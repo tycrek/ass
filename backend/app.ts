@@ -98,7 +98,7 @@ async function main() {
 
 	// CSS
 	app.use('/.css', epcss({
-		cssPath: path.join('tailwind2.css'),
+		cssPath: path.join('tailwind.css'),
 		plugins: [
 			tailwindcss,
 			(await import('autoprefixer')).default(),
