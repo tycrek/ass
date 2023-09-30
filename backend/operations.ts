@@ -1,9 +1,7 @@
 import fs from 'fs-extra';
 import sharp from 'sharp';
-import crypto from 'crypto';
 import Vibrant from 'node-vibrant';
 import ffmpeg from 'ffmpeg-static';
-import toArray from 'stream-to-array';
 import { exec } from 'child_process';
 import { removeLocation } from '@xoi/gps-metadata-remover';
 import { isProd } from '@tycrek/joint';
@@ -30,16 +28,6 @@ export const removeGPS = (file: string): Promise<boolean> => {
 			.then(resolve)
 			.catch(reject));
 }
-
-/**
- * SHA256 file hasher
- */
-export const sha256 = (file: string): Promise<string> => new Promise((resolve, reject) =>
-	toArray(fs.createReadStream(file))
-		.then((parts: any[]) => Buffer.concat(parts.map((part: any) => Buffer.isBuffer(part) ? part : Buffer.from(part))))
-		.then((buf: Buffer) => crypto.createHash('sha256').update(buf).digest('hex'))
-		.then((hash: string) => resolve(hash))
-		.catch(reject));
 
 const VIBRANT = { COLOURS: 256, QUALITY: 3 };
 export const vibrant = (file: string, mimetype: string): Promise<string> => new Promise((resolve, reject) =>
