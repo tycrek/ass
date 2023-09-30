@@ -17,7 +17,7 @@ export function getDirectUrl(resourceId: string) {
 }
 
 export function getResourceColor(colorValue: string, vibrantValue: string) {
-	return colorValue === '&random' ? randomHexColour() : colorValue === '&vibrant' ? vibrantValue : colorValue;
+	return (!colorValue || colorValue === '&vibrant') ? vibrantValue : colorValue === '&random' ? randomHexColour() : colorValue;
 }
 
 export function replaceholder(data: string, size: number, timestamp: number, timeoffset: string, originalname: string) {
