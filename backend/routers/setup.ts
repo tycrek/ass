@@ -4,11 +4,12 @@ import { log } from '../log';
 import { UserConfig } from '../UserConfig';
 import { setDataModeToSql } from '../data';
 import { MySql } from '../sql/mysql';
+import { App } from '../app';
 
 const router = Router({ caseSensitive: true });
 
 // Static routes
-router.get('/', (req, res) => UserConfig.ready ? res.redirect('/') : res.render('setup'));
+router.get('/', (req, res) => UserConfig.ready ? res.redirect('/') : res.render('setup', { version: App.pkgVersion }));
 router.get('/ui.js', (req, res) => UserConfig.ready ? res.send('') : res.type('text/javascript').sendFile(path.join('dist-frontend/setup.mjs')));
 
 // Setup route

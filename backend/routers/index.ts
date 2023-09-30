@@ -9,6 +9,7 @@ import { BusBoyFile, AssFile } from 'ass';
 import { getFileS3, uploadFileS3 } from '../s3';
 import { Readable } from 'stream';
 import * as data from '../data';
+import { App } from '../app';
 
 const router = Router({ caseSensitive: true });
 
@@ -23,7 +24,7 @@ bb.extend(router, {
 });
 
 // Render or redirect
-router.get('/', (req, res) => UserConfig.ready ? res.render('index') : res.redirect('/setup'));
+router.get('/', (req, res) => UserConfig.ready ? res.render('index', { version: App.pkgVersion }) : res.redirect('/setup'));
 
 // Upload flow
 router.post('/', async (req, res) => {

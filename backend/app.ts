@@ -10,6 +10,13 @@ import { ServerConfiguration } from 'ass';
 import { MySql } from './sql/mysql';
 
 /**
+ * Top-level metadata exports
+ */
+export const App = {
+	pkgVersion: ''
+}
+
+/**
  * Custom middleware to attach the ass object (and construct the `host` property)
  */
 function assMetaMiddleware(port: number, proxied: boolean): RequestHandler {
@@ -28,6 +35,8 @@ async function main() {
 	// Launch log
 	const pkg = await fs.readJson(path.join('package.json')) as { name: string, version: string };
 	log.blank().info(pkg.name, pkg.version).blank();
+
+	App.pkgVersion = pkg.version;
 
 	// Ensure data files exist
 	await ensureFiles();
