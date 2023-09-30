@@ -111,9 +111,9 @@ async function main() {
 	app.get('/.ass.host', (req, res) => res.send(req.ass.host));
 
 	// Routing
-	app.use('/setup', (await import('./routers/setup')).router);
-	app.use('/api', (await import('./routers/api')).router);
-	app.use('/', (await import('./routers/index')).router);
+	app.use('/setup', (await import('./routers/setup.js')).router);
+	app.use('/api', (await import('./routers/api.js')).router);
+	app.use('/', (await import('./routers/index.js')).router);
 
 	// Host app
 	app.listen(serverConfig.port, serverConfig.host, () => log[UserConfig.ready ? 'success' : 'warn']('Server listening', UserConfig.ready ? 'Ready for uploads' : 'Setup required', `click http://127.0.0.1:${serverConfig.port}`));
