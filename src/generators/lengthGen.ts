@@ -1,2 +1,0 @@
-import { randomBytes } from 'crypto';
-export default (length: number, charset: string[]): string => [...randomBytes(length)].map((byte) => charset[Number(byte) % charset.length]).join('').slice(1).concat(charset[0]);
