@@ -6,12 +6,11 @@ html.dark.sl-theme-dark(lang='en')
 		title ass setup
 		meta(name='theme-color' content='black')
 		link(rel='stylesheet', href='/.css')
-		//- Shoelace-FontAwesome Pug mixin
+		//- Shoelace/Font Awesome mixins
 		include ../node_modules/shoelace-fontawesome-pug/sl-fa-mixin.pug
 		include ../node_modules/shoelace-pug-loader/loader.pug
 		+slTheme('dark')
-		//- Shoelace components
-		+slComponents('input', 'icon', 'button')
+		+slAuto
 	body.w-screen.h-screen.flex.flex-col
 
 		//- Header
