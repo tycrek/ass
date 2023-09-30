@@ -51,7 +51,7 @@ export function randomHexColour() { // From: https://www.geeksforgeeks.org/javas
 }
 
 export function getResourceColor(colorValue: string, vibrantValue: string) {
-	return colorValue === '&random' ? randomHexColour() : colorValue === '&vibrant' ? vibrantValue : colorValue;
+	return (!colorValue || colorValue === '&vibrant') ? vibrantValue : colorValue === '&random' ? randomHexColour() : colorValue;
 }
 
 export function formatTimestamp(timestamp: number, timeoffset: string) {
