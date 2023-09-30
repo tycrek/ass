@@ -1,0 +1,15 @@
+doctype html
+html.dark.sl-theme-dark(lang='en')
+	head
+		meta(charset='UTF-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0')
+		block title
+			title ass 🍑
+		meta(name='theme-color' content='black')
+		link(rel='stylesheet', href='/.css')
+		//- Shoelace/Font Awesome mixins
+		include ../node_modules/shoelace-fontawesome-pug/sl-fa-mixin.pug
+		include ../node_modules/shoelace-pug-loader/loader.pug
+		+slTheme('dark')
+		+slAuto
+	block content
