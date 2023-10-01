@@ -21,6 +21,11 @@ jobs:
         run: yarn install
       - name: Lint Action
         uses: wearerequired/lint-action@v2
+        with:
+          eslint: true
+          prettier: true
+          xo: true
+          tsc: true
       - name: Formatting
         run: yarn format:check
       - name: Build
