@@ -17,8 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install dependencies
-        run: yarn install
+##      - name: Install dependencies
+##        run: yarn install
       - name: Lint Code
         run: yarn lint
       - name: Formatting
