@@ -17,10 +17,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-##      - name: Install dependencies
-##        run: yarn install
-      - name: Lint Code
-        run: yarn lint
+      - name: Install dependencies
+        run: yarn install
+      - name: Lint Action
+        uses: wearerequired/lint-action@v2
       - name: Formatting
         run: yarn format:check
       - name: Build
