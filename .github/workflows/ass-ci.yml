@@ -8,10 +8,6 @@ on:
     branches:
       - master
 
-permissions:
-  checks: write
-  contents: write
-
 jobs:
   test:
     name: Test Build
@@ -20,12 +16,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      # Install npm 9 & TypeScript
+      - name: Install global packages
+        run: npm i -g npm@9 typescript
+      # Install ass dependencies (including types)
       - name: Install dependencies
-        run: yarn install
-      - name: Formatting
-        run: yarn format:check
-      - name: Build
-        run: yarn build
+        run: npm i --save-dev
+      # Compile the TypeScript files
+      - name: Run build script
+        run: npm run build
 
   build_and_push:
     name: Build & Publish Docker Images
