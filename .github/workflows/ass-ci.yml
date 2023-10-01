@@ -19,8 +19,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Install dependencies
         run: yarn install
-      - name: Install xmllint
-        run: sudo apt-get install git
+      - name: Install git
+        run: apk add git
       - name: Lint Action
         uses: wearerequired/lint-action@v2
         with:
