@@ -11,7 +11,7 @@ on:
 jobs:
   test:
     name: Lint & Test Build
-    if: github.event_name == 'pull_request'
+    ## if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     container: node:16-alpine
     steps:
