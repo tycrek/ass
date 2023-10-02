@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						message: string
 					}) => {
 						alert(data.message);
-						if (data.success) window.location.href = '/dashboard';
+						if (data.success) window.location.href = '/admin';
 					});
 			})
 			.catch((err) => errAlert('POST to /setup failed!', err))
