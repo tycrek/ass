@@ -13,15 +13,15 @@ jobs:
       # Checkout repo
       - uses: actions/checkout@v4
 
-      # Set up Node 16
+      # Set up Node 20
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 16.14.0
+          node-version: 20
 
-      # Install npm 8 & TypeScript
+      # Install npm 10 & TypeScript
       - name: Install global packages
-        run: npm i -g npm@8 typescript
+        run: npm i -g npm@10 typescript
 
       # Install ass dependencies (including types)
       - name: Install dependencies
