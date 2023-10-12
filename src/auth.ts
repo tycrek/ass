@@ -104,7 +104,13 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 		// We did it hoofuckingray
 		.then(() => log.success('Migrated all auth & file data to new auth system'))
 		.then(() => resolve(newUsers))
-		.catch(reject);
+		.catch((err) => (
+			log.blank().blank().blank()
+				.info('READ THIS', 'If you see this after installation, please run ass once again before asking for help. This error will automatically fix itself.')
+				.blank()
+				.info('Hey you', 'Read that message ^^')
+				.blank().blank().blank(),
+			reject(err)));
 });
 
 /**
