@@ -1,12 +1,13 @@
 <div align="center">
   <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://i.tycrek.dev/ass-round-square-logo-white-with-text"></a></h1>
-</div>
 
 ![GitHub package.json version]
 ![GitHub license]
 ![GitHub last commit]
 ![GitHub Repo stars]
 [![Discord badge]][Discord invite]
+
+</div>
 
 **ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite. ass aims to be as **unopinionated** as possible, giving users & hosts alike the ability to modify nearly everything.
 
