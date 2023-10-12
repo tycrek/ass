@@ -3,6 +3,7 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,11 +11,11 @@ jobs:
       ARCHIVE_NAME: ass-build-${{ github.run_id }}-${{ github.run_number }}
     steps:
       # Checkout repo
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       # Set up Node 16
       - name: Setup Node.js environment
-        uses: actions/setup-node@v2.4.1
+        uses: actions/setup-node@v3
         with:
           node-version: 16.14.0
 
@@ -38,7 +39,7 @@ jobs:
         
       # Upload archive as an artifact
       - name: Upload archive
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ env.ARCHIVE_NAME }}
           path: ${{ env.ARCHIVE_NAME }}.zip
