@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://imagedelivery.net/cNsTmYlz178gQNL42swQfw/44357fc5-8afd-4a17-76b9-556660b5fc00/public"></a></h1>
+  <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://i.tycrek.dev/ass-round-square-logo-white-with-text"></a></h1>
 </div>
 
 ![GitHub package.json version]
@@ -15,9 +15,11 @@ By default, ass comes with a resource viewing page, which includes metadata abou
 
 ### Notice (Sep 2023)
 
-The current release version 0.14.4 is now in "maintenence mode". What this means is I'll only be providing updates to catastrophic issues. However! I'm currently working on [a new version](https://github.com/tycrek/ass/pull/220), 0.15.0, which is a lot more stable and organized. I have no ETA but please know that I'm continuing to work on it when I can. Version 0.14.4 is still functional, just a bit rough around the edges.
+The current release version 0.14.x is now in **maintenence mode**. What this means is I'll only be providing updates to catastrophic issues.
 
-#### Developers ❤
+However! I'm currently working on [a new version](https://github.com/tycrek/ass/pull/220), 0.15.0, which is a lot more stable and organized. I have no ETA but please know that I'm continuing to work on it when I can. Version 0.14.x is still functional, just a bit rough around the edges.
+
+#### Developers 🧡
 
 ass was designed with developers in mind. If you are a developer & want something changed to better suit you, let me know & we'll see what we can do!
 
