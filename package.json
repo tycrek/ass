@@ -3,6 +3,10 @@
   "version": "0.15.0-indev",
   "description": "The simple self-hosted ShareX server",
   "main": "dist-backend/app.js",
+  "engines": {
+    "node": ">=20.8.0",
+    "npm": ">=10.1.0"
+  },
   "scripts": {
     "dev": "npm run build && npm start",
     "build": "rm -dr dist-*/ & npm run build:backend && npm run build:frontend",
