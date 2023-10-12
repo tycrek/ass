@@ -26,7 +26,7 @@ ass was designed with developers in mind. If you are a developer & want somethin
 [GitHub license]: https://img.shields.io/github/license/tycrek/ass?color=FD7C21&style=for-the-badge
 [GitHub last commit]: https://img.shields.io/github/last-commit/tycrek/ass?color=FD710D&style=for-the-badge
 [GitHub Repo stars]: https://img.shields.io/github/stars/tycrek/ass?color=F26602&style=for-the-badge
-[Discord badge]: https://img.shields.io/discord/848274994375294986?label=Support%20server&logo=Discord&logoColor=FFF&style=for-the-badge
+[Discord badge]: https://img.shields.io/discord/848274994375294986?label=Discord&logo=Discord&logoColor=FFF&style=for-the-badge
 [Discord invite]: https://discord.gg/wGZYt5fasY
 [create their own frontends]: #custom-frontends
 
