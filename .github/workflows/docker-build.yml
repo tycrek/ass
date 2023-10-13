@@ -27,6 +27,7 @@ jobs:
 
   build_and_push:
     name: Build & Publish Docker Images
+    needs: test
     if: (github.ref == 'refs/heads/master' || github.ref == 'dev/0.15.0') && !contains(github.event.head_commit.message, '[skip ci:docker]')
     runs-on: ubuntu-latest
     steps:
