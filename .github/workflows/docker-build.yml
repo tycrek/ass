@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     name: Test Build
+    if: "!contains(github.event.head_commit.message, '[skip ci:docker]')"
     runs-on: ubuntu-latest
     container: node:20-alpine
     steps:
@@ -26,7 +27,7 @@ jobs:
 
   build_and_push:
     name: Build & Publish Docker Images
-    if: github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, '[skip ci]')
+    if: (github.ref == 'refs/heads/master' || github.ref == 'dev/0.15.0') && !contains(github.event.head_commit.message, '[skip ci:docker]')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

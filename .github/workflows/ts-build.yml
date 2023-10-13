@@ -11,6 +11,7 @@ on:
 
 jobs:
   build:
+    if: "!contains(github.event.head_commit.message, '[skip ci:ts]')"
     runs-on: ubuntu-latest
     env:
       ARCHIVE_NAME: ass-build-${{ github.run_id }}-${{ github.run_number }}
