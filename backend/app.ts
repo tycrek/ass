@@ -118,6 +118,7 @@ async function main() {
 	app.use('/setup', (await import('./routers/setup.js')).router);
 	app.use('/login', (await import('./routers/login.js')).router);
 	app.use('/admin', (await import('./routers/admin.js')).router);
+	app.use('/user', (await import('./routers/user.js')).router);
 	app.use('/api', (await import('./routers/api.js')).router);
 	app.use('/', (await import('./routers/index.js')).router);
 

@@ -9,6 +9,7 @@ const FILES = {
 		'setup',
 		'login',
 		'admin',
+		'user',
 	]
 };
 
