@@ -112,6 +112,7 @@ async function main() {
 
 	// ! I did not want to do it like this how tf did I back myself into this shit
 	app.get('/admin', (req, res) => res.render('admin', { version: App.pkgVersion }))
+	app.get('/login', (req, res) => res.render('login', { version: App.pkgVersion }))
 
 	// Routing
 	app.use('/setup', (await import('./routers/setup.js')).router);
