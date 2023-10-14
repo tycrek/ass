@@ -19,4 +19,4 @@ jobs:
           dirtyLabel: 'merge conflict'
           commentOnDirty: 'This pull request has merge conflicts. Please resolve the conflicts so the PR can be successfully reviewed and merged.'
           commentOnClean: "Conflicts have been resolved. A maintainer will review the pull request shortly."
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          repoToken: "${{ secrets.GH_TOKEN }}"
