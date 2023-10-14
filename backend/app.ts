@@ -1,4 +1,6 @@
 import express, { Request, Response, NextFunction, RequestHandler, json as BodyParserJson } from 'express';
+import session from 'express-session';
+import MemoryStore from 'memorystore';
 import fs from 'fs-extra';
 import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
@@ -83,9 +85,22 @@ async function main() {
 	// Set up Express
 	const app = express();
 
+	// Configure sessions
+	const DAY = 86_400_000;
+	app.use(session({
+		name: 'ass',
+		resave: true,
+		saveUninitialized: false,
+		cookie: { maxAge: DAY, secure: isProd() },
+		secret: (Math.random() * 100).toString(),
+		store: new (MemoryStore(session))({ checkPeriod: DAY }) as any,
+	}));
+
+	// Configure Express features
 	app.enable('case sensitive routing');
 	app.disable('x-powered-by');
 
+	// Set Express variables
 	app.set('trust proxy', serverConfig.proxied);
 	app.set('view engine', 'pug');
 	app.set('views', 'views/');
