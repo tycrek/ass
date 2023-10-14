@@ -1,8 +1,6 @@
 name: "Docker Build"
 
 on:
-  #push:
-  #  branches: [ master, dev/0.15.0 ]
   pull_request:
     branches: [ master, dev/0.15.0 ]
 
