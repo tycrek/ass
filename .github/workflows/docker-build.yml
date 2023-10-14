@@ -39,8 +39,6 @@ jobs:
           allowed-conclusions: success
       - name: Set short commit hash as environment variable
         run: echo "SHORT_COMMIT_HASH=${{ github.sha:0:7 }}" >> $GITHUB_ENV
-      - name: Display short commit hash
-        run: echo "Short Commit Hash: $SHORT_COMMIT_HASH"
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up QEMU
