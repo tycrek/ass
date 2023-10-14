@@ -1,7 +1,6 @@
 name: Merge Conflict Labeler
 
 on:
-  push:
   pull_request_target:
     types: [ synchronize ]
 
@@ -15,6 +14,6 @@ jobs:
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request_target'}}
         with:
           dirtyLabel: 'merge conflict'
-          commentOnDirty: 'This pull request has merge conflicts. Please resolve the conflicts so the PR can be successfully reviewed and merged.'
-          commentOnClean: "Conflicts have been resolved. A maintainer will review the pull request shortly."
+          commentOnDirty: '**[AUTOMATED MESSAGE]** 🔴 This Pull Request has merge conflicts. Please resolve the conflicts so the PR can be successfully reviewed and merged.'
+          commentOnClean: '**[AUTOMATED MESSAGE]** 🟢 Conflicts have been resolved.'
           repoToken: "${{ secrets.GH_TOKEN }}"
