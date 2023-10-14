@@ -7,7 +7,8 @@ const FILES = {
 	suffix: '.mjs',
 	pages: [
 		'setup',
-		'login'
+		'login',
+		'admin',
 	]
 };
 

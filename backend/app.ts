@@ -114,12 +114,10 @@ async function main() {
 	app.get('/.ass.host', (req, res) => res.type('text').send(req.ass.host));
 	app.get('/.ass.version', (req, res) => res.type('text').send(req.ass.version));
 
-	// ! I did not want to do it like this how tf did I back myself into this shit
-	app.get('/admin', (req, res) => res.render('admin', { version: App.pkgVersion }));
-
-	// Routing
+	// Routers
 	app.use('/setup', (await import('./routers/setup.js')).router);
 	app.use('/login', (await import('./routers/login.js')).router);
+	app.use('/admin', (await import('./routers/admin.js')).router);
 	app.use('/api', (await import('./routers/api.js')).router);
 	app.use('/', (await import('./routers/index.js')).router);
 
