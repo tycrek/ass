@@ -1,20 +1,10 @@
-# ass Dockerfile v0.3.1
+# ass Dockerfile v0.3.2
 # authors:
 #  - tycrek <t@tycrek.com> (https://tycrek.com/)
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
 
-# Node 18 image
-FROM node:18.16.1
-
-# Set working directory
+FROM node:20.8.0
 WORKDIR /opt/ass-src/
-
-# Copy directory files (config.json, source files etc.)
 COPY . ./
-
-# Install dependencies as rootless user
-RUN npm i --save-dev && \
-    npm run build
-
-# Start ass
+RUN npm i --save-dev && npm run build
 CMD npm start
