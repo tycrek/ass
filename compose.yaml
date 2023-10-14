@@ -9,7 +9,7 @@
 
 services:
   ass:
-    build: .
+    image: tycrek/ass
     container_name: ass-docker
     restart: unless-stopped
     ports:
