@@ -5,23 +5,6 @@ on:
     branches: [ master, dev/0.15.0 ]
 
 jobs:
-  # test:
-  #   name: Test Build
-  #   if: contains(github.event.head_commit.message, '[docker build]')
-  #   runs-on: ubuntu-latest
-  #   container: node:20-alpine
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     # Install npm 10 & TypeScript
-  #     - name: Install global packages
-  #       run: npm i -g npm@10 typescript
-  #     # Install ass dependencies (including types)
-  #     - name: Install dependencies
-  #       run: npm i --save-dev
-  #     # Compile the TypeScript files
-  #     - name: Run build script
-  #       run: npm run build
   build_and_push:
     name: Build & Publish Docker Images
     if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev/0.15.0') && contains(github.event.head_commit.message, '[docker build]')
@@ -59,7 +42,6 @@ jobs:
           tags: |
             tycrek/ass:latest
             tycrek:ass:$SHORT_COMMIT_HASH
-
   discord:
     name: Send Discord Notification
     needs: build_and_push
