@@ -1,0 +1,20 @@
+name: Merge Conflict Labeler
+
+on:
+  push:
+  pull_request_target:
+    types: [ synchronize ]
+
+jobs:
+  label:
+    name: 'Merge conflict labeling'
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'tycrek/ass' }}
+    steps:
+      - uses: eps1lon/actions-label-merge-conflict@releases/2.x
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request_target'}}
+        with:
+          dirtyLabel: 'merge conflict'
+          commentOnDirty: 'This pull request has merge conflicts. Please resolve the conflicts so the PR can be successfully reviewed and merged.'
+          commentOnClean: "Conflicts have been resolved. A maintainer will review the pull request shortly."
+          repoToken: "${{ secrets.GH_TOKEN }}"
