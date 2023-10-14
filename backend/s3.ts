@@ -48,7 +48,7 @@ const s3 = (): S3Client | null => {
 	}
 
 	return _s3client;
-}
+};
 
 /**
  * Basic single file upload

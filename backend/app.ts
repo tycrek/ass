@@ -14,17 +14,16 @@ import { MySql } from './sql/mysql';
  */
 export const App = {
 	pkgVersion: ''
-}
+};
 
 /**
  * Custom middleware to attach the ass object (and construct the `host` property)
  */
-function assMetaMiddleware(port: number, proxied: boolean): RequestHandler {
-	return (req: Request, _res: Response, next: NextFunction) => {
+const assMetaMiddleware = (port: number, proxied: boolean): RequestHandler =>
+	(req: Request, _res: Response, next: NextFunction) => {
 		req.ass = { host: `${req.protocol}://${req.hostname}${proxied ? '' : `:${port}`}` };
 		next();
-	}
-}
+	};
 
 /**
  * Main function.
@@ -111,8 +110,8 @@ async function main() {
 	app.get('/.ass.host', (req, res) => res.send(req.ass.host));
 
 	// ! I did not want to do it like this how tf did I back myself into this shit
-	app.get('/admin', (req, res) => res.render('admin', { version: App.pkgVersion }))
-	app.get('/login', (req, res) => res.render('login', { version: App.pkgVersion }))
+	app.get('/admin', (req, res) => res.render('admin', { version: App.pkgVersion }));
+	app.get('/login', (req, res) => res.render('login', { version: App.pkgVersion }));
 
 	// Routing
 	app.use('/setup', (await import('./routers/setup.js')).router);

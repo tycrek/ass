@@ -35,10 +35,7 @@ const Checkers: UserConfigTypeChecker = {
 			return false;
 		}
 	},
-	idType: (val) => {
-		const options = ['random', 'original', 'gfycat', 'timestamp', 'zws'];
-		return options.includes(val);
-	},
+	idType: (val) => ['random', 'original', 'gfycat', 'timestamp', 'zws'].includes(val),
 	idSize: numChecker,
 	gfySize: numChecker,
 	maximumFileSize: numChecker,
@@ -61,7 +58,7 @@ const Checkers: UserConfigTypeChecker = {
 			database: basicStringChecker
 		}
 	}
-}
+};
 
 export class UserConfig {
 	private static _config: UserConfiguration;

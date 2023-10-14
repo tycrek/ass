@@ -133,7 +133,7 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 
 				// ? SQL
 				if (!(await MySql.get('assfiles', key))) await MySql.put('assfiles', key, data);
-				else return reject(new Error(`File key ${key} already exists`))
+				else return reject(new Error(`File key ${key} already exists`));
 
 				// todo: modify users SQL files property
 			}

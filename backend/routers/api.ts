@@ -21,12 +21,12 @@ router.post('/user', BodyParserJson(), async (req, res) => {
 	try {
 
 		// Username check
-		if (!newUser.username) issue = 'Missing username'
+		if (!newUser.username) issue = 'Missing username';
 		newUser.username.replaceAll(/[^A-z0-9_-]/g, '');
 		if (newUser.username === '') issue = 'Invalid username';
 
 		// Password check
-		if (!newUser.password) issue = 'Missing password'
+		if (!newUser.password) issue = 'Missing password';
 		if (newUser.password === '') issue = 'Invalid password';
 		newUser.password = newUser.password.substring(0, 128);
 
@@ -48,7 +48,7 @@ router.post('/user', BodyParserJson(), async (req, res) => {
 		// todo: also check duplicate usernames
 		await data.put('users', user.id, user);
 
-	} catch (err: any) { issue = `Error: ${err.message}` }
+	} catch (err: any) { issue = `Error: ${err.message}`; }
 
 	if (issue) return res.status(400).json({ success: false, messsage: issue });
 

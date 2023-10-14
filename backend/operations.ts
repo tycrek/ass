@@ -13,21 +13,19 @@ type SrcDest = { src: string, dest: string };
 /**
  * Strips GPS EXIF data from a file
  */
-export const removeGPS = (file: string): Promise<boolean> => {
-	return new Promise((resolve, reject) =>
-		fs.open(file, 'r+')
-			.then((fd) => removeLocation(file,
-				// Read function
-				(size: number, offset: number): Promise<Buffer> =>
-					fs.read(fd, Buffer.alloc(size), 0, size, offset)
-						.then(({ buffer }) => Promise.resolve(buffer)),
-				// Write function
-				(val: string, offset: number, enc: BufferEncoding): Promise<void> =>
-					fs.write(fd, Buffer.alloc(val.length, val, enc), 0, val.length, offset)
-						.then(() => Promise.resolve())))
-			.then(resolve)
-			.catch(reject));
-}
+export const removeGPS = (file: string): Promise<boolean> => new Promise((resolve, reject) =>
+	fs.open(file, 'r+')
+		.then((fd) => removeLocation(file,
+			// Read function
+			(size: number, offset: number): Promise<Buffer> =>
+				fs.read(fd, Buffer.alloc(size), 0, size, offset)
+					.then(({ buffer }) => Promise.resolve(buffer)),
+			// Write function
+			(val: string, offset: number, enc: BufferEncoding): Promise<void> =>
+				fs.write(fd, Buffer.alloc(val.length, val, enc), 0, val.length, offset)
+					.then(() => Promise.resolve())))
+		.then(resolve)
+		.catch(reject));
 
 const VIBRANT = { COLOURS: 256, QUALITY: 3 };
 export const vibrant = (file: string, mimetype: string): Promise<string> => new Promise((resolve, reject) =>
@@ -39,8 +37,7 @@ export const vibrant = (file: string, mimetype: string): Promise<string> => new 
 				.quality(VIBRANT.QUALITY)
 				.getPalette())
 			.then((palettes) => resolve(palettes[Object.keys(palettes).sort((a, b) => palettes[b]!.population - palettes[a]!.population)[0]]!.hex))
-			.catch((err) => reject(err))
-)
+			.catch((err) => reject(err)));
 
 /**
  * Thumbnail operations
@@ -64,7 +61,7 @@ export class Thumbnail {
 	}
 
 	private static getVideoThumbnail({ src, dest }: SrcDest) {
-		exec(this.getCommand({ src, dest }))
+		exec(this.getCommand({ src, dest }));
 	}
 
 	private static getCommand({ src, dest }: SrcDest) {
