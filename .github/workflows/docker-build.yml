@@ -5,6 +5,7 @@ on:
     branches: [ master, dev/0.15.0 ]
 
 jobs:
+
   build_and_push:
     name: Build & Publish Docker Images
     if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev/0.15.0') && contains(github.event.head_commit.message, '[docker build]')
@@ -42,6 +43,7 @@ jobs:
           tags: |
             tycrek/ass:latest
             tycrek:ass:$SHORT_COMMIT_HASH
+
   discord:
     name: Send Discord Notification
     needs: build_and_push
