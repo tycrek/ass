@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "npm run build && npm start",
+    "fresh": "rm -dr .ass-data/ & npm run dev",
     "build": "rm -dr dist-*/ & npm run build:backend && npm run build:frontend",
     "build:backend": "tsc -p backend/",
     "build:frontend": "tsc -p frontend/",
