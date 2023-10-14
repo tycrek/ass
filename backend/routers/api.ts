@@ -14,7 +14,7 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 	if (UserConfig.ready)
 		return res.status(409).json({ success: false, message: 'User config already exists' });
 
-	log.debug('Setup initiated');
+	log.info('Setup', 'initiated');
 
 	try {
 		// Parse body
@@ -26,6 +26,8 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 		// Set data storage (not files) to SQL if required
 		if (UserConfig.config.sql?.mySql != null)
 			await Promise.all([MySql.configure(), data.setDataModeToSql()]);
+
+		log.success('Setup', 'completed');
 
 		return res.json({ success: true });
 	} catch (err: any) {
