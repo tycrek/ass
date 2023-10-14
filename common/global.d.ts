@@ -14,6 +14,11 @@ declare global {
 				 * Combination of {protocol}://{hostname}
 				 */
 				host: string
+
+				/**
+				 * ass version
+				 */
+				version: string
 			}
 
 			files: { [key: string]: BusBoyFile }

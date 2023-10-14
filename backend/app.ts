@@ -21,7 +21,10 @@ export const App = {
  */
 const assMetaMiddleware = (port: number, proxied: boolean): RequestHandler =>
 	(req: Request, _res: Response, next: NextFunction) => {
-		req.ass = { host: `${req.protocol}://${req.hostname}${proxied ? '' : `:${port}`}` };
+		req.ass = {
+			host: `${req.protocol}://${req.hostname}${proxied ? '' : `:${port}`}`,
+			version: App.pkgVersion
+		};
 		next();
 	};
 
@@ -107,7 +110,9 @@ async function main() {
 		warn: (warning: Error) => log.warn('PostCSS', warning.toString())
 	}));
 
-	app.get('/.ass.host', (req, res) => res.send(req.ass.host));
+	// Metadata routes
+	app.get('/.ass.host', (req, res) => res.type('text').send(req.ass.host));
+	app.get('/.ass.version', (req, res) => res.type('text').send(req.ass.version));
 
 	// ! I did not want to do it like this how tf did I back myself into this shit
 	app.get('/admin', (req, res) => res.render('admin', { version: App.pkgVersion }));
