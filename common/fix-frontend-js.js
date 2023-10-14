@@ -2,13 +2,24 @@ const fs = require('fs-extra');
 const { path } = require('@tycrek/joint');
 const log = new (require('@tycrek/log').TLog)();
 
-log.info('Fixing frontend JS');
+const FILES = {
+	prefix: 'dist-frontend',
+	suffix: '.mjs',
+	pages: [
+		'setup',
+		'login'
+	]
+};
 
-// Read & fix file data
-const setupUiFile = path.join('dist-frontend/setup.mjs');
-const setupUiNew = fs.readFileSync(setupUiFile).toString().replace('export {};', '');
+const fixFile = (page) => {
+	const filePath = path.join(FILES.prefix, `${page}${FILES.suffix}`);
+	const fixed = fs.readFileSync(filePath).toString().replace('export {};', '');
 
-// Write new file
-fs.writeFileSync(setupUiFile, setupUiNew);
+	return fs.writeFile(filePath, fixed);
+};
 
-log.success('Fixed.');
+log.info('Fixing frontend JS', `${FILES.pages.length} files`);
+Promise.all(FILES.pages.map(fixFile))
+	.then(() => log.success('Fixed.'))
+	.catch(console.error);
+
