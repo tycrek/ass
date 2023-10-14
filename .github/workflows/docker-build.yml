@@ -59,9 +59,9 @@ jobs:
           push: true
           build-args: |
             COMMIT_TAG=${{ github.sha }}
-          tags:
-            - tycrek/ass:latest
-            - tycrek:ass:$SHORT_COMMIT_HASH
+          tags: |
+            tycrek/ass:latest
+            tycrek:ass:$SHORT_COMMIT_HASH
 
   discord:
     name: Send Discord Notification
