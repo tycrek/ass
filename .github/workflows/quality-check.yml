@@ -1,0 +1,117 @@
+name: Quality checks
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  run-escheck:
+    name: Run es-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Setup node environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          check-latest: true
+          cache: npm
+
+      - name: Install Node.js dependencies
+        run: npm ci --no-audit
+
+      - name: Run build
+        run: npm run build
+
+      - name: Run es-check
+        run: npm run escheck
+
+  run-eslint:
+    name: Run eslint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Setup node environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          check-latest: true
+          cache: npm
+
+      - name: Install Node.js dependencies
+        run: npm ci --no-audit
+
+      - name: Run eslint
+        run: npm run lint
+
+  run-prettier:
+    name: Run Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Setup node environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          check-latest: true
+          cache: npm
+
+      - name: Install Node.js dependencies
+        run: npm ci --no-audit
+
+      - name: Run Prettier
+        run: npm run prettier:check
+
+  run-stylelint-css:
+    name: Run stylelint (css)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Setup node environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          check-latest: true
+          cache: npm
+
+      - name: Set up stylelint matcher
+        uses: xt0rted/stylelint-problem-matcher@v1
+
+      - name: Install Node.js dependencies
+        run: npm ci --no-audit
+
+      - name: Run stylelint
+        run: npm run stylelint:css
+
+  run-tsc:
+    name: Run TypeScript build check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - name: Setup node environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          check-latest: true
+          cache: npm
+
+      - name: Install Node.js dependencies
+        run: npm ci --no-audit
+
+      - name: Run tsc
+        run: npm run build:check
