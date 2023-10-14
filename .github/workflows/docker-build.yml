@@ -19,7 +19,7 @@ jobs:
           repo-token: ${{ secrets.GH_TOKEN }}
           allowed-conclusions: success
       - name: Set short commit hash as environment variable
-        run: echo "SHORT_COMMIT_HASH=${ ${{ github.sha }}::7 }" >> $GITHUB_ENV
+        run: echo "SHORT_COMMIT_HASH=${ ${{ github.sha }}:0:7 }" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up QEMU
