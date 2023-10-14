@@ -18,5 +18,5 @@
 
 
 
-[Contributing Guidelines]: https://github.com/tycrek/ass/blob/master/CONTRIBUTING.md
+[Contributing Guidelines]: https://github.com/tycrek/ass/blob/master/.github/CONTRIBUTING.md
 [ISC License]: https://github.com/tycrek/ass/blob/master/LICENSE
