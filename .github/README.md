@@ -1,13 +1,13 @@
 <div align="center">
   <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://i.tycrek.dev/ass-round-square-logo-white-with-text"></a></h1>
-</div>
 
 ![GitHub package.json version]
 ![GitHub license]
 ![GitHub last commit]
-![Lines of code]
 ![GitHub Repo stars]
 [![Discord badge]][Discord invite]
+
+</div>
 
 **ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite. ass aims to be as **unopinionated** as possible, giving users & hosts alike the ability to modify nearly everything.
 
@@ -26,9 +26,8 @@ ass was designed with developers in mind. If you are a developer & want somethin
 [GitHub package.json version]: https://img.shields.io/github/package-json/v/tycrek/ass?color=fd842d&style=for-the-badge
 [GitHub license]: https://img.shields.io/github/license/tycrek/ass?color=FD7C21&style=for-the-badge
 [GitHub last commit]: https://img.shields.io/github/last-commit/tycrek/ass?color=FD710D&style=for-the-badge
-[Lines of code]: https://img.shields.io/tokei/lines/github/tycrek/ass?color=F26602&label=LINES&style=for-the-badge
-[GitHub Repo stars]: https://img.shields.io/github/stars/tycrek/ass?color=DE5E02&style=for-the-badge
-[Discord badge]: https://img.shields.io/discord/848274994375294986?label=Support%20server&logo=Discord&logoColor=FFF&style=for-the-badge
+[GitHub Repo stars]: https://img.shields.io/github/stars/tycrek/ass?color=F26602&style=for-the-badge
+[Discord badge]: https://img.shields.io/discord/848274994375294986?label=Discord&logo=Discord&logoColor=FFF&style=for-the-badge
 [Discord invite]: https://discord.gg/wGZYt5fasY
 [create their own frontends]: #custom-frontends
 
