@@ -5,30 +5,42 @@ on:
     branches: [ master, dev/0.15.0 ]
 
 jobs:
-  test:
-    name: Test Build
-    if: contains(github.event.head_commit.message, '[docker build]')
-    runs-on: ubuntu-latest
-    container: node:20-alpine
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      # Install npm 10 & TypeScript
-      - name: Install global packages
-        run: npm i -g npm@10 typescript
-      # Install ass dependencies (including types)
-      - name: Install dependencies
-        run: npm i --save-dev
-      # Compile the TypeScript files
-      - name: Run build script
-        run: npm run build
+  # test:
+  #   name: Test Build
+  #   if: contains(github.event.head_commit.message, '[docker build]')
+  #   runs-on: ubuntu-latest
+  #   container: node:20-alpine
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     # Install npm 10 & TypeScript
+  #     - name: Install global packages
+  #       run: npm i -g npm@10 typescript
+  #     # Install ass dependencies (including types)
+  #     - name: Install dependencies
+  #       run: npm i --save-dev
+  #     # Compile the TypeScript files
+  #     - name: Run build script
+  #       run: npm run build
 
   build_and_push:
     name: Build & Publish Docker Images
-    needs: test
+    # needs: test
     if: ${{ (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev/0.15.0') && contains(github.event.head_commit.message, '[docker build]') }}
     runs-on: ubuntu-latest
     steps:
+      - name: Wait for build to succeed
+        uses: lewagon/wait-on-check-action@master
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'build'
+          running-workflow-name: 'TypeScript Build'
+          repo-token: ${{ secrets.GH_TOKEN }}
+          allowed-conclusions: success
+      - name: Set short commit hash as environment variable
+        run: echo "SHORT_COMMIT_HASH=${{ github.sha:0:7 }}" >> $GITHUB_ENV
+      - name: Display short commit hash
+        run: echo "Short Commit Hash: $SHORT_COMMIT_HASH"
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up QEMU
@@ -49,8 +61,9 @@ jobs:
           push: true
           build-args: |
             COMMIT_TAG=${{ github.sha }}
-          tags: |
-            tycrek/ass:master
+          tags:
+            - tycrek/ass:latest
+            - tycrek:ass:$SHORT_COMMIT_HASH
 
   discord:
     name: Send Discord Notification
