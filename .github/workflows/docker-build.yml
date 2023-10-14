@@ -39,7 +39,7 @@ jobs:
             COMMIT_TAG=${{ github.sha }}
           tags: |
             tycrek/ass:latest
-            tycrek:ass:${{ github.sha }}
+            tycrek/ass:${{ github.sha }}
   discord:
     name: Send Discord Notification
     needs: build_and_push
