@@ -1,7 +1,7 @@
 name: "Docker Build"
 
 on:
-  pull_request:
+  push:
     branches: [ master, dev/0.15.0 ]
 
 jobs:
