@@ -14,7 +14,7 @@ jobs:
         uses: lewagon/wait-on-check-action@master
         with:
           ref: ${{ github.ref }}
-          running-workflow-name: 'TypeScript Build'
+          check-name: build
           repo-token: ${{ secrets.GH_TOKEN }}
           allowed-conclusions: success
       - name: Set short commit hash as environment variable
