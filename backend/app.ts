@@ -131,12 +131,12 @@ async function main() {
 	app.get('/.ass.version', (req, res) => res.type('text').send(req.ass.version));
 
 	// Basic page routers
+	app.use('/setup', buildFrontendRouter('setup', false));
 	app.use('/login', buildFrontendRouter('login'));
 	app.use('/admin', buildFrontendRouter('admin'));
 	app.use('/user', buildFrontendRouter('user'));
 
 	// Advanced routers
-	app.use('/setup', (await import('./routers/setup.js')).router);
 	app.use('/api', (await import('./routers/api.js')).router);
 	app.use('/', (await import('./routers/index.js')).router);
 

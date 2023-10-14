@@ -5,8 +5,33 @@ import { UserConfig } from '../UserConfig';
 import * as data from '../data';
 import { AssUser, AssUserNewReq } from 'ass';
 import { nanoid } from '../generators';
+import { MySql } from '../sql/mysql';
 
 const router = Router({ caseSensitive: true });
+
+// Setup route
+router.post('/setup', BodyParserJson(), async (req, res) => {
+	if (UserConfig.ready)
+		return res.status(409).json({ success: false, message: 'User config already exists' });
+
+	log.debug('Setup initiated');
+
+	try {
+		// Parse body
+		new UserConfig(req.body);
+
+		// Save config
+		await UserConfig.saveConfigFile();
+
+		// Set data storage (not files) to SQL if required
+		if (UserConfig.config.sql?.mySql != null)
+			await Promise.all([MySql.configure(), data.setDataModeToSql()]);
+
+		return res.json({ success: true });
+	} catch (err: any) {
+		return res.status(400).json({ success: false, message: err.message });
+	}
+});
 
 // todo: authenticate API endpoints
 router.post('/user', BodyParserJson(), async (req, res) => {

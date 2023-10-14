@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			return adminErrReset('Admin password is required!');
 
 		// Do setup
-		fetch('/setup', {
+		fetch('/api/setup', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(config)
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						if (data.success) window.location.href = '/login';
 					});
 			})
-			.catch((err) => errAlert('POST to /setup failed!', err))
+			.catch((err) => errAlert('POST to /api/setup failed!', err))
 			.finally(() => Elements.submitButton.disabled = false);
 	});
 });
