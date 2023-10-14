@@ -12,6 +12,8 @@ services:
     image: tycrek/ass
     container_name: ass-docker
     restart: unless-stopped
+    volumes:
+      - ass-data:/opt/ass-src/.ass-data
     ports:
       - "40115:40115"
     tmpfs: /tmp # temp files such as uploads are stored here
