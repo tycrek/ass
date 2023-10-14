@@ -17,8 +17,6 @@ jobs:
           check-name: build
           repo-token: ${{ secrets.GH_TOKEN }}
           allowed-conclusions: success
-      - name: Set short commit hash as environment variable
-        run: echo "SHORT_COMMIT_HASH=${ ${{ github.sha }}:0:7 }" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up QEMU
@@ -41,7 +39,7 @@ jobs:
             COMMIT_TAG=${{ github.sha }}
           tags: |
             tycrek/ass:latest
-            tycrek:ass:$SHORT_COMMIT_HASH
+            tycrek:ass:${{ github.sha }}
   discord:
     name: Send Discord Notification
     needs: build_and_push
