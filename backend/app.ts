@@ -10,6 +10,7 @@ import { ensureFiles } from './data';
 import { UserConfig } from './UserConfig';
 import { ServerConfiguration } from 'ass';
 import { MySql } from './sql/mysql';
+import { buildFrontendRouter } from './routers/_frontend';
 
 /**
  * Top-level metadata exports
@@ -129,11 +130,13 @@ async function main() {
 	app.get('/.ass.host', (req, res) => res.type('text').send(req.ass.host));
 	app.get('/.ass.version', (req, res) => res.type('text').send(req.ass.version));
 
-	// Routers
+	// Basic page routers
+	app.use('/login', buildFrontendRouter('login'));
+	app.use('/admin', buildFrontendRouter('admin'));
+	app.use('/user', buildFrontendRouter('user'));
+
+	// Advanced routers
 	app.use('/setup', (await import('./routers/setup.js')).router);
-	app.use('/login', (await import('./routers/login.js')).router);
-	app.use('/admin', (await import('./routers/admin.js')).router);
-	app.use('/user', (await import('./routers/user.js')).router);
 	app.use('/api', (await import('./routers/api.js')).router);
 	app.use('/', (await import('./routers/index.js')).router);
 
