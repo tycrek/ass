@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     name: Test Build
-    if: "!contains(github.event.head_commit.message, '[skip ci:docker]')"
+    if: contains(github.event.head_commit.message, '[docker build]')
     runs-on: ubuntu-latest
     container: node:20-alpine
     steps:
@@ -28,7 +28,7 @@ jobs:
   build_and_push:
     name: Build & Publish Docker Images
     needs: test
-    if: ${{ (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev/0.15.0') && !contains(github.event.head_commit.message, '[skip ci:docker]') }}
+    if: ${{ (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev/0.15.0') && contains(github.event.head_commit.message, '[docker build]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,7 +57,7 @@ jobs:
   discord:
     name: Send Discord Notification
     needs: build_and_push
-    if: always() && github.event_name != 'pull_request' && !contains(github.event.head_commit.message, '[skip ci:docker]')
+    if: always() && github.event_name != 'pull_request' && contains(github.event.head_commit.message, '[docker build]')
     runs-on: ubuntu-latest
     steps:
       - name: Get Build Job Status
