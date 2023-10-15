@@ -1,4 +1,4 @@
-import { Router, json as BodyParserJson } from 'express';
+import { Router, json as BodyParserJson, RequestHandler } from 'express';
 import * as bcrypt from 'bcrypt'
 import { log } from '../log';
 import { UserConfig } from '../UserConfig';
@@ -6,6 +6,18 @@ import * as data from '../data';
 import { AssUser, AssUserNewReq } from 'ass';
 import { nanoid } from '../generators';
 import { MySql } from '../sql/mysql';
+
+/**
+ * Validates a user login session
+ */
+const validateSessions: RequestHandler = (req, res, next) => {
+	if (!req.session.ass) (log.debug('Session missing'), req.session.ass = {});
+
+	// todo: actually authenticate (data.get needs to be updated for subproperties maybe)
+	// data.get('')
+
+	next();
+};
 
 const router = Router({ caseSensitive: true });
 
@@ -33,6 +45,12 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 	} catch (err: any) {
 		return res.status(400).json({ success: false, message: err.message });
 	}
+});
+
+// User login
+router.post('/login', BodyParserJson(), validateSessions, async (req, res) => {
+	log.success('User logged in', req.body.username);
+	res.json({ success: true, message: `User [${req.body.username}] logged in` });
 });
 
 // todo: authenticate API endpoints

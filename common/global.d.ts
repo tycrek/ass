@@ -3,8 +3,12 @@ import { Request, Response } from 'express';
 
 declare module 'express-session' {
 	interface SessionData {
-		uid: string;
-		token: string;
+		ass: {
+			auth?: {
+				uid: string;
+				token: string;
+			}
+		}
 	}
 }
 
