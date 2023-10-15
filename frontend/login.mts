@@ -24,6 +24,24 @@ document.addEventListener('DOMContentLoaded', () => {
 			return errReset('Password is required!', Elements.submitButton);
 
 		alert(`Attempting to login user [${Elements.usernameInput.value}]`);
-		Elements.submitButton.disabled = false;
+
+		fetch('/api/login', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				username: Elements.usernameInput.value,
+				password: Elements.passwordInput.value
+			})
+		})
+			.then((res) => res.json())
+			.then((data: {
+				success: boolean,
+				message: string
+			}) => {
+				if (!data.success) alert(data.message);
+				else window.location.href = '/user';
+			})
+			.catch((err) => errAlert('POST to /api/login failed!', err))
+			.finally(() => Elements.submitButton.disabled = false);
 	});
 });
