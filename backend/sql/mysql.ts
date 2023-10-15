@@ -129,4 +129,24 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 			}
 		});
 	}
+
+	// todo: unknown if this works
+	public static getAll(table: TableNamesType): Promise<UploadToken | AssFile | AssUser | undefined> {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Run query // ! this may not work as expected
+				const [rowz, _fields] = await MySql._pool.query(`SELECT Data FROM ${table}`);
+
+				// Interpret results this is pain
+				const rows = (rowz as unknown as { [key: string]: string }[]);
+
+				// console.log(rows);
+
+				// aaaaaaaaaaaa
+				resolve(undefined);
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
 }
