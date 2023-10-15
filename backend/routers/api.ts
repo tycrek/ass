@@ -48,9 +48,29 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 });
 
 // User login
-router.post('/login', BodyParserJson(), validateSessions, async (req, res) => {
-	log.success('User logged in', req.body.username);
-	res.json({ success: true, message: `User [${req.body.username}] logged in` });
+router.post('/login', BodyParserJson(), validateSessions, (req, res) => {
+	const { username, password } = req.body;
+
+	data.getAll('users')
+		.then((users) => {
+			if (!users) throw new Error('Missing users data');
+			else return Object.entries(users as { [key: string]: AssUser })
+				.filter(([_uid, user]: [string, AssUser]) => user.username === username)[0][1]; // [0] is the first item in the filter results, [1] is is AssUser
+		})
+		.then((user) => Promise.all([bcrypt.compare(password, user.password), user]))
+		.then(([success, user]) => {
+			success ? log.success('User logged in', user.username)
+				: log.warn('User failed to log in', user.username);
+
+			// Set up the session information
+			if (success) req.session.ass!.auth = {
+				uid: user.id,
+				token: ''
+			};
+
+			res.json({ success, message: `User [${user.username}] ${success ? 'logged' : 'failed to log'} in` });
+		})
+		.catch((err) => res.status(400).json({ success: false, message: err.message }));
 });
 
 // todo: authenticate API endpoints
