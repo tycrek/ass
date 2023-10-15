@@ -1,5 +1,9 @@
 import { SlInput, SlButton } from '@shoelace-style/shoelace';
 
+const genericErrorAlert = () => alert('An error occured, please check the console for details');
+const errAlert = (logTitle: string, err: any, stream: 'error' | 'warn' = 'error') => (console[stream](logTitle, err), genericErrorAlert());
+const errReset = (message: string, element: SlButton) => (element.disabled = false, alert(message));
+
 // * Wait for the document to be ready
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -14,11 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		Elements.submitButton.disabled = true;
 
 		// Make sure fields are filled
-		const errorReset = (message: string) => (Elements.submitButton.disabled = false, alert(message));
 		if (Elements.usernameInput.value == null || Elements.usernameInput.value === '')
-			return errorReset('Username is required!');
+			return errReset('Username is required!', Elements.submitButton);
 		if (Elements.passwordInput.value == null || Elements.passwordInput.value === '')
-			return errorReset('Password is required!');
+			return errReset('Password is required!', Elements.submitButton);
 
 		alert(`Attempting to login user [${Elements.usernameInput.value}]`);
 		Elements.submitButton.disabled = false;
