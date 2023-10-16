@@ -3,8 +3,9 @@ import sharp from 'sharp';
 import Vibrant from 'node-vibrant';
 import ffmpeg from 'ffmpeg-static';
 import { exec } from 'child_process';
-import { removeLocation } from '@xoi/gps-metadata-remover';
 import { isProd } from '@tycrek/joint';
+import { removeLocation } from '@xoi/gps-metadata-remover';
+
 //@ts-ignore
 import shell from 'any-shell-escape';
 

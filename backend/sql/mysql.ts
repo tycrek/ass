@@ -1,7 +1,9 @@
-import mysql, { Pool } from 'mysql2/promise';
-import { UserConfig } from '../UserConfig';
-import { log } from '../log';
 import { AssFile, AssUser, NID, UploadToken } from 'ass';
+
+import mysql, { Pool } from 'mysql2/promise';
+
+import { log } from '../log';
+import { UserConfig } from '../UserConfig';
 
 type TableNamesType = 'assfiles' | 'assusers' | 'asstokens';
 

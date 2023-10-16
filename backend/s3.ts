@@ -1,5 +1,3 @@
-import { UserConfig } from './UserConfig';
-import { log } from './log';
 import {
 	S3Client,
 	S3ClientConfig,
@@ -13,6 +11,9 @@ import {
 	CompleteMultipartUploadCommandOutput,
 	AbortMultipartUploadCommand,
 } from "@aws-sdk/client-s3";
+
+import { log } from './log';
+import { UserConfig } from './UserConfig';
 
 const NYR = 'S3 not ready';
 

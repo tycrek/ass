@@ -1,10 +1,12 @@
-import { Router, json as BodyParserJson, RequestHandler } from 'express';
-import * as bcrypt from 'bcrypt'
-import { log } from '../log';
-import { UserConfig } from '../UserConfig';
-import * as data from '../data';
 import { AssUser, AssUserNewReq } from 'ass';
+
+import * as bcrypt from 'bcrypt'
+import { Router, json as BodyParserJson, RequestHandler } from 'express';
+
+import * as data from '../data';
+import { log } from '../log';
 import { nanoid } from '../generators';
+import { UserConfig } from '../UserConfig';
 import { MySql } from '../sql/mysql';
 
 /**
