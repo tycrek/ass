@@ -1,4 +1,4 @@
-import { ServerConfiguration } from 'ass';
+import { AssUser, ServerConfiguration } from 'ass';
 
 import fs from 'fs-extra';
 import tailwindcss from 'tailwindcss';
@@ -9,7 +9,7 @@ import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 
 import { log } from './log';
-import { ensureFiles } from './data';
+import { ensureFiles, get } from './data';
 import { UserConfig } from './UserConfig';
 import { MySql } from './sql/mysql';
 import { buildFrontendRouter } from './routers/_frontend';
@@ -37,6 +37,24 @@ const assMetaMiddleware = (port: number, proxied: boolean): RequestHandler =>
 
 		next();
 	};
+
+/**
+ * Custom middleware to verify user access
+ */
+const loginRedirectMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+
+	// If auth doesn't exist yet, make the user login
+	if (!req.session.ass?.auth) res.redirect('/login');
+	else {
+		const user = (await get('users', req.session.ass.auth.uid)) as AssUser;
+
+		// Check if user is admin
+		if (req.baseUrl === '/admin' && !user.admin) {
+			log.warn('Admin verification failed', user.username, user.id);
+			res.sendStatus(403);
+		} else next();
+	}
+};
 
 /**
  * Main function.
@@ -140,8 +158,8 @@ async function main() {
 	// Basic page routers
 	app.use('/setup', buildFrontendRouter('setup', false));
 	app.use('/login', buildFrontendRouter('login'));
-	app.use('/admin', buildFrontendRouter('admin'));
-	app.use('/user', buildFrontendRouter('user'));
+	app.use('/admin', loginRedirectMiddleware, buildFrontendRouter('admin'));
+	app.use('/user', loginRedirectMiddleware, buildFrontendRouter('user'));
 
 	// Advanced routers
 	app.use('/api', (await import('./routers/api.js')).router);
