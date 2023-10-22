@@ -41,7 +41,7 @@ const assMetaMiddleware = (port: number, proxied: boolean): RequestHandler =>
 /**
  * Custom middleware to verify user access
  */
-const loginRedirectMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+const loginRedirectMiddleware: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
 
 	// If auth doesn't exist yet, make the user login
 	if (!req.session.ass?.auth) {
