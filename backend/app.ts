@@ -30,6 +30,11 @@ const assMetaMiddleware = (port: number, proxied: boolean): RequestHandler =>
 			host: `${req.protocol}://${req.hostname}${proxied ? '' : `:${port}`}`,
 			version: App.pkgVersion
 		};
+
+		// Set up Session if required
+		if (!req.session.ass)
+			(log.debug('Session missing'), req.session.ass = {});
+
 		next();
 	};
 

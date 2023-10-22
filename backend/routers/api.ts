@@ -9,18 +9,6 @@ import { nanoid } from '../generators';
 import { UserConfig } from '../UserConfig';
 import { MySql } from '../sql/mysql';
 
-/**
- * Validates a user login session
- */
-const validateSessions: RequestHandler = (req, res, next) => {
-	if (!req.session.ass) (log.debug('Session missing'), req.session.ass = {});
-
-	// todo: actually authenticate (data.get needs to be updated for subproperties maybe)
-	// data.get('')
-
-	next();
-};
-
 const router = Router({ caseSensitive: true });
 
 // Setup route
@@ -50,7 +38,7 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 });
 
 // User login
-router.post('/login', BodyParserJson(), validateSessions, (req, res) => {
+router.post('/login', BodyParserJson(), (req, res) => {
 	const { username, password } = req.body;
 
 	data.getAll('users')
