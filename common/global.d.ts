@@ -1,6 +1,18 @@
 import { BusBoyFile } from 'ass';
 import { Request, Response } from 'express';
 
+declare module 'express-session' {
+	interface SessionData {
+		ass: {
+			auth?: {
+				uid: string;
+				token: string;
+			}
+			preLoginPath?: string;
+		}
+	}
+}
+
 declare global {
 	namespace Express {
 		interface Request {

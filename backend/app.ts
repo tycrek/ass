@@ -1,13 +1,18 @@
-import express, { Request, Response, NextFunction, RequestHandler, json as BodyParserJson } from 'express';
+import { AssUser, ServerConfiguration } from 'ass';
+
 import fs from 'fs-extra';
+import tailwindcss from 'tailwindcss';
+import session from 'express-session';
+import MemoryStore from 'memorystore';
+import express, { Request, Response, NextFunction, RequestHandler, json as BodyParserJson } from 'express';
 import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
-import tailwindcss from 'tailwindcss';
+
 import { log } from './log';
-import { ensureFiles } from './data';
+import { ensureFiles, get } from './data';
 import { UserConfig } from './UserConfig';
-import { ServerConfiguration } from 'ass';
 import { MySql } from './sql/mysql';
+import { buildFrontendRouter } from './routers/_frontend';
 
 /**
  * Top-level metadata exports
@@ -25,8 +30,35 @@ const assMetaMiddleware = (port: number, proxied: boolean): RequestHandler =>
 			host: `${req.protocol}://${req.hostname}${proxied ? '' : `:${port}`}`,
 			version: App.pkgVersion
 		};
+
+		// Set up Session if required
+		if (!req.session.ass)
+			(log.debug('Session missing'), req.session.ass = {});
+
 		next();
 	};
+
+/**
+ * Custom middleware to verify user access
+ */
+const loginRedirectMiddleware: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+
+	// If auth doesn't exist yet, make the user login
+	if (!req.session.ass?.auth) {
+		req.session.ass!.preLoginPath = req.baseUrl;
+		log.warn('User not logged in', req.baseUrl);
+		res.redirect('/login');
+	}
+	else {
+		const user = (await get('users', req.session.ass.auth.uid)) as AssUser;
+
+		// Check if user is admin
+		if (req.baseUrl === '/admin' && !user.admin) {
+			log.warn('Admin verification failed', user.username, user.id);
+			res.sendStatus(403);
+		} else next();
+	}
+};
 
 /**
  * Main function.
@@ -83,9 +115,22 @@ async function main() {
 	// Set up Express
 	const app = express();
 
+	// Configure sessions
+	const DAY = 86_400_000;
+	app.use(session({
+		name: 'ass',
+		resave: true,
+		saveUninitialized: false,
+		cookie: { maxAge: DAY, secure: isProd() },
+		secret: (Math.random() * 100).toString(),
+		store: new (MemoryStore(session))({ checkPeriod: DAY }) as any,
+	}));
+
+	// Configure Express features
 	app.enable('case sensitive routing');
 	app.disable('x-powered-by');
 
+	// Set Express variables
 	app.set('trust proxy', serverConfig.proxied);
 	app.set('view engine', 'pug');
 	app.set('views', 'views/');
@@ -114,12 +159,13 @@ async function main() {
 	app.get('/.ass.host', (req, res) => res.type('text').send(req.ass.host));
 	app.get('/.ass.version', (req, res) => res.type('text').send(req.ass.version));
 
-	// ! I did not want to do it like this how tf did I back myself into this shit
-	app.get('/admin', (req, res) => res.render('admin', { version: App.pkgVersion }));
-	app.get('/login', (req, res) => res.render('login', { version: App.pkgVersion }));
+	// Basic page routers
+	app.use('/setup', buildFrontendRouter('setup', false));
+	app.use('/login', buildFrontendRouter('login'));
+	app.use('/admin', loginRedirectMiddleware, buildFrontendRouter('admin'));
+	app.use('/user', loginRedirectMiddleware, buildFrontendRouter('user'));
 
-	// Routing
-	app.use('/setup', (await import('./routers/setup.js')).router);
+	// Advanced routers
 	app.use('/api', (await import('./routers/api.js')).router);
 	app.use('/', (await import('./routers/index.js')).router);
 

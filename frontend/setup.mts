@@ -3,6 +3,7 @@ import { IdType, UserConfiguration } from 'ass';
 
 const genericErrorAlert = () => alert('An error occured, please check the console for details');
 const errAlert = (logTitle: string, err: any, stream: 'error' | 'warn' = 'error') => (console[stream](logTitle, err), genericErrorAlert());
+const errReset = (message: string, element: SlButton) => (element.disabled = false, alert(message));
 
 // * Wait for the document to be ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -72,14 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 
 		// ! Make sure the admin user fields are set
-		const adminErrReset = (message: string) => (Elements.submitButton.disabled = false, alert(message));
 		if (Elements.userUsername.value == null || Elements.userUsername.value === '')
-			return adminErrReset('Admin username is required!');
+			return errReset('Admin username is required!', Elements.submitButton);
 		if (Elements.userPassword.value == null || Elements.userPassword.value === '')
-			return adminErrReset('Admin password is required!');
+			return errReset('Admin password is required!', Elements.submitButton);
 
 		// Do setup
-		fetch('/setup', {
+		fetch('/api/setup', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(config)
@@ -106,10 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
 						message: string
 					}) => {
 						alert(data.message);
-						if (data.success) window.location.href = '/admin';
+						if (data.success) window.location.href = '/login';
 					});
 			})
-			.catch((err) => errAlert('POST to /setup failed!', err))
+			.catch((err) => errAlert('POST to /api/setup failed!', err))
 			.finally(() => Elements.submitButton.disabled = false);
 	});
 });

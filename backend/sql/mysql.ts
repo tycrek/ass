@@ -1,7 +1,9 @@
-import mysql, { Pool } from 'mysql2/promise';
-import { UserConfig } from '../UserConfig';
-import { log } from '../log';
 import { AssFile, AssUser, NID, UploadToken } from 'ass';
+
+import mysql, { Pool } from 'mysql2/promise';
+
+import { log } from '../log';
+import { UserConfig } from '../UserConfig';
 
 type TableNamesType = 'assfiles' | 'assusers' | 'asstokens';
 
@@ -124,6 +126,26 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 				const rows_tableData = (rowz as unknown as { [key: string]: string }[])[0] as unknown as ({ Data: UploadToken | AssFile | AssUser | undefined });
 
 				resolve(rows_tableData?.Data ?? undefined);
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
+
+	// todo: unknown if this works
+	public static getAll(table: TableNamesType): Promise<UploadToken | AssFile | AssUser | undefined> {
+		return new Promise(async (resolve, reject) => {
+			try {
+				// Run query // ! this may not work as expected
+				const [rowz, _fields] = await MySql._pool.query(`SELECT Data FROM ${table}`);
+
+				// Interpret results this is pain
+				const rows = (rowz as unknown as { [key: string]: string }[]);
+
+				// console.log(rows);
+
+				// aaaaaaaaaaaa
+				resolve(undefined);
 			} catch (err) {
 				reject(err);
 			}
