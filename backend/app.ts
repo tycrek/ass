@@ -41,27 +41,28 @@ const assMetaMiddleware = (port: number, proxied: boolean): RequestHandler =>
 /**
  * Custom middleware to verify user access
  */
-const loginRedirectMiddleware: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+const loginRedirectMiddleware = (requireAdmin = false): RequestHandler =>
+	async (req: Request, res: Response, next: NextFunction) => {
 
-	// If auth doesn't exist yet, make the user login
-	if (!req.session.ass?.auth) {
-		log.warn('User not logged in', req.baseUrl);
+		// If auth doesn't exist yet, make the user login
+		if (!req.session.ass?.auth) {
+			log.warn('User not logged in', req.baseUrl);
 
-		// Set pre-login path so user is directed to their requested page
-		req.session.ass!.preLoginPath = req.baseUrl;
+			// Set pre-login path so user is directed to their requested page
+			req.session.ass!.preLoginPath = req.baseUrl;
 
-		// Redirect
-		res.redirect('/login');
-	} else {
-		const user = (await get('users', req.session.ass.auth.uid)) as AssUser;
+			// Redirect
+			res.redirect('/login');
+		} else {
+			const user = (await get('users', req.session.ass.auth.uid)) as AssUser;
 
-		// Check if user is admin
-		if (req.baseUrl === '/admin' && !user.admin) {
-			log.warn('Admin verification failed', user.username, user.id);
-			res.sendStatus(403);
-		} else next();
-	}
-};
+			// Check if user is admin
+			if ((requireAdmin || req.baseUrl === '/admin') && !user.admin) {
+				log.warn('Admin verification failed', user.username, user.id);
+				res.sendStatus(403);
+			} else next();
+		}
+	};
 
 /**
  * Main function.
@@ -165,8 +166,8 @@ async function main() {
 	// Basic page routers
 	app.use('/setup', buildFrontendRouter('setup', false));
 	app.use('/login', buildFrontendRouter('login'));
-	app.use('/admin', loginRedirectMiddleware, buildFrontendRouter('admin'));
-	app.use('/user', loginRedirectMiddleware, buildFrontendRouter('user'));
+	app.use('/admin', loginRedirectMiddleware(), buildFrontendRouter('admin'));
+	app.use('/user', loginRedirectMiddleware(), buildFrontendRouter('user'));
 
 	// Advanced routers
 	app.use('/api', (await import('./routers/api.js')).router);
