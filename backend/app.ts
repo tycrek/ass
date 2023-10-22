@@ -45,11 +45,14 @@ const loginRedirectMiddleware: RequestHandler = async (req: Request, res: Respon
 
 	// If auth doesn't exist yet, make the user login
 	if (!req.session.ass?.auth) {
-		req.session.ass!.preLoginPath = req.baseUrl;
 		log.warn('User not logged in', req.baseUrl);
+
+		// Set pre-login path so user is directed to their requested page
+		req.session.ass!.preLoginPath = req.baseUrl;
+
+		// Redirect
 		res.redirect('/login');
-	}
-	else {
+	} else {
 		const user = (await get('users', req.session.ass.auth.uid)) as AssUser;
 
 		// Check if user is admin
