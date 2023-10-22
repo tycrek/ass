@@ -23,8 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (Elements.passwordInput.value == null || Elements.passwordInput.value === '')
 			return errReset('Password is required!', Elements.submitButton);
 
-		alert(`Attempting to login user [${Elements.usernameInput.value}]`);
-
 		fetch('/api/login', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
