@@ -58,7 +58,11 @@ router.post('/login', BodyParserJson(), (req, res) => {
 				token: ''
 			};
 
-			res.json({ success, message: `User [${user.username}] ${success ? 'logged' : 'failed to log'} in` });
+			// Respond
+			res.json({ success, message: `User [${user.username}] ${success ? 'logged' : 'failed to log'} in`, meta: { redirectTo: req.session.ass?.preLoginPath ?? '/user' } });
+
+			// Delete the pre-login path after successful login
+			if (success) delete req.session.ass?.preLoginPath;
 		})
 		.catch((err) => res.status(400).json({ success: false, message: err.message }));
 });

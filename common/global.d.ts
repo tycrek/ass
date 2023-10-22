@@ -8,6 +8,7 @@ declare module 'express-session' {
 				uid: string;
 				token: string;
 			}
+			preLoginPath?: string;
 		}
 	}
 }

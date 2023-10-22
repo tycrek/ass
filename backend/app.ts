@@ -44,7 +44,11 @@ const assMetaMiddleware = (port: number, proxied: boolean): RequestHandler =>
 const loginRedirectMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
 	// If auth doesn't exist yet, make the user login
-	if (!req.session.ass?.auth) res.redirect('/login');
+	if (!req.session.ass?.auth) {
+		req.session.ass!.preLoginPath = req.baseUrl;
+		log.warn('User not logged in', req.baseUrl);
+		res.redirect('/login');
+	}
 	else {
 		const user = (await get('users', req.session.ass.auth.uid)) as AssUser;
 

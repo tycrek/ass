@@ -36,10 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			.then((res) => res.json())
 			.then((data: {
 				success: boolean,
-				message: string
+				message: string,
+				meta: { redirectTo: string }
 			}) => {
 				if (!data.success) alert(data.message);
-				else window.location.href = '/user';
+				else window.location.href = data.meta.redirectTo;
 			})
 			.catch((err) => errAlert('POST to /api/login failed!', err))
 			.finally(() => Elements.submitButton.disabled = false);
