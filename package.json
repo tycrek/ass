@@ -42,10 +42,10 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
-    "@tinycreek/postcss-font-magician": "^4.1.0",
+    "@tinycreek/postcss-font-magician": "^4.2.0",
     "@tsconfig/node16": "^1.0.1",
     "@tycrek/discord-hookr": "^0.1.0",
-    "@tycrek/express-postcss": "^0.4.0",
+    "@tycrek/express-postcss": "^0.4.1",
     "@tycrek/joint": "^1.0.0-1",
     "@tycrek/log": "^0.7.1",
     "@tycrek/papito": "^0.3.4",
