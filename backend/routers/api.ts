@@ -8,6 +8,7 @@ import { log } from '../log';
 import { nanoid } from '../generators';
 import { UserConfig } from '../UserConfig';
 import { MySql } from '../sql/mysql';
+import { rateLimiterMiddleware } from '../ratelimit';
 
 const router = Router({ caseSensitive: true });
 
@@ -38,7 +39,7 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 });
 
 // User login
-router.post('/login', BodyParserJson(), (req, res) => {
+router.post('/login', rateLimiterMiddleware("login", UserConfig.config.rateLimit?.login), BodyParserJson(), (req, res) => {
 	const { username, password } = req.body;
 
 	data.getAll('users')
@@ -68,7 +69,7 @@ router.post('/login', BodyParserJson(), (req, res) => {
 });
 
 // todo: authenticate API endpoints
-router.post('/user', BodyParserJson(), async (req, res) => {
+router.post('/user', rateLimiterMiddleware("api", UserConfig.config.rateLimit?.api), BodyParserJson(), async (req, res) => {
 	if (!UserConfig.ready)
 		return res.status(409).json({ success: false, message: 'User config not ready' });
 

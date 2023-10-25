@@ -59,6 +59,10 @@ const Checkers: UserConfigTypeChecker = {
 			password: basicStringChecker,
 			database: basicStringChecker
 		}
+	},
+
+	rateLimit: {
+		endpoint: (val) => val == null || (val != null && (numChecker(val.requests) && numChecker(val.duration)))
 	}
 };
 
@@ -105,6 +109,13 @@ export class UserConfig {
 			if (!Checkers.sql.mySql.user(config.sql.mySql.user)) throw new Error('Invalid MySql User');
 			if (!Checkers.sql.mySql.password(config.sql.mySql.password)) throw new Error('Invalid MySql Password');
 			if (!Checkers.sql.mySql.database(config.sql.mySql.database)) throw new Error('Invalid MySql Database');
+		}
+
+		// * optional rate limit config
+		if (config.rateLimit != null) {
+			if (!Checkers.rateLimit.endpoint(config.rateLimit.login)) throw new Error('Invalid rate limit configuration');
+			if (!Checkers.rateLimit.endpoint(config.rateLimit.upload)) throw new Error('Invalid rate limit configuration');
+			if (!Checkers.rateLimit.endpoint(config.rateLimit.api)) throw new Error('Invalid rate limit configuration');
 		}
 
 		// All is fine, carry on!
