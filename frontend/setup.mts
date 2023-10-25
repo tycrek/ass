@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		ratelimitApiTime: document.querySelector('#ratelimit-api-time') as SlInput,
 		ratelimitUploadRequests: document.querySelector('#ratelimit-upload-requests') as SlInput,
 		ratelimitUploadTime: document.querySelector('#ratelimit-upload-time') as SlInput,
-		
+
 		submitButton: document.querySelector('#submit') as SlButton,
 	};
 
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// append rate limit config, if specified
 		if ((
-			   Elements.ratelimitLoginRequests.value
+			Elements.ratelimitLoginRequests.value
 			|| Elements.ratelimitLoginTime.value
 			|| Elements.ratelimitUploadRequests.value
 			|| Elements.ratelimitUploadTime.value
@@ -110,11 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		) {
 			if (!config.rateLimit) config.rateLimit = {};
 
-			if  (
-				   genericRateLimit(config.rateLimit, 'login', Elements.submitButton, Elements.ratelimitLoginRequests, Elements.ratelimitLoginTime)
+			if (
+				genericRateLimit(config.rateLimit, 'login', Elements.submitButton, Elements.ratelimitLoginRequests, Elements.ratelimitLoginTime)
 				|| genericRateLimit(config.rateLimit, 'api', Elements.submitButton, Elements.ratelimitApiRequests, Elements.ratelimitApiTime)
 				|| genericRateLimit(config.rateLimit, 'upload', Elements.submitButton, Elements.ratelimitUploadRequests, Elements.ratelimitUploadTime)
-			) {			
+			) {
 				return;
 			}
 		}

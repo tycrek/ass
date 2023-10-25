@@ -2,7 +2,6 @@ import { UserConfiguration, UserConfigTypeChecker } from 'ass';
 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
-
 import { log } from './log';
 
 const FILEPATH = path.join('.ass-data/userconfig.json');

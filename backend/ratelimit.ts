@@ -21,11 +21,11 @@ export const rateLimiterMiddleware = (group: string, config: EndpointRateLimitCo
         return rateLimiterGroups.get(group)!;
     } else {
         rateLimiterGroups.set(group, rateLimit({
-            limit:              config.requests,
-            windowMs:           config.duration * 1000,
+            limit: config.requests,
+            windowMs: config.duration * 1000,
             skipFailedRequests: true,
-            legacyHeaders:      false,
-            standardHeaders:    "draft-7",
+            legacyHeaders: false,
+            standardHeaders: 'draft-7',
             keyGenerator: (req, res) => {
                 return req.ip || 'disconnected';
             },
