@@ -126,7 +126,7 @@ app.use((err: ErrWrap, _req: Request, res: Response) => {
 		.info('Users', `${users.length}`)
 		.info('Files', `${data().size}`)
 		.info('Data engine', data().name, data().type)
-		.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
+		.info('Frontend', 'disabled')
 		.info('Custom index', ASS_INDEX ?? 'disabled')
 		.blank()
 		.callback(() => app.listen(port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`)));
