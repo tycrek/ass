@@ -5,7 +5,7 @@ import { rateLimit } from 'express-rate-limit';
 /**
  * map that contains rate limiter middleware for each group
  */
-let rateLimiterGroups = new Map<string, (req: Request, res: Response, next: NextFunction) => void>();
+const rateLimiterGroups = new Map<string, (req: Request, res: Response, next: NextFunction) => void>();
 
 /**
  * creates middleware for rate limiting
@@ -21,11 +21,11 @@ export const rateLimiterMiddleware = (group: string, config: EndpointRateLimitCo
         return rateLimiterGroups.get(group)!;
     } else {
         rateLimiterGroups.set(group, rateLimit({
-            limit:              config.requests,
-            windowMs:           config.duration * 1000,
+            limit: config.requests,
+            windowMs: config.duration * 1000,
             skipFailedRequests: true,
-            legacyHeaders:      false,
-            standardHeaders:    "draft-7",
+            legacyHeaders: false,
+            standardHeaders: 'draft-7',
             keyGenerator: (req, res) => {
                 return req.ip || 'disconnected';
             },

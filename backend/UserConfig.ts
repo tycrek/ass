@@ -2,7 +2,6 @@ import { UserConfiguration, UserConfigTypeChecker } from 'ass';
 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
-
 import { log } from './log';
 
 const FILEPATH = path.join('.ass-data/userconfig.json');
@@ -113,9 +112,9 @@ export class UserConfig {
 
 		// * optional rate limit config
 		if (config.rateLimit != null) {
-			if (!Checkers.rateLimit.endpoint(config.rateLimit.login)) throw new Error('Invalid rate limit configuration');
-			if (!Checkers.rateLimit.endpoint(config.rateLimit.upload)) throw new Error('Invalid rate limit configuration');
-			if (!Checkers.rateLimit.endpoint(config.rateLimit.api)) throw new Error('Invalid rate limit configuration');
+			if (!Checkers.rateLimit.endpoint(config.rateLimit.login)) throw new Error('Invalid Login rate limit configuration');
+			if (!Checkers.rateLimit.endpoint(config.rateLimit.upload)) throw new Error('Invalid Upload rate limit configuration');
+			if (!Checkers.rateLimit.endpoint(config.rateLimit.api)) throw new Error('Invalid API rate limit configuration');
 		}
 
 		// All is fine, carry on!

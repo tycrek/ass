@@ -59,7 +59,7 @@ declare module 'ass' {
 			database: string;
 		}
 	}
-	
+
 	/**
 	 * rate limiter configuration
 	 * @since  0.15.0

@@ -31,10 +31,10 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.421.0",
     "@shoelace-style/shoelace": "^2.9.0",
-    "@tinycreek/postcss-font-magician": "^4.1.0",
+    "@tinycreek/postcss-font-magician": "^4.2.0",
     "@tsconfig/node20": "^20.1.2",
     "@tycrek/discord-hookr": "^0.1.0",
-    "@tycrek/express-postcss": "^0.4.0",
+    "@tycrek/express-postcss": "^0.4.1",
     "@tycrek/joint": "^1.0.0-1",
     "@tycrek/log": "^0.7.5",
     "@tycrek/papito": "^0.3.4",
