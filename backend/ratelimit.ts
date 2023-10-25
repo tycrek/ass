@@ -5,7 +5,7 @@ import { rateLimit } from 'express-rate-limit';
 /**
  * map that contains rate limiter middleware for each group
  */
-let rateLimiterGroups = new Map<string, (req: Request, res: Response, next: NextFunction) => void>();
+const rateLimiterGroups = new Map<string, (req: Request, res: Response, next: NextFunction) => void>();
 
 /**
  * creates middleware for rate limiting
