@@ -11,8 +11,9 @@ import { epcss } from '@tycrek/express-postcss';
 import { log } from './log';
 import { ensureFiles, get } from './data';
 import { UserConfig } from './UserConfig';
-import { MySql } from './sql/mysql';
+import { MySQLDatabase } from './db/mysql';
 import { buildFrontendRouter } from './routers/_frontend';
+import { DBManager } from './db/database';
 
 /**
  * Top-level metadata exports
@@ -113,7 +114,7 @@ async function main() {
 
 	// If user config is ready, try to configure SQL
 	if (UserConfig.ready && UserConfig.config.sql?.mySql != null)
-		try { await MySql.configure(); }
+		try { await DBManager.use(new MySQLDatabase()); }
 		catch (err) { throw new Error(`Failed to configure SQL`); }
 
 	// Set up Express

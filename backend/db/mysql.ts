@@ -4,21 +4,20 @@ import mysql, { Pool } from 'mysql2/promise';
 
 import { log } from '../log';
 import { UserConfig } from '../UserConfig';
+import { Database, DatabaseTable, DatabaseValue } from './database';
 
-type TableNamesType = 'assfiles' | 'assusers' | 'asstokens';
+export class MySQLDatabase implements Database {
+	private _pool: Pool;
 
-export class MySql {
-	private static _pool: Pool;
-
-	private static _ready: boolean = false;
-	public static get ready() { return MySql._ready; }
+	private _ready: boolean = false;
+	public get ready() { return this._ready; }
 
 	/**
 	 * Quick function for creating a simple JSON table
 	 */
-	private static _tableManager(mode: 'create' | 'drop', name: string, schema = '( NanoID varchar(255), Data JSON )'): Promise<void> {
+	private _tableManager(mode: 'create' | 'drop', name: string, schema = '( NanoID varchar(255), Data JSON )'): Promise<void> {
 		return new Promise((resolve, reject) =>
-			MySql._pool.query(
+			this._pool.query(
 				mode === 'create'
 					? `CREATE TABLE ${name} ${schema};`
 					: `DROP TABLE ${name};`)
@@ -26,31 +25,33 @@ export class MySql {
 				.catch((err) => reject(err)));
 	}
 
+	public open()  { return Promise.resolve(); }
+	public close() { return Promise.resolve(); }
+
 	/**
 	 * Build the MySQL client and create the tables
 	 */
-	public static configure(): Promise<void> {
+	public configure(): Promise<void> {
 		return new Promise(async (resolve, reject) => {
 			try {
-
 				// Config check
 				if (!UserConfig.ready) throw new Error('User configuration not ready');
 				if (!UserConfig.config.sql?.mySql) throw new Error('MySQL configuration missing');
 
 				// Create the pool
-				MySql._pool = mysql.createPool(UserConfig.config.sql.mySql);
+				this._pool = mysql.createPool(UserConfig.config.sql.mySql);
 
 				// Check if the pool is usable
-				const [rowz, _fields] = await MySql._pool.query(`SHOW FULL TABLES WHERE Table_Type LIKE 'BASE TABLE';`);
+				const [rowz, _fields] = await this._pool.query(`SHOW FULL TABLES WHERE Table_Type LIKE 'BASE TABLE';`);
 				const rows_tableData = rowz as unknown as { [key: string]: string }[];
 
 				// Create tables if needed
 				if (rows_tableData.length === 0) {
 					log.warn('MySQL', 'Tables do not exist, creating');
 					await Promise.all([
-						MySql._tableManager('create', 'assfiles'),
-						MySql._tableManager('create', 'assusers'),
-						MySql._tableManager('create', 'asstokens')
+						this._tableManager('create', 'assfiles'),
+						this._tableManager('create', 'assusers'),
+						this._tableManager('create', 'asstokens')
 					]);
 					log.success('MySQL', 'Tables created').callback(resolve);
 				} else {
@@ -61,7 +62,7 @@ export class MySql {
 					// Check which tables ACTUALLY do exist
 					for (let row of rows_tableData) {
 						const table = row[`Tables_in_${UserConfig.config.sql!.mySql!.database}`
-						] as TableNamesType;
+						] as DatabaseTable;
 						if (table === 'assfiles') tablesExist.files = true;
 						if (table === 'assusers') tablesExist.users = true;
 						if (table === 'asstokens') tablesExist.tokens = true;
@@ -69,9 +70,9 @@ export class MySql {
 					}
 
 					// Mini-function for creating a one-off table
-					const createOneTable = async (name: TableNamesType) => {
+					const createOneTable = async (name: DatabaseTable) => {
 						log.warn('MySQL', `Table '${name}' missing, creating`);
-						await MySql._tableManager('create', name);
+						await this._tableManager('create', name);
 						log.success('MySQL', `Table '${name}' created`);
 					}
 
@@ -88,7 +89,7 @@ export class MySql {
 					// Hopefully we are ready
 					if (tablesExist.files && tablesExist.users)
 						log.info('MySQL', 'Tables exist, ready').callback(() => {
-							MySql._ready = true;
+							this._ready = true;
 							resolve(void 0);
 						});
 					else throw new Error('Table(s) missing!');
@@ -101,26 +102,26 @@ export class MySql {
 		});
 	}
 
-	public static put(table: TableNamesType, key: NID, data: UploadToken | AssFile | AssUser): Promise<void> {
+	public put(table: DatabaseTable, key: NID, data: DatabaseValue): Promise<void> {
 		return new Promise(async (resolve, reject) => {
-			if (!MySql._ready) return reject(new Error('MySQL not ready'));
+			if (!this._ready) return reject(new Error('MySQL not ready'));
 
 			const query = `
 INSERT INTO ${table} ( NanoID, Data )
 VALUES ('${key}', '${JSON.stringify(data)}');
 `;
 
-			return MySql._pool.query(query)
+			return this._pool.query(query)
 				.then(() => resolve(void 0))
 				.catch((err) => reject(err));
 		});
 	}
 
-	public static get(table: TableNamesType, key: NID): Promise<UploadToken | AssFile | AssUser | undefined> {
+    public get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined> {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Run query
-				const [rowz, _fields] = await MySql._pool.query(`SELECT Data FROM ${table} WHERE NanoID = '${key}';`);
+				const [rowz, _fields] = await this._pool.query(`SELECT Data FROM ${table} WHERE NanoID = '${key}';`);
 
 				// Disgustingly interpret the query results
 				const rows_tableData = (rowz as unknown as { [key: string]: string }[])[0] as unknown as ({ Data: UploadToken | AssFile | AssUser | undefined });
@@ -133,11 +134,11 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 	}
 
 	// todo: unknown if this works
-	public static getAll(table: TableNamesType): Promise<UploadToken | AssFile | AssUser | undefined> {
+    public getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Run query // ! this may not work as expected
-				const [rowz, _fields] = await MySql._pool.query(`SELECT Data FROM ${table}`);
+				const [rowz, _fields] = await this._pool.query(`SELECT Data FROM ${table}`);
 
 				// Interpret results this is pain
 				const rows = (rowz as unknown as { [key: string]: string }[]);
@@ -145,7 +146,7 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 				// console.log(rows);
 
 				// aaaaaaaaaaaa
-				resolve(undefined);
+				resolve([]);
 			} catch (err) {
 				reject(err);
 			}

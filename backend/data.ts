@@ -6,7 +6,7 @@ import { path } from '@tycrek/joint';
 import { log } from './log';
 import { nanoid } from './generators';
 import { UserConfig } from './UserConfig';
-import { MySql } from './sql/mysql';
+import { DBManager } from './db/database';
 
 /**
  * Switcher type for exported functions
@@ -107,7 +107,7 @@ export const setDataModeToSql = (): Promise<void> => new Promise(async (resolve,
 
 export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Promise<void> => new Promise(async (resolve, reject) => {
 	try {
-		const useSql = MySql.ready;
+		const useSql = DBManager.ready;
 
 		if (sector === 'files') {
 
@@ -134,7 +134,7 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 			} else {
 
 				// ? SQL
-				if (!(await MySql.get('assfiles', key))) await MySql.put('assfiles', key, data);
+				if (!(await DBManager.get('assfiles', key))) await DBManager.put('assfiles', key, data);
 				else return reject(new Error(`File key ${key} already exists`));
 
 				// todo: modify users SQL files property
@@ -158,7 +158,7 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 			} else {
 
 				// ? SQL
-				if (!(await MySql.get('assusers', key))) await MySql.put('assusers', key, data);
+				if (!(await DBManager.get('assusers', key))) await DBManager.put('assusers', key, data);
 				else return reject(new Error(`User key ${key} already exists`));
 			}
 		}
@@ -172,8 +172,8 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 
 export const get = (sector: DataSector, key: NID): Promise<AssFile | AssUser | false> => new Promise(async (resolve, reject) => {
 	try {
-		const data: AssFile | AssUser | undefined = (MySql.ready)
-			? (await MySql.get(sector === 'files' ? 'assfiles' : 'assusers', key) as AssFile | AssUser | undefined)
+		const data: AssFile | AssUser | undefined = (DBManager.ready)
+			? (await DBManager.get(sector === 'files' ? 'assfiles' : 'assusers', key) as AssFile | AssUser | undefined)
 			: (await fs.readJson(PATHS[sector]))[sector][key];
 		(!data) ? resolve(false) : resolve(data);
 	} catch (err) {
@@ -183,9 +183,9 @@ export const get = (sector: DataSector, key: NID): Promise<AssFile | AssUser | f
 
 export const getAll = (sector: DataSector): Promise<{ [key: string]: AssFile | AssUser } | false> => new Promise(async (resolve, reject) => {
 	try {
-		const data: { [key: string]: AssFile | AssUser } | undefined = (MySql.ready)
+		const data: { [key: string]: AssFile | AssUser } | undefined = (DBManager.ready)
 			// todo: fix MySQL
-			? (await MySql.getAll(sector === 'files' ? 'assfiles' : 'assusers') as /* AssFile[] | AssUser[] | */ undefined)
+			? (await DBManager.getAll(sector === 'files' ? 'assfiles' : 'assusers') as /* AssFile[] | AssUser[] | */ [])
 			: (await fs.readJson(PATHS[sector]))[sector];
 		(!data) ? resolve(false) : resolve(data);
 	} catch (err) {

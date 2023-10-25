@@ -7,8 +7,8 @@ import * as data from '../data';
 import { log } from '../log';
 import { nanoid } from '../generators';
 import { UserConfig } from '../UserConfig';
-import { MySql } from '../sql/mysql';
 import { rateLimiterMiddleware } from '../ratelimit';
+import { DBManager } from '../db/database';
 
 const router = Router({ caseSensitive: true });
 
@@ -28,7 +28,7 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 
 		// Set data storage (not files) to SQL if required
 		if (UserConfig.config.sql?.mySql != null)
-			await Promise.all([MySql.configure(), data.setDataModeToSql()]);
+			await Promise.all([DBManager.configure(), data.setDataModeToSql()]);
 
 		log.success('Setup', 'completed');
 
