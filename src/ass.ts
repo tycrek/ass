@@ -87,8 +87,7 @@ app.get('/', (req, res, next) =>
 			res.redirect(homepage))
 
 // Set up custom frontend
-const ASS_FRONTEND = fs.existsSync(path(`./${frontendName}/package.json`)) ? (require('submodule'), require(`../${frontendName}`)) : { enabled: false };
-ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // skipcq: JS-0093
+const ASS_FRONTEND = { enabled: false }; // ! Disabled in 0.14.7
 
 // Upload router (has to come after custom frontends as express-busboy interferes with all POST calls)
 app.use('/', ROUTERS.upload);
