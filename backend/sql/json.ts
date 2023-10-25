@@ -86,7 +86,7 @@ export const ensureFiles = (): Promise<void> => new Promise(async (resolve, reje
 });
 
 /**
- * JSON database
+ * JSON database. i know json isnt sql, shut up.
  */
 export class JSONDatabase implements Database {
     open():  Promise<void> { return Promise.resolve() }

@@ -5,7 +5,7 @@ import { path } from '@tycrek/joint';
 
 import { log } from './log';
 import { UserConfig } from './UserConfig';
-import { DBManager } from './db/database';
+import { DBManager } from './sql/database';
 
 /**
  * Switcher type for exported functions

@@ -8,7 +8,7 @@ import { log } from '../log';
 import { nanoid } from '../generators';
 import { UserConfig } from '../UserConfig';
 import { rateLimiterMiddleware } from '../ratelimit';
-import { DBManager } from '../db/database';
+import { DBManager } from '../sql/database';
 
 const router = Router({ caseSensitive: true });
 

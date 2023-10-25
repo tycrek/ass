@@ -9,12 +9,12 @@ import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 
 import { log } from './log';
-import { JSONDatabase, ensureFiles } from './db/json';
+import { JSONDatabase, ensureFiles } from './sql/json';
 import { get } from './data';
 import { UserConfig } from './UserConfig';
-import { MySQLDatabase } from './db/mysql';
+import { MySQLDatabase } from './sql/mysql';
 import { buildFrontendRouter } from './routers/_frontend';
-import { DBManager } from './db/database';
+import { DBManager } from './sql/database';
 
 /**
  * Top-level metadata exports
