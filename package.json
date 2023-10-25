@@ -48,6 +48,7 @@
     "cssnano": "^6.0.1",
     "express": "^4.18.2",
     "express-busboy": "^10.1.0",
+    "express-rate-limit": "^7.1.2",
     "express-session": "^1.17.3",
     "ffmpeg-static": "^5.2.0",
     "fs-extra": "^11.1.1",
