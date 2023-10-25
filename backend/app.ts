@@ -9,7 +9,8 @@ import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 
 import { log } from './log';
-import { ensureFiles, get } from './data';
+import { JSONDatabase, ensureFiles } from './db/json';
+import { get } from './data';
 import { UserConfig } from './UserConfig';
 import { MySQLDatabase } from './db/mysql';
 import { buildFrontendRouter } from './routers/_frontend';
@@ -113,9 +114,12 @@ async function main() {
 		.catch((err) => (err.code && err.code === 'ENOENT' ? {} : console.error(err), resolve(void 0))));
 
 	// If user config is ready, try to configure SQL
-	if (UserConfig.ready && UserConfig.config.sql?.mySql != null)
+	if (UserConfig.ready && UserConfig.config.sql?.mySql != null) {
 		try { await DBManager.use(new MySQLDatabase()); }
 		catch (err) { throw new Error(`Failed to configure SQL`); }
+	} else {
+		await DBManager.use(new JSONDatabase());
+	}
 
 	// Set up Express
 	const app = express();

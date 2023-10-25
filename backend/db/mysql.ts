@@ -106,6 +106,8 @@ export class MySQLDatabase implements Database {
 		return new Promise(async (resolve, reject) => {
 			if (!this._ready) return reject(new Error('MySQL not ready'));
 
+			if (await this.get(table, key)) reject(new Error(`${table == 'assfiles' ? 'File' : table == 'assusers' ? 'User' : 'Token'} key ${key} already exists`));
+
 			const query = `
 INSERT INTO ${table} ( NanoID, Data )
 VALUES ('${key}', '${JSON.stringify(data)}');
@@ -134,7 +136,7 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 	}
 
 	// todo: unknown if this works
-    public getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
+    public getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Run query // ! this may not work as expected
@@ -146,7 +148,7 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 				// console.log(rows);
 
 				// aaaaaaaaaaaa
-				resolve([]);
+				resolve({});
 			} catch (err) {
 				reject(err);
 			}
