@@ -1,8 +1,10 @@
+import { AssFile, AssUser, NID, FilesSchema, UsersSchema } from 'ass';
+
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
-import { nanoid } from './generators';
+
 import { log } from './log';
-import { AssFile, AssUser, NID, FilesSchema, UsersSchema } from 'ass';
+import { nanoid } from './generators';
 import { UserConfig } from './UserConfig';
 import { MySql } from './sql/mysql';
 
@@ -133,7 +135,7 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 
 				// ? SQL
 				if (!(await MySql.get('assfiles', key))) await MySql.put('assfiles', key, data);
-				else return reject(new Error(`File key ${key} already exists`))
+				else return reject(new Error(`File key ${key} already exists`));
 
 				// todo: modify users SQL files property
 			}
@@ -173,6 +175,18 @@ export const get = (sector: DataSector, key: NID): Promise<AssFile | AssUser | f
 		const data: AssFile | AssUser | undefined = (MySql.ready)
 			? (await MySql.get(sector === 'files' ? 'assfiles' : 'assusers', key) as AssFile | AssUser | undefined)
 			: (await fs.readJson(PATHS[sector]))[sector][key];
+		(!data) ? resolve(false) : resolve(data);
+	} catch (err) {
+		reject(err);
+	}
+});
+
+export const getAll = (sector: DataSector): Promise<{ [key: string]: AssFile | AssUser } | false> => new Promise(async (resolve, reject) => {
+	try {
+		const data: { [key: string]: AssFile | AssUser } | undefined = (MySql.ready)
+			// todo: fix MySQL
+			? (await MySql.getAll(sector === 'files' ? 'assfiles' : 'assusers') as /* AssFile[] | AssUser[] | */ undefined)
+			: (await fs.readJson(PATHS[sector]))[sector];
 		(!data) ? resolve(false) : resolve(data);
 	} catch (err) {
 		reject(err);
