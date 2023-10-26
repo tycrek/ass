@@ -25,6 +25,8 @@ declare module 'ass' {
 
 		s3?: S3Configuration;
 		sql?: SqlConfiguration;
+
+		rateLimit?: RateLimitConfiguration;
 	}
 
 	interface S3Configuration {
@@ -58,6 +60,43 @@ declare module 'ass' {
 		}
 	}
 
+	/**
+	 * rate limiter configuration
+	 * @since  0.15.0
+	 */
+	interface RateLimitConfiguration {
+		/**
+		 * rate limit for the login endpoints
+		 */
+		login?: EndpointRateLimitConfiguration;
+
+		/**
+		 * rate limit for parts of the api not covered by other rate limits
+		 */
+		api?: EndpointRateLimitConfiguration;
+
+		/**
+		 * rate limit for file uploads
+		 */
+		upload?: EndpointRateLimitConfiguration;
+	}
+
+	/**
+	 * rate limiter per-endpoint configuration
+	 * @since 0.15.0
+	 */
+	interface EndpointRateLimitConfiguration {
+		/**
+		 * maximum number of requests per duration
+		 */
+		requests: number;
+
+		/**
+		 * rate limiting window in seconds
+		 */
+		duration: number;
+	}
+
 	interface UserConfigTypeChecker {
 		uploadsDir: (val: any) => boolean;
 		idType: (val: any) => boolean;
@@ -80,6 +119,9 @@ declare module 'ass' {
 				password: (val: any) => boolean;
 				database: (val: any) => boolean;
 			}
+		}
+		rateLimit: {
+			endpoint: (val: any) => boolean;
 		}
 	}
 

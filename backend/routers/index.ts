@@ -1,15 +1,18 @@
+import { BusBoyFile, AssFile } from 'ass';
+
 import fs from 'fs-extra';
 import bb from 'express-busboy';
-import { Router } from 'express';
 import crypto from 'crypto';
-import { log } from '../log';
-import { UserConfig } from '../UserConfig';
-import { random } from '../generators';
-import { BusBoyFile, AssFile } from 'ass';
-import { getFileS3, uploadFileS3 } from '../s3';
+import { Router } from 'express';
 import { Readable } from 'stream';
+
 import * as data from '../data';
+import { log } from '../log';
 import { App } from '../app';
+import { random } from '../generators';
+import { UserConfig } from '../UserConfig';
+import { getFileS3, uploadFileS3 } from '../s3';
+import { rateLimiterMiddleware } from '../ratelimit';
 
 const router = Router({ caseSensitive: true });
 
@@ -27,7 +30,7 @@ bb.extend(router, {
 router.get('/', (req, res) => UserConfig.ready ? res.render('index', { version: App.pkgVersion }) : res.redirect('/setup'));
 
 // Upload flow
-router.post('/', async (req, res) => {
+router.post('/', rateLimiterMiddleware("upload", UserConfig.config?.rateLimit?.upload), async (req, res) => {
 
 	// Check user config
 	if (!UserConfig.ready) return res.status(500).type('text').send('Configuration missing!');

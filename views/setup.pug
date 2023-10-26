@@ -55,6 +55,22 @@ block content
 			sl-input#mysql-password(type='password' placeholder='super-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
 			h3.setup-text-item-title Database
 			sl-input#mysql-database(type='text' placeholder='assdb' clearable): sl-icon(slot='prefix' name='fas-database' library='fa')
+		
+		//- * Rate Limits
+		h2.setup-text-section-header.mt-4 Rate Limits #[span.setup-text-optional optional]
+		.setup-panel
+			h3.setup-text-item-title Generic API - Requests
+			sl-input#ratelimit-api-requests(type='text' placeholder='120' clearable): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+			h3.setup-text-item-title Generic API - Seconds per reset
+			sl-input#ratelimit-api-time(type='text' placeholder='60' clearable): sl-icon(slot='prefix' name='fas-clock' library='fa')
+			h3.setup-text-item-title Login - Requests
+			sl-input#ratelimit-login-requests(type='text' placeholder='5' clearable): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+			h3.setup-text-item-title Login - Seconds per reset
+			sl-input#ratelimit-login-time(type='text' placeholder='30' clearable): sl-icon(slot='prefix' name='fas-clock' library='fa')
+			h3.setup-text-item-title File upload - Requests
+			sl-input#ratelimit-upload-requests(type='text' placeholder='120' clearable): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+			h3.setup-text-item-title File upload - Seconds per reset
+			sl-input#ratelimit-upload-time(type='text' placeholder='60' clearable): sl-icon(slot='prefix' name='fas-clock' library='fa')
 
 		sl-button.w-32.mt-2.self-center#submit(type='primary' submit) Submit
 	script(src='/setup/ui.js')

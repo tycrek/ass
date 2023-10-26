@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
-import { randomBytes, getRandomValues } from 'crypto';
 import cryptoRandomString from 'crypto-random-string';
+import { randomBytes, getRandomValues } from 'crypto';
 import { path } from '@tycrek/joint';
 
 type Length = { length: number, gfyLength?: number };
