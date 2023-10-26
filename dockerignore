@@ -1,0 +1,7 @@
+.github
+.gitignore
+.dockerignore
+.install
+Dockerfile
+compose.yaml
+node_modules/
