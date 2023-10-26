@@ -102,12 +102,17 @@ export class UserConfig {
 			if (!Checkers.s3.credentials.secretKey(config.s3.credentials.secretKey)) throw new Error('Invalid S3 Secret key');
 		}
 
-		// * Optional SQL config(s) (Currently only checks MySQL)
-		if (config.sql?.mySql != null) {
-			if (!Checkers.sql.mySql.host(config.sql.mySql.host)) throw new Error('Invalid MySql Host');
-			if (!Checkers.sql.mySql.user(config.sql.mySql.user)) throw new Error('Invalid MySql User');
-			if (!Checkers.sql.mySql.password(config.sql.mySql.password)) throw new Error('Invalid MySql Password');
-			if (!Checkers.sql.mySql.database(config.sql.mySql.database)) throw new Error('Invalid MySql Database');
+		// * Optional database config(s)
+		if (config.database != null) {
+			// these both have the same schema so we can just check both
+			if (config.database.kind == 'mysql' || config.database.kind == 'postgres') {
+				if (config.database.options != undefined) {
+					if (!Checkers.sql.mySql.host(config.database.options.host)) throw new Error('Invalid database host');
+					if (!Checkers.sql.mySql.user(config.database.options.user)) throw new Error('Invalid databse user');
+					if (!Checkers.sql.mySql.password(config.database.options.password)) throw new Error('Invalid database password');
+					if (!Checkers.sql.mySql.database(config.database.options.database)) throw new Error('Invalid database');
+				} else throw new Error('Database options missing');
+			}
 		}
 
 		// * optional rate limit config

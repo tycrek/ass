@@ -89,10 +89,10 @@ export const ensureFiles = (): Promise<void> => new Promise(async (resolve, reje
  * JSON database. i know json isnt sql, shut up.
  */
 export class JSONDatabase implements Database {
-    open():  Promise<void> { return Promise.resolve() }
-    close(): Promise<void> { return Promise.resolve() }
+    public open():  Promise<void> { return Promise.resolve() }
+    public close(): Promise<void> { return Promise.resolve() }
 
-    configure(): Promise<void> {
+    public configure(): Promise<void> {
         return new Promise((resolve, reject) => {
             ensureFiles();
 
@@ -100,7 +100,7 @@ export class JSONDatabase implements Database {
         });
     }
     
-    put(table: DatabaseTable, key: string, data: DatabaseValue): Promise<void> {
+    public put(table: DatabaseTable, key: string, data: DatabaseValue): Promise<void> {
         return new Promise(async (resolve, reject) => {
             if (table == 'assfiles') {
                 // ? Local JSON
@@ -138,14 +138,14 @@ export class JSONDatabase implements Database {
         })
     }
 
-    get(table: DatabaseTable, key: string): Promise<DatabaseValue | undefined> {
+    public get(table: DatabaseTable, key: string): Promise<DatabaseValue | undefined> {
         return new Promise(async (resolve, reject) => {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]][key];
     		(!data) ? resolve(undefined) : resolve(data);
         });
     }
 
-    getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
+    public getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
         return new Promise(async (resolve, reject) => {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]];
             (!data) ? resolve({}) : resolve(data);

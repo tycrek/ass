@@ -15,6 +15,7 @@ import { UserConfig } from './UserConfig';
 import { MySQLDatabase } from './sql/mysql';
 import { buildFrontendRouter } from './routers/_frontend';
 import { DBManager } from './sql/database';
+import { PostgreSQLDatabase } from './sql/postgres';
 
 /**
  * Top-level metadata exports
@@ -114,10 +115,21 @@ async function main() {
 		.catch((err) => (err.code && err.code === 'ENOENT' ? {} : console.error(err), resolve(void 0))));
 
 	// If user config is ready, try to configure SQL
-	if (UserConfig.ready && UserConfig.config.sql?.mySql != null) {
-		try { await DBManager.use(new MySQLDatabase()); }
-		catch (err) { throw new Error(`Failed to configure SQL`); }
-	} else {
+	if (UserConfig.ready && UserConfig.config.database != null) {
+		try {
+			switch (UserConfig.config.database?.kind) {
+				case 'json':
+					await DBManager.use(new JSONDatabase());
+					break;
+				case 'mysql':
+					await DBManager.use(new MySQLDatabase());
+					break;
+				case 'postgres':
+					await DBManager.use(new PostgreSQLDatabase());
+					break;
+			}
+		} catch (err) { throw new Error(`Failed to configure SQL`); }
+	} else { // default to json database
 		await DBManager.use(new JSONDatabase());
 	}
 

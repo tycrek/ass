@@ -25,6 +25,31 @@ export class MySQLDatabase implements Database {
 				.catch((err) => reject(err)));
 	}
 
+	/**
+	 * validate the mysql config
+	 */
+	private _validateConfig(): string | undefined {
+		// make sure the configuration exists
+		if (!UserConfig.ready) return 'User configuration not ready';
+		if (typeof UserConfig.config.database != 'object') return 'MySQL configuration missing';
+		if (UserConfig.config.database.kind != "mysql") return 'Database not set to MySQL, but MySQL is in use, something has gone terribly wrong';
+		if (typeof UserConfig.config.database.options != 'object') return 'MySQL configuration missing';
+
+		let mySqlConf = UserConfig.config.database.options;
+
+		// Check the MySQL configuration
+		const checker = (val: string) => val != null && val !== '';
+		const issue =
+			!checker(mySqlConf.host) ? 'Missing MySQL Host'
+				: !checker(mySqlConf.user) ? 'Missing MySQL User'
+					: !checker(mySqlConf.password) ? 'Missing MySQL Password'
+						: !checker(mySqlConf.database) ? 'Missing MySQL Database'
+							// ! Blame VS Code for this weird indentation
+							: undefined;
+
+		return issue;
+	}
+
 	public open()  { return Promise.resolve(); }
 	public close() { return Promise.resolve(); }
 
@@ -35,11 +60,11 @@ export class MySQLDatabase implements Database {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Config check
-				if (!UserConfig.ready) throw new Error('User configuration not ready');
-				if (!UserConfig.config.sql?.mySql) throw new Error('MySQL configuration missing');
+				let configError = this._validateConfig();
+				if (configError) throw new Error(configError);
 
 				// Create the pool
-				this._pool = mysql.createPool(UserConfig.config.sql.mySql);
+				this._pool = mysql.createPool(UserConfig.config.database!.options!);
 
 				// Check if the pool is usable
 				const [rowz, _fields] = await this._pool.query(`SHOW FULL TABLES WHERE Table_Type LIKE 'BASE TABLE';`);
@@ -61,7 +86,7 @@ export class MySQLDatabase implements Database {
 
 					// Check which tables ACTUALLY do exist
 					for (let row of rows_tableData) {
-						const table = row[`Tables_in_${UserConfig.config.sql!.mySql!.database}`
+						const table = row[`Tables_in_${UserConfig.config.database!.options!.database}`
 						] as DatabaseTable;
 						if (table === 'assfiles') tablesExist.files = true;
 						if (table === 'assusers') tablesExist.users = true;

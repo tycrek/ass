@@ -24,7 +24,7 @@ declare module 'ass' {
 		maximumFileSize: number;
 
 		s3?: S3Configuration;
-		sql?: SqlConfiguration;
+		database?: DatabaseConfiguration;
 
 		rateLimit?: RateLimitConfiguration;
 	}
@@ -51,13 +51,23 @@ declare module 'ass' {
 		}
 	}
 
-	interface SqlConfiguration {
-		mySql?: {
-			host: string;
-			user: string;
-			password: string;
-			database: string;
-		}
+	interface DatabaseConfiguration {
+		kind: 'mysql' | 'postgres' | 'json';
+		options?: MySQLConfiguration | PostgresConfiguration;
+	}
+
+	interface MySQLConfiguration {
+		host: string;
+		user: string;
+		password: string;
+		database: string;
+	}
+
+	interface PostgresConfiguration {
+		host: string;
+		user: string;
+		password: string;
+		database: string;
 	}
 
 	/**
@@ -219,7 +229,6 @@ declare module 'ass' {
 		files: {
 			[key: NID]: AssFile;
 		}
-		useSql: boolean;
 		meta: { [key: string]: any };
 	}
 
@@ -232,7 +241,6 @@ declare module 'ass' {
 			[key: NID]: AssUser;
 		};
 		cliKey: string;
-		useSql: boolean;
 		meta: { [key: string]: any };
 	}
 }
