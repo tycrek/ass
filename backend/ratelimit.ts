@@ -38,7 +38,7 @@ export const setRateLimiter = (group: string, config: EndpointRateLimitConfigura
  * creates middleware for rate limiting
  */
 export const rateLimiterMiddleware = (group: string, config: EndpointRateLimitConfiguration | undefined): (req: Request, res: Response, next: NextFunction) => void => {
-    if (rateLimiterGroups.has(group)) setRateLimiter(group, config);
+    if (!rateLimiterGroups.has(group)) setRateLimiter(group, config);
 
     return (req, res, next) => {
         return rateLimiterGroups.get(group)!(req, res, next);
