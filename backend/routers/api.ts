@@ -8,7 +8,7 @@ import { log } from '../log';
 import { nanoid } from '../generators';
 import { UserConfig } from '../UserConfig';
 import { MySql } from '../sql/mysql';
-import { rateLimiterMiddleware } from '../ratelimit';
+import { rateLimiterMiddleware, setRateLimiter } from '../ratelimit';
 
 const router = Router({ caseSensitive: true });
 
@@ -30,6 +30,11 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 		if (UserConfig.config.sql?.mySql != null)
 			await Promise.all([MySql.configure(), data.setDataModeToSql()]);
 
+		// set rate limits
+		if (UserConfig.config.rateLimit?.api)    setRateLimiter('api',    UserConfig.config.rateLimit.api);
+		if (UserConfig.config.rateLimit?.login)  setRateLimiter('login',  UserConfig.config.rateLimit.login);
+		if (UserConfig.config.rateLimit?.upload) setRateLimiter('upload', UserConfig.config.rateLimit.upload);
+
 		log.success('Setup', 'completed');
 
 		return res.json({ success: true });
@@ -39,7 +44,7 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 });
 
 // User login
-router.post('/login', rateLimiterMiddleware('login', UserConfig.config.rateLimit?.login), BodyParserJson(), (req, res) => {
+router.post('/login', rateLimiterMiddleware('login', UserConfig.config?.rateLimit?.login), BodyParserJson(), (req, res) => {
 	const { username, password } = req.body;
 
 	data.getAll('users')
@@ -69,7 +74,7 @@ router.post('/login', rateLimiterMiddleware('login', UserConfig.config.rateLimit
 });
 
 // todo: authenticate API endpoints
-router.post('/user', rateLimiterMiddleware('api', UserConfig.config.rateLimit?.api), BodyParserJson(), async (req, res) => {
+router.post('/user', rateLimiterMiddleware('api', UserConfig.config?.rateLimit?.api), BodyParserJson(), async (req, res) => {
 	if (!UserConfig.ready)
 		return res.status(409).json({ success: false, message: 'User config not ready' });
 
