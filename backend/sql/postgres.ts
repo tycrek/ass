@@ -149,9 +149,9 @@ export class PostgreSQLDatabase implements Database {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
-                    assfiles:  'INSERT INTO assfiles (id, data) VALUES ($1, $2)',
-                    assusers:  'INSERT INTO assusers (id, data) VALUES ($1, $2)',
-                    asstokens: 'INSERT INTO asstokens (id, data) VALUES ($1, $2)'
+                    assfiles:  'INSERT INTO assfiles (id, data) VALUES ($1, $2);',
+                    assusers:  'INSERT INTO assusers (id, data) VALUES ($1, $2);',
+                    asstokens: 'INSERT INTO asstokens (id, data) VALUES ($1, $2);'
                 };
 
                 let result = await this._client.query(queries[table], [key, data]);
@@ -167,9 +167,9 @@ export class PostgreSQLDatabase implements Database {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
-                    assfiles:  'SELECT data FROM assfiles WHERE id = $1::text',
-                    assusers:  'SELECT data FROM assusers WHERE id = $1::text',
-                    asstokens: 'SELECT data FROM asstokens WHERE id = $1::text'
+                    assfiles:  'SELECT data FROM assfiles WHERE id = $1::text;',
+                    assusers:  'SELECT data FROM assusers WHERE id = $1::text;',
+                    asstokens: 'SELECT data FROM asstokens WHERE id = $1::text;'
                 };
 
                 let result = await this._client.query(queries[table], [key]);
