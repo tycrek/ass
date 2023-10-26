@@ -65,6 +65,7 @@ declare module 'ass' {
 
 	interface PostgresConfiguration {
 		host: string;
+		port: number;
 		user: string;
 		password: string;
 		database: string;
@@ -128,6 +129,9 @@ declare module 'ass' {
 				user: (val: any) => boolean;
 				password: (val: any) => boolean;
 				database: (val: any) => boolean;
+			}
+			postgres: {
+				port: (val: any) => boolean;
 			}
 		}
 		rateLimit: {

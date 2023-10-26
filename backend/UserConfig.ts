@@ -1,4 +1,4 @@
-import { UserConfiguration, UserConfigTypeChecker } from 'ass';
+import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration } from 'ass';
 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
@@ -56,7 +56,10 @@ const Checkers: UserConfigTypeChecker = {
 			host: basicStringChecker,
 			user: basicStringChecker,
 			password: basicStringChecker,
-			database: basicStringChecker
+			database: basicStringChecker,
+		},
+		postgres: {
+			port: (val) => numChecker(val) && val >= 1 && val <= 65535
 		}
 	},
 
@@ -111,6 +114,11 @@ export class UserConfig {
 					if (!Checkers.sql.mySql.user(config.database.options.user)) throw new Error('Invalid databse user');
 					if (!Checkers.sql.mySql.password(config.database.options.password)) throw new Error('Invalid database password');
 					if (!Checkers.sql.mySql.database(config.database.options.database)) throw new Error('Invalid database');
+					if (config.database.kind == 'postgres') {
+						if (!Checkers.sql.postgres.port((config.database.options as PostgresConfiguration).port)) {
+							throw new Error("Invalid database port");
+						}
+					}
 				} else throw new Error('Database options missing');
 			}
 		}

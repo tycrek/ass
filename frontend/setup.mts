@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		pgsqlTab: document.querySelector('#pgsql-tab') as SlTab,
 		pgsqlHost: document.querySelector('#pgsql-host') as SlInput,
+		pgsqlPort: document.querySelector('#pgsql-port') as SlInput,
 		pgsqlUser: document.querySelector('#pgsql-user') as SlInput,
 		pgsqlPassword: document.querySelector('#pgsql-password') as SlInput,
 		pgsqlDatabase: document.querySelector('#pgsql-database') as SlInput,
@@ -120,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					kind: 'postgres',
 					options: {
 						host:     Elements.pgsqlHost.value,
+						port:     parseInt(Elements.pgsqlPort.value),
 						user:     Elements.pgsqlUser.value,
 						password: Elements.pgsqlPassword.value,
 						database: Elements.pgsqlDatabase.value
