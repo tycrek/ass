@@ -7,12 +7,7 @@ import { rateLimit } from 'express-rate-limit';
  */
 const rateLimiterGroups = new Map<string, (req: Request, res: Response, next: NextFunction) => void>();
 
-/**
- * creates middleware for rate limiting
- */
-export const rateLimiterMiddleware = (group: string, config: EndpointRateLimitConfiguration | undefined): (req: Request, res: Response, next: NextFunction) => void => {
-    if (rateLimiterGroups.has(group)) return rateLimiterGroups.get(group)!;
-
+export const setRateLimiter = (group: string, config: EndpointRateLimitConfiguration | undefined): (req: Request, res: Response, next: NextFunction) => void => {
     if (config == null) { // config might be null if the user doesnt want a rate limit
         rateLimiterGroups.set(group, (req, res, next) => {
             next();
@@ -38,4 +33,14 @@ export const rateLimiterMiddleware = (group: string, config: EndpointRateLimitCo
 
         return rateLimiterGroups.get(group)!;
     }
+}
+/**
+ * creates middleware for rate limiting
+ */
+export const rateLimiterMiddleware = (group: string, config: EndpointRateLimitConfiguration | undefined): (req: Request, res: Response, next: NextFunction) => void => {
+    if (rateLimiterGroups.has(group)) setRateLimiter(group, config);
+
+    return (req, res, next) => {
+        return rateLimiterGroups.get(group)!(req, res, next);
+    };
 };
