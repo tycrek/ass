@@ -4,8 +4,8 @@
   "description": "The simple self-hosted ShareX server",
   "main": "dist-backend/app.js",
   "engines": {
-    "node": ">=20.8.0",
-    "npm": ">=10.1.0"
+    "node": ">=20.9.0",
+    "npm": ">=10.2.1"
   },
   "scripts": {
     "dev": "npm run build && npm start",
@@ -28,12 +28,12 @@
   "bugs": "https://github.com/tycrek/ass/issues",
   "homepage": "https://github.com/tycrek/ass#readme",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.421.0",
-    "@shoelace-style/shoelace": "^2.9.0",
-    "@tinycreek/postcss-font-magician": "^4.1.0",
-    "@tsconfig/node18": "^18.2.2",
+    "@aws-sdk/client-s3": "^3.436.0",
+    "@shoelace-style/shoelace": "^2.11.2",
+    "@tinycreek/postcss-font-magician": "^4.2.0",
+    "@tsconfig/node20": "^20.1.2",
     "@tycrek/discord-hookr": "^0.1.0",
-    "@tycrek/express-postcss": "^0.4.0",
+    "@tycrek/express-postcss": "^0.4.1",
     "@tycrek/joint": "^1.0.0-1",
     "@tycrek/log": "^0.7.5",
     "@tycrek/papito": "^0.3.4",
@@ -50,29 +50,29 @@
     "ffmpeg-static": "^5.2.0",
     "fs-extra": "^11.1.1",
     "luxon": "^3.4.3",
-    "mysql2": "^3.6.1",
-    "node-fetch": "^2.6.7",
+    "mysql2": "^3.6.2",
+    "node-fetch": "^2.7.0",
     "node-vibrant": "^3.1.6",
     "pug": "^3.0.2",
     "sanitize-filename": "^1.6.3",
     "sharp": "^0.32.6",
-    "shoelace-fontawesome-pug": "^6.4.2",
-    "shoelace-pug-loader": "^2.9.2",
-    "tailwindcss": "^3.3.3",
+    "shoelace-fontawesome-pug": "^6.4.3",
+    "shoelace-pug-loader": "^2.11.0",
+    "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
-    "@types/express": "^4.17.18",
-    "@types/express-busboy": "^8.0.1",
-    "@types/ffmpeg-static": "^3.0.1",
+    "@types/bcrypt": "^5.0.1",
+    "@types/express": "^4.17.20",
+    "@types/express-busboy": "^8.0.2",
+    "@types/ffmpeg-static": "^3.0.2",
     "@types/fs-extra": "^9.0.13",
-    "@types/luxon": "^3.3.2",
-    "@types/node": "^18.16.19",
-    "@types/node-fetch": "^2.6.6",
+    "@types/luxon": "^3.3.3",
+    "@types/node": "^20.8.9",
+    "@types/node-fetch": "^2.6.7",
     "@types/sharp": "^0.32.0",
     "@types/tailwindcss": "^3.1.0",
-    "@types/uuid": "^8.3.1"
+    "@types/uuid": "^8.3.4"
   }
 }
