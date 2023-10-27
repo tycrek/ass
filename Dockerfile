@@ -6,5 +6,7 @@
 FROM node:20.9.0-alpine
 WORKDIR /opt/ass-src/
 COPY . ./
-RUN npm i --save-dev && npm run build
+RUN npm i -g pnpm
+RUN pnpm i
+RUN npm run build
 CMD npm start
