@@ -26,4 +26,8 @@
 	}
 }
 
-@layer utilities {}
+@layer utilities {
+	.flex-center {
+		@apply items-center justify-center;
+	}
+}
