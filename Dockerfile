@@ -8,4 +8,3 @@ WORKDIR /opt/ass-src/
 COPY . ./
 RUN npm i --save-dev && npm run build
 CMD npm start
-RUN rm -rf /var/cache/apk/*
