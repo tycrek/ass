@@ -53,7 +53,7 @@
     "any-shell-escape": "^0.1.1",
     "autoprefixer": "^10.4.16",
     "aws-sdk": "^2.1467.0",
-    "axios": "^1.5.1",
+    "axios": "^1.6.0",
     "bcrypt": "^5.1.1",
     "chalk": "^4.1.2",
     "check-node-version": "^4.2.1",
