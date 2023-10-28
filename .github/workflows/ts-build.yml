@@ -26,11 +26,11 @@ jobs:
 
       # Install npm 10 & TypeScript
       - name: Install global packages
-        run: npm i -g npm@10 typescript
+        run: npm i -g npm@10 typescript pnpm
 
       # Install ass dependencies (including types)
       - name: Install dependencies
-        run: npm i --save-dev
+        run: pnpm i
 
       # Compile the TypeScript files
       - name: Run build script
