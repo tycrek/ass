@@ -12,7 +12,7 @@ import { log } from './log';
 import { get } from './data';
 import { UserConfig } from './UserConfig';
 import { DBManager } from './sql/database';
-import { JSONDatabase, ensureFiles } from './sql/json';
+import { JSONDatabase } from './sql/json';
 import { MySQLDatabase } from './sql/mysql';
 import { PostgreSQLDatabase } from './sql/postgres';
 import { buildFrontendRouter } from './routers/_frontend';
@@ -79,8 +79,9 @@ async function main() {
 
 	App.pkgVersion = pkg.version;
 
-	// Ensure data files exist
-	await ensureFiles();
+	// Ensure data directory exists
+	log.debug('Check data dir')
+	await fs.ensureDir(path.join('.ass-data'));
 
 	// Set default server configuration
 	const serverConfig: ServerConfiguration = {
