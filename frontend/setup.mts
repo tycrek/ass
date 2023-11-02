@@ -113,8 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						password: Elements.mySqlPassword.value,
 						database: Elements.mySqlDatabase.value
 					}
-				}
-			};
+				};
+			}
 		} else if (Elements.pgsqlTab.active) {
 			if (Elements.pgsqlHost.value != null && Elements.pgsqlHost.value != '') {
 				config.database = {
@@ -126,8 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						password: Elements.pgsqlPassword.value,
 						database: Elements.pgsqlDatabase.value
 					}
-				}
-			};
+				};
+			}
 		}
 
 		// append rate limit config, if specified
