@@ -80,7 +80,7 @@ async function main() {
 	App.pkgVersion = pkg.version;
 
 	// Ensure data directory exists
-	log.debug('Check data dir')
+	log.debug('Checking data dir')
 	await fs.ensureDir(path.join('.ass-data'));
 
 	// Set default server configuration
