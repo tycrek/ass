@@ -163,44 +163,6 @@ If you need to override a specific part of the config to be different from the g
 
 [Luxon]: https://moment.github.io/luxon/#/zones?id=specifying-a-zone
 
-### Fancy embeds
-
-If you primarily share media on Discord, you can add these additional (optional) headers to build embeds:
-
-| Header | Purpose |
-| ------ | ------- |
-| **`X-Ass-OG-Title`** | Large text shown above your media. Required for embeds to appear on desktop. |
-| **`X-Ass-OG-Description`** | Small text shown below the title but above the media (does not show up on videos) |
-| **`X-Ass-OG-Author`** | Small text shown above the title |
-| **`X-Ass-OG-Author-Url`** | URL to open when the Author is clicked |
-| **`X-Ass-OG-Provider`** | Smaller text shown above the author |
-| **`X-Ass-OG-Provider-Url`** | URL to open when the Provider is clicked |
-| **`X-Ass-OG-Color`** | Colour shown on the left side of the embed. Must be one of `&random`, `&vibrant`, or a hex colour value (for example: `#fe3c29`). Random is a randomly generated hex value & Vibrant is sourced from the image itself |
-
-#### Embed placeholders
-
-You can insert certain metadata into your embeds with these placeholders:
-
-| Placeholder | Result |
-| ----------- | ------ |
-| **`&size`** | The files size with proper notation rounded to two decimals (example: `7.06 KB`) |
-| **`&filename`** | The original filename of the uploaded file |
-| **`&timestamp`** | The timestamp of when the file was uploaded (example: `Oct 14, 1983, 1:30 PM`) |
-
-#### Server-side embed configuration
-
-You may also specify a default embed config on the server. Keep in mind that if users specify the `X-Ass-OG-Title` header, the server-side config will be ignored. To configure the server-side embed, create a new file in the `share/` directory named `embed.json`. Available options are:
-
-- **`title`**
-- `description`
-- `author`
-- `authorUrl`
-- `provider`
-- `providerUrl`
-- `color`
-
-Their values are equivalent to the headers listed above.
-
 ### Webhooks
 
 You may use Discord webhooks as an easy way to keep track of your uploads. The first step is to [create a new Webhook]. You only need to follow the first section, **Making a Webhook**. Once you are done that, click **Copy Webhook URL**. Finally, add these headers to your custom uploader:
@@ -214,22 +176,6 @@ You may use Discord webhooks as an easy way to keep track of your uploads. The f
 Webhooks will show the filename, mimetype, size, upload timestamp, thumbail, & a link to delete the file. To disable webhooks, simply remove the headers from your config.
 
 [create a new Webhook]: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
-
-## Customizing the viewer
-
-If you want to customize the font or colours of the viewer page, create a file in the `share/` directory called `theme.json`. Available options are:
-
-| Option | Purpose |
-| ------ | ------- |
-| **`font`** | The font family to use; defaults to `"Josefin Sans"`. Fonts with a space should be surrounded by double quotes. |
-| **`bgPage`** | Background colour for the whole page |
-| **`bgViewer`** | Background colour for the viewer element |
-| **`txtPrimary`** | Primary text colour; this should be your main brand colour. |
-| **`txtSecondary`** | Secondary text colour; this is used for the file details. |
-| **`linkPrimary`** | Primary link colour |
-| **`linkHover`** | Colour of the `hover` effect for links |
-| **`linkActive`** | Colour of the `active` effect for links |
-| **`borderHover`** | Colour of the `hover` effect for borders; this is used for the underlining links. |
 
 ## Custom index
 
@@ -256,148 +202,12 @@ To use a custom 404 page, create a file in the `share/` directory called `404.ht
 
 If there's interest, I may allow making this a function, similar to the custom index.
 
-## File storage
-
-ass supports three methods of file storage: local, S3, or [Skynet].
-
-### Local
-
-Local storage is the simplest option, but relies on you having a lot of disk space to store files, which can be costly.
-
-### S3
-
-Any existing object storage server that's compatible with [Amazon S3] can be used with ass. I personally host my files using Digital Ocean Spaces, which implements S3.
-
-S3 servers are generally very fast & have very good uptime, though this will depend on the hosting provider & plan you choose.
-
-## New user system (v0.14.0)
-
-The user system was overhauled in v0.14.0 to allow more features and flexibility. New fields on users include `admin`, `passhash`, `unid`, and `meta` (these will be documented more once the system is finalized).
-
-New installs will automatically generate a default user. Check the `auth.json` file for the token. You will use this for API requests and to authenticate within ShareX.
-
-ass will automatically convert your old `auth.json` to the new format. **Always backup your `auth.json` and `data.json` before updating**. By default, the original user (named `ass`) will be marked as an admin.
-
-### Adding users
-
-You may add users via the CLI or the API. I'll document the API further in the future.
-
-#### CLI
-
-```bash
-npm run cli-adduser <username> <password> [admin] [meta]
-```
-
-| Argument | Purpose |
-| -------- | ------- |
-| **`username`** `string` | The username of the user. |
-| **`password`** `string` | The password of the user. |
-| **`admin?`** `boolean` | Whether the user is an admin. Defaults to `false`. |
-| **`meta?`** `string` | Any additional metadata to store on the user, as a JSON string. |
-
-**Things still not added:**
-
-- Modifying/deleting users via the API
-
-## Developer API
-
-ass includes an API (v0.14.0) for frontend developers to easily integrate with. Right now the API is pretty limited but I will expand on it in the future, with frontend developer feedback.
-
-Any endpoints requiring authorization will require an `Authorization` header with the value being the user's upload token. Admin users are a new feature introduced in v0.14.0. Admin users can access all endpoints, while non-admin users can only access those relevant to them.
-
-Other things to note:
-
-- **All endpoints are prefixed with `/api/`**.
-- All endpoints will return a JSON object unless otherwise specified.
-- Successful endpoints *should* return a `200` status code. Any errors will use the corresponding `4xx` or `5xx` status code (such as `401 Unauthorized`).
-- ass's API will try to be as compliant with the HTTP spec as possible. For example, using `POST/PUT` for create/modify, and response codes such as `409 Conflict` for duplicate entries. This compliance may not be 100% perfect, but I will try my best.
-
-### API endpoints
-
-| Endpoint | Purpose | Admin? |
-| -------- | ------- | ------ |
-| **`GET /user/`** | Returns a list of all users | Yes |
-| **`GET /user/:id`** | Returns the user with the given ID | Yes |
-| **`GET /user/self`** | Returns the current user | No |
-| **`GET /user/token/:token`** | Returns the user with the given token | No |
-| **`POST /user/`** | Creates a new user. Request body must be a JSON object including `username` and `password`. You may optionally include `admin` (boolean) or `meta` (object). Returns 400 if fails. | Yes |
-| **`POST /user/password/reset/:id`** | Force resets the user's **password**. Request body must be a JSON object including a `password`. | Yes |
-| **`DELETE /user/:id`** | Deletes the user with the given ID, as well as all their uploads. | Yes |
-| **`PUT /user/meta/:id`** | Updates the user's metadata. Request body must be a JSON object with keys `key` and `value`, with the key/value you want to set in the users metadata. Optionally you may include `force: boolean` to override existing keys. | Yes |
-| **`DELETE /user/meta/:id`** | Deletes a key/value from a users metadata. Request body must be a JSON object with a `key` property specifying the key to delete. | Yes |
-| **`PUT /user/username/:id`** | Updates the user's username. Request body must be a JSON object with a `username` property. | Yes |
-| **`PUT /user/token/:id`** | Regenerates a users upload token | Yes |
-
-## Custom frontends - OUTDATED
-
-**Please be aware that this section is outdated (marked as of 2022-04-15). It will be updated when I overhaul the frontend system.**
-
-**Update 2022-12-24: I plan to overhaul this early in 2023.**
-
-ass is intended to provide a strong backend for developers to build their own frontends around. [Git Submodules] make it easy to create custom frontends. Submodules are their own projects, which means you are free to build the router however you wish, as long as it exports the required items. A custom frontend is really just an [Express.js router].
-
-**For a detailed walkthrough on developing your first frontend, [consult the wiki][ctw1].**
-
-[Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
-[Express.js router]: https://expressjs.com/en/guide/routing.html#express-router
-[ctw1]: https://github.com/tycrek/ass/wiki/Writing-a-custom-frontend
-
-## Data Engines
-
-[Papito data engines] are responsible for managing your data. "Data" has two parts: an identifier & the actual data itself. With ass, the data is a JSON object representing the uploaded resource. The identifier is the unique ID in the URL returned to the user on upload. **Update August 2022:** I plan to overhaul Papito and how all this works *eventually*. If this comment is still here in a year, ~~kick~~ message me.
-
-[Papito data engines]: https://github.com/tycrek/papito
-
-**Supported data engines:**
-
-| Name | Description | Links |
-| :--: | ----------- | :---: |
-| **JSON** | JSON-based data storage. On disk, data is stored in a JSON file. In memory, data is stored in a [Map]. This is the default engine. | [GitHub][GH ASE]<br>[npm][npm ASE] |
-| **PostgreSQL** | Data storage using a [PostgreSQL] database. [node-postgres] is used for communicating with the database. | [GitHub][GH APSQL]<br>[npm][npm APSQL] |
-| **Mongoose** | Data storage using a [MongoDB] database. [mongoose] is used for communicating with the database. Created by [@dylancl] | [GitHub][GH AMongoose]<br>[npm][npm AMongoose] |
-
-[Map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
-[GH ASE]: https://github.com/tycrek/papito/
-[npm ASE]: https://www.npmjs.com/package/@tycrek/papito
-[PostgreSQL]: https://www.postgresql.org/
-[node-postgres]: https://node-postgres.com/
-[GH APSQL]: https://github.com/tycrek/ass-psql/
-[npm APSQL]: https://www.npmjs.com/package/@tycrek/ass-psql
-[MongoDB]: https://www.mongodb.com/
-[mongoose]: https://mongoosejs.com/
-[GH AMongoose]: https://github.com/dylancl/ass-mongoose
-[npm AMongoose]: https://www.npmjs.com/package/ass-mongoose
-[@dylancl]: https://github.com/dylancl
-
-A Papito data engine implements support for one type of database (or file, such as JSON or YAML). This lets ass server hosts pick their database of choice, because all they'll have to do is enter the connection/authentication details & ass will handle the rest, using the resource ID as the key.
-
-**~~For a detailed walkthrough on developing engines, [consult the wiki][ctw2].~~ Outdated!**
-
-[`data.js`]: https://github.com/tycrek/ass/blob/master/data.js
-[ctw2]: https://github.com/tycrek/ass/wiki/Writing-a-StorageEngine
-
-## npm scripts
-
-ass has a number of pre-made npm scripts for you to use. **All** of these scripts should be run using `npm run <script-name>` (except `start`).
-
-| Script | Description |
-| ------ | ----------- |
-| **`start`** | Starts the ass server. This is the default script & is run with **`npm start`**. |
-| `build` | Compiles the TypeScript files into JavaScript. |
-| `dev` | Chains the `build` & `compile` scripts together. |
-| `setup` | Starts the easy setup process. Should be run after any updates that introduce new config options. |
-| `metrics` | Runs the metrics script. This is a simple script that outputs basic resource statistics. |
-| `purge` | Purges all uploads & data associated with them. This does **not** delete any users, however. |
-| `engine-check` | Ensures your environment meets the minimum Node & npm version requirements. |
-
-[`FORCE_COLOR`]: https://nodejs.org/dist/latest-v16.x/docs/api/cli.html#cli_force_color_1_2_3
-
 ## Flameshot users (Linux)
 
-Use [this script]. For the `KEY`, put your token. Thanks to [@ToxicAven] for creating this!
+Use [`flameshot-v2.sh`] or [`sample_screenshotter.sh`].
 
-[this script]: https://github.com/tycrek/ass/blob/master/flameshot_example.sh
-[@ToxicAven]: https://github.com/ToxicAven
+[`flameshot-v2.sh`]: https://github.com/tycrek/ass/blob/dev/0.15.0/flameshot-v2.sh
+[`sample_screenshotter.sh`]: https://github.com/tycrek/ass/blob/dev/0.15.0/sample_screenshotter.sh
 
 ## Contributing
 
@@ -410,7 +220,6 @@ Please follow the [Contributing Guidelines] when submiting Issues or Pull Reques
 - Thanks to [hlsl#1359] for the logo
 - [Gfycat] for their wordlists
 - [Aven], for helping kickstart the project
-- My spiteful ass for motivating me to actually take this project to new heights
 
 [hlsl#1359]: https://behance.net/zevwolf
 [Aven]: https://github.com/ToxicAven
