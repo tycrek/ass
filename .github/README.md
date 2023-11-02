@@ -9,19 +9,7 @@
 
 </div>
 
-**ass** is a self-hosted ShareX upload server written in Node.js. I initially started this project purely out of spite. ass aims to be as **unopinionated** as possible, giving users & hosts alike the ability to modify nearly everything.
-
-By default, ass comes with a resource viewing page, which includes metadata about the resource as well as a download button & inline viewers for images, videos, & audio. It does **not** have a user dashboard or registration system: **this is intentional!** Developers are free to [create their own frontends] using the languages & tools they are most comfortable with. Writing & using these frontends is fully documented below, in the wiki, & in the source code.
-
-### Notice (Sep 2023)
-
-The current release version 0.14.x is now in **maintenence mode**. What this means is I'll only be providing updates to catastrophic issues.
-
-However! I'm currently working on [a new version](https://github.com/tycrek/ass/pull/220), 0.15.0, which is a lot more stable and organized. I have no ETA but please know that I'm continuing to work on it when I can. Version 0.14.x is still functional, just a bit rough around the edges.
-
-#### Developers 🧡
-
-ass was designed with developers in mind. If you are a developer & want something changed to better suit you, let me know & we'll see what we can do!
+**ass** is a self-hosted ShareX upload server written in TypeScript.
 
 [GitHub package.json version]: https://img.shields.io/github/package-json/v/tycrek/ass?color=fd842d&style=for-the-badge
 [GitHub license]: https://img.shields.io/github/license/tycrek/ass?color=FD7C21&style=for-the-badge
@@ -29,23 +17,10 @@ ass was designed with developers in mind. If you are a developer & want somethin
 [GitHub Repo stars]: https://img.shields.io/github/stars/tycrek/ass?color=F26602&style=for-the-badge
 [Discord badge]: https://img.shields.io/discord/848274994375294986?label=Discord&logo=Discord&logoColor=FFF&style=for-the-badge
 [Discord invite]: https://discord.gg/wGZYt5fasY
-[create their own frontends]: #custom-frontends
-
-## Code quality
-
-| [CodeQL] | [DeepSource] |
-| :---------------------------------------: | :----------------------------------: |
-| [![CodeQL badge]][CodeQL link] | [![DeepSource Active Issues]][DeepSource Repo] [![DeepSource Resolved Issues]][DeepSource Repo] |
-
-[CodeQL]: https://codeql.github.com/docs/
-[DeepSource]: https://deepsource.io/
-[CodeQL badge]: https://github.com/tycrek/ass/actions/workflows/codeql-analysis.yml/badge.svg?branch=master
-[CodeQL link]: https://github.com/tycrek/ass/actions/workflows/codeql-analysis.yml
-[DeepSource Active Issues]: https://deepsource.io/gh/tycrek/ass.svg/?label=active+issues
-[DeepSource Resolved Issues]: https://deepsource.io/gh/tycrek/ass.svg/?label=resolved+issues
-[DeepSource Repo]: https://deepsource.io/gh/tycrek/ass/?ref=repository-badge
 
 ## Features
+
+###### Out of date
 
 #### For users
 
@@ -55,44 +30,30 @@ ass was designed with developers in mind. If you are a developer & want somethin
 - GPS data automatically removed
 - Fully customizable Discord embeds
 - Built-in web viewer with video & audio player
+- Dashboard to manage your files
 - Embed images, gifs, & videos directly in Discord
 - Personal upload log using customizable Discord Webhooks
 - macOS/Linux support with alternative clients such as [Flameshot] ([script for ass]) & [MagicCap]
 - **Multiple URL styles**
-   - [ZWS]
    - Mixed-case alphanumeric
    - Gfycat
-   - Original
    - Timestamp
+   - Original
+   - ZWS
 
 #### For hosts & developers
 
-- Usage metrics
-- Thumbnail support
-- Mimetype blocking
-- Themeable viewer page
-- Basic multi-user support
-- Configurable global upload size limit (per-user coming soon)
-- Custom pluggable frontends using [Git Submodules]
-- Run locally or in a Docker container
+- Multi-user support
+- Run locally or via Docker
+- API for developers to write custom interfaces
 - **Multiple file storage methods**
    - Local file system
-   - Amazon S3, including [DigitalOcean Spaces] (more coming soon)
-- **Multiple data storage methods** using [data engines]
-   - **File**
-      - JSON (default, [papito])
-      - YAML (soon)
-   - **Database**
-      - PostgreSQL ([ass-psql])
-      - MongoDB ([ass-mongoose][GH AMongoose])
-      - MySQL (soon)
+   - S3
+- **Multiple data storage methods**
+   - JSON
+   - MySQL
+   - PostgreSQL
 
-[Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
-[ZWS]: https://zws.im
-[DigitalOcean Spaces]: https://www.digitalocean.com/products/spaces/
-[data engines]: #data-engines
-[papito]: https://github.com/tycrek/papito
-[ass-psql]: https://github.com/tycrek/ass-psql
 [Flameshot]: https://flameshot.org/
 [script for ass]: #flameshot-users-linux
 [MagicCap]: https://magiccap.me/
@@ -101,18 +62,17 @@ ass was designed with developers in mind. If you are a developer & want somethin
 
 | Type | What is it? |
 | ---- | ----------- |
-| **[Zero-width spaces][ZWS]** | When pasted elsewhere, the URL appears to be *just* your domain name. Some browsers or sites may not recognize these URLs (Discord sadly no longer supports these as of April 2023)<br>![ZWS sample] |
 | **Mixed-case alphanumeric** | The "safe" mode. URL's are browser safe as the character set is just letters & numbers. |
 | **Gfycat** | Gfycat-style ID's (for example: `https://example.com/unsung-discrete-grub`). Thanks to [Gfycat] for the wordlists |
-| **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
 | **Timestamp** | The quick but dirty mode. URL is a timestamp of when the file was uploaded, in milliseconds. This is the most unique mode, but also potentially the longest (Gfycat could be longer, easily). **Keep in mind this is vulnerable to iteration attacks** |
+| **Original** | The "basic" mode. URL matches the same filename as when the file was uploaded. This may be prone to conflicts with files of the same name. |
+| **ZWS** | "Zero-width spaces": when pasted elsewhere, the URL appears to be *just* your domain name. Some browsers or sites may not recognize these URLs (Discord sadly no longer supports these as of April 2023) |
 
-[ZWS sample]: https://user-images.githubusercontent.com/29926144/113785625-bf43a480-96f4-11eb-8dd7-7f164f33ada2.png
 [Gfycat]: https://gfycat.com
 
 ## Installation
 
-ass supports two installation methods: Docker (recommended) & local (manual).
+ass supports two installation methods: Docker & local.
 
 ### Docker
 
@@ -120,61 +80,17 @@ ass supports two installation methods: Docker (recommended) & local (manual).
 <summary><em>Expand for Docker/Docker Compose installation steps</em></summary>
 <br>
 
-[Docker Compose] is the recommended way to install ass. These steps assume you are already family with Docker. If not, you should probably use the local installation method. They also assume that you have a working Docker installation with Docker Compose v2 installed.
+[Docker Compose] is the recommended way to install ass. These steps assume you already Docker & Docker Compose v2 installed.
 
 [Docker Compose]: https://docs.docker.com/compose/
 
 #### Install using docker-compose
 
-1. Clone the ass repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
-2. Run the command that corresponds to your OS:
-   - **Linux**: `./install/docker-linux.sh` (uses `#!/bin/bash`)
-   - **Windows**: `install\docker-windows.bat` (from Command Prompt)
-   - These scripts are identical using the equivalent commands in each OS.
-3. Work through the setup process when prompted.
-
-The upload token will be printed at the end of the setup script prompts. This is the token that you'll need to use to upload resources to ass. It may go by too quickly to copy it, so just scroll back up in your terminal after setup or run `cat auth.json`.
-
-You should now be able to access the ass server at `http://localhost:40115/` (ass-docker will bind to host `0.0.0.0` to allow external access). You can configure a reverse proxy (for example, [Caddy]; also check out [my tutorial]) to make it accessible from the internet with automatic SSL.
-
-#### What is this script doing?
-
-It creates directories & files required for Docker Compose to properly set up volumes. After that, it simply builds the image & container, then launches the setup process.
-
-#### How do I run the npm scripts?
-
-Since all 3 primary data files are bound to the container with Volumes, you can run the scripts in two ways: `docker compose exec` or `npm` on the host.
-
-```bash
-# Check the usage metrics
-docker compose exec ass npm run metrics
-
-# Run the setup script
-docker compose exec ass npm run setup && docker compose restart
-
-# Run npm on the host to run the setup script (also works for metrics)
-# (You will have to meet the Node.js & npm requirements on your host for this to work properly)
-npm run setup && docker compose restart
-```
-
-#### How do I update?
-
-Easy! Just pull the changes & run this one-liner:
-
-```bash
-# Pull the latest version of ass & rebuild the image
-git pull && docker compose build --no-cache && docker compose up -d
-```
-
-#### What else should I be aware of?
-
-Deploying ass with Docker exposes **five** volumes. These volumes let you edit the config, view the auth or data files, or view the `uploads/` folder from your host.
-
-- `uploads/`
-- `share/`
-- `config.json`
-- `auth.json`
-- `data.json`
+0. This repo comes with a pre-made Compose file.
+1. Clone the repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
+2. Run `docker compose up`
+   - You can append `-d` to run in the background.
+3. When the logs indicate, visit your installation in your browser to begin the setup.
 
 </details>
 
@@ -184,15 +100,16 @@ Deploying ass with Docker exposes **five** volumes. These volumes let you edit t
 <summary><em>Expand for local installation steps</em></summary>
 <br>
 
-1. You should have **Node.js 16** & **npm 8 or later** installed. 
+1. You should have **Node.js 20** & **npm 10 or later** installed. 
 2. Clone this repo using `git clone https://github.com/tycrek/ass.git && cd ass/`
-3. Run `npm i --save-dev` to install the required dependencies (`--save-dev` is **required** for compilation)
-4. Run `npm run build` to compile the TypeScript files
-5. Run `npm start` to start ass.
-
-The first time you run ass, the setup process will automatically be called & you will be shown your first authorization token; save this as you will need it to configure ShareX.
+3. Run `pnpm i` or `npm i`
+4. Run `npm run build`
+5. Run `npm start`
+6. When the logs indicate, visit your installation in your browser to begin the setup.
 
 </details>
+
+# the readme from this point is out of date
 
 ## Using HTTPS
 
