@@ -58,8 +58,6 @@ export const ensureFiles = (): Promise<void> => new Promise(async (resolve, reje
 	log.debug('Checking data files');
 
 	try {
-		// Create data directory
-		await fs.ensureDir(path.join('.ass-data'));
 
 		// * Default files.json
 		await createEmptyJson(PATHS.files, {
