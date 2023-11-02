@@ -7,8 +7,11 @@ import * as data from '../data';
 import { log } from '../log';
 import { nanoid } from '../generators';
 import { UserConfig } from '../UserConfig';
-import { MySql } from '../sql/mysql';
 import { rateLimiterMiddleware, setRateLimiter } from '../ratelimit';
+import { DBManager } from '../sql/database';
+import { JSONDatabase } from '../sql/json';
+import { MySQLDatabase } from '../sql/mysql';
+import { PostgreSQLDatabase } from '../sql/postgres';
 
 const router = Router({ caseSensitive: true });
 
@@ -26,14 +29,25 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 		// Save config
 		await UserConfig.saveConfigFile();
 
-		// Set data storage (not files) to SQL if required
-		if (UserConfig.config.sql?.mySql != null)
-			await Promise.all([MySql.configure(), data.setDataModeToSql()]);
+		// set up new databases
+		if (UserConfig.config.database) {
+			switch (UserConfig.config.database.kind) {
+				case 'json':
+					await DBManager.use(new JSONDatabase());
+					break;
+				case 'mysql':
+					await DBManager.use(new MySQLDatabase());
+					break;
+				case 'postgres':
+					await DBManager.use(new PostgreSQLDatabase());
+					break;
+			}
+		}
 
 		// set rate limits
-		if (UserConfig.config.rateLimit?.api)    setRateLimiter('api',    UserConfig.config.rateLimit.api);
-		if (UserConfig.config.rateLimit?.login)  setRateLimiter('login',  UserConfig.config.rateLimit.login);
-		if (UserConfig.config.rateLimit?.upload) setRateLimiter('upload', UserConfig.config.rateLimit.upload);
+		if (UserConfig.config.rateLimit?.api) setRateLimiter('api', UserConfig.config.rateLimit.api);
+		if (UserConfig.config.rateLimit?.login) setRateLimiter('login', UserConfig.config.rateLimit.login);
+		if (UserConfig.config.rateLimit?.upload) setRateLimiter('upload', UserConfig.config.rateLimit.upload);;
 
 		log.success('Setup', 'completed');
 

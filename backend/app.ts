@@ -9,9 +9,12 @@ import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 
 import { log } from './log';
-import { ensureFiles, get } from './data';
+import { get } from './data';
 import { UserConfig } from './UserConfig';
-import { MySql } from './sql/mysql';
+import { DBManager } from './sql/database';
+import { JSONDatabase } from './sql/json';
+import { MySQLDatabase } from './sql/mysql';
+import { PostgreSQLDatabase } from './sql/postgres';
 import { buildFrontendRouter } from './routers/_frontend';
 
 /**
@@ -76,8 +79,9 @@ async function main() {
 
 	App.pkgVersion = pkg.version;
 
-	// Ensure data files exist
-	await ensureFiles();
+	// Ensure data directory exists
+	log.debug('Checking data dir')
+	await fs.ensureDir(path.join('.ass-data'));
 
 	// Set default server configuration
 	const serverConfig: ServerConfiguration = {
@@ -112,9 +116,24 @@ async function main() {
 		.catch((err) => (err.code && err.code === 'ENOENT' ? {} : console.error(err), resolve(void 0))));
 
 	// If user config is ready, try to configure SQL
-	if (UserConfig.ready && UserConfig.config.sql?.mySql != null)
-		try { await MySql.configure(); }
-		catch (err) { throw new Error(`Failed to configure SQL`); }
+	if (UserConfig.ready && UserConfig.config.database != null) {
+		try {
+			switch (UserConfig.config.database?.kind) {
+				case 'json':
+					await DBManager.use(new JSONDatabase());
+					break;
+				case 'mysql':
+					await DBManager.use(new MySQLDatabase());
+					break;
+				case 'postgres':
+					await DBManager.use(new PostgreSQLDatabase());
+					break;
+			}
+		} catch (err) { throw new Error(`Failed to configure SQL`); }
+	} else { // default to json database
+		log.debug('DB not set! Defaulting to JSON');
+		await DBManager.use(new JSONDatabase());
+	}
 
 	// Set up Express
 	const app = express();

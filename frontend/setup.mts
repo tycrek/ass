@@ -1,4 +1,4 @@
-import { SlInput, SlButton } from '@shoelace-style/shoelace';
+import { SlInput, SlButton, SlTab } from '@shoelace-style/shoelace';
 import { IdType, UserConfiguration } from 'ass';
 
 const genericErrorAlert = () => alert('An error occured, please check the console for details');
@@ -41,10 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
 		s3secretKey: document.querySelector('#s3-secretKey') as SlInput,
 		s3region: document.querySelector('#s3-region') as SlInput,
 
+		jsonTab: document.querySelector('#json-tab') as SlTab,
+
+		mySqlTab: document.querySelector('#mysql-tab') as SlTab,
 		mySqlHost: document.querySelector('#mysql-host') as SlInput,
 		mySqlUser: document.querySelector('#mysql-user') as SlInput,
 		mySqlPassword: document.querySelector('#mysql-password') as SlInput,
 		mySqlDatabase: document.querySelector('#mysql-database') as SlInput,
+
+		pgsqlTab: document.querySelector('#pgsql-tab') as SlTab,
+		pgsqlHost: document.querySelector('#pgsql-host') as SlInput,
+		pgsqlPort: document.querySelector('#pgsql-port') as SlInput,
+		pgsqlUser: document.querySelector('#pgsql-user') as SlInput,
+		pgsqlPassword: document.querySelector('#pgsql-password') as SlInput,
+		pgsqlDatabase: document.querySelector('#pgsql-database') as SlInput,
 
 		userUsername: document.querySelector('#user-username') as SlInput,
 		userPassword: document.querySelector('#user-password') as SlInput,
@@ -88,15 +98,36 @@ document.addEventListener('DOMContentLoaded', () => {
 				config.s3.region = Elements.s3region.value;
 		}
 
-		// Append MySQL to config, if specified
-		if (Elements.mySqlHost.value != null && Elements.mySqlHost.value !== '') {
-			if (!config.sql) config.sql = {};
-			config.sql.mySql = {
-				host: Elements.mySqlHost.value,
-				user: Elements.mySqlUser.value,
-				password: Elements.mySqlPassword.value,
-				database: Elements.mySqlDatabase.value
+		// Append database to config, if specified
+		if (Elements.jsonTab.active) {
+			config.database = {
+				kind: 'json'
 			};
+		} else if (Elements.mySqlTab.active) {
+			if (Elements.mySqlHost.value != null && Elements.mySqlHost.value != '') {
+				config.database = {
+					kind: 'mysql',
+					options: {
+						host:     Elements.mySqlHost.value,
+						user:     Elements.mySqlUser.value,
+						password: Elements.mySqlPassword.value,
+						database: Elements.mySqlDatabase.value
+					}
+				};
+			}
+		} else if (Elements.pgsqlTab.active) {
+			if (Elements.pgsqlHost.value != null && Elements.pgsqlHost.value != '') {
+				config.database = {
+					kind: 'postgres',
+					options: {
+						host:     Elements.pgsqlHost.value,
+						port:     parseInt(Elements.pgsqlPort.value),
+						user:     Elements.pgsqlUser.value,
+						password: Elements.pgsqlPassword.value,
+						database: Elements.pgsqlDatabase.value
+					}
+				};
+			}
 		}
 
 		// append rate limit config, if specified

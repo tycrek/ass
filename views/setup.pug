@@ -30,6 +30,41 @@ block content
 			h3.setup-text-item-title Password
 			sl-input#user-password(type='password' placeholder='the-most-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
 
+		//- * Database
+		h2.setup-text-section-header.mt-4 Database
+		.setup-panel
+			sl-tab-group
+				//- * JSON
+				sl-tab#json-tab(slot='nav' panel='json') JSON
+				sl-tab-panel(name='json')
+					| you all good!
+				
+				//- * MySQL
+				sl-tab#mysql-tab(slot='nav' panel='mysql') MySQL
+				sl-tab-panel(name='mysql')
+					h3.setup-text-item-title Host
+					sl-input#mysql-host(type='text' placeholder='mysql.example.com' clearable): sl-icon(slot='prefix' name='fas-server' library='fa')
+					h3.setup-text-item-title User
+					sl-input#mysql-user(type='text' placeholder='myassql' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
+					h3.setup-text-item-title Password
+					sl-input#mysql-password(type='password' placeholder='super-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
+					h3.setup-text-item-title Database
+					sl-input#mysql-database(type='text' placeholder='assdb' clearable): sl-icon(slot='prefix' name='fas-database' library='fa')
+
+				//- * PostgreSQL
+				sl-tab#pgsql-tab(slot='nav' panel='pgsql') PostgreSQL
+				sl-tab-panel(name='pgsql')
+					h3.setup-text-item-title Host
+					sl-input#pgsql-host(type='text' placeholder='postgres.example.com' clearable): sl-icon(slot='prefix' name='fas-server' library='fa')
+					h3.setup-text-item-title Port
+					sl-input#pgsql-port(type='number' placeholder='5432' min='1' max='65535' no-spin-buttons clearable): sl-icon(slot='prefix' name='fas-number' library='fa')
+					h3.setup-text-item-title User
+					sl-input#pgsql-user(type='text' placeholder='posgrassql' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
+					h3.setup-text-item-title Password
+					sl-input#pgsql-password(type='password' placeholder='super-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
+					h3.setup-text-item-title Database
+					sl-input#pgsql-database(type='text' placeholder='assdb' clearable): sl-icon(slot='prefix' name='fas-database' library='fa')
+
 		//- * S3
 		h2.setup-text-section-header.mt-4 S3 #[span.setup-text-optional optional]
 		.setup-panel
@@ -43,18 +78,6 @@ block content
 			sl-input#s3-secretKey(type='password' placeholder='EF56GH78IJ90KL12' clearable): sl-icon(slot='prefix' name='fas-user-secret' library='fa')
 			h3.setup-text-item-title Region #[span.setup-text-optional optional]
 			sl-input#s3-region(type='text' placeholder='us-east' clearable): sl-icon(slot='prefix' name='fas-map-location-dot' library='fa')
-
-		//- * MySQL
-		h2.setup-text-section-header.mt-4 MySQL #[span.setup-text-optional optional]
-		.setup-panel
-			h3.setup-text-item-title Host
-			sl-input#mysql-host(type='text' placeholder='mysql.example.com' clearable): sl-icon(slot='prefix' name='fas-server' library='fa')
-			h3.setup-text-item-title User
-			sl-input#mysql-user(type='text' placeholder='myassql' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
-			h3.setup-text-item-title Password
-			sl-input#mysql-password(type='password' placeholder='super-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
-			h3.setup-text-item-title Database
-			sl-input#mysql-database(type='text' placeholder='assdb' clearable): sl-icon(slot='prefix' name='fas-database' library='fa')
 		
 		//- * Rate Limits
 		h2.setup-text-section-header.mt-4 Rate Limits #[span.setup-text-optional optional]
