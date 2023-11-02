@@ -131,6 +131,7 @@ async function main() {
 			}
 		} catch (err) { throw new Error(`Failed to configure SQL`); }
 	} else { // default to json database
+		log.debug('DB not set! Defaulting to JSON');
 		await DBManager.use(new JSONDatabase());
 	}
 
