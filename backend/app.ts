@@ -92,11 +92,11 @@ async function main() {
 
 	// Replace with user details, if necessary
 	try {
-		const exists = await fs.pathExists(path.join('server.json'));
+		const exists = await fs.pathExists(path.join('.ass-data/server.json'));
 		if (exists) {
 
 			// Read file
-			const { host, port, proxied } = await fs.readJson(path.join('server.json')) as { host?: string, port?: number, proxied?: boolean };
+			const { host, port, proxied } = await fs.readJson(path.join('.ass-data/server.json')) as { host?: string, port?: number, proxied?: boolean };
 
 			// Set details, if available
 			if (host) serverConfig.host = host;
