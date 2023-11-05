@@ -14,10 +14,7 @@
     "build:backend": "tsc -p backend/",
     "build:frontend": "tsc -p frontend/",
     "build:fix-frontend": "node common/fix-frontend-js.js",
-    "start": "node dist-backend/app.js",
-    "cli-setpassword": "node dist/tools/script.setpassword.js",
-    "cli-testpassword": "node dist/tools/script.testpassword.js",
-    "cli-adduser": "node dist/tools/script.adduser.js"
+    "start": "node dist-backend/app.js"
   },
   "repository": "github:tycrek/ass",
   "keywords": [
