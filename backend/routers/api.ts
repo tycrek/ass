@@ -53,11 +53,6 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 		if (UserConfig.config.rateLimit?.login)  setRateLimiter('login',  UserConfig.config.rateLimit.login);
 		if (UserConfig.config.rateLimit?.upload) setRateLimiter('upload', UserConfig.config.rateLimit.upload);
 
-		// set rate limits
-		if (UserConfig.config.rateLimit?.api)    setRateLimiter('api',    UserConfig.config.rateLimit.api);
-		if (UserConfig.config.rateLimit?.login)  setRateLimiter('login',  UserConfig.config.rateLimit.login);
-		if (UserConfig.config.rateLimit?.upload) setRateLimiter('upload', UserConfig.config.rateLimit.upload);
-
 		log.success('Setup', 'completed');
 
 		return res.json({ success: true });
