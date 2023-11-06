@@ -19,7 +19,7 @@ export class PostgreSQLDatabase implements Database {
         // make sure the configuration exists
 		if (!UserConfig.ready) return 'User configuration not ready';
 		if (typeof UserConfig.config.database != 'object') return 'PostgreSQL configuration missing';
-		if (UserConfig.config.database.kind != "postgres") return 'Database not set to PostgreSQL, but PostgreSQL is in use, something has gone terribly wrong';
+		if (UserConfig.config.database.kind != 'postgres') return 'Database not set to PostgreSQL, but PostgreSQL is in use, something has gone terribly wrong';
 		if (typeof UserConfig.config.database.options != 'object') return 'PostgreSQL configuration missing';
 
 		let config = UserConfig.config.database.options;
@@ -35,7 +35,6 @@ export class PostgreSQLDatabase implements Database {
 							: undefined;
 
 		return issue;
-
     }
 
     public open():  Promise<void> {

@@ -12,6 +12,7 @@ import { DBManager } from '../sql/database';
 import { JSONDatabase } from '../sql/json';
 import { MySQLDatabase } from '../sql/mysql';
 import { PostgreSQLDatabase } from '../sql/postgres';
+import { MongoDBDatabase } from '../sql/mongodb';
 
 const router = Router({ caseSensitive: true });
 
@@ -41,13 +42,11 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 				case 'postgres':
 					await DBManager.use(new PostgreSQLDatabase());
 					break;
+				case 'mongodb':
+					await DBManager.use(new MongoDBDatabase());
+					break;
 			}
 		}
-
-		// set rate limits
-		if (UserConfig.config.rateLimit?.api)    setRateLimiter('api',    UserConfig.config.rateLimit.api);
-		if (UserConfig.config.rateLimit?.login)  setRateLimiter('login',  UserConfig.config.rateLimit.login);
-		if (UserConfig.config.rateLimit?.upload) setRateLimiter('upload', UserConfig.config.rateLimit.upload);
 
 		// set rate limits
 		if (UserConfig.config.rateLimit?.api)    setRateLimiter('api',    UserConfig.config.rateLimit.api);
