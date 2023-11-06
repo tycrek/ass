@@ -32,7 +32,7 @@ export class MySQLDatabase implements Database {
 		// make sure the configuration exists
 		if (!UserConfig.ready) return 'User configuration not ready';
 		if (typeof UserConfig.config.database != 'object') return 'MySQL configuration missing';
-		if (UserConfig.config.database.kind != "mysql") return 'Database not set to MySQL, but MySQL is in use, something has gone terribly wrong';
+		if (UserConfig.config.database.kind != 'mysql') return 'Database not set to MySQL, but MySQL is in use, something has gone terribly wrong';
 		if (typeof UserConfig.config.database.options != 'object') return 'MySQL configuration missing';
 
 		let mySqlConf = UserConfig.config.database.options;
