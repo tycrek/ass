@@ -120,8 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						password: Elements.mySqlPassword.value,
 						database: Elements.mySqlDatabase.value
 					}
-				}
-			};
+				};
+			}
 		} else if (Elements.pgsqlTab.active) {
 			if (Elements.pgsqlHost.value != null && Elements.pgsqlHost.value != '') {
 				config.database = {
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						password: Elements.pgsqlPassword.value,
 						database: Elements.pgsqlDatabase.value
 					}
-				}
+				};
 			}
 		} else if (Elements.mongoDBTab.active) {
 			if (Elements.mongoDBHost.value != null && Elements.mongoDBHost.value != '') {
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						password: Elements.mongoDBPassword.value,
 						database: Elements.mongoDBDatabase.value
 					}
-				}
+				};
 			}
 		}
 

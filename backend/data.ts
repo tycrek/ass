@@ -1,7 +1,4 @@
-import { AssFile, AssUser, NID, FilesSchema, UsersSchema } from 'ass';
-
-import fs from 'fs-extra';
-import { path } from '@tycrek/joint';
+import { AssFile, AssUser, NID } from 'ass';
 
 import { log } from './log';
 import { UserConfig } from './UserConfig';
@@ -11,14 +8,6 @@ import { DBManager } from './sql/database';
  * Switcher type for exported functions
  */
 type DataSector = 'files' | 'users';
-
-/**
- * Absolute filepaths for JSON data files
- */
-const PATHS = {
-    files: path.join('.ass-data/files.json'),
-    users: path.join('.ass-data/users.json')
-};
 
 /**
  * database kind -> name mapping

@@ -9,14 +9,14 @@ import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 
 import { log } from './log';
-import { JSONDatabase, ensureFiles } from './sql/json';
 import { get } from './data';
 import { UserConfig } from './UserConfig';
-import { MySQLDatabase } from './sql/mysql';
-import { buildFrontendRouter } from './routers/_frontend';
 import { DBManager } from './sql/database';
+import { JSONDatabase } from './sql/json';
+import { MySQLDatabase } from './sql/mysql';
 import { PostgreSQLDatabase } from './sql/postgres';
 import { MongoDBDatabase } from './sql/mongodb';
+import { buildFrontendRouter } from './routers/_frontend';
 
 /**
  * Top-level metadata exports
@@ -80,8 +80,9 @@ async function main() {
 
 	App.pkgVersion = pkg.version;
 
-	// Ensure data files exist
-	await ensureFiles();
+	// Ensure data directory exists
+	log.debug('Checking data dir')
+	await fs.ensureDir(path.join('.ass-data'));
 
 	// Set default server configuration
 	const serverConfig: ServerConfiguration = {
@@ -134,6 +135,7 @@ async function main() {
 			}
 		} catch (err) { throw new Error(`Failed to configure SQL`); }
 	} else { // default to json database
+		log.debug('DB not set! Defaulting to JSON');
 		await DBManager.use(new JSONDatabase());
 	}
 
