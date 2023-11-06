@@ -52,8 +52,8 @@ declare module 'ass' {
 	}
 
 	interface DatabaseConfiguration {
-		kind: 'mysql' | 'postgres' | 'json';
-		options?: MySQLConfiguration | PostgresConfiguration;
+		kind: 'mysql' | 'postgres' | 'json' | 'mongodb';
+		options?: MySQLConfiguration | PostgresConfiguration | MongoDBConfiguration;
 	}
 
 	interface MySQLConfiguration {
@@ -64,6 +64,14 @@ declare module 'ass' {
 	}
 
 	interface PostgresConfiguration {
+		host: string;
+		port: number;
+		user: string;
+		password: string;
+		database: string;
+	}
+
+	interface MongoDBConfiguration {
 		host: string;
 		port: number;
 		user: string;

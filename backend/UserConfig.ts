@@ -1,4 +1,4 @@
-import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration } from 'ass';
+import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration, MongoDBConfiguration } from 'ass';
 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
@@ -108,15 +108,15 @@ export class UserConfig {
 		// * Optional database config(s)
 		if (config.database != null) {
 			// these both have the same schema so we can just check both
-			if (config.database.kind == 'mysql' || config.database.kind == 'postgres') {
+			if (config.database.kind == 'mysql' || config.database.kind == 'postgres' || config.database.kind == 'mongodb') {
 				if (config.database.options != undefined) {
 					if (!Checkers.sql.mySql.host(config.database.options.host)) throw new Error('Invalid database host');
 					if (!Checkers.sql.mySql.user(config.database.options.user)) throw new Error('Invalid databse user');
 					if (!Checkers.sql.mySql.password(config.database.options.password)) throw new Error('Invalid database password');
 					if (!Checkers.sql.mySql.database(config.database.options.database)) throw new Error('Invalid database');
-					if (config.database.kind == 'postgres') {
-						if (!Checkers.sql.postgres.port((config.database.options as PostgresConfiguration).port)) {
-							throw new Error("Invalid database port");
+					if (config.database.kind == 'postgres' || config.database.kind == 'mongodb') {
+						if (!Checkers.sql.postgres.port((config.database.options as PostgresConfiguration | MongoDBConfiguration).port)) {
+							throw new Error('Invalid database port');
 						}
 					}
 				} else throw new Error('Database options missing');

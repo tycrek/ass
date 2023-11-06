@@ -26,6 +26,7 @@ const PATHS = {
 const DBNAMES = {
 	'mysql':    'MySQL',
 	'postgres': 'PostgreSQL',
+	'mongodb':  'MongoDB',
 	'json':     'JSON'
 };
 

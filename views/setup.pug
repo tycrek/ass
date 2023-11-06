@@ -65,6 +65,20 @@ block content
 					h3.setup-text-item-title Database
 					sl-input#pgsql-database(type='text' placeholder='assdb' clearable): sl-icon(slot='prefix' name='fas-database' library='fa')
 
+				//- * MongoDB
+				sl-tab#mongodb-tab(slot='nav' panel='mongodb') MongoDB
+				sl-tab-panel(name='mongodb')
+					h3.setup-text-item-title Host
+					sl-input#mongodb-host(type='text' placeholder='mongo.example.com' clearable): sl-icon(slot='prefix' name='fas-server' library='fa')
+					h3.setup-text-item-title Port
+					sl-input#mongodb-port(type='number' placeholder='27017' min='1' max='65535' no-spin-buttons clearable): sl-icon(slot='prefix' name='fas-number' library='fa')
+					h3.setup-text-item-title User
+					sl-input#mongodb-user(type='text' placeholder='mongo' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
+					h3.setup-text-item-title Password
+					sl-input#mongodb-password(type='password' placeholder='super-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
+					h3.setup-text-item-title Database
+					sl-input#mongodb-database(type='text' placeholder='assdb' clearable): sl-icon(slot='prefix' name='fas-database' library='fa')
+
 		//- * S3
 		h2.setup-text-section-header.mt-4 S3 #[span.setup-text-optional optional]
 		.setup-panel

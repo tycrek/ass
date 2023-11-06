@@ -16,6 +16,7 @@ import { MySQLDatabase } from './sql/mysql';
 import { buildFrontendRouter } from './routers/_frontend';
 import { DBManager } from './sql/database';
 import { PostgreSQLDatabase } from './sql/postgres';
+import { MongoDBDatabase } from './sql/mongodb';
 
 /**
  * Top-level metadata exports
@@ -126,6 +127,9 @@ async function main() {
 					break;
 				case 'postgres':
 					await DBManager.use(new PostgreSQLDatabase());
+					break;
+				case 'mongodb':
+					await DBManager.use(new MongoDBDatabase());
 					break;
 			}
 		} catch (err) { throw new Error(`Failed to configure SQL`); }
