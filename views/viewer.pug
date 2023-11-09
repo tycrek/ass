@@ -1,5 +1,5 @@
 doctype html 
-html.dark.sl-theme-dark(lang='en')
+html.dark.sl-theme-dark(lang='en', prefix='og: https://ogp.me/ns')
     head
         //- this stuff
         meta(charset='UTF-8')
@@ -11,6 +11,11 @@ html.dark.sl-theme-dark(lang='en')
         title ass 🍑
 
         //- embed data
+        meta(property='og:title',       content=`image uploaded by ${user}`)
+        meta(property='og:description', content='a one to two sentence description of your objectg')
+        meta(property='og:type',        content='website')
+        meta(property='og:image',       content=url)
+        meta(property='og:url',         content='.')
 
         //- mixins
         include ../node_modules/shoelace-fontawesome-pug/sl-fa-mixin.pug
