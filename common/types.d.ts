@@ -27,6 +27,25 @@ declare module 'ass' {
 		database?: DatabaseConfiguration;
 
 		rateLimit?: RateLimitConfiguration;
+
+		// to whoever has to make the config screen
+		// for this, im very verys sorry
+		embed?: EmbedTemplate;
+	}
+
+	/**
+	 * Embed config
+	 */
+	interface EmbedConfiguration {
+		/**
+		 * Title in embed
+		 */
+		title?:       string,
+		
+		/**
+		 * Description(s) in embed
+		 */
+		description?: string[] | string,
 	}
 
 	interface S3Configuration {
@@ -254,6 +273,33 @@ declare module 'ass' {
 		};
 		cliKey: string;
 		meta: { [key: string]: any };
+	}
+
+	// Generic embed template operation
+	type EmbedTemplateOperation = EmbedTemplateRandomOperation | string;
+
+	/**
+	 * Selects one operation and executes it
+	 */
+	type EmbedTemplateRandomOperation = {
+		op:      "random";
+		options: EmbedTemplateOperation[];
+	};
+
+	/**
+	 * This is so beyond cursed
+	 */
+	interface EmbedTemplate {
+		title:       EmbedTemplateOperation;
+		description: EmbedTemplateOperation;
+	}
+
+	/**
+	 * 
+	 */
+	interface PreparedEmbed {
+		title:       string;
+		description: string;
 	}
 }
 

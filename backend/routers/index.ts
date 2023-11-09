@@ -14,6 +14,7 @@ import { UserConfig } from '../UserConfig';
 import { getFileS3, uploadFileS3 } from '../s3';
 import { rateLimiterMiddleware } from '../ratelimit';
 import { DBManager } from '../sql/database';
+import { DEFAULT_EMBED, prepareEmbed } from '../embed';
 
 const router = Router({ caseSensitive: true });
 
@@ -121,7 +122,11 @@ router.get('/:fakeId', async (req, res) => {
 			url:      `/direct/${fakeId}`,
 			uploader: user?.username ?? 'unknown',
 			size:     meta.size,
-			time:     meta.timestamp
+			time:     meta.timestamp,
+			embed:    prepareEmbed({
+				title:       UserConfig.config.embed?.title       ?? DEFAULT_EMBED.title,
+				description: UserConfig.config.embed?.description ?? DEFAULT_EMBED.description
+			})
 		});
 	}
 });
