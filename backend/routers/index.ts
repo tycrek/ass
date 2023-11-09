@@ -1,4 +1,4 @@
-import { BusBoyFile, AssFile } from 'ass';
+import { BusBoyFile, AssFile, AssUser } from 'ass';
 
 import fs from 'fs-extra';
 import bb from 'express-busboy';
@@ -13,6 +13,7 @@ import { random } from '../generators';
 import { UserConfig } from '../UserConfig';
 import { getFileS3, uploadFileS3 } from '../s3';
 import { rateLimiterMiddleware } from '../ratelimit';
+import { DBManager } from '../sql/database';
 
 const router = Router({ caseSensitive: true });
 
@@ -96,7 +97,34 @@ router.post('/', rateLimiterMiddleware('upload', UserConfig.config?.rateLimit?.u
 	}
 });
 
-router.get('/:fakeId', (req, res) => res.redirect(`/direct/${req.params.fakeId}`));
+router.get('/:fakeId', async (req, res) => {
+	if (!UserConfig.ready) res.redirect('/setup');
+
+	// Get the ID
+	const fakeId = req.params.fakeId;
+
+	// Get the file metadata
+	let _data;
+	try { _data = await DBManager.get('assfiles', fakeId); }
+	catch (err) {
+		log.error('Failed to get', fakeId);
+		console.error(err);
+		return res.status(500).send();
+	}
+
+	if (!_data) return res.status(404).send();
+	else {
+		let meta = _data as AssFile;
+		let user = await DBManager.get('assusers', meta.uploader) as AssUser | undefined;
+
+		res.render("viewer", {
+			url:      `/direct/${fakeId}`,
+			uploader: user?.username ?? 'unknown',
+			size:     meta.size,
+			time:     meta.timestamp
+		});
+	}
+});
 
 router.get('/direct/:fakeId', async (req, res) => {
 	if (!UserConfig.ready) res.redirect('/setup');
