@@ -126,7 +126,15 @@ router.get('/:fakeId', async (req, res) => {
 			embed:    prepareEmbed({
 				title:       UserConfig.config.embed?.title       ?? DEFAULT_EMBED.title,
 				description: UserConfig.config.embed?.description ?? DEFAULT_EMBED.description
-			})
+			}, user ?? {
+				admin: false,
+				files: [],
+				id:    "",
+				meta:  {},
+				password: "",
+				tokens:   [],
+				username: "unknown"
+			}, meta)
 		});
 	}
 });

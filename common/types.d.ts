@@ -276,15 +276,51 @@ declare module 'ass' {
 	}
 
 	// Generic embed template operation
-	type EmbedTemplateOperation = EmbedTemplateRandomOperation | string;
+	type EmbedTemplateOperation = 
+		EmbedTemplateRandomOperation |
+		EmbedTemplateFileSizeOperation |
+		EmbedTemplateFormatBytesOperation |
+		EmbedTemplateUploaderOperation |
+		EmbedTemplateConcatOperation |
+		string | number;
 
 	/**
 	 * Selects one operation and executes it
 	 */
 	type EmbedTemplateRandomOperation = {
-		op:      "random";
-		options: EmbedTemplateOperation[];
+		op:     'random';
+		values: EmbedTemplateOperation[];
 	};
+
+	/**
+	 * Returns the file size in bytes
+	 * @returns number
+	 */
+	type EmbedTemplateFileSizeOperation = { op: 'fileSize' };
+
+	/**
+	 * Formats the file size in in {value}
+	 */
+	type EmbedTemplateFormatBytesOperation = {
+		op:    'formatBytes';
+		unit?: EmbedTemplateOperation; // ready for ios!
+		value: EmbedTemplateOperation;
+	};
+
+	/**
+	 * Returns the user who uploaded this file
+	 */
+	type EmbedTemplateUploaderOperation = {
+		op: 'uploader'
+	};
+
+	/**
+	 * Joins strings
+	 */
+	type EmbedTemplateConcatOperation = {
+		op:     'concat',
+		values: EmbedTemplateOperation[]
+	}
 
 	/**
 	 * This is so beyond cursed
