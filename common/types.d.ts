@@ -328,6 +328,7 @@ declare module 'ass' {
 	interface EmbedTemplate {
 		title:       EmbedTemplateOperation;
 		description: EmbedTemplateOperation;
+		sitename:    EmbedTemplateOperation;
 	}
 
 	/**
@@ -336,6 +337,7 @@ declare module 'ass' {
 	interface PreparedEmbed {
 		title:       string;
 		description: string;
+		sitename:    string;
 	}
 }
 

@@ -125,7 +125,8 @@ router.get('/:fakeId', async (req, res) => {
 			time:     meta.timestamp,
 			embed:    prepareEmbed({
 				title:       UserConfig.config.embed?.title       ?? DEFAULT_EMBED.title,
-				description: UserConfig.config.embed?.description ?? DEFAULT_EMBED.description
+				description: UserConfig.config.embed?.description ?? DEFAULT_EMBED.description,
+				sitename:    UserConfig.config.embed?.sitename    ?? DEFAULT_EMBED.sitename
 			}, user ?? {
 				admin: false,
 				files: [],

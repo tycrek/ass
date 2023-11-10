@@ -1,9 +1,10 @@
 import { AssFile, AssUser, EmbedTemplate, EmbedTemplateOperation, PreparedEmbed } from "ass"
 
 export const DEFAULT_EMBED: EmbedTemplate = {
-    title:       "ass - The simple self-hosted ShareX server",
-    description: "ass is a self-hosted ShareX upload server written in Node.js"
-}
+    sitename:    "ass",
+    title:       "",
+    description: ""
+};
 
 class EmbedContext {
     public uploader: AssUser;
@@ -50,6 +51,7 @@ export const prepareEmbed = (template: EmbedTemplate, user: AssUser, file: AssFi
 
     return {
         title:       executeEmbedOperation(template.title, ctx).toString(),
-        description: executeEmbedOperation(template.description, ctx).toString()
+        description: executeEmbedOperation(template.description, ctx).toString(),
+        sitename:    executeEmbedOperation(template.sitename, ctx).toString()
     };
 };
