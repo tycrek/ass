@@ -41,7 +41,7 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 	const oldUsers = fs.readJsonSync(authPath).users as OldUsers;
 
 	// Create a new users object
-	const newUsers: Users = { users: [], meta: {} };
+	const newUsers: Users = { users: [], meta: {}, cliKey: nanoid(32) };
 	newUsers.migrated = true;
 
 	// Loop through each user
