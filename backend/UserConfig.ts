@@ -3,6 +3,9 @@ import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration, MongoD
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
 import { log } from './log';
+import { prepareTemplate } from './templates/parser';
+import { TemplateError } from './templates/error';
+import { DEFAULT_EMBED, validateEmbed } from './embed';
 
 const FILEPATH = path.join('.ass-data/userconfig.json');
 
@@ -129,6 +132,28 @@ export class UserConfig {
 			if (!Checkers.rateLimit.endpoint(config.rateLimit.upload)) throw new Error('Invalid Upload rate limit configuration');
 			if (!Checkers.rateLimit.endpoint(config.rateLimit.api)) throw new Error('Invalid API rate limit configuration');
 		}
+
+		// * the embed
+		if (config.embed != null) {
+			try {
+				for (let part of ['title', 'description', 'sitename'] as ('title' | 'description' | 'sitename')[]) {
+					if (config.embed[part] != null) {
+						if (typeof config.embed[part] == 'string') {
+							config.embed[part] = prepareTemplate(config.embed[part] as string);
+						} else throw new Error(`Template string for embed ${part} is not a string`);
+					} else config.embed[part] = DEFAULT_EMBED[part];
+				}
+
+				validateEmbed(config.embed);
+			} catch (err) {
+				if (err instanceof TemplateError) {
+					// tlog messes up the formatting
+					console.error(err.format());
+
+					throw new Error('Template error');
+				} else throw err;
+			}
+		} else config.embed = DEFAULT_EMBED;
 
 		// All is fine, carry on!
 		return config;

@@ -1,4 +1,7 @@
-import { AssFile, AssUser, EmbedTemplate, EmbedTemplateOperation, PreparedEmbed } from "ass"
+import { AssFile, AssUser, EmbedTemplate, PreparedEmbed } from "ass"
+import { TemplateExecutor } from "./templates/executor";
+
+let executor = TemplateExecutor.createExecutor(); 
 
 export const DEFAULT_EMBED: EmbedTemplate = {
     sitename:    "ass",
@@ -6,52 +9,23 @@ export const DEFAULT_EMBED: EmbedTemplate = {
     description: ""
 };
 
-class EmbedContext {
-    public uploader: AssUser;
-    public file:     AssFile;
+// ensures a template is valid
+export const validateEmbed = (template: EmbedTemplate) => {
+    // lets hope this works
+    let context = executor.createContext(null!, null!);
 
-    constructor(uploader: AssUser, file: AssFile) {
-        this.uploader = uploader;
-        this.file     = file;
-    }
+    executor.validateTemplate(template.title,       context);
+    executor.validateTemplate(template.description, context);
+    executor.validateTemplate(template.sitename,    context);
 }
 
-const executeEmbedOperation = (op: EmbedTemplateOperation, ctx: EmbedContext): string | number => {
-    if (typeof op == 'string') {
-        return op;
-    } else if (typeof op == 'number') {
-        return op;
-    } else if (typeof op == 'object') {
-        switch (op.op) {
-            case 'random':
-                if (op.values.length > 0) {
-                    return executeEmbedOperation(op.values[Math.round(Math.random() * (op.values.length - 1))], ctx);
-                } else throw new Error('Random without child operations');
-            case 'fileSize':
-                return ctx.file.size;
-            case 'uploader':
-                return ctx.uploader.username;
-            case 'formatBytes':
-                // calculate the value
-                let value      = executeEmbedOperation(op.value, ctx);
-
-                // calculate the exponent
-                let exponent = (op.unit != null && { 'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4 }[executeEmbedOperation(op.unit, ctx)])
-                            || Math.max(Math.min(Math.floor(Math.log10(Number(value))/3), 4), 0);
-                
-                return `${(Number(value) / 1000 ** exponent).toFixed(2)}${['b', 'kb', 'mb', 'gb', 'tb'][exponent]}`;
-            case 'concat':
-                return op.values.reduce<string>((prev, op) => prev.concat(executeEmbedOperation(op, ctx).toString()), "");
-        }
-    } else throw new Error("Invalid embed template operation");
-};
-
+// cooks up the embed
 export const prepareEmbed = (template: EmbedTemplate, user: AssUser, file: AssFile): PreparedEmbed => {
-    let ctx = new EmbedContext(user, file);
+    let context = executor.createContext(user, file);
 
     return {
-        title:       executeEmbedOperation(template.title, ctx).toString(),
-        description: executeEmbedOperation(template.description, ctx).toString(),
-        sitename:    executeEmbedOperation(template.sitename, ctx).toString()
+        title:       executor.executeTemplate(template.title,       context),
+        description: executor.executeTemplate(template.description, context),
+        sitename:    executor.executeTemplate(template.sitename,    context)
     };
 };

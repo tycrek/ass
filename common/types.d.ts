@@ -275,60 +275,66 @@ declare module 'ass' {
 		meta: { [key: string]: any };
 	}
 
-	// Generic embed template operation
-	type EmbedTemplateOperation = 
-		EmbedTemplateRandomOperation |
-		EmbedTemplateFileSizeOperation |
-		EmbedTemplateFormatBytesOperation |
-		EmbedTemplateUploaderOperation |
-		EmbedTemplateConcatOperation |
-		string | number;
+	/**
+	 * Template operation
+	 */
+	type TemplateOp = TemplateCommandOp<any, TemplateCommandSchema> | string;
 
 	/**
-	 * Selects one operation and executes it
+	 * Please don't waste your time trying to make this look
+	 * nice, it's not possible.
 	 */
-	type EmbedTemplateRandomOperation = {
-		op:     'random';
-		values: EmbedTemplateOperation[];
+	type TemplateCommandOp<N extends string, T extends TemplateCommandSchema> = {
+		op:    N;
+		args:  TemplateOp[];
+		named: {
+			+readonly [name in keyof T['named']]: (
+				TemplateOp | (T['named'] extends object
+					? T['named'][name] extends { required?: boolean }
+						? T['named'][name]['required'] extends true
+							? TemplateOp
+							: undefined
+						: undefined
+					: undefined)
+			)
+		};
+		srcRange: TemplateSourceRange;
 	};
 
 	/**
-	 * Returns the file size in bytes
-	 * @returns number
+	 * Basically a declaration
 	 */
-	type EmbedTemplateFileSizeOperation = { op: 'fileSize' };
-
-	/**
-	 * Formats the file size in in {value}
-	 */
-	type EmbedTemplateFormatBytesOperation = {
-		op:    'formatBytes';
-		unit?: EmbedTemplateOperation; // ready for ios!
-		value: EmbedTemplateOperation;
+	type TemplateCommandSchema = {
+		named?: {
+			[index: string]: {
+				required?: boolean
+			}
+		};
 	};
 
 	/**
-	 * Returns the user who uploaded this file
+	 * Template source code
 	 */
-	type EmbedTemplateUploaderOperation = {
-		op: 'uploader'
+	type TemplateSource = {
+		code: string;
 	};
 
 	/**
-	 * Joins strings
+	 * Range in template source code
 	 */
-	type EmbedTemplateConcatOperation = {
-		op:     'concat',
-		values: EmbedTemplateOperation[]
-	}
+	type TemplateSourceRange = {
+		file: TemplateSource;
+		from: number;
+		to:   number;
+	};
 
 	/**
 	 * This is so beyond cursed
 	 */
 	interface EmbedTemplate {
-		title:       EmbedTemplateOperation;
-		description: EmbedTemplateOperation;
-		sitename:    EmbedTemplateOperation;
+		title:       TemplateOp;
+		description: TemplateOp;
+		sitename:    TemplateOp;
 	}
 
 	/**
