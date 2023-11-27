@@ -3,7 +3,7 @@ const { path } = require('@tycrek/joint');
 const log = new (require('@tycrek/log').TLog)();
 
 const FILES = {
-	prefix: 'dist-frontend',
+	prefix: 'dist/frontend',
 	suffix: '.mjs',
 	pages: [
 		'setup',

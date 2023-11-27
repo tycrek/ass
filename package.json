@@ -2,7 +2,7 @@
   "name": "ass",
   "version": "0.15.0-indev",
   "description": "The simple self-hosted ShareX server",
-  "main": "dist-backend/app.js",
+  "main": "dist/backend/app.js",
   "engines": {
     "node": "^20",
     "npm": "^10"
@@ -14,7 +14,7 @@
     "build:backend": "tsc -p backend/",
     "build:frontend": "tsc -p frontend/",
     "build:fix-frontend": "node common/fix-frontend-js.js",
-    "start": "node dist-backend/app.js"
+    "start": "node dist/backend/app.js"
   },
   "repository": "github:tycrek/ass",
   "keywords": [

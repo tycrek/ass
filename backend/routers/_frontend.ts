@@ -24,7 +24,7 @@ export const buildFrontendRouter = (page: string, onConfigReady = true) => {
 
 	// Load frontend JS
 	router.get('/ui.js', (_req, res) => ready()
-		? res.type('text/javascript').sendFile(path.join(`dist-frontend/${page}.mjs`))
+		? res.type('text/javascript').sendFile(path.join(`dist/frontend/${page}.mjs`))
 		: res.sendStatus(403));
 
 	return router;
