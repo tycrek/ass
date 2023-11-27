@@ -1,4 +1,7 @@
 import { TemplateOp, TemplateSource } from 'ass';
+
+import fs from 'fs';
+
 import { TemplateSyntaxError } from './error';
 
 enum TokenType {
@@ -96,6 +99,10 @@ function getTemplateTokens(src: string): TemplateToken[] {
         } else if (src[pos] == '&') {
             pos++;
             buf += findReplacement();
+            pos--; continue;
+        } else if (src[pos] == '\n') {
+            pos++;
+            for (; pos < src.length && (src[pos] == ' ' || src[pos] == '\t'); pos++);
             pos--; continue;
         } else {
             buf += src[pos];
@@ -203,7 +210,7 @@ export function prepareTemplate(src: string): TemplateOp {
         } else if (pos < tokens.length) {
             if (tokens[pos].type == TokenType.T_CLOSE) {
                 throw new TemplateSyntaxError('Template name missing', { file: file, from: tokens[pos - 1].from, to: tokens[pos].to });
-                } else throw new TemplateSyntaxError('Expected template name', { file: file, from: tokens[pos].from, to: tokens[pos].to });
+            } else throw new TemplateSyntaxError('Expected template name', { file: file, from: tokens[pos].from, to: tokens[pos].to });
         } else throw new TemplateSyntaxError('Unexpected end of file');
 
         if (pos < tokens.length && tokens[pos].type == TokenType.PIPE) {
@@ -252,6 +259,26 @@ export function prepareTemplate(src: string): TemplateOp {
         } else throw new TemplateSyntaxError('Template closing tag missing');
 
         stackDrop();
+
+        // include is executed early
+        if (name.toLowerCase() == 'include') {
+            if (nargs['file'] != null) {
+                // TODO: this NEEDS to be restricted before ass 0.15.0 is released
+                //       its extremely insecure and should be restricted to things 
+                //       set by operators, users can have their own template inclusion
+                //       thing that doesnt depend on reading files
+
+                if (typeof nargs['file'] == 'string') {
+                    if (fs.existsSync(nargs['file'])) {
+                        let template = fs.readFileSync(nargs['file'], { encoding: 'utf-8' });
+
+                        let tl = prepareTemplate(template);
+                        
+                        return tl;
+                    } else throw new TemplateSyntaxError('File does not exist', { file: file, from: tokens[start].from, to: tokens[pos - 1].to});
+                } else throw new TemplateSyntaxError('Include directive can not contain templates', { file: file, from: tokens[start].from, to: tokens[pos - 1].to});
+            } else throw new TemplateSyntaxError(`Bad include directive`, { file: file, from: tokens[start].from, to: tokens[pos - 1].to});
+        }
 
         return {
             op: name.toLocaleLowerCase(),
