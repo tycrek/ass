@@ -3,6 +3,7 @@
   "version": "0.15.0-indev",
   "description": "The simple self-hosted ShareX server",
   "main": "dist/backend/app.js",
+  "type": "module",
   "engines": {
     "node": "^20"
   },
