@@ -4,8 +4,7 @@
   "description": "The simple self-hosted ShareX server",
   "main": "dist/backend/app.js",
   "engines": {
-    "node": "^20",
-    "npm": "^10"
+    "node": "^20"
   },
   "scripts": {
     "dev": "npm run build && npm start",
