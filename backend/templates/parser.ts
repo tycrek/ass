@@ -186,8 +186,8 @@ export function prepareTemplate(src: string): TemplateOp {
             args: joined,
             srcRange: {
                 file: file,
-                from: tokens[Math.min(tokens.length - 1, start)].from,
-                to:   tokens[Math.min(tokens.length, pos) - 1].to
+                from: tokens[start]?.from ?? 0,
+                to:   tokens[pos - 1]?.to ?? src.length - 1
             }
         };
     }
@@ -286,8 +286,8 @@ export function prepareTemplate(src: string): TemplateOp {
             args: args,
             srcRange: {
                 file: file,
-                from: tokens[start].from,
-                to:   tokens[pos - 1].to
+                from: tokens[start]?.from ?? 0,
+                to:   tokens[pos - 1]?.to ?? src.length - 1
             }
         };
     }
