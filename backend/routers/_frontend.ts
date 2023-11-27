@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { path } from '@tycrek/joint';
 
-import { App } from '../app';
-import { UserConfig } from '../UserConfig';
+import { App } from '../app.js';
+import { UserConfig } from '../UserConfig.js';
 
 /**
  * Builds a basic router for loading a page with frontend JS

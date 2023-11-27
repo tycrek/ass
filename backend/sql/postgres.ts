@@ -1,44 +1,43 @@
 import { PostgresConfiguration } from 'ass';
 
-import { Client } from 'pg';
-
-import { log } from '../log';
-import { Database, DatabaseTable, DatabaseValue } from './database';
-import { UserConfig } from '../UserConfig';
+import pg from 'pg';
+import { log } from '../log.js';
+import { Database, DatabaseTable, DatabaseValue } from './database.js';
+import { UserConfig } from '../UserConfig.js';
 
 /**
  * database adapter for postgresql 
  */
 export class PostgreSQLDatabase implements Database {
-    private _client: Client;
+    private _client: pg.Client;
 
     /**
      * validate config
      */
     private _validateConfig(): string | undefined {
         // make sure the configuration exists
-		if (!UserConfig.ready) return 'User configuration not ready';
-		if (typeof UserConfig.config.database != 'object') return 'PostgreSQL configuration missing';
-		if (UserConfig.config.database.kind != "postgres") return 'Database not set to PostgreSQL, but PostgreSQL is in use, something has gone terribly wrong';
-		if (typeof UserConfig.config.database.options != 'object') return 'PostgreSQL configuration missing';
+        if (!UserConfig.ready) return 'User configuration not ready';
+        if (typeof UserConfig.config.database != 'object') return 'PostgreSQL configuration missing';
+        if (UserConfig.config.database.kind != "postgres") return 'Database not set to PostgreSQL, but PostgreSQL is in use, something has gone terribly wrong';
+        if (typeof UserConfig.config.database.options != 'object') return 'PostgreSQL configuration missing';
 
-		let config = UserConfig.config.database.options;
+        let config = UserConfig.config.database.options;
 
-		// check the postgres config
-		const checker = (val: string) => val != null && val !== '';
-		const issue =
-			!checker(config.host) ? 'Missing PostgreSQL Host'
-				: !checker(config.user) ? 'Missing PostgreSQL User'
-					: !checker(config.password) ? 'Missing PostgreSQL Password'
-						: !checker(config.database) ? 'Missing PostgreSQL Database'
-							// ! Blame VS Code for this weird indentation
-							: undefined;
+        // check the postgres config
+        const checker = (val: string) => val != null && val !== '';
+        const issue =
+            !checker(config.host) ? 'Missing PostgreSQL Host'
+                : !checker(config.user) ? 'Missing PostgreSQL User'
+                    : !checker(config.password) ? 'Missing PostgreSQL Password'
+                        : !checker(config.database) ? 'Missing PostgreSQL Database'
+                            // ! Blame VS Code for this weird indentation
+                            : undefined;
 
-		return issue;
+        return issue;
 
     }
 
-    public open():  Promise<void> {
+    public open(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
                 // config check
@@ -49,7 +48,7 @@ export class PostgreSQLDatabase implements Database {
                 let config = UserConfig.config.database!.options! as PostgresConfiguration;
 
                 // set up the client
-                this._client = new Client({
+                this._client = new pg.Client({
                     host: config.host,
                     port: config.port,
                     user: config.user,
@@ -90,7 +89,7 @@ export class PostgreSQLDatabase implements Database {
         return new Promise(async (resolve, reject) => {
             try {
                 await this._client.query(
-`CREATE TABLE IF NOT EXISTS asstables (
+                    `CREATE TABLE IF NOT EXISTS asstables (
     name    TEXT PRIMARY KEY,
     version INT NOT NULL
 );`);
@@ -105,7 +104,7 @@ export class PostgreSQLDatabase implements Database {
                 }
 
                 const assTableSchema = '(id TEXT PRIMARY KEY, data JSON NOT NULL)'
-                
+
                 // add missing tables
                 if (!seenRows.has('assfiles')) {
                     log.warn('PostgreSQL', 'assfiles missing, repairing...')
@@ -149,8 +148,8 @@ export class PostgreSQLDatabase implements Database {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
-                    assfiles:  'INSERT INTO assfiles (id, data) VALUES ($1, $2);',
-                    assusers:  'INSERT INTO assusers (id, data) VALUES ($1, $2);',
+                    assfiles: 'INSERT INTO assfiles (id, data) VALUES ($1, $2);',
+                    assusers: 'INSERT INTO assusers (id, data) VALUES ($1, $2);',
                     asstokens: 'INSERT INTO asstokens (id, data) VALUES ($1, $2);'
                 };
 
@@ -167,8 +166,8 @@ export class PostgreSQLDatabase implements Database {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
-                    assfiles:  'SELECT data FROM assfiles WHERE id = $1::text;',
-                    assusers:  'SELECT data FROM assusers WHERE id = $1::text;',
+                    assfiles: 'SELECT data FROM assfiles WHERE id = $1::text;',
+                    assusers: 'SELECT data FROM assusers WHERE id = $1::text;',
                     asstokens: 'SELECT data FROM asstokens WHERE id = $1::text;'
                 };
 
@@ -185,8 +184,8 @@ export class PostgreSQLDatabase implements Database {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
-                    assfiles:  'SELECT json_object_agg(id, data) AS stuff FROM assfiles;',
-                    assusers:  'SELECT json_object_agg(id, data) AS stuff FROM assusers;',
+                    assfiles: 'SELECT json_object_agg(id, data) AS stuff FROM assfiles;',
+                    assusers: 'SELECT json_object_agg(id, data) AS stuff FROM assusers;',
                     asstokens: 'SELECT json_object_agg(id, data) AS stuff FROM asstokens;'
                 };
 

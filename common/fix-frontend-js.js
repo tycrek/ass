@@ -1,6 +1,7 @@
-const fs = require('fs-extra');
-const { path } = require('@tycrek/joint');
-const log = new (require('@tycrek/log').TLog)();
+import fs from 'fs-extra';
+import { path } from '@tycrek/joint';
+import { TLog } from '@tycrek/log';
+const log = new TLog();
 
 const FILES = {
 	prefix: 'dist/frontend',

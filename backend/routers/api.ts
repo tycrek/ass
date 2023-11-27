@@ -3,15 +3,15 @@ import { AssUser, AssUserNewReq } from 'ass';
 import * as bcrypt from 'bcrypt'
 import { Router, json as BodyParserJson, RequestHandler } from 'express';
 
-import * as data from '../data';
-import { log } from '../log';
-import { nanoid } from '../generators';
-import { UserConfig } from '../UserConfig';
-import { rateLimiterMiddleware, setRateLimiter } from '../ratelimit';
-import { DBManager } from '../sql/database';
-import { JSONDatabase } from '../sql/json';
-import { MySQLDatabase } from '../sql/mysql';
-import { PostgreSQLDatabase } from '../sql/postgres';
+import * as data from '../data.js';
+import { log } from '../log.js';
+import { nanoid } from '../generators.js';
+import { UserConfig } from '../UserConfig.js';
+import { rateLimiterMiddleware, setRateLimiter } from '../ratelimit.js';
+import { DBManager } from '../sql/database.js';
+import { JSONDatabase } from '../sql/json.js';
+import { MySQLDatabase } from '../sql/mysql.js';
+import { PostgreSQLDatabase } from '../sql/postgres.js';
 
 const router = Router({ caseSensitive: true });
 
