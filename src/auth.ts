@@ -41,7 +41,7 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 	const oldUsers = fs.readJsonSync(authPath).users as OldUsers;
 
 	// Create a new users object
-	const newUsers: Users = { users: [], meta: {} };
+	const newUsers: Users = { users: [], meta: {}, cliKey: nanoid(32) };
 	newUsers.migrated = true;
 
 	// Loop through each user
@@ -69,38 +69,40 @@ const migrate = (authFileName = 'auth.json'): Promise<Users> => new Promise(asyn
 		.catch(reject)
 
 		// Migrate the datafile (token => uploader)
-		.then(() => data().get())
-		.then((fileData: [string, FileData][]) =>
+		.then(() => (!data())
+			? (log.warn('data.json not found. This may be a new install?'), Promise.resolve())
+			: data().get().then((fileData: [string, FileData][]) =>
 
-			// ! A note about this block.
-			// I know it's gross. But using Promise.all crashes low-spec servers, so I had to do it this way. Sorry.
-			// Thanks to CoPilot for writing `runQueue` :D
+				// ! A note about this block.
+				// I know it's gross. But using Promise.all crashes low-spec servers, so I had to do it this way. Sorry.
+				// Thanks to CoPilot for writing `runQueue` :D
 
-			// Wait for all the deletions and puts to finish
-			new Promise((resolve, reject) => {
+				// Wait for all the deletions and puts to finish
+				new Promise((resolve, reject) => {
 
-				// Create a queue of functions to run
-				const queue = fileData.map(([key, file]) => async () => {
+					// Create a queue of functions to run
+					const queue = fileData.map(([key, file]) => async () => {
 
-					// We need to use `newUsers` because `users` hasn't been re-assigned yet
-					const user = newUsers.users.find((user) => user.token === file.token!)?.unid ?? ''; // ? This is probably fine
+						// We need to use `newUsers` because `users` hasn't been re-assigned yet
+						const user = newUsers.users.find((user) => user.token === file.token!)?.unid ?? ''; // ? This is probably fine
 
-					// Because of the stupid way I wrote papito, we need to DEL before we can PUT
-					await data().del(key);
+						// Because of the stupid way I wrote papito, we need to DEL before we can PUT
+						await data().del(key);
 
-					// PUT the new data
-					return data().put(key, { ...file, uploader: user });
-				});
+						// PUT the new data
+						return data().put(key, { ...file, uploader: user });
+					});
 
-				// Recursively run the queue, hopefully sequentially without running out of memory
-				const runQueue = (index: number) => {
-					if (index >= queue.length) return resolve(void 0);
-					queue[index]().then(() => runQueue(index + 1)).catch(reject);
-				};
+					// Recursively run the queue, hopefully sequentially without running out of memory
+					const runQueue = (index: number) => {
+						if (index >= queue.length) return resolve(void 0);
+						queue[index]().then(() => runQueue(index + 1)).catch(reject);
+					};
 
-				runQueue(0);
-			}))
-
+					runQueue(0);
+				}))
+				.catch((err: any) => log.warn(err.message))
+		)
 		// We did it hoofuckingray
 		.then(() => log.success('Migrated all auth & file data to new auth system'))
 		.then(() => resolve(newUsers))
