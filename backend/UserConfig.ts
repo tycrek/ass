@@ -2,7 +2,7 @@ import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration, MongoD
 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
-import { log } from './log';
+import { log } from './log.js';
 
 const FILEPATH = path.join('.ass-data/userconfig.json');
 

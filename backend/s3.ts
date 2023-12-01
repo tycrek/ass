@@ -12,8 +12,8 @@ import {
 	AbortMultipartUploadCommand,
 } from "@aws-sdk/client-s3";
 
-import { log } from './log';
-import { UserConfig } from './UserConfig';
+import { log } from './log.js';
+import { UserConfig } from './UserConfig.js';
 
 const NYR = 'S3 not ready';
 

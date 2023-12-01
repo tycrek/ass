@@ -1,8 +1,8 @@
 import { AssFile, AssUser, NID } from 'ass';
 
-import { log } from './log';
-import { UserConfig } from './UserConfig';
-import { DBManager } from './sql/database';
+import { log } from './log.js';
+import { UserConfig } from './UserConfig.js';
+import { DBManager } from './sql/database.js';
 
 /**
  * Switcher type for exported functions
@@ -13,10 +13,10 @@ type DataSector = 'files' | 'users';
  * database kind -> name mapping
  */
 const DBNAMES = {
-	'mysql':    'MySQL',
+	'mysql': 'MySQL',
 	'postgres': 'PostgreSQL',
-	'mongodb':  'MongoDB',
-	'json':     'JSON'
+	'mongodb': 'MongoDB',
+	'json': 'JSON'
 };
 
 export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Promise<void> => new Promise(async (resolve, reject) => {

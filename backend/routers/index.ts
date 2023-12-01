@@ -6,13 +6,13 @@ import crypto from 'crypto';
 import { Router } from 'express';
 import { Readable } from 'stream';
 
-import * as data from '../data';
-import { log } from '../log';
-import { App } from '../app';
-import { random } from '../generators';
-import { UserConfig } from '../UserConfig';
-import { getFileS3, uploadFileS3 } from '../s3';
-import { rateLimiterMiddleware } from '../ratelimit';
+import * as data from '../data.js';
+import { log } from '../log.js';
+import { App } from '../app.js';
+import { random } from '../generators.js';
+import { UserConfig } from '../UserConfig.js';
+import { getFileS3, uploadFileS3 } from '../s3.js';
+import { rateLimiterMiddleware } from '../ratelimit.js';
 
 const router = Router({ caseSensitive: true });
 

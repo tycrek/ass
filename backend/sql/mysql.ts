@@ -2,9 +2,9 @@ import { AssFile, AssUser, NID, UploadToken } from 'ass';
 
 import mysql, { Pool } from 'mysql2/promise';
 
-import { log } from '../log';
-import { UserConfig } from '../UserConfig';
-import { Database, DatabaseTable, DatabaseValue } from './database';
+import { log } from '../log.js';
+import { UserConfig } from '../UserConfig.js';
+import { Database, DatabaseTable, DatabaseValue } from './database.js';
 
 export class MySQLDatabase implements Database {
 	private _pool: Pool;
@@ -50,7 +50,7 @@ export class MySQLDatabase implements Database {
 		return issue;
 	}
 
-	public open()  { return Promise.resolve(); }
+	public open() { return Promise.resolve(); }
 	public close() { return Promise.resolve(); }
 
 	/**
@@ -144,7 +144,7 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 		});
 	}
 
-    public get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined> {
+	public get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined> {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Run query
@@ -161,7 +161,7 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 	}
 
 	// todo: unknown if this works
-    public getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
+	public getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Run query // ! this may not work as expected
