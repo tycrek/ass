@@ -1,12 +1,13 @@
-import { AssFile, AssUser, EmbedTemplate, PreparedEmbed } from "ass"
-import { TemplateExecutor } from "./templates/executor";
+import { AssFile, AssUser, EmbedTemplate, PreparedEmbed } from 'ass'
+
+import { TemplateExecutor } from './templates/executor.js';
 
 let executor = TemplateExecutor.createExecutor(); 
 
 export const DEFAULT_EMBED: EmbedTemplate = {
-    sitename:    "ass",
-    title:       "",
-    description: ""
+    sitename:    'ass',
+    title:       '',
+    description: ''
 };
 
 // ensures a template is valid

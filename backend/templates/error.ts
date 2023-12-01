@@ -1,4 +1,4 @@
-import { TemplateSourceRange } from "ass";
+import { TemplateSourceRange } from 'ass';
 
 export class TemplateError extends Error {
     range?: TemplateSourceRange;

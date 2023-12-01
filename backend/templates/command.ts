@@ -1,5 +1,6 @@
 import { TemplateCommandOp, TemplateCommandSchema } from 'ass';
-import { TemplateContext } from './executor';
+
+import { TemplateContext } from './executor.js';
 
 export type TemplateCommand<N extends string, S extends TemplateCommandSchema> = {
     readonly name:   N;

@@ -1,6 +1,7 @@
 import { AssFile, AssUser, TemplateCommandOp, TemplateCommandSchema, TemplateOp } from 'ass';
-import { TemplateCommand } from './command';
-import { TemplateError } from './error';
+
+import { TemplateCommand } from './command.js';
+import { TemplateError } from './error.js';
 
 export class TemplateContext {
     public readonly owner: TemplateExecutor;

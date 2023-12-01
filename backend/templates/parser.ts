@@ -2,7 +2,7 @@ import { TemplateOp, TemplateSource } from 'ass';
 
 import fs from 'fs';
 
-import { TemplateSyntaxError } from './error';
+import { TemplateSyntaxError } from './error.js';
 
 enum TokenType {
     T_OPEN, T_CLOSE,
