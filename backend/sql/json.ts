@@ -3,9 +3,9 @@ import { AssFile, AssUser, FilesSchema, UsersSchema } from 'ass';
 import path, { resolve } from 'path';
 import fs from 'fs-extra';
 
-import { Database, DatabaseTable, DatabaseValue } from './database';
-import { log } from '../log';
-import { nanoid } from '../generators';
+import { Database, DatabaseTable, DatabaseValue } from './database.js';
+import { log } from '../log.js';
+import { nanoid } from '../generators.js';
 
 /**
  * Absolute filepaths for JSON data files
@@ -32,62 +32,62 @@ const SECTORMAP = {
 } as { [index: string]: string };
 
 const bothWriter = async (files: FilesSchema, users: UsersSchema) => {
-	await fs.writeJson(PATHS.files, files, { spaces: '\t' });
-	await fs.writeJson(PATHS.users, users, { spaces: '\t' });
+    await fs.writeJson(PATHS.files, files, { spaces: '\t' });
+    await fs.writeJson(PATHS.users, users, { spaces: '\t' });
 };
 
 /**
  * Creates a JSON file with a given empty data template
  */
 const createEmptyJson = (filepath: string, emptyData: any): Promise<void> => new Promise(async (resolve, reject) => {
-	try {
-		if (!(await fs.pathExists(filepath))) {
-			await fs.ensureFile(filepath);
-			await fs.writeJson(filepath, emptyData, { spaces: '\t' });
-		}
-		resolve(void 0);
-	} catch (err) {
-		reject(err);
-	}
+    try {
+        if (!(await fs.pathExists(filepath))) {
+            await fs.ensureFile(filepath);
+            await fs.writeJson(filepath, emptyData, { spaces: '\t' });
+        }
+        resolve(void 0);
+    } catch (err) {
+        reject(err);
+    }
 });
 
 /**
  * Ensures the data files exist and creates them if required
  */
 export const ensureFiles = (): Promise<void> => new Promise(async (resolve, reject) => {
-	log.debug('Checking data files');
+    log.debug('Checking data files');
 
-	try {
+    try {
 
-		// * Default files.json
-		await createEmptyJson(PATHS.files, {
-			files: {},
-			useSql: false,
-			meta: {}
-		} as FilesSchema);
+        // * Default files.json
+        await createEmptyJson(PATHS.files, {
+            files: {},
+            useSql: false,
+            meta: {}
+        } as FilesSchema);
 
-		// * Default users.json
-		await createEmptyJson(PATHS.users, {
-			tokens: [],
-			users: {},
-			cliKey: nanoid(32),
-			useSql: false,
-			meta: {}
-		} as UsersSchema);
+        // * Default users.json
+        await createEmptyJson(PATHS.users, {
+            tokens: [],
+            users: {},
+            cliKey: nanoid(32),
+            useSql: false,
+            meta: {}
+        } as UsersSchema);
 
-		log.debug('Data files exist');
-		resolve();
-	} catch (err) {
-		log.error('Failed to verify existence of data files');
-		reject(err);
-	}
+        log.debug('Data files exist');
+        resolve();
+    } catch (err) {
+        log.error('Failed to verify existence of data files');
+        reject(err);
+    }
 });
 
 /**
  * JSON database. i know json isnt sql, shut up.
  */
 export class JSONDatabase implements Database {
-    public open():  Promise<void> { return Promise.resolve() }
+    public open(): Promise<void> { return Promise.resolve() }
     public close(): Promise<void> { return Promise.resolve() }
 
     public configure(): Promise<void> {
@@ -97,7 +97,7 @@ export class JSONDatabase implements Database {
             resolve();
         });
     }
-    
+
     public put(table: DatabaseTable, key: string, data: DatabaseValue): Promise<void> {
         return new Promise(async (resolve, reject) => {
             if (table == 'assfiles') {
@@ -117,19 +117,19 @@ export class JSONDatabase implements Database {
 
                 // Save the files
                 await bothWriter(filesJson, usersJson);
-                
+
                 resolve()
             } else if (table == 'assusers') {
                 // ? Local JSON
-				const usersJson = await fs.readJson(PATHS.users) as UsersSchema;
+                const usersJson = await fs.readJson(PATHS.users) as UsersSchema;
 
-				// Check if key already exists
-				if (usersJson.users[key] != null) return reject(new Error(`User key ${key} already exists`));
+                // Check if key already exists
+                if (usersJson.users[key] != null) return reject(new Error(`User key ${key} already exists`));
 
-				// Otherwise add the data
-				usersJson.users[key] = data as AssUser;
+                // Otherwise add the data
+                usersJson.users[key] = data as AssUser;
 
-				await fs.writeJson(PATHS.users, usersJson, { spaces: '\t' });
+                await fs.writeJson(PATHS.users, usersJson, { spaces: '\t' });
 
                 resolve();
             }
@@ -139,7 +139,7 @@ export class JSONDatabase implements Database {
     public get(table: DatabaseTable, key: string): Promise<DatabaseValue | undefined> {
         return new Promise(async (resolve, reject) => {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]][key];
-    		(!data) ? resolve(undefined) : resolve(data);
+            (!data) ? resolve(undefined) : resolve(data);
         });
     }
 
@@ -148,5 +148,5 @@ export class JSONDatabase implements Database {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]];
             (!data) ? resolve({}) : resolve(data);
         });
-    }   
+    }
 }

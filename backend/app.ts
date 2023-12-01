@@ -8,15 +8,15 @@ import express, { Request, Response, NextFunction, RequestHandler, json as BodyP
 import { path, isProd } from '@tycrek/joint';
 import { epcss } from '@tycrek/express-postcss';
 
-import { log } from './log';
-import { get } from './data';
-import { UserConfig } from './UserConfig';
-import { DBManager } from './sql/database';
-import { JSONDatabase } from './sql/json';
-import { MySQLDatabase } from './sql/mysql';
-import { PostgreSQLDatabase } from './sql/postgres';
-import { MongoDBDatabase } from './sql/mongodb';
-import { buildFrontendRouter } from './routers/_frontend';
+import { log } from './log.js';
+import { get } from './data.js';
+import { UserConfig } from './UserConfig.js';
+import { DBManager } from './sql/database.js';
+import { JSONDatabase } from './sql/json.js';
+import { MySQLDatabase } from './sql/mysql.js';
+import { PostgreSQLDatabase } from './sql/postgres.js';
+import { MongoDBDatabase } from './sql/mongodb.js';
+import { buildFrontendRouter } from './routers/_frontend.js';
 
 /**
  * Top-level metadata exports

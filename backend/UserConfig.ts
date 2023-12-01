@@ -2,10 +2,11 @@ import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration, MongoD
 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
-import { log } from './log';
-import { prepareTemplate } from './templates/parser';
-import { TemplateError } from './templates/error';
-import { DEFAULT_EMBED, validateEmbed } from './embed';
+
+import { log } from './log.js';
+import { prepareTemplate } from './templates/parser.js';
+import { TemplateError } from './templates/error.js';
+import { DEFAULT_EMBED, validateEmbed } from './embed.js';
 
 const FILEPATH = path.join('.ass-data/userconfig.json');
 

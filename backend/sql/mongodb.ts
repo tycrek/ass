@@ -1,8 +1,10 @@
 import { AssFile, AssUser, MongoDBConfiguration, NID, UploadToken } from 'ass';
-import { UserConfig } from '../UserConfig';
-import { Database, DatabaseTable, DatabaseValue } from './database';
+
 import mongoose, { Model, Mongoose, Schema } from 'mongoose';
-import { log } from '../log';
+
+import { UserConfig } from '../UserConfig.js';
+import { Database, DatabaseTable, DatabaseValue } from './database.js';
+import { log } from '../log.js';
 
 interface TableVersion {
     name:    string;
