@@ -130,7 +130,15 @@ function getTemplateTokens(src: string): TemplateToken[] {
     return tokens;
 }
 
-export function prepareTemplate(src: string): TemplateOp {
+export type PrepareTemplateOptions = {
+    allowIncludeFile?: boolean;
+};
+
+export function prepareTemplate(src: string, config?: PrepareTemplateOptions): TemplateOp {
+    let options = {
+        includeFiles: config?.allowIncludeFile ?? false
+    };
+
     type ParserStackEntry = {
         pos: number
     };
@@ -263,16 +271,16 @@ export function prepareTemplate(src: string): TemplateOp {
         // include is executed early
         if (name.toLowerCase() == 'include') {
             if (nargs['file'] != null) {
-                // TODO: this NEEDS to be restricted before ass 0.15.0 is released
-                //       its extremely insecure and should be restricted to things 
-                //       set by operators, users can have their own template inclusion
-                //       thing that doesnt depend on reading files
+                // security check!
+                if (!options.includeFiles) {
+                    throw new TemplateSyntaxError('You are not allowed to include files', { file: file, from: tokens[start].from, to: tokens[pos - 1].to });
+                }
 
                 if (typeof nargs['file'] == 'string') {
                     if (fs.existsSync(nargs['file'])) {
                         let template = fs.readFileSync(nargs['file'], { encoding: 'utf-8' });
 
-                        let tl = prepareTemplate(template);
+                        let tl = prepareTemplate(template, config);
                         
                         return tl;
                     } else throw new TemplateSyntaxError('File does not exist', { file: file, from: tokens[start].from, to: tokens[pos - 1].to});

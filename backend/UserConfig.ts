@@ -139,7 +139,9 @@ export class UserConfig {
 				for (let part of ['title', 'description', 'sitename'] as ('title' | 'description' | 'sitename')[]) {
 					if (config.embed[part] != null) {
 						if (typeof config.embed[part] == 'string') {
-							config.embed[part] = prepareTemplate(config.embed[part] as string);
+							config.embed[part] = prepareTemplate(config.embed[part] as string, {
+								allowIncludeFile: true
+							});
 						} else throw new Error(`Template string for embed ${part} is not a string`);
 					} else config.embed[part] = DEFAULT_EMBED[part];
 				}

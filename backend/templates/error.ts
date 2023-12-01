@@ -9,6 +9,9 @@ export class TemplateError extends Error {
         this.range = range;
     }
 
+    /**
+     * Formats the error.
+     */
     public format(): string {
         let format = '';
 
@@ -39,13 +42,15 @@ export class TemplateError extends Error {
                 }
             }
 
-            pend = Math.max(this.range.file.code.indexOf('\n', pend), pend);
+            if ((pend = this.range.file.code.indexOf('\n', pend)) == -1) {
+                pend = this.range.file.code.length - 1;
+            }
 
             if (fline == tline) {
-                format += `${fline.toString().padStart(5, ' ')} | ${this.range.file.code.substring(pstart, pend)}\n`;
+                format += `${fline.toString().padStart(5, ' ')} | ${this.range.file.code.substring(pstart, pend + 1)}\n`;
                 format += `${fline.toString().padStart(5, ' ')} | ${' '.repeat(fcol)}^${'~'.repeat(Math.max(tcol - fcol, 0))}\n`;
             } else {
-                let lines = this.range.file.code.substring(pstart, pend).split('\n');
+                let lines = this.range.file.code.substring(pstart, pend + 1).split('\n');
 
                 format += `      | /${'~'.repeat(lines[0].length)}v\n`;
 
