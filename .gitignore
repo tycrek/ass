@@ -6,3 +6,7 @@ dist*/
 
 # ass data
 .ass-data/
+
+# VitePress documentation
+docs/.vitepress/dist/
+docs/.vitepress/cache/
