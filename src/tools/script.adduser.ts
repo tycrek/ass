@@ -23,7 +23,7 @@ if (process.argv.length < 4) {
 	axios.post(`http://localhost:${port}/api/user`, { username, password, admin, meta }, { headers: { 'Authorization': cliKey } })
 		.then((response) => {
 			const user = response.data as User;
-			logger.info('User created', username, user.unid).callback(() => process.exit(0))
+			logger.info('User created', `${username} (${user.unid})`, `token: ${user.token}`).callback(() => process.exit(0))
 		})
 		.catch((err) => logger.error(err).callback(() => process.exit(1)));
 }

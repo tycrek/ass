@@ -1,6 +1,6 @@
 {
   "name": "ass",
-  "version": "0.14.6",
+  "version": "0.14.8",
   "description": "The simple self-hosted ShareX server",
   "main": "ass.js",
   "engines": {
@@ -42,10 +42,10 @@
     "url": "https://patreon.com/tycrek"
   },
   "dependencies": {
-    "@tinycreek/postcss-font-magician": "^4.1.0",
+    "@tinycreek/postcss-font-magician": "^4.2.0",
     "@tsconfig/node16": "^1.0.1",
     "@tycrek/discord-hookr": "^0.1.0",
-    "@tycrek/express-postcss": "^0.4.0",
+    "@tycrek/express-postcss": "^0.4.1",
     "@tycrek/joint": "^1.0.0-1",
     "@tycrek/log": "^0.7.1",
     "@tycrek/papito": "^0.3.4",
@@ -53,7 +53,7 @@
     "any-shell-escape": "^0.1.1",
     "autoprefixer": "^10.4.16",
     "aws-sdk": "^2.1467.0",
-    "axios": "^1.5.1",
+    "axios": "^1.6.0",
     "bcrypt": "^5.1.1",
     "chalk": "^4.1.2",
     "check-node-version": "^4.2.1",
@@ -74,7 +74,6 @@
     "sanitize-filename": "^1.6.3",
     "sharp": "^0.32.6",
     "stream-to-array": "^2.3.0",
-    "submodule": "^1.2.1",
     "tailwindcss": "^3.3.3",
     "typescript": "^4.9.5",
     "uuid": "^8.3.2"
@@ -92,7 +91,6 @@
     "@types/node-fetch": "^2.5.12",
     "@types/sharp": "^0.30.2",
     "@types/stream-to-array": "^2.3.0",
-    "@types/tailwindcss": "^3.0.9",
     "@types/uuid": "^8.3.1",
     "@types/ws": "^7.4.7"
   }

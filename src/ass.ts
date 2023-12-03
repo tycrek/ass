@@ -87,8 +87,7 @@ app.get('/', (req, res, next) =>
 			res.redirect(homepage))
 
 // Set up custom frontend
-const ASS_FRONTEND = fs.existsSync(path(`./${frontendName}/package.json`)) ? (require('submodule'), require(`../${frontendName}`)) : { enabled: false };
-ASS_FRONTEND.enabled && app.use(ASS_FRONTEND.endpoint, ASS_FRONTEND.router); // skipcq: JS-0093
+const ASS_FRONTEND = { enabled: false }; // ! Disabled in 0.14.7
 
 // Upload router (has to come after custom frontends as express-busboy interferes with all POST calls)
 app.use('/', ROUTERS.upload);
@@ -127,7 +126,7 @@ app.use((err: ErrWrap, _req: Request, res: Response) => {
 		.info('Users', `${users.length}`)
 		.info('Files', `${data().size}`)
 		.info('Data engine', data().name, data().type)
-		.info('Frontend', ASS_FRONTEND.enabled ? ASS_FRONTEND.brand : 'disabled', `${ASS_FRONTEND.enabled ? `${getTrueHttp()}${getTrueDomain()}${ASS_FRONTEND.endpoint}` : ''}`)
+		.info('Frontend', 'disabled')
 		.info('Custom index', ASS_INDEX ?? 'disabled')
 		.blank()
 		.callback(() => app.listen(port, host, () => log.success('Ready for uploads', `Storing resources ${s3enabled ? 'in S3' : 'on disk'}`)));
