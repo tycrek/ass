@@ -57,6 +57,7 @@ const Checkers: UserConfigTypeChecker = {
 			user: basicStringChecker,
 			password: basicStringChecker,
 			database: basicStringChecker,
+			port: (val) => numChecker(val) && val >= 1 && val <= 65535
 		},
 		postgres: {
 			port: (val) => numChecker(val) && val >= 1 && val <= 65535
@@ -114,6 +115,7 @@ export class UserConfig {
 					if (!Checkers.sql.mySql.user(config.database.options.user)) throw new Error('Invalid databse user');
 					if (!Checkers.sql.mySql.password(config.database.options.password)) throw new Error('Invalid database password');
 					if (!Checkers.sql.mySql.database(config.database.options.database)) throw new Error('Invalid database');
+					if (!Checkers.sql.mySql.port(config.database.options.port)) throw new Error('Invalid database port');
 					if (config.database.kind == 'postgres') {
 						if (!Checkers.sql.postgres.port((config.database.options as PostgresConfiguration).port)) {
 							throw new Error("Invalid database port");

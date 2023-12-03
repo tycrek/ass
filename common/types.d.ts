@@ -58,6 +58,7 @@ declare module 'ass' {
 
 	interface MySQLConfiguration {
 		host: string;
+		port: number;
 		user: string;
 		password: string;
 		database: string;
@@ -126,6 +127,7 @@ declare module 'ass' {
 		sql: {
 			mySql: {
 				host: (val: any) => boolean;
+				port: (val: any) => boolean;
 				user: (val: any) => boolean;
 				password: (val: any) => boolean;
 				database: (val: any) => boolean;
