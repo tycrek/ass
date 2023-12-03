@@ -129,7 +129,10 @@ router.post('/user', rateLimiterMiddleware('api', UserConfig.config?.rateLimit?.
 
 	} catch (err: any) { issue = `Error: ${err.message}`; }
 
-	if (issue) return res.status(400).json({ success: false, messsage: issue });
+	if (issue) {
+		log.error('Failed to create user', issue);
+		return res.status(400).json({ success: false, messsage: issue });
+	}
 
 	log.debug(`User created`, user!.username);
 	res.json(({ success: true, message: `User ${user!.username} created` }));
