@@ -36,7 +36,7 @@ export interface Database {
     /**
      * get all values from the database
      */
-    getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }>;
+    getAll(table: DatabaseTable): Promise<{ [key: string]: DatabaseValue | undefined }[]>;
 }
 
 export class DBManager {
@@ -98,7 +98,7 @@ export class DBManager {
     /**
      * get all values from the database
      */
-    public static getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
+    public static getAll(table: DatabaseTable): Promise<{ [key: string]: DatabaseValue | undefined }[]> {
         if (this._db && this._dbReady) {
             return this._db.getAll(table);
         } else throw new Error("No database active"); 

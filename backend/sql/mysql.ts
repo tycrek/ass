@@ -162,19 +162,18 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 	}
 
 	// todo: unknown if this works
-	public getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
+	public getAll(table: DatabaseTable): Promise<{ Data: DatabaseValue | undefined }[]> {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Run query // ! this may not work as expected
 				const [rowz, _fields] = await this._pool.query(`SELECT Data FROM ${table}`);
 
 				// Interpret results this is pain
-				const rows = (rowz as unknown as { [key: string]: string }[]);
+				const rows = (rowz as unknown as { Data: UploadToken | AssFile | AssUser | undefined }[]);
 
-				// console.log(rows);
 
 				// aaaaaaaaaaaa
-				resolve({});
+				resolve(rows);
 			} catch (err) {
 				reject(err);
 			}

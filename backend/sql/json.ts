@@ -143,10 +143,10 @@ export class JSONDatabase implements Database {
         });
     }
 
-    public getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
+    public getAll(table: DatabaseTable): Promise<{ Data: DatabaseValue | undefined }[]> {
         return new Promise(async (resolve, reject) => {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]];
-            (!data) ? resolve({}) : resolve(data);
+            (!data) ? resolve(data) : resolve(data);
         });
     }
 }
