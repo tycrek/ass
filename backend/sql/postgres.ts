@@ -1,8 +1,7 @@
-import { PostgresConfiguration } from 'ass';
+import { PostgresConfiguration, Database, DatabaseTable, DatabaseValue } from 'ass';
 
 import pg from 'pg';
 import { log } from '../log.js';
-import { Database, DatabaseTable, DatabaseValue } from './database.js';
 import { UserConfig } from '../UserConfig.js';
 
 /**

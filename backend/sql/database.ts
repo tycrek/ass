@@ -1,43 +1,4 @@
-import { AssFile, AssUser, NID, UploadToken } from "ass";
-
-export type DatabaseValue = AssFile | AssUser | UploadToken;
-export type DatabaseTable = 'assfiles' | 'assusers' | 'asstokens';
-
-// todo: move this to types.d.ts
-/**
- * interface for database classes
- */
-export interface Database {
-    /**
-     * preform database initialization tasks
-     */
-    open(): Promise<void>;
-
-    /**
-     * preform database suspension tasks
-     */
-    close(): Promise<void>;
-
-    /**
-     * set up database
-     */
-    configure(): Promise<void>;
-
-    /**
-     * put a value in the database
-     */
-    put(table: DatabaseTable, key: NID, data: DatabaseValue): Promise<void>;
-    
-    /**
-     * get a value from the database
-     */
-    get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined>;
-    
-    /**
-     * get all values from the database
-     */
-    getAll(table: DatabaseTable): Promise<{ [key: string]: DatabaseValue | undefined }[]>;
-}
+import { NID, Database, DatabaseTable, DatabaseValue } from "ass";
 
 export class DBManager {
     private static _db:      Database;

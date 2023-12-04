@@ -1,10 +1,9 @@
-import { AssFile, AssUser, NID, UploadToken } from 'ass';
+import { AssFile, AssUser, NID, UploadToken, Database, DatabaseTable, DatabaseValue } from 'ass';
 
 import mysql, { Pool } from 'mysql2/promise';
 
 import { log } from '../log.js';
 import { UserConfig } from '../UserConfig.js';
-import { Database, DatabaseTable, DatabaseValue } from './database.js';
 
 export class MySQLDatabase implements Database {
 	private _pool: Pool;

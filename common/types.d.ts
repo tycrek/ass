@@ -3,6 +3,9 @@ declare module 'ass' {
 
 	type IdType = 'random' | 'original' | 'gfycat' | 'timestamp' | 'zws'
 
+	export type DatabaseValue = AssFile | AssUser | UploadToken;
+	export type DatabaseTable = 'assfiles' | 'assusers' | 'asstokens';
+
 	/**
 	 * Core Express server config.
 	 * This is separate from the user configuration starting in 0.15.0
@@ -49,6 +52,42 @@ declare module 'ass' {
 			accessKey: string;
 			secretKey: string;
 		}
+	}
+
+	/**
+	 * interface for database classes
+	 */
+
+	export interface Database {
+		/**
+		 * preform database initialization tasks
+		 */
+		open(): Promise<void>;
+
+		/**
+		 * preform database suspension tasks
+		 */
+		close(): Promise<void>;
+
+		/**
+		 * set up database
+		 */
+		configure(): Promise<void>;
+
+		/**
+		 * put a value in the database
+		 */
+		put(table: DatabaseTable, key: NID, data: DatabaseValue): Promise<void>;
+
+		/**
+		 * get a value from the database
+		 */
+		get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined>;
+
+		/**
+		 * get all values from the database
+		 */
+		getAll(table: DatabaseTable): Promise<{ [key: string]: DatabaseValue | undefined; }[]>;
 	}
 
 	interface DatabaseConfiguration {

@@ -1,9 +1,8 @@
-import { AssFile, AssUser, FilesSchema, UsersSchema } from 'ass';
+import { AssFile, AssUser, FilesSchema, UsersSchema, Database, DatabaseTable, DatabaseValue } from 'ass';
 
 import path, { resolve } from 'path';
 import fs from 'fs-extra';
 
-import { Database, DatabaseTable, DatabaseValue } from './database.js';
 import { log } from '../log.js';
 import { nanoid } from '../generators.js';
 
