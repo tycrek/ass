@@ -53,6 +53,7 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 
 		return res.json({ success: true });
 	} catch (err: any) {
+		log.error('Setup failed', err);
 		return res.status(400).json({ success: false, message: err.message });
 	}
 });
@@ -84,7 +85,7 @@ router.post('/login', rateLimiterMiddleware('login', UserConfig.config?.rateLimi
 			// Delete the pre-login path after successful login
 			if (success) delete req.session.ass?.preLoginPath;
 		})
-		.catch((err) => res.status(400).json({ success: false, message: err.message }));
+		.catch((err) => log.error(err).callback(() => res.status(400).json({ success: false, message: err.message })));
 });
 
 // todo: authenticate API endpoints
