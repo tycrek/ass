@@ -5,8 +5,9 @@ const LOGO = 'https://i.tycrek.dev/ass';
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'en-US',
-  title: "ass docs",
-  description: "Documentation for ass, a ShareX server",
+  title: 'ass docs',
+  titleTemplate: ':title ~ ass docs',
+  description: 'Documentation for ass, an open-source ShareX server',
   cleanUrls: true,
   lastUpdated: true,
 
@@ -86,4 +87,4 @@ export default defineConfig({
       { icon: 'discord', link: 'https://discord.gg/wGZYt5fasY' }
     ]
   }
-})
+});
