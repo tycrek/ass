@@ -180,6 +180,7 @@ export class PostgreSQLDatabase implements Database {
         });
     }
 
+    // todo: verify this works
     public getAll(table: DatabaseTable): Promise<{ Data: DatabaseValue | undefined }[]> {
         return new Promise(async (resolve, reject) => {
             try {
