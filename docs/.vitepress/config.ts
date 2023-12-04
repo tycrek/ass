@@ -50,7 +50,6 @@ export default defineConfig({
         items: [
           {
             text: 'SQL',
-            link: '/configure/sql',
             items: [
               {
                 text: 'MySQL',
@@ -64,7 +63,6 @@ export default defineConfig({
           },
           {
             text: 'Clients',
-            link: '/configure/clients',
             items: [
               {
                 text: 'ShareX',
