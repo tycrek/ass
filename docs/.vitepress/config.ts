@@ -1,13 +1,27 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
+
+const LOGO = 'https://i.tycrek.dev/ass';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  lang: 'en-US',
   title: "ass docs",
   description: "Documentation for ass, a ShareX server",
   cleanUrls: true,
+  lastUpdated: true,
+
+  head: [
+    ['meta', { property: 'og:image', content: LOGO }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'twitter:domain', content: 'ass.tycrek.dev' }],
+    ['meta', { property: 'twitter:image', content: LOGO }],
+    ['link', { rel: 'icon', href: LOGO }],
+  ],
 
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
+    logo: LOGO,
+
     nav: [
       { text: 'Home', link: '/' },
       {
