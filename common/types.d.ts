@@ -82,12 +82,12 @@ declare module 'ass' {
 		/**
 		 * get a value from the database
 		 */
-		get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined>;
+		get(table: DatabaseTable, key: NID): Promise<DatabaseValue>;
 
 		/**
 		 * get all values from the database
 		 */
-		getAll(table: DatabaseTable): Promise<{ [key: string]: DatabaseValue | undefined; }[]>;
+		getAll(table: DatabaseTable): Promise<DatabaseValue[]>;
 	}
 
 	interface DatabaseConfiguration {

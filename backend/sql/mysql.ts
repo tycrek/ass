@@ -144,7 +144,7 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 		});
 	}
 
-	public get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined> {
+	public get(table: DatabaseTable, key: NID): Promise<DatabaseValue> {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Run query
@@ -160,19 +160,16 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 		});
 	}
 
-	// todo: unknown if this works
-	public getAll(table: DatabaseTable): Promise<{ Data: DatabaseValue | undefined }[]> {
+	public getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
 		return new Promise(async (resolve, reject) => {
 			try {
-				// Run query // ! this may not work as expected
+				// Run query
 				const [rowz, _fields] = await this._pool.query(`SELECT Data FROM ${table}`);
 
 				// Interpret results this is pain
-				const rows = (rowz as unknown as { Data: UploadToken | AssFile | AssUser | undefined }[]);
+				const rows = (rowz as unknown as { Data: UploadToken | AssFile | AssUser }[]);
 
-
-				// aaaaaaaaaaaa
-				resolve(rows);
+				resolve(rows.map((row) => row.Data));
 			} catch (err) {
 				reject(err);
 			}

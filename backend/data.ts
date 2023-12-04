@@ -1,4 +1,4 @@
-import { AssFile, AssUser, NID } from 'ass';
+import { AssFile, AssUser, DatabaseValue, NID } from 'ass';
 
 import { log } from './log.js';
 import { UserConfig } from './UserConfig.js';
@@ -35,19 +35,18 @@ export const put = (sector: DataSector, key: NID, data: AssFile | AssUser): Prom
 	}
 });
 
-export const get = (sector: DataSector, key: NID): Promise<AssFile | AssUser | false> => new Promise(async (resolve, reject) => {
+export const get = (sector: DataSector, key: NID): Promise<DatabaseValue> => new Promise(async (resolve, reject) => {
 	try {
-		const data: AssFile | AssUser | undefined = await DBManager.get(sector === 'files' ? 'assfiles' : 'assusers', key) as AssFile | AssUser | undefined
-		(!data) ? resolve(false) : resolve(data);
+		const data = await DBManager.get(sector === 'files' ? 'assfiles' : 'assusers', key);
+		resolve(data);
 	} catch (err) {
 		reject(err);
 	}
 });
 
-export const getAll = (sector: DataSector): Promise<{ [key: string]: AssFile | AssUser }> => new Promise(async (resolve, reject) => {
+export const getAll = (sector: DataSector): Promise<DatabaseValue[]> => new Promise(async (resolve, reject) => {
 	try {
-		// todo: fix MySQL
-		const data: { [key: string]: AssFile | AssUser } = await DBManager.getAll(sector === 'files' ? 'assfiles' : 'assusers') as /* AssFile[] | AssUser[] | */ {}
+		const data = await DBManager.getAll(sector === 'files' ? 'assfiles' : 'assusers');
 		resolve(data);
 	} catch (err) {
 		reject(err);

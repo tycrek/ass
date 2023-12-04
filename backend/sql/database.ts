@@ -41,7 +41,7 @@ export class DBManager {
     /**
      * put a value in the database
      */
-	public static put(table: DatabaseTable, key: NID, data: DatabaseValue): Promise<void> {
+    public static put(table: DatabaseTable, key: NID, data: DatabaseValue): Promise<void> {
         if (this._db && this._dbReady) {
             return this._db.put(table, key, data);
         } else throw new Error("No database active");
@@ -50,18 +50,18 @@ export class DBManager {
     /**
      * get a value from the database
      */
-    public static get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined> {
+    public static get(table: DatabaseTable, key: NID): Promise<DatabaseValue> {
         if (this._db && this._dbReady) {
             return this._db.get(table, key);
-        } else throw new Error("No database active"); 
+        } else throw new Error("No database active");
     }
 
     /**
      * get all values from the database
      */
-    public static getAll(table: DatabaseTable): Promise<{ [key: string]: DatabaseValue | undefined }[]> {
+    public static getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
         if (this._db && this._dbReady) {
             return this._db.getAll(table);
-        } else throw new Error("No database active"); 
+        } else throw new Error("No database active");
     }
 }

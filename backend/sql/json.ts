@@ -135,17 +135,17 @@ export class JSONDatabase implements Database {
         })
     }
 
-    public get(table: DatabaseTable, key: string): Promise<DatabaseValue | undefined> {
+    public get(table: DatabaseTable, key: string): Promise<DatabaseValue> {
         return new Promise(async (resolve, reject) => {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]][key];
             (!data) ? resolve(undefined) : resolve(data);
         });
     }
 
-    // todo: fix this
-    public getAll(table: DatabaseTable): Promise<{ Data: DatabaseValue | undefined }[]> {
+    public getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
         return new Promise(async (resolve, reject) => {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]];
+            // todo: fix this
             (!data) ? resolve(data) : resolve(data);
         });
     }

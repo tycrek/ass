@@ -161,7 +161,7 @@ export class PostgreSQLDatabase implements Database {
         });
     }
 
-    public get(table: DatabaseTable, key: string): Promise<DatabaseValue | undefined> {
+    public get(table: DatabaseTable, key: string): Promise<DatabaseValue> {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
@@ -180,7 +180,7 @@ export class PostgreSQLDatabase implements Database {
     }
 
     // todo: verify this works
-    public getAll(table: DatabaseTable): Promise<{ Data: DatabaseValue | undefined }[]> {
+    public getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
