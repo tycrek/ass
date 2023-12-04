@@ -61,6 +61,20 @@ export default defineConfig({
                 link: '/configure/sql/postgresql'
               }
             ]
+          },
+          {
+            text: 'Clients',
+            link: '/configure/clients',
+            items: [
+              {
+                text: 'ShareX',
+                link: '/configure/clients/sharex'
+              },
+              {
+                text: 'Flameshot',
+                link: '/configure/clients/flameshot'
+              }
+            ]
           }
         ]
       },
