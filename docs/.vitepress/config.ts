@@ -71,6 +71,11 @@ export default defineConfig({
       }
     ],
 
+    editLink: {
+      pattern: `https://github.com/tycrek/ass/edit/${GIT_BRANCH}/docs/:path`,
+      text: 'Edit this page on GitHub',
+    },
+
     footer: {
       message: 'Released under the ISC License.',
       copyright: 'Copyright © 2023 tycrek & ass contributors',
