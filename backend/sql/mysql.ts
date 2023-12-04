@@ -78,7 +78,7 @@ export class MySQLDatabase implements Database {
 						this._tableManager('create', 'assusers'),
 						this._tableManager('create', 'asstokens')
 					]);
-					log.success('MySQL', 'Tables created').callback(resolve);
+					log.success('MySQL', 'Tables created');
 				} else {
 
 					// There's at least one row, do further checks
@@ -113,12 +113,13 @@ export class MySQLDatabase implements Database {
 
 					// Hopefully we are ready
 					if (tablesExist.files && tablesExist.users)
-						log.info('MySQL', 'Tables exist, ready').callback(() => {
-							this._ready = true;
-							resolve(void 0);
-						});
+						log.info('MySQL', 'Tables exist, ready');
 					else throw new Error('Table(s) missing!');
 				}
+
+				// We are ready!
+				this._ready = true;
+				resolve();
 			} catch (err) {
 				log.error('MySQL', 'failed to initialize');
 				console.error(err);
