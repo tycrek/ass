@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress';
 
 const LOGO = 'https://i.tycrek.dev/ass';
+const GIT_BRANCH = 'dev/0.15.0'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
