@@ -10,3 +10,6 @@ dist*/
 # VitePress documentation
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+
+# Wrangler local cache (docs dev server)
+.wrangler/
