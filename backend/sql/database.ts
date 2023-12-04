@@ -3,6 +3,7 @@ import { AssFile, AssUser, NID, UploadToken } from "ass";
 export type DatabaseValue = AssFile | AssUser | UploadToken;
 export type DatabaseTable = 'assfiles' | 'assusers' | 'asstokens';
 
+// todo: move this to types.d.ts
 /**
  * interface for database classes
  */
