@@ -131,7 +131,13 @@ export class MySQLDatabase implements Database {
 		return new Promise(async (resolve, reject) => {
 			if (!this._ready) return reject(new Error('MySQL not ready'));
 
-			if (await this.get(table, key)) reject(new Error(`${table == 'assfiles' ? 'File' : table == 'assusers' ? 'User' : 'Token'} key ${key} already exists`));
+			try {
+				if (await this.get(table, key))
+					reject(new Error(`${table == 'assfiles' ? 'File' : table == 'assusers' ? 'User' : 'Token'} key ${key} already exists`));
+			} catch (err: any) {
+				if (!err.message.includes('not found in'))
+					reject(err);
+			}
 
 			const query = `
 INSERT INTO ${table} ( NanoID, Data )
@@ -153,7 +159,8 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 				// Disgustingly interpret the query results
 				const rows_tableData = (rowz as unknown as { [key: string]: string }[])[0] as unknown as ({ Data: UploadToken | AssFile | AssUser | undefined });
 
-				resolve(rows_tableData?.Data ?? undefined);
+				if (rows_tableData?.Data) resolve(rows_tableData.Data);
+				else throw new Error(`Key '${key}' not found in '${table}'`);
 			} catch (err) {
 				reject(err);
 			}
