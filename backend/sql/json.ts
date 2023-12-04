@@ -138,7 +138,7 @@ export class JSONDatabase implements Database {
     public get(table: DatabaseTable, key: string): Promise<DatabaseValue> {
         return new Promise(async (resolve, reject) => {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]][key];
-            (!data) ? resolve(undefined) : resolve(data);
+            (!data) ? reject(new Error(`Key '${key}' not found in '${table}'`)) : resolve(data);
         });
     }
 
