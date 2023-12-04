@@ -15,7 +15,8 @@ export default defineConfig({
           { text: 'Docker', link: '/install/docker' },
           { text: 'Local', link: '/install/local' }
         ]
-      }
+      },
+      { text: 'Configure', link: '/configure/' }
     ],
 
     sidebar: [
@@ -25,6 +26,26 @@ export default defineConfig({
         items: [
           { text: 'Docker', link: '/install/docker' },
           { text: 'Local', link: '/install/local' }
+        ]
+      },
+      {
+        text: 'Configure',
+        link: '/configure/',
+        items: [
+          {
+            text: 'SQL',
+            link: '/configure/sql',
+            items: [
+              {
+                text: 'MySQL',
+                link: '/configure/sql/mysql'
+              },
+              {
+                text: 'PostgreSQL',
+                link: '/configure/sql/postgresql'
+              }
+            ]
+          }
         ]
       },
       {

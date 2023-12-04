@@ -13,6 +13,9 @@ hero:
       text: Install
       link: /install/
     - theme: alt
+      text: Configure
+      link: /configure/
+    - theme: alt
       text: Customize
       link: /customize/
   image:
