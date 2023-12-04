@@ -8,16 +8,16 @@
     "node": "^20"
   },
   "scripts": {
+    "start": "node dist/backend/app.js",
     "dev": "npm run build && npm start",
-    "fresh": "rm -dr .ass-data/ & npm run dev",
-    "build": "rm -dr dist/ & npm run build:backend && npm run build:frontend && npm run build:fix-frontend",
+    "dev:docs": "wrangler pages dev --proxy 5173 -- npm run vp:dev",
+    "build": "rm -dr dist/ ; npm run build:backend && npm run build:frontend && npm run build:fix-frontend",
     "build:backend": "tsc -p backend/",
     "build:frontend": "tsc -p frontend/",
     "build:fix-frontend": "node common/fix-frontend-js.js",
-    "start": "node dist/backend/app.js",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "vp:dev": "vitepress dev docs",
+    "vp:build": "vitepress build docs",
+    "vp:preview": "vitepress preview docs"
   },
   "repository": "github:tycrek/ass",
   "keywords": [
