@@ -71,6 +71,11 @@ export default defineConfig({
       }
     ],
 
+    footer: {
+      message: 'Released under the ISC License.',
+      copyright: 'Copyright © 2023 tycrek & ass contributors',
+    },
+
     socialLinks: [
       { icon: 'github', link: 'https://github.com/tycrek/ass/' },
       { icon: 'discord', link: 'https://discord.gg/wGZYt5fasY' }
