@@ -12,7 +12,7 @@ At this time, it is working and ready for testing, **but is very incomplete** an
 
 ## Alternatives
 
-These are not officially supported.
+These are maintained by the ass community.
 
 - Nix flake (soon)
 - Pterodactyl Egg (soon)
