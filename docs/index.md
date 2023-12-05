@@ -14,7 +14,7 @@ hero:
       link: /install/
     - theme: alt
       text: View on GitHub
-      link: /configure/
+      link: https://github.com/tycrek/ass
 
   image:
     src: 'https://i.tycrek.dev/ass-round-square-logo-white-with-text'
