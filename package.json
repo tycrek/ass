@@ -15,6 +15,8 @@
     "build:backend": "tsc -p backend/",
     "build:frontend": "tsc -p frontend/",
     "build:fix-frontend": "node common/fix-frontend-js.js",
+    "build:docs": "npm run vp:build && npm run build:compose-redir",
+    "build:compose-redir": "echo \"/compose.yaml https://raw.githubusercontent.com/tycrek/ass/dev/0.15.0/compose.yaml 302\" > ./docs/.vitepress/dist/_redirects",
     "vp:dev": "vitepress dev docs",
     "vp:build": "vitepress build docs",
     "vp:preview": "vitepress preview docs"
