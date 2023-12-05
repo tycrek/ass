@@ -57,6 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		pgsqlPassword: document.querySelector('#pgsql-password') as SlInput,
 		pgsqlDatabase: document.querySelector('#pgsql-database') as SlInput,
 
+		mongoDBTab: document.querySelector('#mongodb-tab') as SlTab,
+		mongoDBHost: document.querySelector('#mongodb-host') as SlInput,
+		mongoDBPort: document.querySelector('#mongodb-port') as SlInput,
+		mongoDBUser: document.querySelector('#mongodb-user') as SlInput,
+		mongoDBPassword: document.querySelector('#mongodb-password') as SlInput,
+		mongoDBDatabase: document.querySelector('#mongodb-database') as SlInput,
+
 		userUsername: document.querySelector('#user-username') as SlInput,
 		userPassword: document.querySelector('#user-password') as SlInput,
 
@@ -127,6 +134,19 @@ document.addEventListener('DOMContentLoaded', () => {
 						user: Elements.pgsqlUser.value,
 						password: Elements.pgsqlPassword.value,
 						database: Elements.pgsqlDatabase.value
+					}
+				};
+			}
+		} else if (Elements.mongoDBTab.active) {
+			if (Elements.mongoDBHost.value != null && Elements.mongoDBHost.value != '') {
+				config.database = {
+					kind: 'mongodb',
+					options: {
+						host:     Elements.mongoDBHost.value,
+						port:     parseInt(Elements.mongoDBPort.value),
+						user:     Elements.mongoDBUser.value,
+						password: Elements.mongoDBPassword.value,
+						database: Elements.mongoDBDatabase.value
 					}
 				};
 			}

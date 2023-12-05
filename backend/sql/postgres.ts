@@ -17,7 +17,7 @@ export class PostgreSQLDatabase implements Database {
         // make sure the configuration exists
         if (!UserConfig.ready) return 'User configuration not ready';
         if (typeof UserConfig.config.database != 'object') return 'PostgreSQL configuration missing';
-        if (UserConfig.config.database.kind != "postgres") return 'Database not set to PostgreSQL, but PostgreSQL is in use, something has gone terribly wrong';
+        if (UserConfig.config.database.kind != 'postgres') return 'Database not set to PostgreSQL, but PostgreSQL is in use, something has gone terribly wrong';
         if (typeof UserConfig.config.database.options != 'object') return 'PostgreSQL configuration missing';
 
         let config = UserConfig.config.database.options;
@@ -33,7 +33,6 @@ export class PostgreSQLDatabase implements Database {
                             : undefined;
 
         return issue;
-
     }
 
     public open(): Promise<void> {
@@ -172,26 +171,30 @@ export class PostgreSQLDatabase implements Database {
 
                 let result = await this._client.query(queries[table], [key]);
 
-                resolve(result.rowCount ? result.rows[0].data : void 0);
+                if (result.rowCount == 0) {
+                    throw new Error(`Key '${key}' not found in '${table}'`);
+                }
+
+                resolve(result.rows[0].data);
             } catch (err) {
                 reject(err);
             }
         });
     }
 
-    // todo: verify this works
+    // XXX: This is broken
     public getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
-                    assfiles: 'SELECT json_object_agg(id, data) AS stuff FROM assfiles;',
-                    assusers: 'SELECT json_object_agg(id, data) AS stuff FROM assusers;',
-                    asstokens: 'SELECT json_object_agg(id, data) AS stuff FROM asstokens;'
+                    assfiles: 'SELECT json_agg(data) as stuff FROM assfiles;',
+                    assusers: 'SELECT json_agg(data) as stuff FROM assusers;',
+                    asstokens: 'SELECT json_agg(data) as stuff FROM asstokens;'
                 };
 
                 let result = await this._client.query(queries[table]);
 
-                resolve(result.rowCount ? result.rows[0].stuff : void 0);
+                resolve(result.rowCount ? result.rows[0].stuff : []);
             } catch (err) {
                 reject(err);
             }

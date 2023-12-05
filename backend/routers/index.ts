@@ -1,4 +1,4 @@
-import { BusBoyFile, AssFile } from 'ass';
+import { BusBoyFile, AssFile, AssUser } from 'ass';
 
 import fs from 'fs-extra';
 import bb from 'express-busboy';
@@ -13,6 +13,8 @@ import { random } from '../generators.js';
 import { UserConfig } from '../UserConfig.js';
 import { getFileS3, uploadFileS3 } from '../s3.js';
 import { rateLimiterMiddleware } from '../ratelimit.js';
+import { DBManager } from '../sql/database.js';
+import { DEFAULT_EMBED, prepareEmbed } from '../embed.js';
 
 const router = Router({ caseSensitive: true });
 
@@ -30,7 +32,7 @@ bb.extend(router, {
 router.get('/', (req, res) => UserConfig.ready ? res.render('index', { version: App.pkgVersion }) : res.redirect('/setup'));
 
 // Upload flow
-router.post('/', rateLimiterMiddleware("upload", UserConfig.config?.rateLimit?.upload), async (req, res) => {
+router.post('/', rateLimiterMiddleware('upload', UserConfig.config?.rateLimit?.upload), async (req, res) => {
 
 	// Check user config
 	if (!UserConfig.ready) return res.status(500).type('text').send('Configuration missing!');
@@ -96,7 +98,47 @@ router.post('/', rateLimiterMiddleware("upload", UserConfig.config?.rateLimit?.u
 	}
 });
 
-router.get('/:fakeId', (req, res) => res.redirect(`/direct/${req.params.fakeId}`));
+router.get('/:fakeId', async (req, res) => {
+	if (!UserConfig.ready) res.redirect('/setup');
+
+	// Get the ID
+	const fakeId = req.params.fakeId;
+
+	// Get the file metadata
+	let _data;
+	try { _data = await DBManager.get('assfiles', fakeId); }
+	catch (err) {
+		log.error('Failed to get', fakeId);
+		console.error(err);
+		return res.status(500).send();
+	}
+
+	if (!_data) return res.status(404).send();
+	else {
+		let meta = _data as AssFile;
+		let user = await DBManager.get('assusers', meta.uploader) as AssUser | undefined;
+
+		res.render("viewer", {
+			url:      `/direct/${fakeId}`,
+			uploader: user?.username ?? 'unknown',
+			size:     meta.size,
+			time:     meta.timestamp,
+			embed:    prepareEmbed({
+				title:       UserConfig.config.embed?.title       ?? DEFAULT_EMBED.title,
+				description: UserConfig.config.embed?.description ?? DEFAULT_EMBED.description,
+				sitename:    UserConfig.config.embed?.sitename    ?? DEFAULT_EMBED.sitename
+			}, user ?? {
+				admin: false,
+				files: [],
+				id:    "",
+				meta:  {},
+				password: "",
+				tokens:   [],
+				username: "unknown"
+			}, meta)
+		});
+	}
+});
 
 router.get('/direct/:fakeId', async (req, res) => {
 	if (!UserConfig.ready) res.redirect('/setup');

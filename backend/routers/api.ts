@@ -12,6 +12,7 @@ import { DBManager } from '../sql/database.js';
 import { JSONDatabase } from '../sql/json.js';
 import { MySQLDatabase } from '../sql/mysql.js';
 import { PostgreSQLDatabase } from '../sql/postgres.js';
+import { MongoDBDatabase } from '../sql/mongodb.js';
 
 const router = Router({ caseSensitive: true });
 
@@ -41,13 +42,16 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 				case 'postgres':
 					await DBManager.use(new PostgreSQLDatabase());
 					break;
+				case 'mongodb':
+					await DBManager.use(new MongoDBDatabase());
+					break;
 			}
 		}
 
 		// set rate limits
-		if (UserConfig.config.rateLimit?.api) setRateLimiter('api', UserConfig.config.rateLimit.api);
-		if (UserConfig.config.rateLimit?.login) setRateLimiter('login', UserConfig.config.rateLimit.login);
-		if (UserConfig.config.rateLimit?.upload) setRateLimiter('upload', UserConfig.config.rateLimit.upload);;
+		if (UserConfig.config.rateLimit?.api)    setRateLimiter('api',    UserConfig.config.rateLimit.api);
+		if (UserConfig.config.rateLimit?.login)  setRateLimiter('login',  UserConfig.config.rateLimit.login);
+		if (UserConfig.config.rateLimit?.upload) setRateLimiter('upload', UserConfig.config.rateLimit.upload);
 
 		log.success('Setup', 'completed');
 
@@ -62,10 +66,11 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 router.post('/login', rateLimiterMiddleware('login', UserConfig.config?.rateLimit?.login), BodyParserJson(), (req, res) => {
 	const { username, password } = req.body;
 
+	// something tells me we shouldnt be using getall here
 	data.getAll('users')
 		.then((users) => {
 			if (!users) throw new Error('Missing users data');
-			else return Object.entries(users as AssUser[])
+			else return Object.entries(users as AssUser[]) 
 				.filter(([_uid, user]: [string, AssUser]) => user.username === username)[0][1]; // [0] is the first item in the filter results, [1] is AssUser
 		})
 		.then((user) => Promise.all([bcrypt.compare(password, user.password), user]))

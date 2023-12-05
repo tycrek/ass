@@ -30,6 +30,25 @@ declare module 'ass' {
 		database?: DatabaseConfiguration;
 
 		rateLimit?: RateLimitConfiguration;
+
+		// to whoever has to make the config screen
+		// for this, im very verys sorry
+		embed?: EmbedTemplate;
+	}
+
+	/**
+	 * Embed config
+	 */
+	interface EmbedConfiguration {
+		/**
+		 * Title in embed
+		 */
+		title?:       string,
+		
+		/**
+		 * Description(s) in embed
+		 */
+		description?: string[] | string,
 	}
 
 	interface S3Configuration {
@@ -91,8 +110,8 @@ declare module 'ass' {
 	}
 
 	interface DatabaseConfiguration {
-		kind: 'mysql' | 'postgres' | 'json';
-		options?: MySQLConfiguration | PostgresConfiguration;
+		kind: 'mysql' | 'postgres' | 'json' | 'mongodb';
+		options?: MySQLConfiguration | PostgresConfiguration | MongoDBConfiguration;
 	}
 
 	interface MySQLConfiguration {
@@ -104,6 +123,14 @@ declare module 'ass' {
 	}
 
 	interface PostgresConfiguration {
+		host: string;
+		port: number;
+		user: string;
+		password: string;
+		database: string;
+	}
+
+	interface MongoDBConfiguration {
 		host: string;
 		port: number;
 		user: string;
@@ -170,9 +197,6 @@ declare module 'ass' {
 				user: (val: any) => boolean;
 				password: (val: any) => boolean;
 				database: (val: any) => boolean;
-			}
-			postgres: {
-				port: (val: any) => boolean;
 			}
 		}
 		rateLimit: {
@@ -287,6 +311,77 @@ declare module 'ass' {
 		};
 		cliKey: string;
 		meta: { [key: string]: any };
+	}
+
+	/**
+	 * Template operation
+	 */
+	type TemplateOp = TemplateCommandOp<any, TemplateCommandSchema> | string;
+
+	/**
+	 * Please don't waste your time trying to make this look
+	 * nice, it's not possible.
+	 */
+	type TemplateCommandOp<N extends string, T extends TemplateCommandSchema> = {
+		op:    N;
+		args:  TemplateOp[];
+		named: {
+			+readonly [name in keyof T['named']]: (
+				TemplateOp | (T['named'] extends object
+					? T['named'][name] extends { required?: boolean }
+						? T['named'][name]['required'] extends true
+							? TemplateOp
+							: undefined
+						: undefined
+					: undefined)
+			)
+		};
+		srcRange: TemplateSourceRange;
+	};
+
+	/**
+	 * Basically a declaration
+	 */
+	type TemplateCommandSchema = {
+		named?: {
+			[index: string]: {
+				required?: boolean
+			}
+		};
+	};
+
+	/**
+	 * Template source code
+	 */
+	type TemplateSource = {
+		code: string;
+	};
+
+	/**
+	 * Range in template source code
+	 */
+	type TemplateSourceRange = {
+		file: TemplateSource;
+		from: number;
+		to:   number;
+	};
+
+	/**
+	 * This is so beyond cursed
+	 */
+	interface EmbedTemplate {
+		title:       TemplateOp;
+		description: TemplateOp;
+		sitename:    TemplateOp;
+	}
+
+	/**
+	 * 
+	 */
+	interface PreparedEmbed {
+		title:       string;
+		description: string;
+		sitename:    string;
 	}
 }
 

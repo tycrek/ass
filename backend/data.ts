@@ -15,6 +15,7 @@ type DataSector = 'files' | 'users';
 const DBNAMES = {
 	'mysql': 'MySQL',
 	'postgres': 'PostgreSQL',
+	'mongodb': 'MongoDB',
 	'json': 'JSON'
 };
 

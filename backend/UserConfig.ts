@@ -1,8 +1,12 @@
-import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration } from 'ass';
+import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration, MongoDBConfiguration } from 'ass';
 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
+
 import { log } from './log.js';
+import { prepareTemplate } from './templates/parser.js';
+import { TemplateError } from './templates/error.js';
+import { DEFAULT_EMBED, validateEmbed } from './embed.js';
 
 const FILEPATH = path.join('.ass-data/userconfig.json');
 
@@ -58,9 +62,6 @@ const Checkers: UserConfigTypeChecker = {
 			password: basicStringChecker,
 			database: basicStringChecker,
 			port: (val) => numChecker(val) && val >= 1 && val <= 65535
-		},
-		postgres: {
-			port: (val) => numChecker(val) && val >= 1 && val <= 65535
 		}
 	},
 
@@ -109,18 +110,13 @@ export class UserConfig {
 		// * Optional database config(s)
 		if (config.database != null) {
 			// these both have the same schema so we can just check both
-			if (config.database.kind == 'mysql' || config.database.kind == 'postgres') {
+			if (config.database.kind == 'mysql' || config.database.kind == 'postgres' || config.database.kind == 'mongodb') {
 				if (config.database.options != undefined) {
 					if (!Checkers.sql.mySql.host(config.database.options.host)) throw new Error('Invalid database host');
 					if (!Checkers.sql.mySql.user(config.database.options.user)) throw new Error('Invalid databse user');
 					if (!Checkers.sql.mySql.password(config.database.options.password)) throw new Error('Invalid database password');
 					if (!Checkers.sql.mySql.database(config.database.options.database)) throw new Error('Invalid database');
 					if (!Checkers.sql.mySql.port(config.database.options.port)) throw new Error('Invalid database port');
-					if (config.database.kind == 'postgres') {
-						if (!Checkers.sql.postgres.port((config.database.options as PostgresConfiguration).port)) {
-							throw new Error("Invalid database port");
-						}
-					}
 				} else throw new Error('Database options missing');
 			}
 		}
@@ -131,6 +127,30 @@ export class UserConfig {
 			if (!Checkers.rateLimit.endpoint(config.rateLimit.upload)) throw new Error('Invalid Upload rate limit configuration');
 			if (!Checkers.rateLimit.endpoint(config.rateLimit.api)) throw new Error('Invalid API rate limit configuration');
 		}
+
+		// * the embed
+		if (config.embed != null) {
+			try {
+				for (let part of ['title', 'description', 'sitename'] as ('title' | 'description' | 'sitename')[]) {
+					if (config.embed[part] != null) {
+						if (typeof config.embed[part] == 'string') {
+							config.embed[part] = prepareTemplate(config.embed[part] as string, {
+								allowIncludeFile: true
+							});
+						} else throw new Error(`Template string for embed ${part} is not a string`);
+					} else config.embed[part] = DEFAULT_EMBED[part];
+				}
+
+				validateEmbed(config.embed);
+			} catch (err) {
+				if (err instanceof TemplateError) {
+					// tlog messes up the formatting
+					console.error(err.format());
+
+					throw new Error('Template error');
+				} else throw err;
+			}
+		} else config.embed = DEFAULT_EMBED;
 
 		// All is fine, carry on!
 		return config;

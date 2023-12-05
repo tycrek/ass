@@ -15,6 +15,7 @@ import { DBManager } from './sql/database.js';
 import { JSONDatabase } from './sql/json.js';
 import { MySQLDatabase } from './sql/mysql.js';
 import { PostgreSQLDatabase } from './sql/postgres.js';
+import { MongoDBDatabase } from './sql/mongodb.js';
 import { buildFrontendRouter } from './routers/_frontend.js';
 
 /**
@@ -127,6 +128,9 @@ async function main() {
 					break;
 				case 'postgres':
 					await DBManager.use(new PostgreSQLDatabase());
+					break;
+				case 'mongodb':
+					await DBManager.use(new MongoDBDatabase());
 					break;
 			}
 		} catch (err) { throw new Error(`Failed to configure SQL`); }

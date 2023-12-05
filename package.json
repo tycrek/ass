@@ -53,6 +53,7 @@
     "fs-extra": "^11.2.0",
     "luxon": "^3.4.4",
     "memorystore": "^1.6.7",
+    "mongoose": "^8.0.0",
     "mysql2": "^3.6.5",
     "node-vibrant": "^3.1.6",
     "pg": "^8.11.3",

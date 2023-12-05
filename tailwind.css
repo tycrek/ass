@@ -24,6 +24,15 @@
 	.setup-panel>sl-input {
 		@apply mb-4;
 	}
+
+	.res-image {
+		@apply max-h-[75vh];
+	}
+
+	/* THANKS TAILWIND */
+	sl-divider {
+		border: solid var(--width) var(--color);
+	}
 }
 
 @layer utilities {
