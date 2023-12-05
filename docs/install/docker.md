@@ -15,7 +15,7 @@ I provide a pre-made `compose.yaml` file that makes it easier to get started.
 
 ```bash
 mkdir ass && cd ass/
-curl -O https://ass.tycrek.dev/compose.yaml
+curl -LO https://ass.tycrek.dev/compose.yaml
 docker compose up -d
 ```
 
