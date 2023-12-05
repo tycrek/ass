@@ -14,7 +14,10 @@
     "build:backend": "tsc -p backend/",
     "build:frontend": "tsc -p frontend/",
     "build:fix-frontend": "node common/fix-frontend-js.js",
-    "start": "node dist/backend/app.js"
+    "start": "node dist/backend/app.js",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "repository": "github:tycrek/ass",
   "keywords": [
@@ -68,6 +71,8 @@
     "@types/fs-extra": "^11.0.4",
     "@types/luxon": "^3.3.5",
     "@types/node": "^20.10.0",
-    "@types/pg": "^8.10.9"
+    "@types/pg": "^8.10.9",
+    "vitepress": "1.0.0-rc.31",
+    "vue": "^3.3.9"
   }
 }
