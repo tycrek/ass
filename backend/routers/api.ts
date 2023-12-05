@@ -57,6 +57,7 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 
 		return res.json({ success: true });
 	} catch (err: any) {
+		log.error('Setup failed', err);
 		return res.status(400).json({ success: false, message: err.message });
 	}
 });
@@ -68,8 +69,8 @@ router.post('/login', rateLimiterMiddleware('login', UserConfig.config?.rateLimi
 	data.getAll('users')
 		.then((users) => {
 			if (!users) throw new Error('Missing users data');
-			else return Object.entries(users as { [key: string]: AssUser })
-				.filter(([_uid, user]: [string, AssUser]) => user.username === username)[0][1]; // [0] is the first item in the filter results, [1] is is AssUser
+			else return Object.entries(users as AssUser[])
+				.filter(([_uid, user]: [string, AssUser]) => user.username === username)[0][1]; // [0] is the first item in the filter results, [1] is AssUser
 		})
 		.then((user) => Promise.all([bcrypt.compare(password, user.password), user]))
 		.then(([success, user]) => {
@@ -88,7 +89,7 @@ router.post('/login', rateLimiterMiddleware('login', UserConfig.config?.rateLimi
 			// Delete the pre-login path after successful login
 			if (success) delete req.session.ass?.preLoginPath;
 		})
-		.catch((err) => res.status(400).json({ success: false, message: err.message }));
+		.catch((err) => log.error(err).callback(() => res.status(400).json({ success: false, message: err.message })));
 });
 
 // todo: authenticate API endpoints
@@ -133,7 +134,10 @@ router.post('/user', rateLimiterMiddleware('api', UserConfig.config?.rateLimit?.
 
 	} catch (err: any) { issue = `Error: ${err.message}`; }
 
-	if (issue) return res.status(400).json({ success: false, messsage: issue });
+	if (issue) {
+		log.error('Failed to create user', issue);
+		return res.status(400).json({ success: false, messsage: issue });
+	}
 
 	log.debug(`User created`, user!.username);
 	res.json(({ success: true, message: `User ${user!.username} created` }));

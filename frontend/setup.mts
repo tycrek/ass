@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		mySqlTab: document.querySelector('#mysql-tab') as SlTab,
 		mySqlHost: document.querySelector('#mysql-host') as SlInput,
+		mySqlPort: document.querySelector('#mysql-port') as SlInput,
 		mySqlUser: document.querySelector('#mysql-user') as SlInput,
 		mySqlPassword: document.querySelector('#mysql-password') as SlInput,
 		mySqlDatabase: document.querySelector('#mysql-database') as SlInput,
@@ -115,8 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				config.database = {
 					kind: 'mysql',
 					options: {
-						host:     Elements.mySqlHost.value,
-						user:     Elements.mySqlUser.value,
+						host: Elements.mySqlHost.value,
+						port: parseInt(Elements.mySqlPort.value),
+						user: Elements.mySqlUser.value,
 						password: Elements.mySqlPassword.value,
 						database: Elements.mySqlDatabase.value
 					}
@@ -127,9 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				config.database = {
 					kind: 'postgres',
 					options: {
-						host:     Elements.pgsqlHost.value,
-						port:     parseInt(Elements.pgsqlPort.value),
-						user:     Elements.pgsqlUser.value,
+						host: Elements.pgsqlHost.value,
+						port: parseInt(Elements.pgsqlPort.value),
+						user: Elements.pgsqlUser.value,
 						password: Elements.pgsqlPassword.value,
 						database: Elements.pgsqlDatabase.value
 					}

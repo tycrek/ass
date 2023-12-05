@@ -1,10 +1,9 @@
-import { AssFile, AssUser, NID, UploadToken } from 'ass';
+import { AssFile, AssUser, NID, UploadToken, Database, DatabaseTable, DatabaseValue } from 'ass';
 
 import mysql, { Pool } from 'mysql2/promise';
 
 import { log } from '../log.js';
 import { UserConfig } from '../UserConfig.js';
-import { Database, DatabaseTable, DatabaseValue } from './database.js';
 
 export class MySQLDatabase implements Database {
 	private _pool: Pool;
@@ -78,7 +77,7 @@ export class MySQLDatabase implements Database {
 						this._tableManager('create', 'assusers'),
 						this._tableManager('create', 'asstokens')
 					]);
-					log.success('MySQL', 'Tables created').callback(resolve);
+					log.success('MySQL', 'Tables created');
 				} else {
 
 					// There's at least one row, do further checks
@@ -113,12 +112,13 @@ export class MySQLDatabase implements Database {
 
 					// Hopefully we are ready
 					if (tablesExist.files && tablesExist.users)
-						log.info('MySQL', 'Tables exist, ready').callback(() => {
-							this._ready = true;
-							resolve(void 0);
-						});
+						log.info('MySQL', 'Tables exist, ready');
 					else throw new Error('Table(s) missing!');
 				}
+
+				// We are ready!
+				this._ready = true;
+				resolve();
 			} catch (err) {
 				log.error('MySQL', 'failed to initialize');
 				console.error(err);
@@ -131,7 +131,13 @@ export class MySQLDatabase implements Database {
 		return new Promise(async (resolve, reject) => {
 			if (!this._ready) return reject(new Error('MySQL not ready'));
 
-			if (await this.get(table, key)) reject(new Error(`${table == 'assfiles' ? 'File' : table == 'assusers' ? 'User' : 'Token'} key ${key} already exists`));
+			try {
+				if (await this.get(table, key))
+					reject(new Error(`${table == 'assfiles' ? 'File' : table == 'assusers' ? 'User' : 'Token'} key ${key} already exists`));
+			} catch (err: any) {
+				if (!err.message.includes('not found in'))
+					reject(err);
+			}
 
 			const query = `
 INSERT INTO ${table} ( NanoID, Data )
@@ -144,7 +150,7 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 		});
 	}
 
-	public get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined> {
+	public get(table: DatabaseTable, key: NID): Promise<DatabaseValue> {
 		return new Promise(async (resolve, reject) => {
 			try {
 				// Run query
@@ -153,27 +159,24 @@ VALUES ('${key}', '${JSON.stringify(data)}');
 				// Disgustingly interpret the query results
 				const rows_tableData = (rowz as unknown as { [key: string]: string }[])[0] as unknown as ({ Data: UploadToken | AssFile | AssUser | undefined });
 
-				resolve(rows_tableData?.Data ?? undefined);
+				if (rows_tableData?.Data) resolve(rows_tableData.Data);
+				else throw new Error(`Key '${key}' not found in '${table}'`);
 			} catch (err) {
 				reject(err);
 			}
 		});
 	}
 
-	// todo: unknown if this works
-	public getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
+	public getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
 		return new Promise(async (resolve, reject) => {
 			try {
-				// Run query // ! this may not work as expected
+				// Run query
 				const [rowz, _fields] = await this._pool.query(`SELECT Data FROM ${table}`);
 
 				// Interpret results this is pain
-				const rows = (rowz as unknown as { [key: string]: string }[]);
+				const rows = (rowz as unknown as { Data: UploadToken | AssFile | AssUser }[]);
 
-				// console.log(rows);
-
-				// aaaaaaaaaaaa
-				resolve({});
+				resolve(rows.map((row) => row.Data));
 			} catch (err) {
 				reject(err);
 			}

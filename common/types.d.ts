@@ -3,6 +3,9 @@ declare module 'ass' {
 
 	type IdType = 'random' | 'original' | 'gfycat' | 'timestamp' | 'zws'
 
+	export type DatabaseValue = AssFile | AssUser | UploadToken;
+	export type DatabaseTable = 'assfiles' | 'assusers' | 'asstokens';
+
 	/**
 	 * Core Express server config.
 	 * This is separate from the user configuration starting in 0.15.0
@@ -70,6 +73,42 @@ declare module 'ass' {
 		}
 	}
 
+	/**
+	 * interface for database classes
+	 */
+
+	export interface Database {
+		/**
+		 * preform database initialization tasks
+		 */
+		open(): Promise<void>;
+
+		/**
+		 * preform database suspension tasks
+		 */
+		close(): Promise<void>;
+
+		/**
+		 * set up database
+		 */
+		configure(): Promise<void>;
+
+		/**
+		 * put a value in the database
+		 */
+		put(table: DatabaseTable, key: NID, data: DatabaseValue): Promise<void>;
+
+		/**
+		 * get a value from the database
+		 */
+		get(table: DatabaseTable, key: NID): Promise<DatabaseValue>;
+
+		/**
+		 * get all values from the database
+		 */
+		getAll(table: DatabaseTable): Promise<DatabaseValue[]>;
+	}
+
 	interface DatabaseConfiguration {
 		kind: 'mysql' | 'postgres' | 'json' | 'mongodb';
 		options?: MySQLConfiguration | PostgresConfiguration | MongoDBConfiguration;
@@ -77,6 +116,7 @@ declare module 'ass' {
 
 	interface MySQLConfiguration {
 		host: string;
+		port: number;
 		user: string;
 		password: string;
 		database: string;
@@ -153,12 +193,10 @@ declare module 'ass' {
 		sql: {
 			mySql: {
 				host: (val: any) => boolean;
+				port: (val: any) => boolean;
 				user: (val: any) => boolean;
 				password: (val: any) => boolean;
 				database: (val: any) => boolean;
-			}
-			postgres: {
-				port: (val: any) => boolean;
 			}
 		}
 		rateLimit: {

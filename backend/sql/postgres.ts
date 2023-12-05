@@ -1,8 +1,7 @@
-import { PostgresConfiguration } from 'ass';
+import { PostgresConfiguration, Database, DatabaseTable, DatabaseValue } from 'ass';
 
 import pg from 'pg';
 import { log } from '../log.js';
-import { Database, DatabaseTable, DatabaseValue } from './database.js';
 import { UserConfig } from '../UserConfig.js';
 
 /**
@@ -161,7 +160,7 @@ export class PostgreSQLDatabase implements Database {
         });
     }
 
-    public get(table: DatabaseTable, key: string): Promise<DatabaseValue | undefined> {
+    public get(table: DatabaseTable, key: string): Promise<DatabaseValue> {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
@@ -179,7 +178,8 @@ export class PostgreSQLDatabase implements Database {
         });
     }
 
-    public getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue; }> {
+    // XXX: This is broken
+    public getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {

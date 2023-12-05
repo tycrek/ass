@@ -6,15 +6,16 @@ title: Home
 
 hero:
   name: ass
-  text: open-source file management server
+  text: open-source file hosting server
   tagline: Unopinionated, customizable, uniquely yours.
   actions:
     - theme: brand
-      text: Install
+      text: Get Started
       link: /install/
     - theme: alt
-      text: Customize
-      link: /customize/
+      text: View on GitHub
+      link: /configure/
+
   image:
     src: 'https://i.tycrek.dev/ass-round-square-logo-white-with-text'
     alt: ass logo

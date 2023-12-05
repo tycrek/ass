@@ -8,28 +8,28 @@
     "node": "^20"
   },
   "scripts": {
+    "start": "node dist/backend/app.js",
     "dev": "npm run build && npm start",
-    "fresh": "rm -dr .ass-data/ & npm run dev",
-    "build": "rm -dr dist/ & npm run build:backend && npm run build:frontend && npm run build:fix-frontend",
+    "dev:docs": "wrangler pages dev --proxy 5173 -- npm run vp:dev",
+    "build": "rm -dr dist/ ; npm run build:backend && npm run build:frontend && npm run build:fix-frontend",
     "build:backend": "tsc -p backend/",
     "build:frontend": "tsc -p frontend/",
     "build:fix-frontend": "node common/fix-frontend-js.js",
-    "start": "node dist/backend/app.js",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "vp:dev": "vitepress dev docs",
+    "vp:build": "vitepress build docs",
+    "vp:preview": "vitepress preview docs"
   },
   "repository": "github:tycrek/ass",
   "keywords": [
     "sharex",
     "sharex-server"
   ],
-  "author": "tycrek <t@tycrek.com> (https://tycrek.com/)",
+  "author": "tycrek <sylvie@tycrek.com> (https://tycrek.com/)",
   "license": "ISC",
   "bugs": "https://github.com/tycrek/ass/issues",
   "homepage": "https://github.com/tycrek/ass#readme",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.456.0",
+    "@aws-sdk/client-s3": "^3.465.0",
     "@shoelace-style/shoelace": "^2.12.0",
     "@tinycreek/postcss-font-magician": "^4.2.0",
     "@tsconfig/node20": "^20.1.2",
@@ -45,10 +45,10 @@
     "cssnano": "^6.0.1",
     "express": "^4.18.2",
     "express-busboy": "^10.1.0",
-    "express-rate-limit": "^7.1.4",
+    "express-rate-limit": "^7.1.5",
     "express-session": "^1.17.3",
     "ffmpeg-static": "^5.2.0",
-    "fs-extra": "^11.1.1",
+    "fs-extra": "^11.2.0",
     "luxon": "^3.4.4",
     "memorystore": "^1.6.7",
     "mongoose": "^8.0.0",
@@ -59,7 +59,7 @@
     "sharp": "^0.32.6",
     "shoelace-fontawesome-pug": "^6.4.3",
     "shoelace-pug-loader": "^2.11.0",
-    "tailwindcss": "^3.3.5",
+    "tailwindcss": "^3.3.6",
     "typescript": "^5.3.2"
   },
   "devDependencies": {
@@ -69,10 +69,11 @@
     "@types/express-session": "^1.17.10",
     "@types/ffmpeg-static": "^3.0.3",
     "@types/fs-extra": "^11.0.4",
-    "@types/luxon": "^3.3.5",
-    "@types/node": "^20.10.0",
+    "@types/luxon": "^3.3.6",
+    "@types/node": "^20.10.3",
     "@types/pg": "^8.10.9",
     "vitepress": "1.0.0-rc.31",
-    "vue": "^3.3.9"
+    "vue": "^3.3.10",
+    "wrangler": "^3.18.0"
   }
 }

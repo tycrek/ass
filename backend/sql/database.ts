@@ -1,42 +1,4 @@
-import { AssFile, AssUser, NID, UploadToken } from 'ass';
-
-export type DatabaseValue = AssFile | AssUser | UploadToken;
-export type DatabaseTable = 'assfiles' | 'assusers' | 'asstokens';
-
-/**
- * interface for database classes
- */
-export interface Database {
-    /**
-     * preform database initialization tasks
-     */
-    open(): Promise<void>;
-
-    /**
-     * preform database suspension tasks
-     */
-    close(): Promise<void>;
-
-    /**
-     * set up database
-     */
-    configure(): Promise<void>;
-
-    /**
-     * put a value in the database
-     */
-    put(table: DatabaseTable, key: NID, data: DatabaseValue): Promise<void>;
-    
-    /**
-     * get a value from the database
-     */
-    get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined>;
-    
-    /**
-     * get all values from the database
-     */
-    getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }>;
-}
+import { NID, Database, DatabaseTable, DatabaseValue } from "ass";
 
 export class DBManager {
     private static _db:      Database;
@@ -79,7 +41,7 @@ export class DBManager {
     /**
      * put a value in the database
      */
-	public static put(table: DatabaseTable, key: NID, data: DatabaseValue): Promise<void> {
+    public static put(table: DatabaseTable, key: NID, data: DatabaseValue): Promise<void> {
         if (this._db && this._dbReady) {
             return this._db.put(table, key, data);
         } else throw new Error('No database active');
@@ -88,7 +50,7 @@ export class DBManager {
     /**
      * get a value from the database
      */
-    public static get(table: DatabaseTable, key: NID): Promise<DatabaseValue | undefined> {
+    public static get(table: DatabaseTable, key: NID): Promise<DatabaseValue> {
         if (this._db && this._dbReady) {
             return this._db.get(table, key);
         } else throw new Error('No database active'); 
@@ -97,7 +59,7 @@ export class DBManager {
     /**
      * get all values from the database
      */
-    public static getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
+    public static getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
         if (this._db && this._dbReady) {
             return this._db.getAll(table);
         } else throw new Error('No database active'); 

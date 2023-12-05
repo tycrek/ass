@@ -1,9 +1,8 @@
-import { AssFile, AssUser, MongoDBConfiguration, NID, UploadToken } from 'ass';
+import { AssFile, AssUser, MongoDBConfiguration, NID, UploadToken, Database, DatabaseTable, DatabaseValue } from 'ass';
 
 import mongoose, { Model, Mongoose, Schema } from 'mongoose';
 
 import { UserConfig } from '../UserConfig.js';
-import { Database, DatabaseTable, DatabaseValue } from './database.js';
 import { log } from '../log.js';
 
 interface TableVersion {
@@ -194,7 +193,7 @@ export class MongoDBDatabase implements Database {
         });
     }
 
-    get(table: DatabaseTable, key: string): Promise<DatabaseValue | undefined> {
+    get(table: DatabaseTable, key: string): Promise<DatabaseValue> {
         return new Promise(async (resolve, reject) => {
             try {
                 const models = {
@@ -217,7 +216,7 @@ export class MongoDBDatabase implements Database {
         });
     }
 
-    getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue; }> {
+    getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
         return new Promise(async (resolve, reject) => {
             try {
                 const models = {

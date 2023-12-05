@@ -1,9 +1,8 @@
-import { AssFile, AssUser, FilesSchema, UsersSchema } from 'ass';
+import { AssFile, AssUser, FilesSchema, UsersSchema, Database, DatabaseTable, DatabaseValue } from 'ass';
 
 import path, { resolve } from 'path';
 import fs from 'fs-extra';
 
-import { Database, DatabaseTable, DatabaseValue } from './database.js';
 import { log } from '../log.js';
 import { nanoid } from '../generators.js';
 
@@ -136,17 +135,18 @@ export class JSONDatabase implements Database {
         })
     }
 
-    public get(table: DatabaseTable, key: string): Promise<DatabaseValue | undefined> {
+    public get(table: DatabaseTable, key: string): Promise<DatabaseValue> {
         return new Promise(async (resolve, reject) => {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]][key];
-            (!data) ? resolve(undefined) : resolve(data);
+            (!data) ? reject(new Error(`Key '${key}' not found in '${table}'`)) : resolve(data);
         });
     }
 
-    public getAll(table: DatabaseTable): Promise<{ [index: string]: DatabaseValue }> {
+    public getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
         return new Promise(async (resolve, reject) => {
             const data = (await fs.readJson(PATHMAP[table]))[SECTORMAP[table]];
-            (!data) ? resolve({}) : resolve(data);
+            // todo: fix this
+            (!data) ? resolve(data) : resolve(data);
         });
     }
 }
