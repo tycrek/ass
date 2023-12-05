@@ -209,6 +209,10 @@ export class MongoDBDatabase implements Database {
                     id: key
                 }).exec();
 
+                if (result.length == 0) {
+                    throw new Error(`Key '${key}' not found in '${table}'`);
+                }
+
                 resolve(result.length ? result[0].data : void 0);
             } catch (err) {
                 reject(err);
@@ -216,6 +220,7 @@ export class MongoDBDatabase implements Database {
         });
     }
 
+    // TODO: Unsure if this works.
     getAll(table: DatabaseTable): Promise<DatabaseValue[]> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -228,7 +233,7 @@ export class MongoDBDatabase implements Database {
                 // more ts-ignore!
                 // @ts-ignore
                 let result = await models[table].find({}).exec() // @ts-ignore
-                    .then(res => res.reduce((obj, doc) => (obj[doc.id] = doc.data, obj), {})); 
+                    .then(res => res.reduce((obj, doc) => (obj.push(doc.data)), [])); 
                 
                 resolve(result);
             } catch (err) {

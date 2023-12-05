@@ -66,10 +66,11 @@ router.post('/setup', BodyParserJson(), async (req, res) => {
 router.post('/login', rateLimiterMiddleware('login', UserConfig.config?.rateLimit?.login), BodyParserJson(), (req, res) => {
 	const { username, password } = req.body;
 
+	// something tells me we shouldnt be using getall here
 	data.getAll('users')
 		.then((users) => {
 			if (!users) throw new Error('Missing users data');
-			else return Object.entries(users as AssUser[])
+			else return Object.entries(users as AssUser[]) 
 				.filter(([_uid, user]: [string, AssUser]) => user.username === username)[0][1]; // [0] is the first item in the filter results, [1] is AssUser
 		})
 		.then((user) => Promise.all([bcrypt.compare(password, user.password), user]))

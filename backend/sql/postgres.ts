@@ -171,7 +171,11 @@ export class PostgreSQLDatabase implements Database {
 
                 let result = await this._client.query(queries[table], [key]);
 
-                resolve(result.rowCount ? result.rows[0].data : void 0);
+                if (result.rowCount == 0) {
+                    throw new Error(`Key '${key}' not found in '${table}'`);
+                }
+
+                resolve(result.rows[0].data);
             } catch (err) {
                 reject(err);
             }
@@ -183,14 +187,14 @@ export class PostgreSQLDatabase implements Database {
         return new Promise(async (resolve, reject) => {
             try {
                 const queries = {
-                    assfiles: 'SELECT json_object_agg(id, data) AS stuff FROM assfiles;',
-                    assusers: 'SELECT json_object_agg(id, data) AS stuff FROM assusers;',
-                    asstokens: 'SELECT json_object_agg(id, data) AS stuff FROM asstokens;'
+                    assfiles: 'SELECT json_agg(data) as stuff FROM assfiles;',
+                    assusers: 'SELECT json_agg(data) as stuff FROM assusers;',
+                    asstokens: 'SELECT json_agg(data) as stuff FROM asstokens;'
                 };
 
                 let result = await this._client.query(queries[table]);
 
-                resolve(result.rowCount ? result.rows[0].stuff : void 0);
+                resolve(result.rowCount ? result.rows[0].stuff : []);
             } catch (err) {
                 reject(err);
             }
