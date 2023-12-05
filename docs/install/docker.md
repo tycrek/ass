@@ -11,9 +11,11 @@ The Docker method uses [Docker Compose][1] for a quick and easy installation. Fo
 
 ## Install
 
+I provide a pre-made `compose.yaml` file that makes it easier to get started.
+
 ```bash
-git clone -b dev/0.15.0 https://github.com/tycrek/ass.git
-cd ass/
+mkdir ass && cd ass/
+curl -O https://ass.tycrek.dev/compose.yaml
 docker compose up -d
 ```
 
