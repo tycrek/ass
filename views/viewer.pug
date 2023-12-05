@@ -1,0 +1,60 @@
+doctype html 
+html.dark.sl-theme-dark(lang='en', prefix='og: https://ogp.me/ns')
+    head
+        //- this stuff
+        meta(charset='UTF-8')
+        meta(name='viewport', content='width=device-witdh, initial-scale=1.0')
+        meta(name='theme-color' content='black')
+        link(rel='stylesheet' href='/.css')
+
+        //- title
+        title ass 🍑
+
+        //- embed data
+        meta(property='og:title',       content=embed.title)
+        meta(property='og:description', content=embed.description)
+        meta(property='og:site_name',   content=embed.sitename)
+        meta(property='og:type',        content='image')
+        meta(property='og:image',       content=url)
+        meta(property='og:url',         content='.')
+        meta(property='twitter:card',   content='summary_large_image')
+
+        //- mixins
+        include ../node_modules/shoelace-fontawesome-pug/sl-fa-mixin.pug
+        include ../node_modules/shoelace-pug-loader/loader.pug
+
+        //- shoelace
+        +slTheme('dark')
+        +slAuto
+    body.w-screen.h-screen.flex-col
+        div.w-full.h-full.flex.justify-center.items-center.text-center
+            main.flex.flex-col
+                - let borderStyle = { 'border-color': 'var(--sl-color-neutral-200)' };
+                header.border-t.border-x.flex.h-8.bg-stone-900(style=borderStyle)
+                    - let dividerStyle = { '--spacing': '0px', 'margin-left': '8px' };
+
+                    //- uploader
+                    span
+                        sl-icon.p-2.align-middle(name='person-fill', label='uploader')
+                        | #{uploader}
+                    sl-divider(vertical, style=dividerStyle)
+                    //- file size
+                    span
+                        sl-icon.p-2.align-middle(name='database-fill', label='size')
+                        sl-format-bytes(value=size)
+                    sl-divider(vertical, style=dividerStyle)
+                    //- upload date
+                    span
+                        //- calendar is a funny word
+                        sl-icon.p-2.align-middle(name='calendar-fill', label='upload date')
+                        sl-format-date(value=time)
+                    sl-divider(vertical, style=dividerStyle)
+                    
+                    //- spacer
+                    div.flex-grow
+
+                    //- download button
+                    sl-divider(vertical, style=dividerStyle)
+                    span.float-right
+                        sl-icon-button(name='download', href=url, download, label='download')
+                img.res-image.border-b.border-x(src=url, style=borderStyle)
