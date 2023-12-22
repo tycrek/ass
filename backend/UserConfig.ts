@@ -3,6 +3,7 @@ import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration } from 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
 import { log } from './log.js';
+import { validate } from 'william.js';
 
 const FILEPATH = path.join('.ass-data/userconfig.json');
 
@@ -40,10 +41,7 @@ const Checkers: UserConfigTypeChecker = {
 	idSize: numChecker,
 	gfySize: numChecker,
 	maximumFileSize: numChecker,
-	discordWebhook: (val) => {
-		const regex = /^https:\/\/discord\.com\/api\/webhooks\/\d+\/\S+$/;
-		return regex.test(val);
-	},
+	discordWebhook: (val) => validate.discord.webhook(val),
 
 	s3: {
 		endpoint: basicStringChecker,
