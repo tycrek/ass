@@ -3,6 +3,7 @@ import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration } from 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
 import { log } from './log.js';
+import { validate } from 'william.js';
 
 const FILEPATH = path.join('.ass-data/userconfig.json');
 
@@ -40,6 +41,7 @@ const Checkers: UserConfigTypeChecker = {
 	idSize: numChecker,
 	gfySize: numChecker,
 	maximumFileSize: numChecker,
+	discordWebhook: (val) => validate.discord.webhook(val),
 
 	s3: {
 		endpoint: basicStringChecker,
@@ -96,6 +98,7 @@ export class UserConfig {
 		if (!Checkers.idSize(config.idSize)) throw new Error('Invalid ID size');
 		if (!Checkers.gfySize(config.gfySize)) throw new Error('Invalid Gfy size');
 		if (!Checkers.maximumFileSize(config.maximumFileSize)) throw new Error('Invalid maximum file size');
+		if (!Checkers.discordWebhook(config.discordWebhook)) throw new Error('Invalid Discord webhook');
 
 		// * Optional S3 config
 		if (config.s3 != null) {
@@ -118,7 +121,7 @@ export class UserConfig {
 					if (!Checkers.sql.mySql.port(config.database.options.port)) throw new Error('Invalid database port');
 					if (config.database.kind == 'postgres') {
 						if (!Checkers.sql.postgres.port((config.database.options as PostgresConfiguration).port)) {
-							throw new Error("Invalid database port");
+							throw new Error('Invalid database port');
 						}
 					}
 				} else throw new Error('Database options missing');

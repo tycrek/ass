@@ -1,5 +1,6 @@
 import { BusBoyFile, AssFile } from 'ass';
 
+import axios from 'axios';
 import fs from 'fs-extra';
 import bb from 'express-busboy';
 import crypto from 'crypto';
@@ -88,7 +89,19 @@ router.post('/', rateLimiterMiddleware("upload", UserConfig.config?.rateLimit?.u
 		data.put('files', assFile.fakeid, assFile);
 
 		log.debug('File saved to', !s3 ? assFile.save.local! : 'S3');
-		return res.type('json').send({ resource: `${req.ass.host}/${assFile.fakeid}` });
+		await res.type('json').send({ resource: `${req.ass.host}/${assFile.fakeid}` });
+
+		// Send to Discord webhook
+		try {
+			await axios.post(UserConfig.config.discordWebhook, {
+				body: JSON.stringify({
+					content: `New upload: ${req.ass.host}/${assFile.fakeid}`
+				})
+			})
+		} catch (err) {
+			log.warn('Failed to send request to Discord webhook');
+			console.error(err);
+		}
 	} catch (err) {
 		log.error('Failed to upload file', bbFile.filename);
 		console.error(err);
