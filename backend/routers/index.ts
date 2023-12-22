@@ -1,9 +1,9 @@
 import { BusBoyFile, AssFile } from 'ass';
 
+import axios from 'axios';
 import fs from 'fs-extra';
 import bb from 'express-busboy';
 import crypto from 'crypto';
-import fetch from 'node-fetch';
 import { Router } from 'express';
 import { Readable } from 'stream';
 
@@ -93,12 +93,10 @@ router.post('/', rateLimiterMiddleware("upload", UserConfig.config?.rateLimit?.u
 
 		// Send to Discord webhook
 		try {
-			await fetch(UserConfig.config.discordWebhook, {
-				method: "POST",
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ content: `New upload: ${req.ass.host}/${assFile.fakeid}` })
+			await axios.post(UserConfig.config.discordWebhook, {
+				body: JSON.stringify({
+					content: `New upload: ${req.ass.host}/${assFile.fakeid}`
+				})
 			})
 		} catch (err) {
 			log.warn("Failed to send request to Discord webhook");
