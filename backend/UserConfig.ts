@@ -3,7 +3,6 @@ import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration } from 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
 import { log } from './log.js';
-import fetch from "node-fetch";
 
 const FILEPATH = path.join('.ass-data/userconfig.json');
 
