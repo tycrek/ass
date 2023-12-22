@@ -25,6 +25,7 @@ declare module 'ass' {
 		idSize: number;
 		gfySize: number;
 		maximumFileSize: number;
+		discordWebhook: string;
 
 		s3?: S3Configuration;
 		database?: DatabaseConfiguration;
@@ -154,6 +155,7 @@ declare module 'ass' {
 		idSize: (val: any) => boolean;
 		gfySize: (val: any) => boolean;
 		maximumFileSize: (val: any) => boolean;
+		discordWebhook: (val: any) => boolean;
 		s3: {
 			endpoint: (val: any) => boolean;
 			bucket: (val: any) => boolean;

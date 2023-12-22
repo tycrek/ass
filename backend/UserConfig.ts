@@ -3,6 +3,7 @@ import { UserConfiguration, UserConfigTypeChecker, PostgresConfiguration } from 
 import fs from 'fs-extra';
 import { path } from '@tycrek/joint';
 import { log } from './log.js';
+import fetch from "node-fetch";
 
 const FILEPATH = path.join('.ass-data/userconfig.json');
 
@@ -40,6 +41,10 @@ const Checkers: UserConfigTypeChecker = {
 	idSize: numChecker,
 	gfySize: numChecker,
 	maximumFileSize: numChecker,
+	discordWebhook: (val) => {
+		const regex = /^https:\/\/discord\.com\/api\/webhooks\/\d+\/\S+$/;
+		return regex.test(val);
+	},
 
 	s3: {
 		endpoint: basicStringChecker,
@@ -96,6 +101,7 @@ export class UserConfig {
 		if (!Checkers.idSize(config.idSize)) throw new Error('Invalid ID size');
 		if (!Checkers.gfySize(config.gfySize)) throw new Error('Invalid Gfy size');
 		if (!Checkers.maximumFileSize(config.maximumFileSize)) throw new Error('Invalid maximum file size');
+		if (!Checkers.discordWebhook(config.discordWebhook)) throw new Error('Invalid Discord webhook');
 
 		// * Optional S3 config
 		if (config.s3 != null) {
