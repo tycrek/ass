@@ -123,7 +123,7 @@ export class UserConfig {
 					if (!Checkers.sql.mySql.port(config.database.options.port)) throw new Error('Invalid database port');
 					if (config.database.kind == 'postgres') {
 						if (!Checkers.sql.postgres.port((config.database.options as PostgresConfiguration).port)) {
-							throw new Error("Invalid database port");
+							throw new Error('Invalid database port');
 						}
 					}
 				} else throw new Error('Database options missing');

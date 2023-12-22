@@ -99,7 +99,7 @@ router.post('/', rateLimiterMiddleware("upload", UserConfig.config?.rateLimit?.u
 				})
 			})
 		} catch (err) {
-			log.warn("Failed to send request to Discord webhook");
+			log.warn('Failed to send request to Discord webhook');
 			console.error(err);
 		}
 	} catch (err) {
