@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { id } from 'william.js';
 
-export const customId = (length: number, alphabet: string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") => id(length, 1, alphabet);
+export const customId = (length: number, alphabet: string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') => id(length, 1, alphabet);
 
 export const randomHexColour = () => { // From: https://www.geeksforgeeks.org/javascript-generate-random-hex-codes-color/
 	const letters = '0123456789ABCDEF';
