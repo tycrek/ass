@@ -121,8 +121,12 @@ router.post('/', (req: Request, res: Response, next: Function) => {
 			const uploader = findFromToken(req.token)?.username ?? 'Unknown';
 			log.success('File uploaded', logInfo, `uploaded by ${uploader}`);
 
+			// ! random thing for 0.14.8 to append the file extension to the resource url
+			const extAppend = !(req.headers['x-ass-with-file-ext']?.toString() ?? false) ? ''
+				: `.${req.file.originalname.split('.').pop()}`;
+
 			// Build the URLs
-			const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}`;
+			const resourceUrl = `${getTrueHttp()}${trueDomain}/${resourceId}${extAppend}`;
 			const thumbnailUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/thumbnail`;
 			const deleteUrl = `${getTrueHttp()}${trueDomain}/${resourceId}/delete/${req.file.deleteId}`;
 
