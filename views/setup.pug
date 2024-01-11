@@ -1,0 +1,101 @@
+extends _base_
+block title
+	title ass setup 🍑
+block section
+	span ass setup
+block content
+	//- Setup panel
+	.flex.flex-col.items-center
+		p.text-lg.mb-4 Welcome to ass, your new personal file upload server!
+
+		//- * Base config
+		h2.setup-text-section-header.mt-12 Upload configuration
+		.setup-panel
+			h3.setup-text-item-title Uploads directory
+			sl-input#uploads-dir(type='text' placeholder='/opt/ass/uploads' clearable): sl-icon(slot='prefix' name='fas-folders' library='fa')
+			h3.setup-text-item-title ID type
+			sl-input#uploads-idtype(type='text' placeholder='random'): sl-icon(slot='prefix' name='fas-input-text' library='fa')
+			h3.setup-text-item-title ID size
+			sl-input#uploads-idsize(type='number' placeholder='8'): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+			h3.setup-text-item-title Gfycat size
+			sl-input#uploads-gfysize(type='number' placeholder='3'): sl-icon(slot='prefix' name='fas-cat' library='fa')
+			h3.setup-text-item-title Maximum file size (MB)
+			sl-input#uploads-filesize(type='number' placeholder='50'): sl-icon(slot='prefix' name='fas-file' library='fa')
+
+		//- * Admin User
+		h2.setup-text-section-header.mt-4 Admin User
+		.setup-panel
+			h3.setup-text-item-title Username
+			sl-input#user-username(type='text' placeholder='admin' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
+			h3.setup-text-item-title Password
+			sl-input#user-password(type='password' placeholder='the-most-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
+
+		//- * Database
+		h2.setup-text-section-header.mt-4 Database
+		.setup-panel
+			sl-tab-group
+				//- * JSON
+				sl-tab#json-tab(slot='nav' panel='json') JSON
+				sl-tab-panel(name='json')
+					| you all good!
+				
+				//- * MySQL
+				sl-tab#mysql-tab(slot='nav' panel='mysql') MySQL
+				sl-tab-panel(name='mysql')
+					h3.setup-text-item-title Host
+					sl-input#mysql-host(type='text' placeholder='mysql.example.com' clearable): sl-icon(slot='prefix' name='fas-server' library='fa')
+					h3.setup-text-item-title Port
+					sl-input#mysql-port(type='number' placeholder='3306' min='1' max='65535' no-spin-buttons clearable): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+					h3.setup-text-item-title User
+					sl-input#mysql-user(type='text' placeholder='myassql' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
+					h3.setup-text-item-title Password
+					sl-input#mysql-password(type='password' placeholder='super-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
+					h3.setup-text-item-title Database
+					sl-input#mysql-database(type='text' placeholder='assdb' clearable): sl-icon(slot='prefix' name='fas-database' library='fa')
+
+				//- * PostgreSQL
+				sl-tab#pgsql-tab(slot='nav' panel='pgsql') PostgreSQL
+				sl-tab-panel(name='pgsql')
+					h3.setup-text-item-title Host
+					sl-input#pgsql-host(type='text' placeholder='postgres.example.com' clearable): sl-icon(slot='prefix' name='fas-server' library='fa')
+					h3.setup-text-item-title Port
+					sl-input#pgsql-port(type='number' placeholder='5432' min='1' max='65535' no-spin-buttons clearable): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+					h3.setup-text-item-title User
+					sl-input#pgsql-user(type='text' placeholder='posgrassql' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
+					h3.setup-text-item-title Password
+					sl-input#pgsql-password(type='password' placeholder='super-secure' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
+					h3.setup-text-item-title Database
+					sl-input#pgsql-database(type='text' placeholder='assdb' clearable): sl-icon(slot='prefix' name='fas-database' library='fa')
+
+		//- * S3
+		h2.setup-text-section-header.mt-4 S3 #[span.setup-text-optional optional]
+		.setup-panel
+			h3.setup-text-item-title Endpoint
+			sl-input#s3-endpoint(type='text' placeholder='https://s3.example.com' clearable): sl-icon(slot='prefix' name='fas-server' library='fa')
+			h3.setup-text-item-title Bucket
+			sl-input#s3-bucket(type='text' placeholder='ass-bucket' clearable): sl-icon(slot='prefix' name='fas-bucket' library='fa')
+			h3.setup-text-item-title Access key
+			sl-input#s3-accessKey(type='text' placeholder='ABCD1234' clearable): sl-icon(slot='prefix' name='fas-key-skeleton' library='fa')
+			h3.setup-text-item-title Secret key
+			sl-input#s3-secretKey(type='password' placeholder='EF56GH78IJ90KL12' clearable): sl-icon(slot='prefix' name='fas-user-secret' library='fa')
+			h3.setup-text-item-title Region #[span.setup-text-optional optional]
+			sl-input#s3-region(type='text' placeholder='us-east' clearable): sl-icon(slot='prefix' name='fas-map-location-dot' library='fa')
+		
+		//- * Rate Limits
+		h2.setup-text-section-header.mt-4 Rate Limits #[span.setup-text-optional optional]
+		.setup-panel
+			h3.setup-text-item-title Generic API - Requests
+			sl-input#ratelimit-api-requests(type='text' placeholder='120' clearable): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+			h3.setup-text-item-title Generic API - Seconds per reset
+			sl-input#ratelimit-api-time(type='text' placeholder='60' clearable): sl-icon(slot='prefix' name='fas-clock' library='fa')
+			h3.setup-text-item-title Login - Requests
+			sl-input#ratelimit-login-requests(type='text' placeholder='5' clearable): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+			h3.setup-text-item-title Login - Seconds per reset
+			sl-input#ratelimit-login-time(type='text' placeholder='30' clearable): sl-icon(slot='prefix' name='fas-clock' library='fa')
+			h3.setup-text-item-title File upload - Requests
+			sl-input#ratelimit-upload-requests(type='text' placeholder='120' clearable): sl-icon(slot='prefix' name='fas-hashtag' library='fa')
+			h3.setup-text-item-title File upload - Seconds per reset
+			sl-input#ratelimit-upload-time(type='text' placeholder='60' clearable): sl-icon(slot='prefix' name='fas-clock' library='fa')
+
+		sl-button.w-32.mt-2.self-center#submit(type='primary' submit) Submit
+	script(src='/setup/ui.js')

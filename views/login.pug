@@ -1,0 +1,11 @@
+extends _base_
+block section
+	span login
+block content
+	.flex.flex-col.flex-center.h-full: .setup-panel
+		h3 Username
+		sl-input#login-username(type='text' placeholder='username' clearable): sl-icon(slot='prefix' name='fas-user' library='fa')
+		h3 Password
+		sl-input#login-password(type='password' placeholder='password' clearable): sl-icon(slot='prefix' name='fas-lock' library='fa')
+		sl-button.mt-4#login-submit(type='primary' submit) Login
+	script(src='/login/ui.js')
