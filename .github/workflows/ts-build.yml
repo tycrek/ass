@@ -1,11 +1,16 @@
 name: TypeScript Build
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 on:
   push:
-  pull_request:
   workflow_dispatch:
 
 jobs:
   build:
+    if: "!contains(github.event.head_commit.message, '[skip ci:ts]')"
     runs-on: ubuntu-latest
     env:
       ARCHIVE_NAME: ass-build-${{ github.run_id }}-${{ github.run_number }}
@@ -13,19 +18,19 @@ jobs:
       # Checkout repo
       - uses: actions/checkout@v4
 
-      # Set up Node 16
+      # Set up Node 20
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 16.14.0
+          node-version: 20
 
-      # Install npm 8 & TypeScript
+      # Install npm 10 & TypeScript
       - name: Install global packages
-        run: npm i -g npm@8 typescript
+        run: npm i -g npm@10 typescript pnpm
 
       # Install ass dependencies (including types)
       - name: Install dependencies
-        run: npm i --save-dev
+        run: pnpm i
 
       # Compile the TypeScript files
       - name: Run build script

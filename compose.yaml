@@ -1,4 +1,4 @@
-# ass Docker compose.yaml v0.2.0
+# ass Docker compose.yaml v0.3.0
 # authors:
 #  - tycrek <t@tycrek.com> (https://tycrek.com/)
 #  - Zusier <zusier@pm.me> (https://github.com/Zusier)
@@ -9,27 +9,15 @@
 
 services:
   ass:
-    build: .
+    image: tycrek/ass
     container_name: ass-docker
     restart: unless-stopped
+    volumes:
+      - ./.ass-data:/opt/ass-src/.ass-data
     ports:
       - "40115:40115"
-    volumes:
-      - ./uploads:/opt/ass/uploads
-      - ./share:/opt/ass/share
-      - type: bind
-        source: ./config.json
-        target: /opt/ass/config.json
-      - type: bind
-        source: ./auth.json
-        target: /opt/ass/auth.json
-      - type: bind
-        source: ./data.json
-        target: /opt/ass/data.json
-    tmpfs: /tmp # temp files such as uploads are stored here
+    tmpfs: /tmp
     tty: true
     environment:
-      - NODE_ENV=production # for production
-      - ASS_ENV=docker # docker, local, production (not widely used yet)
-      - LOG_LEVEL=debug # debug, info, warn, error
-      - FORCE_COLOR=3 # force color output
+      - NODE_ENV=production
+      - FORCE_COLOR=3 # tlog color output
