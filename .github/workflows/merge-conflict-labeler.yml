@@ -1,8 +1,13 @@
 name: Merge Conflict Labeler
 
 on:
+  push:
+    branches:
+      - dev/0.15.0
   pull_request_target:
-    types: [ synchronize ]
+    branches:
+      - dev/0.15.0
+    types: [synchronize]
 
 jobs:
   label:
@@ -10,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.repository == 'tycrek/ass' }}
     steps:
-      - uses: eps1lon/actions-label-merge-conflict@releases/2.x
+      - uses: eps1lon/actions-label-merge-conflict@v3
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request_target'}}
         with:
           dirtyLabel: 'merge conflict'
