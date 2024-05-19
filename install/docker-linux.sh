@@ -23,7 +23,7 @@ read -n 1 -s -r -p "Press any key to continue..."
 echo Running setup...
 
 # Bring up the container and run the setup
-docker compose up -d && docker compose exec ass npm run setup && docker compose restart
+docker-compose up && docker compose exec ass npm run setup && docker compose restart
 
 # Done!
 echo "ass-docker for Linux installed!"
