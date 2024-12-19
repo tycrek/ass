@@ -1,3 +1,7 @@
+# 2024-12-219: This project has been archived. At some point I will write a new ShareX server from scratch in Deno.
+
+ass will no longer receive any updates. The [Discord server][Discord invite] will continue to serve as the support server, as well as the hub for the sequel to ass. For info on that, join the Discord.
+
 <div align="center">
   <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://i.tycrek.dev/ass-round-square-logo-white-with-text"></a></h1>
 
