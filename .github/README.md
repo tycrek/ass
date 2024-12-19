@@ -1,4 +1,4 @@
-# 2024-12-219: This project has been archived. At some point I will write a new ShareX server from scratch in Deno.
+# 2024-12-19: This project has been archived. At some point I will write a new ShareX server from scratch in Deno.
 
 ass will no longer receive any updates. The [Discord server][Discord invite] will continue to serve as the support server, as well as the hub for the sequel to ass. For info on that, join the Discord.
 
