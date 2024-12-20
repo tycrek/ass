@@ -1,0 +1,5 @@
+# production
+.ass-data/
+
+# development
+node_modules/

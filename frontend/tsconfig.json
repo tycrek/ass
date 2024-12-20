@@ -1,0 +1,15 @@
+{
+    "extends": "@tsconfig/node20/tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../dist/frontend",
+        "lib": [
+            "ES2022",
+            "DOM"
+        ],
+        "target": "ES2015",
+    },
+    "include": [
+        "./**/*.mts",
+        "../**/common/*.ts"
+    ]
+}

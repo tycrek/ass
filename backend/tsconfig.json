@@ -1,0 +1,11 @@
+{
+	"extends": "@tsconfig/node20/tsconfig.json",
+	"compilerOptions": {
+		"outDir": "../dist/backend",
+		"strictPropertyInitialization": false
+	},
+	"include": [
+		"./**/*.ts",
+		"../**/common/*.ts"
+	]
+}
