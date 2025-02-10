@@ -5,29 +5,29 @@
 @layer base {}
 
 @layer components {
-	.res-media {
-		@apply border-l-4 rounded max-h-half-port;
+	.setup-text-section-header {
+		@apply text-2xl font-bold font-mono;
 	}
 
-	.link {
-		@apply no-underline hover_no-underline active_no-underline visited_no-underline
+	.setup-text-item-title {
+		@apply text-stone-300;
+	}
 
-			/* regular, visited */
-			text-link-primary visited_text-link-primary
-			border-b-2 visited_border-b-2
-			border-transparent visited_border-transparent
-			rounded-sm visited_rounded-sm
+	.setup-text-optional {
+		@apply text-stone-400 italic;
+	}
 
-			/* hover */
-			hover_text-link-hover
-			hover_border-hover
+	.setup-panel {
+		@apply flex flex-col pt-4 w-full max-w-xs;
+	}
 
-			/* active */
-			active_text-link-active
-
-			/* transitions */
-			ease-linear duration-150 transition-all;
+	.setup-panel>sl-input {
+		@apply mb-4;
 	}
 }
 
-@layer utilities {}
+@layer utilities {
+	.flex-center {
+		@apply items-center justify-center;
+	}
+}
