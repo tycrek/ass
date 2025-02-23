@@ -1,3 +1,11 @@
+# This project is no longer maintained. see [yaass] instead.
+
+ass will no longer receive any updates. Please consider using [yaass] instead. Join the yaass [Discord server][Discord invite] for information and support.
+
+[yaass]: https://github.com/tycrek/yaass
+
+<br><br><br><br><br><br><br><br>
+
 <div align="center">
   <h1><a href="https://github.com/tycrek/ass" target="_blank"><img height="180" alt="ass" src="https://i.tycrek.dev/ass-round-square-logo-white-with-text"></a></h1>
 
